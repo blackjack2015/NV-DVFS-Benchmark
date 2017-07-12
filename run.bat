@@ -1,1 +1,0 @@
-python DVFS_Performance_Power.py
