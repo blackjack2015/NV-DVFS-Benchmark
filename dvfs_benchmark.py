@@ -65,6 +65,7 @@ for core_f in core_frequencies:
                 arg, number = re.subn('-device=[0-9]*', '-device=%d' % cuda_dev_id, arg)
                 powerlog = 'benchmark_%s_core%d_mem%d_input%02d_power.log' % (app, core_f, mem_f, argNo)
                 perflog = 'benchmark_%s_core%d_mem%d_input%02d_perf.log' % (app, core_f, mem_f, argNo)
+                metricslog = 'benchmark_%s_core%d_mem%d_input%02d_metrics.log' % (app, core_f, mem_f, argNo)
 
                 # start record power data
                 os.system("echo \"arg:%s\" >> %s/%s" % (arg, LOG_ROOT, powerlog))
@@ -90,11 +91,20 @@ for core_f in core_frequencies:
                 os.system(command)
                 time.sleep(rest_int)
 
-                # # execute program to collect metrics data
-                # command = 'nvprof --devices %s --metrics %s %s%s %s >> %s%s.txt 2>&1' % (cuda_dev_id, ''.join(metrics), app_folder.replace('/', '\\'), app, arg, log_folder.replace('/', '\\'), app)
-                # print command
-                # os.system(command)
-                # time.sleep(wt)
+                # execute program to collect metrics data
+                metCount = 0
+
+                while metCount < len(metrics):
+
+                    if metCount + 3 > len(metrics):
+                        metStr = ','.join(metrics[metCount:])
+                    else:
+                        metStr = ','.join(metrics[metCount:metCount + 3])
+                    command = 'nvprof --devices %s --metrics %s %s/%s %s >> %s/%s 2>&1' % (cuda_dev_id, metStr, APP_ROOT, app, arg, LOG_ROOT, metricslog)
+                    print command
+                    os.system(command)
+                    time.sleep(rest_int)
+                    metCount += 3
 
 # reset GPU first
 command = 'nvidiaInspector.exe -forcepstate:%s,16' % nvIns_dev_id
