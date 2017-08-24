@@ -46,9 +46,8 @@ for core_f in core_frequencies:
     for mem_f in memory_frequencies:
 
         # set specific frequency
-        command = 'nvidiaInspector.exe -forcepstate:%s,5 -setMemoryClock:%s,1,%s -setGpuClock:%s,1,%s' % (nvIns_dev_id, \
-                                                                                                        nvIns_dev_id, mem_f, \
-                                                                                                        nvIns_dev_id, core_f)
+        command = 'nvidiaInspector.exe -forcepstate:%s,5 -setMemoryClock:%s,1,%s -setGpuClock:%s,1,%s' \
+                        % (nvIns_dev_id, nvIns_dev_id, mem_f, nvIns_dev_id, core_f)
         
         print command
         os.system(command)
