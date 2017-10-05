@@ -61,7 +61,7 @@ for core_f in core_frequencies:
 
             for arg in args:
 
-                arg, number = re.subn('-device=[0-9]*', '-device=%d' % cuda_dev_id, arg)
+                # arg, number = re.subn('-device=[0-9]*', '-device=%d' % cuda_dev_id, arg)
                 powerlog = 'benchmark_%s_core%d_mem%d_input%02d_power.log' % (app, core_f, mem_f, argNo)
                 perflog = 'benchmark_%s_core%d_mem%d_input%02d_perf.log' % (app, core_f, mem_f, argNo)
                 metricslog = 'benchmark_%s_core%d_mem%d_input%02d_metrics.log' % (app, core_f, mem_f, argNo)
@@ -75,7 +75,7 @@ for core_f in core_frequencies:
 
                 # execute program to collect power data
                 os.system("echo \"arg:%s\" >> %s/%s" % (arg, LOG_ROOT, perflog))
-                command = '%s\\%s %s -secs=10 >> %s/%s' % (APP_ROOT, app, arg, LOG_ROOT, perflog)
+                command = '%s\\%s %s -device=%d -secs=%d >> %s/%s' % (APP_ROOT, app, arg, cuda_dev_id, running_time, LOG_ROOT, perflog)
                 print command
                 os.system(command)
                 time.sleep(rest_int)
@@ -84,8 +84,8 @@ for core_f in core_frequencies:
                 os.system('tasklist|findstr "nvml_samples.exe" && taskkill /F /IM nvml_samples.exe')
 
                 # execute program to collect time data
-                arg, number = re.subn('-iters=[0-9]*', '-iters=10', arg)
-                command = 'nvprof --profile-child-processes %s/%s %s >> %s/%s 2>&1' % (APP_ROOT, app, arg, LOG_ROOT, perflog)
+                # arg, number = re.subn('-iters=[0-9]*', '-iters=10', arg)
+                command = 'nvprof --profile-child-processes %s/%s %s -device=%d -iters=50 >> %s/%s 2>&1' % (APP_ROOT, app, arg, cuda_dev_id, LOG_ROOT, perflog)
                 print command
                 os.system(command)
                 time.sleep(rest_int)
@@ -99,7 +99,7 @@ for core_f in core_frequencies:
                         metStr = ','.join(metrics[metCount:])
                     else:
                         metStr = ','.join(metrics[metCount:metCount + 3])
-                    command = 'nvprof --devices %s --metrics %s %s/%s %s >> %s/%s 2>&1' % (cuda_dev_id, metStr, APP_ROOT, app, arg, LOG_ROOT, metricslog)
+                    command = 'nvprof --devices %s --metrics %s %s/%s %s -device=%d -iters=50 >> %s/%s 2>&1' % (cuda_dev_id, metStr, APP_ROOT, app, arg, cuda_dev_id, LOG_ROOT, metricslog)
                     print command
                     os.system(command)
                     time.sleep(rest_int)

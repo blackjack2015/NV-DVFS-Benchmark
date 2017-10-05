@@ -1,0 +1,77 @@
+"arg:" 
+[applications\convolutionSeparable] - Starting...
+gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+Image Width x Height = 3072 x 3072
+
+Allocating and initializing host arrays...
+Allocating and initializing CUDA arrays...
+Running GPU convolution (100 identical iterations)...
+
+Adjust Iters to 1999 for meeting time requirement 10 secs.
+iterated 1999, average time is 5.000044 msec.
+
+Reading back GPU results...
+
+Checking the results...
+ ...running convolutionRowCPU()
+ ...running convolutionColumnCPU()
+ ...comparing the results
+ ...Relative L2 norm: 0.000000E+000
+
+Shutting down...
+Test passed
+[applications/convolutionSeparable] - Starting...
+gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+Image Width x Height = 3072 x 3072
+
+Allocating and initializing host arrays...
+Allocating and initializing CUDA arrays...
+Running GPU convolution (50 identical iterations)...
+
+iterated 50, average time is 5.006190 msec.
+
+Reading back GPU results...
+
+Checking the results...
+ ...running convolutionRowCPU()
+ ...running convolutionColumnCPU()
+ ...comparing the results
+ ...Relative L2 norm: 0.000000E+000
+
+Shutting down...
+Test passed
+==71700== NVPROF is profiling process 71700, command: applications/convolutionSeparable -device=1 -iters=50
+==71700== Warning: Unified Memory Profiling is not supported on the current configuration because a pair of devices without peer-to-peer support is detected on this multi-GPU setup. When peer mappings are not available, system falls back to using zero-copy memory. It can cause kernels, which access unified memory, to run slower. More details can be found at: http://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#um-managed-memory
+==71700== Profiling application: applications/convolutionSeparable -device=1 -iters=50
+==71700== Profiling result:
+Time(%)      Time     Calls       Avg       Min       Max  Name
+ 45.59%  129.55ms        51  2.5402ms  2.5303ms  2.5473ms  convolutionColumnsKernel(float*, float*, int, int, int)
+ 42.62%  121.11ms        51  2.3746ms  2.3699ms  2.3854ms  convolutionRowsKernel(float*, float*, int, int, int)
+  6.14%  17.456ms         1  17.456ms  17.456ms  17.456ms  [CUDA memcpy DtoH]
+  5.64%  16.021ms         2  8.0107ms  2.8160us  16.018ms  [CUDA memcpy HtoD]
+
+==71700== API calls:
+Time(%)      Time     Calls       Avg       Min       Max  Name
+ 44.91%  256.28ms        51  5.0251ms  4.9715ms  5.7248ms  cudaThreadSynchronize
+ 36.89%  210.53ms         3  70.178ms  6.9588ms  196.47ms  cudaMalloc
+ 10.49%  59.853ms         1  59.853ms  59.853ms  59.853ms  cudaDeviceReset
+  5.85%  33.394ms         2  16.697ms  15.520ms  17.874ms  cudaMemcpy
+  0.63%  3.5669ms        51  69.940us  40.366us  151.80us  cudaEventSynchronize
+  0.30%  1.7400ms         3  579.99us  499.45us  705.55us  cudaFree
+  0.28%  1.6220ms       102  15.902us  13.076us  69.929us  cudaLaunch
+  0.22%  1.2565ms       182  6.9030us       0ns  320.08us  cuDeviceGetAttribute
+  0.15%  836.60us       102  8.2010us  5.1160us  19.614us  cudaEventRecord
+  0.11%  632.77us         1  632.77us  632.77us  632.77us  cudaGetDeviceProperties
+  0.09%  488.08us        51  9.5700us  7.6750us  21.320us  cudaEventElapsedTime
+  0.03%  172.55us         2  86.274us  69.645us  102.90us  cuDeviceGetName
+  0.02%  123.37us       510     241ns       0ns  11.655us  cudaSetupArgument
+  0.01%  57.996us       102     568ns       0ns  11.655us  cudaConfigureCall
+  0.01%  30.984us         1  30.984us  30.984us  30.984us  cudaMemcpyToSymbol
+  0.00%  26.154us       102     256ns       0ns     569ns  cudaGetLastError
+  0.00%  24.731us         2  12.365us  7.3910us  17.340us  cudaDeviceSynchronize
+  0.00%  14.213us         2  7.1060us  1.1370us  13.076us  cudaEventCreate
+  0.00%  12.223us         2  6.1110us  5.6850us  6.5380us  cuDeviceTotalMem
+  0.00%  11.086us         1  11.086us  11.086us  11.086us  cudaSetDevice
+  0.00%  6.2560us         6  1.0420us     285ns  3.1270us  cuDeviceGet
+  0.00%  3.1260us         3  1.0420us     284ns  2.2740us  cuDeviceGetCount
+  0.00%  1.1370us         1  1.1370us  1.1370us  1.1370us  cudaGetDeviceCount

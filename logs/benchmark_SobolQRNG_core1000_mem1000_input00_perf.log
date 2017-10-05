@@ -1,0 +1,78 @@
+"arg:" 
+Sobol Quasi-Random Number Generator Starting...
+
+gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+> number of vectors = 100000
+> number of dimensions = 1000
+gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+Allocating CPU memory...
+Allocating GPU memory...
+Initializing direction numbers...
+Copying direction numbers to device...
+Executing QRNG on GPU...
+Running SobolQRNG for 100 runs...
+
+Adjust Iters to 1430 for meeting time requirement 10 secs.
+Total   Kernel Time binomialOptionsGPU() time: 9969.300991 msec
+Average Kernel Time binomialOptionsGPU() time: 6.971539 msec
+Reading results from GPU...
+
+Executing QRNG on CPU...
+Gsamples/s: 0.256549
+Checking results...
+L1-Error: 0
+Shutting down...
+Sobol Quasi-Random Number Generator Starting...
+
+gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+> number of vectors = 100000
+> number of dimensions = 1000
+gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+Allocating CPU memory...
+Allocating GPU memory...
+Initializing direction numbers...
+Copying direction numbers to device...
+Executing QRNG on GPU...
+Running SobolQRNG for 50 runs...
+
+Total   Kernel Time binomialOptionsGPU() time: 348.971746 msec
+Average Kernel Time binomialOptionsGPU() time: 6.979435 msec
+Reading results from GPU...
+
+Executing QRNG on CPU...
+Gsamples/s: 0.245681
+Checking results...
+L1-Error: 0
+Shutting down...
+==44504== NVPROF is profiling process 44504, command: applications/SobolQRNG -device=1 -iters=50
+==44504== Warning: Unified Memory Profiling is not supported on the current configuration because a pair of devices without peer-to-peer support is detected on this multi-GPU setup. When peer mappings are not available, system falls back to using zero-copy memory. It can cause kernels, which access unified memory, to run slower. More details can be found at: http://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#um-managed-memory
+==44504== Profiling application: applications/SobolQRNG -device=1 -iters=50
+==44504== Profiling result:
+Time(%)      Time     Calls       Avg       Min       Max  Name
+ 62.10%  352.23ms        51  6.9064ms  6.8749ms  6.9391ms  sobolGPU_kernel(unsigned int, unsigned int, unsigned int*, float*)
+ 37.89%  214.94ms         1  214.94ms  214.94ms  214.94ms  [CUDA memcpy DtoH]
+  0.01%  45.183us         1  45.183us  45.183us  45.183us  [CUDA memcpy HtoD]
+
+==44504== API calls:
+Time(%)      Time     Calls       Avg       Min       Max  Name
+ 38.89%  356.02ms        55  6.4730ms  8.2430us  7.0117ms  cudaDeviceSynchronize
+ 28.22%  258.34ms         2  129.17ms  71.201ms  187.14ms  cudaMalloc
+ 23.56%  215.66ms         2  107.83ms  56.284us  215.60ms  cudaMemcpy
+  7.85%  71.874ms         1  71.874ms  71.874ms  71.874ms  cudaDeviceReset
+  0.55%  5.0772ms         2  2.5386ms  211.78us  4.8655ms  cudaFree
+  0.34%  3.0669ms        51  60.135us  35.249us  110.29us  cudaEventSynchronize
+  0.18%  1.6146ms         3  538.21us  434.36us  592.98us  cudaGetDeviceProperties
+  0.12%  1.0535ms       182  5.7880us       0ns  283.70us  cuDeviceGetAttribute
+  0.10%  938.65us        51  18.404us  15.066us  45.199us  cudaLaunch
+  0.09%  783.15us       102  7.6770us  5.1160us  21.035us  cudaEventRecord
+  0.05%  423.56us        51  8.3050us  7.9590us  19.614us  cudaEventElapsedTime
+  0.02%  217.75us       204  1.0670us       0ns  11.939us  cudaSetupArgument
+  0.02%  167.43us         2  83.716us  70.213us  97.219us  cuDeviceGetName
+  0.01%  54.861us        51  1.0750us     284ns  11.939us  cudaConfigureCall
+  0.00%  15.349us         2  7.6740us  1.7050us  13.644us  cudaSetDevice
+  0.00%  12.508us         2  6.2540us  5.9700us  6.5380us  cuDeviceTotalMem
+  0.00%  6.2530us         2  3.1260us     852ns  5.4010us  cudaEventCreate
+  0.00%  3.1270us         6     521ns     284ns  1.1370us  cuDeviceGet
+  0.00%  2.8420us         3     947ns     284ns  2.2740us  cuDeviceGetCount
+  0.00%  1.4220us         2     711ns     569ns     853ns  cudaGetDeviceCount
+  0.00%  1.4210us         1  1.4210us  1.4210us  1.4210us  cudaGetDevice

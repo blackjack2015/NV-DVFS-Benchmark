@@ -1,0 +1,78 @@
+"arg:" 
+Sobol Quasi-Random Number Generator Starting...
+
+gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+> number of vectors = 100000
+> number of dimensions = 1000
+gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+Allocating CPU memory...
+Allocating GPU memory...
+Initializing direction numbers...
+Copying direction numbers to device...
+Executing QRNG on GPU...
+Running SobolQRNG for 100 runs...
+
+Adjust Iters to 560 for meeting time requirement 10 secs.
+Total   Kernel Time binomialOptionsGPU() time: 9947.599203 msec
+Average Kernel Time binomialOptionsGPU() time: 17.763570 msec
+Reading results from GPU...
+
+Executing QRNG on CPU...
+Gsamples/s: 0.252681
+Checking results...
+L1-Error: 0
+Shutting down...
+Sobol Quasi-Random Number Generator Starting...
+
+gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+> number of vectors = 100000
+> number of dimensions = 1000
+gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+Allocating CPU memory...
+Allocating GPU memory...
+Initializing direction numbers...
+Copying direction numbers to device...
+Executing QRNG on GPU...
+Running SobolQRNG for 50 runs...
+
+Total   Kernel Time binomialOptionsGPU() time: 889.777081 msec
+Average Kernel Time binomialOptionsGPU() time: 17.795542 msec
+Reading results from GPU...
+
+Executing QRNG on CPU...
+Gsamples/s: 0.241051
+Checking results...
+L1-Error: 0
+Shutting down...
+==64560== NVPROF is profiling process 64560, command: applications/SobolQRNG -device=1 -iters=50
+==64560== Warning: Unified Memory Profiling is not supported on the current configuration because a pair of devices without peer-to-peer support is detected on this multi-GPU setup. When peer mappings are not available, system falls back to using zero-copy memory. It can cause kernels, which access unified memory, to run slower. More details can be found at: http://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#um-managed-memory
+==64560== Profiling application: applications/SobolQRNG -device=1 -iters=50
+==64560== Profiling result:
+Time(%)      Time     Calls       Avg       Min       Max  Name
+ 80.77%  902.70ms        51  17.700ms  17.633ms  17.787ms  sobolGPU_kernel(unsigned int, unsigned int, unsigned int*, float*)
+ 19.22%  214.85ms         1  214.85ms  214.85ms  214.85ms  [CUDA memcpy DtoH]
+  0.00%  45.631us         1  45.631us  45.631us  45.631us  [CUDA memcpy HtoD]
+
+==64560== API calls:
+Time(%)      Time     Calls       Avg       Min       Max  Name
+ 62.56%  907.32ms        55  16.497ms  7.3910us  17.884ms  cudaDeviceSynchronize
+ 17.21%  249.53ms         2  124.77ms  71.221ms  178.31ms  cudaMalloc
+ 14.85%  215.42ms         2  107.71ms  57.421us  215.37ms  cudaMemcpy
+  4.40%  63.755ms         1  63.755ms  63.755ms  63.755ms  cudaDeviceReset
+  0.35%  5.0264ms         2  2.5132ms  202.11us  4.8243ms  cudaFree
+  0.28%  4.0323ms        51  79.064us  50.315us  183.07us  cudaEventSynchronize
+  0.11%  1.5563ms         3  518.78us  433.79us  563.70us  cudaGetDeviceProperties
+  0.07%  1.0256ms       182  5.6350us       0ns  289.10us  cuDeviceGetAttribute
+  0.07%  951.15us        51  18.650us  15.635us  44.914us  cudaLaunch
+  0.06%  843.70us       102  8.2710us  5.1170us  25.584us  cudaEventRecord
+  0.03%  468.47us        51  9.1850us  7.9590us  10.802us  cudaEventElapsedTime
+  0.01%  158.62us         2  79.310us  68.792us  89.828us  cuDeviceGetName
+  0.00%  58.275us       204     285ns       0ns  12.223us  cudaSetupArgument
+  0.00%  32.409us        51     635ns     284ns  11.655us  cudaConfigureCall
+  0.00%  15.350us         2  7.6750us  1.7050us  13.645us  cudaSetDevice
+  0.00%  11.370us         2  5.6850us  5.6850us  5.6850us  cuDeviceTotalMem
+  0.00%  7.1070us         2  3.5530us  1.1370us  5.9700us  cudaEventCreate
+  0.00%  3.4120us         3  1.1370us     569ns  2.2740us  cuDeviceGetCount
+  0.00%  1.9900us         6     331ns       0ns     568ns  cuDeviceGet
+  0.00%  1.4210us         2     710ns     568ns     853ns  cudaGetDeviceCount
+  0.00%  1.4210us         1  1.4210us  1.4210us  1.4210us  cudaGetDevice

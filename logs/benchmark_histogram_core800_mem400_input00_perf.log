@@ -1,0 +1,91 @@
+"arg:" 
+[[histogram]] - Starting...
+gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+CUDA device [GeForce GTX 980] has 16 Multi-Processors, Compute 5.2
+Initializing data...
+...allocating CPU memory.
+...generating input data
+...allocating GPU memory and copying input data
+
+Initializing 256-bin histogram...
+Running 256-bin GPU histogram for 67108864 bytes (100 runs)...
+
+Adjust Iters to 2706 for meeting time requirement 10 secs.
+iterated 2706, average time is 3.571223 msec.
+histogram256() time (total) : 9.66373 sec, 18791.5653 MB/sec
+
+histogram256, Throughput = 18791.5653 MB/s, Time = 0.00357 s, Size = 67108864 Bytes, NumDevsUsed = 1, Workgroup = 192
+
+Validating GPU results...
+ ...reading back GPU results
+ ...histogram256CPU()
+ ...comparing the results
+ ...256-bin histograms match
+
+Shutting down 256-bin histogram...
+
+
+Shutting down...
+[histogram] - Test Summary
+Test passed
+[[histogram]] - Starting...
+gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+CUDA device [GeForce GTX 980] has 16 Multi-Processors, Compute 5.2
+Initializing data...
+...allocating CPU memory.
+...generating input data
+...allocating GPU memory and copying input data
+
+Initializing 256-bin histogram...
+Running 256-bin GPU histogram for 67108864 bytes (50 runs)...
+
+iterated 50, average time is 3.587414 msec.
+histogram256() time (total) : 0.17937 sec, 18706.7533 MB/sec
+
+histogram256, Throughput = 18706.7533 MB/s, Time = 0.00359 s, Size = 67108864 Bytes, NumDevsUsed = 1, Workgroup = 192
+
+Validating GPU results...
+ ...reading back GPU results
+ ...histogram256CPU()
+ ...comparing the results
+ ...256-bin histograms match
+
+Shutting down 256-bin histogram...
+
+
+Shutting down...
+[histogram] - Test Summary
+Test passed
+==54996== NVPROF is profiling process 54996, command: applications/histogram -device=1 -iters=50
+==54996== Warning: Unified Memory Profiling is not supported on the current configuration because a pair of devices without peer-to-peer support is detected on this multi-GPU setup. When peer mappings are not available, system falls back to using zero-copy memory. It can cause kernels, which access unified memory, to run slower. More details can be found at: http://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#um-managed-memory
+==54996== Profiling application: applications/histogram -device=1 -iters=50
+==54996== Profiling result:
+Time(%)      Time     Calls       Avg       Min       Max  Name
+ 84.88%  177.17ms        51  3.4738ms  3.4482ms  3.5360ms  histogram256Kernel(unsigned int*, unsigned int*, unsigned int)
+ 14.73%  30.749ms         1  30.749ms  30.749ms  30.749ms  [CUDA memcpy HtoD]
+  0.38%  798.44us        51  15.655us  14.495us  18.271us  mergeHistogram256Kernel(unsigned int*, unsigned int*, unsigned int)
+  0.00%  5.9840us         1  5.9840us  5.9840us  5.9840us  [CUDA memcpy DtoH]
+
+==54996== API calls:
+Time(%)      Time     Calls       Avg       Min       Max  Name
+ 41.47%  205.11ms         3  68.370ms  633.63us  202.97ms  cudaMalloc
+ 37.04%  183.17ms        53  3.4560ms  7.3910us  3.6781ms  cudaDeviceSynchronize
+ 13.22%  65.388ms         1  65.388ms  65.388ms  65.388ms  cudaDeviceReset
+  6.03%  29.809ms         2  14.904ms  137.02us  29.672ms  cudaMemcpy
+  0.84%  4.1369ms        51  81.115us  54.295us  142.70us  cudaEventSynchronize
+  0.34%  1.6848ms       102  16.517us  13.360us  53.726us  cudaLaunch
+  0.25%  1.2141ms       182  6.6700us       0ns  323.49us  cuDeviceGetAttribute
+  0.24%  1.2087ms         3  402.90us  201.54us  794.24us  cudaFree
+  0.23%  1.1322ms         2  566.11us  563.70us  568.53us  cudaGetDeviceProperties
+  0.17%  847.11us       102  8.3050us  5.4010us  17.909us  cudaEventRecord
+  0.10%  498.03us        51  9.7650us  8.8120us  10.518us  cudaEventElapsedTime
+  0.04%  186.48us         2  93.238us  71.066us  115.41us  cuDeviceGetName
+  0.01%  68.796us       306     224ns       0ns  1.4210us  cudaSetupArgument
+  0.01%  33.825us       102     331ns       0ns  3.9800us  cudaConfigureCall
+  0.01%  25.583us       102     250ns       0ns     285ns  cudaGetLastError
+  0.00%  15.635us         2  7.8170us  1.1370us  14.498us  cudaEventCreate
+  0.00%  14.497us         2  7.2480us  6.5380us  7.9590us  cuDeviceTotalMem
+  0.00%  12.791us         1  12.791us  12.791us  12.791us  cudaSetDevice
+  0.00%  3.6950us         6     615ns     284ns  1.1370us  cuDeviceGet
+  0.00%  3.6950us         3  1.2310us     284ns  2.8420us  cuDeviceGetCount
+  0.00%     853ns         1     853ns     853ns     853ns  cudaGetDeviceCount

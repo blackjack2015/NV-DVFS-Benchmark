@@ -1,0 +1,78 @@
+"arg:" 
+Sobol Quasi-Random Number Generator Starting...
+
+gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+> number of vectors = 100000
+> number of dimensions = 1000
+gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+Allocating CPU memory...
+Allocating GPU memory...
+Initializing direction numbers...
+Copying direction numbers to device...
+Executing QRNG on GPU...
+Running SobolQRNG for 100 runs...
+
+Adjust Iters to 565 for meeting time requirement 10 secs.
+Total   Kernel Time binomialOptionsGPU() time: 10027.814325 msec
+Average Kernel Time binomialOptionsGPU() time: 17.748344 msec
+Reading results from GPU...
+
+Executing QRNG on CPU...
+Gsamples/s: 0.253745
+Checking results...
+L1-Error: 0
+Shutting down...
+Sobol Quasi-Random Number Generator Starting...
+
+gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+> number of vectors = 100000
+> number of dimensions = 1000
+gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+Allocating CPU memory...
+Allocating GPU memory...
+Initializing direction numbers...
+Copying direction numbers to device...
+Executing QRNG on GPU...
+Running SobolQRNG for 50 runs...
+
+Total   Kernel Time binomialOptionsGPU() time: 888.165861 msec
+Average Kernel Time binomialOptionsGPU() time: 17.763317 msec
+Reading results from GPU...
+
+Executing QRNG on CPU...
+Gsamples/s: 0.24446
+Checking results...
+L1-Error: 0
+Shutting down...
+==60272== NVPROF is profiling process 60272, command: applications/SobolQRNG -device=1 -iters=50
+==60272== Warning: Unified Memory Profiling is not supported on the current configuration because a pair of devices without peer-to-peer support is detected on this multi-GPU setup. When peer mappings are not available, system falls back to using zero-copy memory. It can cause kernels, which access unified memory, to run slower. More details can be found at: http://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#um-managed-memory
+==60272== Profiling application: applications/SobolQRNG -device=1 -iters=50
+==60272== Profiling result:
+Time(%)      Time     Calls       Avg       Min       Max  Name
+ 80.47%  901.14ms        51  17.669ms  17.586ms  17.744ms  sobolGPU_kernel(unsigned int, unsigned int, unsigned int*, float*)
+ 19.53%  218.72ms         1  218.72ms  218.72ms  218.72ms  [CUDA memcpy DtoH]
+  0.00%  45.599us         1  45.599us  45.599us  45.599us  [CUDA memcpy HtoD]
+
+==60272== API calls:
+Time(%)      Time     Calls       Avg       Min       Max  Name
+ 61.16%  905.60ms        55  16.465ms  6.5380us  17.821ms  cudaDeviceSynchronize
+ 18.20%  269.55ms         2  134.77ms  71.194ms  198.36ms  cudaMalloc
+ 14.81%  219.28ms         2  109.64ms  57.137us  219.23ms  cudaMemcpy
+  4.86%  71.995ms         1  71.995ms  71.995ms  71.995ms  cudaDeviceReset
+  0.35%  5.1966ms         2  2.5983ms  219.17us  4.9775ms  cudaFree
+  0.26%  3.8705ms        51  75.893us  39.513us  172.26us  cudaEventSynchronize
+  0.10%  1.4523ms         3  484.10us  437.48us  561.71us  cudaGetDeviceProperties
+  0.07%  1.0387ms       182  5.7070us       0ns  275.74us  cuDeviceGetAttribute
+  0.07%  976.45us        51  19.146us  15.634us  42.924us  cudaLaunch
+  0.06%  857.06us       102  8.4020us  5.4010us  23.593us  cudaEventRecord
+  0.03%  457.95us        51  8.9790us  7.6760us  10.234us  cudaEventElapsedTime
+  0.01%  171.41us         2  85.706us  70.782us  100.63us  cuDeviceGetName
+  0.01%  93.811us       204     459ns       0ns  11.086us  cudaSetupArgument
+  0.00%  56.854us        51  1.1140us     284ns  11.371us  cudaConfigureCall
+  0.00%  15.919us         2  7.9590us  1.7060us  14.213us  cudaSetDevice
+  0.00%  11.371us         2  5.6850us  5.4010us  5.9700us  cuDeviceTotalMem
+  0.00%  6.2540us         2  3.1270us     853ns  5.4010us  cudaEventCreate
+  0.00%  2.8420us         3     947ns     284ns  2.2740us  cuDeviceGetCount
+  0.00%  2.5580us         6     426ns       0ns  1.1370us  cuDeviceGet
+  0.00%  1.7060us         1  1.7060us  1.7060us  1.7060us  cudaGetDevice
+  0.00%  1.4210us         2     710ns     569ns     852ns  cudaGetDeviceCount

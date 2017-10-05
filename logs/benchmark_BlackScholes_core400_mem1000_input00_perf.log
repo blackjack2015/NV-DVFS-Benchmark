@@ -1,0 +1,101 @@
+"arg:" 
+[applications\BlackScholes] - Starting...
+gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+Initializing data...
+...allocating CPU memory for options.
+...allocating GPU memory for options.
+...generating input data in CPU mem.
+...copying input data to GPU mem.
+Data init done.
+
+Executing Black-Scholes GPU kernel (800 iterations)...
+Adjust Iters to 6169 for meeting time requirement 10 secs.
+iterated 6169, average time is 1.630581 msec.
+Options count             : 8388608     
+BlackScholesGPU() time    : 1.630581 msec
+BlackScholesGPU() total   : 10059.054911 msec
+Effective memory bandwidth: 51.445512 GB/s
+Gigaoptions per second    : 5.144551     
+
+BlackScholes, Throughput = 5.1446 GOptions/s, Time = 0.00163 s, Size = 8388608 options, NumDevsUsed = 1, Workgroup = 128
+
+Reading back GPU results...
+Checking the results...
+...running CPU calculations.
+
+Comparing the results...
+L1 norm: 1.652171E-007
+Max absolute error: 1.144409E-005
+
+Shutting down...
+...releasing GPU memory.
+...releasing CPU memory.
+Shutdown done.
+
+[BlackScholes] - Test Summary
+Test passed
+[applications/BlackScholes] - Starting...
+gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+Initializing data...
+...allocating CPU memory for options.
+...allocating GPU memory for options.
+...generating input data in CPU mem.
+...copying input data to GPU mem.
+Data init done.
+
+Executing Black-Scholes GPU kernel (50 iterations)...
+iterated 50, average time is 1.639109 msec.
+Options count             : 8388608     
+BlackScholesGPU() time    : 1.639109 msec
+BlackScholesGPU() total   : 81.955456 msec
+Effective memory bandwidth: 51.177850 GB/s
+Gigaoptions per second    : 5.117785     
+
+BlackScholes, Throughput = 5.1178 GOptions/s, Time = 0.00164 s, Size = 8388608 options, NumDevsUsed = 1, Workgroup = 128
+
+Reading back GPU results...
+Checking the results...
+...running CPU calculations.
+
+Comparing the results...
+L1 norm: 1.652171E-007
+Max absolute error: 1.144409E-005
+
+Shutting down...
+...releasing GPU memory.
+...releasing CPU memory.
+Shutdown done.
+
+[BlackScholes] - Test Summary
+Test passed
+==18964== NVPROF is profiling process 18964, command: applications/BlackScholes -device=1 -iters=50
+==18964== Warning: Unified Memory Profiling is not supported on the current configuration because a pair of devices without peer-to-peer support is detected on this multi-GPU setup. When peer mappings are not available, system falls back to using zero-copy memory. It can cause kernels, which access unified memory, to run slower. More details can be found at: http://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#um-managed-memory
+==18964== Profiling application: applications/BlackScholes -device=1 -iters=50
+==18964== Profiling result:
+Time(%)      Time     Calls       Avg       Min       Max  Name
+ 75.66%  111.18ms        70  1.5883ms  1.5812ms  1.6001ms  BlackScholesGPU(float*, float*, float*, float*, float*, float, float, int)
+ 14.47%  21.262ms         3  7.0874ms  7.0234ms  7.1302ms  [CUDA memcpy HtoD]
+  9.87%  14.510ms         2  7.2550ms  7.2113ms  7.2988ms  [CUDA memcpy DtoH]
+
+==18964== API calls:
+Time(%)      Time     Calls       Avg       Min       Max  Name
+ 46.63%  203.36ms         5  40.673ms  3.2838ms  189.89ms  cudaMalloc
+ 26.64%  116.18ms        73  1.5916ms  7.1060us  1.7079ms  cudaDeviceSynchronize
+ 16.10%  70.211ms         1  70.211ms  70.211ms  70.211ms  cudaDeviceReset
+  8.50%  37.052ms         5  7.4104ms  6.7689ms  7.7320ms  cudaMemcpy
+  0.62%  2.6977ms        70  38.538us  28.995us  60.264us  cudaEventSynchronize
+  0.41%  1.7931ms         5  358.63us  286.82us  436.35us  cudaFree
+  0.27%  1.1558ms        70  16.511us  15.350us  59.695us  cudaLaunch
+  0.24%  1.0643ms       182  5.8470us       0ns  301.61us  cuDeviceGetAttribute
+  0.23%  1.0242ms       140  7.3150us  5.1170us  10.234us  cudaEventRecord
+  0.14%  615.15us        70  8.7870us  7.9590us  19.614us  cudaEventElapsedTime
+  0.14%  596.96us         1  596.96us  596.96us  596.96us  cudaGetDeviceProperties
+  0.03%  145.54us         2  72.772us  68.508us  77.036us  cuDeviceGetName
+  0.03%  110.87us       560     197ns       0ns  1.4210us  cudaSetupArgument
+  0.01%  30.129us        70     430ns     284ns  4.5480us  cudaConfigureCall
+  0.00%  13.076us         2  6.5380us  1.1370us  11.939us  cudaEventCreate
+  0.00%  13.076us         1  13.076us  13.076us  13.076us  cudaSetDevice
+  0.00%  11.086us         2  5.5430us  5.4010us  5.6850us  cuDeviceTotalMem
+  0.00%  3.1270us         3  1.0420us     284ns  2.2740us  cuDeviceGetCount
+  0.00%  2.8420us         6     473ns       0ns  1.1370us  cuDeviceGet
+  0.00%     853ns         1     853ns     853ns     853ns  cudaGetDeviceCount

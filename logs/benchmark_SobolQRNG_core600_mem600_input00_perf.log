@@ -1,0 +1,78 @@
+"arg:" 
+Sobol Quasi-Random Number Generator Starting...
+
+gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+> number of vectors = 100000
+> number of dimensions = 1000
+gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+Allocating CPU memory...
+Allocating GPU memory...
+Initializing direction numbers...
+Copying direction numbers to device...
+Executing QRNG on GPU...
+Running SobolQRNG for 100 runs...
+
+Adjust Iters to 821 for meeting time requirement 10 secs.
+Total   Kernel Time binomialOptionsGPU() time: 10014.692012 msec
+Average Kernel Time binomialOptionsGPU() time: 12.198163 msec
+Reading results from GPU...
+
+Executing QRNG on CPU...
+Gsamples/s: 0.258357
+Checking results...
+L1-Error: 0
+Shutting down...
+Sobol Quasi-Random Number Generator Starting...
+
+gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+> number of vectors = 100000
+> number of dimensions = 1000
+gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+Allocating CPU memory...
+Allocating GPU memory...
+Initializing direction numbers...
+Copying direction numbers to device...
+Executing QRNG on GPU...
+Running SobolQRNG for 50 runs...
+
+Total   Kernel Time binomialOptionsGPU() time: 610.802849 msec
+Average Kernel Time binomialOptionsGPU() time: 12.216057 msec
+Reading results from GPU...
+
+Executing QRNG on CPU...
+Gsamples/s: 0.245535
+Checking results...
+L1-Error: 0
+Shutting down...
+==78324== NVPROF is profiling process 78324, command: applications/SobolQRNG -device=1 -iters=50
+==78324== Warning: Unified Memory Profiling is not supported on the current configuration because a pair of devices without peer-to-peer support is detected on this multi-GPU setup. When peer mappings are not available, system falls back to using zero-copy memory. It can cause kernels, which access unified memory, to run slower. More details can be found at: http://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#um-managed-memory
+==78324== Profiling application: applications/SobolQRNG -device=1 -iters=50
+==78324== Profiling result:
+Time(%)      Time     Calls       Avg       Min       Max  Name
+ 74.06%  618.63ms        51  12.130ms  12.076ms  12.221ms  sobolGPU_kernel(unsigned int, unsigned int, unsigned int*, float*)
+ 25.93%  216.60ms         1  216.60ms  216.60ms  216.60ms  [CUDA memcpy DtoH]
+  0.01%  52.703us         1  52.703us  52.703us  52.703us  [CUDA memcpy HtoD]
+
+==78324== API calls:
+Time(%)      Time     Calls       Avg       Min       Max  Name
+ 52.66%  623.12ms        55  11.329ms  7.3910us  12.313ms  cudaDeviceSynchronize
+ 21.90%  259.20ms         2  129.60ms  71.103ms  188.10ms  cudaMalloc
+ 18.37%  217.42ms         2  108.71ms  61.685us  217.36ms  cudaMemcpy
+  5.88%  69.562ms         1  69.562ms  69.562ms  69.562ms  cudaDeviceReset
+  0.43%  5.0906ms         2  2.5453ms  213.77us  4.8768ms  cudaFree
+  0.30%  3.5496ms        51  69.600us  35.818us  151.80us  cudaEventSynchronize
+  0.14%  1.7059ms         3  568.62us  441.75us  637.89us  cudaGetDeviceProperties
+  0.09%  1.0842ms       182  5.9570us       0ns  312.41us  cuDeviceGetAttribute
+  0.08%  912.77us        51  17.897us  15.066us  43.777us  cudaLaunch
+  0.07%  874.11us       102  8.5690us  5.4010us  17.341us  cudaEventRecord
+  0.04%  459.37us        51  9.0070us  7.9590us  10.233us  cudaEventElapsedTime
+  0.01%  148.10us         2  74.051us  70.782us  77.320us  cuDeviceGetName
+  0.01%  94.658us       204     464ns       0ns  11.654us  cudaSetupArgument
+  0.01%  66.233us        51  1.2980us     284ns  11.939us  cudaConfigureCall
+  0.00%  15.349us         2  7.6740us  1.7050us  13.644us  cudaSetDevice
+  0.00%  11.370us         2  5.6850us  5.4010us  5.9690us  cuDeviceTotalMem
+  0.00%  6.8230us         2  3.4110us  1.1370us  5.6860us  cudaEventCreate
+  0.00%  3.1290us         3  1.0430us     285ns  2.5590us  cuDeviceGetCount
+  0.00%  1.9910us         6     331ns     284ns     569ns  cuDeviceGet
+  0.00%  1.7050us         1  1.7050us  1.7050us  1.7050us  cudaGetDevice
+  0.00%  1.4220us         2     711ns     285ns  1.1370us  cudaGetDeviceCount

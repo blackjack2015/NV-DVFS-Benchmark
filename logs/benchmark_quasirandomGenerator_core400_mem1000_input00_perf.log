@@ -1,0 +1,92 @@
+"arg:" 
+applications\quasirandomGenerator Starting...
+
+gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+Allocating GPU memory...
+Allocating CPU memory...
+Initializing QRNG tables...
+
+Testing QRNG...
+
+Adjust Iters to 24073 for meeting time requirement 10 secs.
+quasirandomGenerator, Total Time = 9.66341 s
+quasirandomGenerator, Throughput = 7.8365 GNumbers/s, Time = 0.00040 s, Size = 3145728 Numbers, NumDevsUsed = 1, Workgroup = 384
+
+Reading GPU results...
+Comparing to the CPU results...
+
+L1 norm: 7.275964E-012
+
+Testing inverseCNDgpu()...
+
+quasirandomGenerator-inverse, Total Time = 0.00067 s
+quasirandomGenerator-inverse, Throughput = 9.4422 GNumbers/s, Time = 0.00033 s, Size = 3145728 Numbers, NumDevsUsed = 1, Workgroup = 128
+Reading GPU results...
+
+Comparing to the CPU results...
+L1 norm: 9.439909E-008
+
+Shutting down...
+applications/quasirandomGenerator Starting...
+
+gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+Allocating GPU memory...
+Allocating CPU memory...
+Initializing QRNG tables...
+
+Testing QRNG...
+
+quasirandomGenerator, Total Time = 0.02067 s
+quasirandomGenerator, Throughput = 7.6096 GNumbers/s, Time = 0.00041 s, Size = 3145728 Numbers, NumDevsUsed = 1, Workgroup = 384
+
+Reading GPU results...
+Comparing to the CPU results...
+
+L1 norm: 7.275964E-012
+
+Testing inverseCNDgpu()...
+
+quasirandomGenerator-inverse, Total Time = 0.00071 s
+quasirandomGenerator-inverse, Throughput = 8.8107 GNumbers/s, Time = 0.00036 s, Size = 3145728 Numbers, NumDevsUsed = 1, Workgroup = 128
+Reading GPU results...
+
+Comparing to the CPU results...
+L1 norm: 9.439909E-008
+
+Shutting down...
+==33216== NVPROF is profiling process 33216, command: applications/quasirandomGenerator -device=1 -iters=50
+==33216== Warning: Unified Memory Profiling is not supported on the current configuration because a pair of devices without peer-to-peer support is detected on this multi-GPU setup. When peer mappings are not available, system falls back to using zero-copy memory. It can cause kernels, which access unified memory, to run slower. More details can be found at: http://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#um-managed-memory
+==33216== Profiling application: applications/quasirandomGenerator -device=1 -iters=50
+==33216== Profiling result:
+Time(%)      Time     Calls       Avg       Min       Max  Name
+ 55.76%  17.832ms        51  349.64us  341.94us  390.77us  quasirandomGeneratorKernel(float*, unsigned int, unsigned int)
+ 41.51%  13.276ms         2  6.6382ms  4.9013ms  8.3751ms  [CUDA memcpy DtoH]
+  2.71%  866.60us         3  288.87us  284.63us  293.82us  inverseCNDKernel(float*, unsigned int*, unsigned int)
+  0.01%  2.9120us         1  2.9120us  2.9120us  2.9120us  [CUDA memcpy HtoD]
+  0.01%  2.4000us         2  1.2000us  1.1840us  1.2160us  [CUDA memset]
+
+==33216== API calls:
+Time(%)      Time     Calls       Avg       Min       Max  Name
+ 63.51%  192.98ms         1  192.98ms  192.98ms  192.98ms  cudaMalloc
+ 21.66%  65.817ms         1  65.817ms  65.817ms  65.817ms  cudaDeviceReset
+  7.58%  23.020ms        55  418.54us  7.3910us  796.79us  cudaDeviceSynchronize
+  4.71%  14.321ms         2  7.1603ms  5.1605ms  9.1601ms  cudaMemcpy
+  0.81%  2.4569ms        51  48.174us  46.619us  59.127us  cudaEventSynchronize
+  0.39%  1.1896ms         2  594.82us  591.27us  598.38us  cudaGetDeviceProperties
+  0.35%  1.0660ms       182  5.8570us       0ns  295.92us  cuDeviceGetAttribute
+  0.31%  935.80us        54  17.329us  14.498us  38.660us  cudaLaunch
+  0.26%  800.77us       102  7.8500us  5.6850us  11.371us  cudaEventRecord
+  0.16%  489.22us        51  9.5920us  9.0960us  15.350us  cudaEventElapsedTime
+  0.11%  330.60us         1  330.60us  330.60us  330.60us  cudaFree
+  0.05%  166.58us         2  83.289us  69.076us  97.503us  cuDeviceGetName
+  0.05%  148.39us         2  74.193us  39.229us  109.16us  cudaMemset
+  0.01%  38.944us       162     240ns       0ns  1.1370us  cudaSetupArgument
+  0.01%  33.259us         1  33.259us  33.259us  33.259us  cudaMemcpyToSymbol
+  0.01%  24.164us        54     447ns     284ns  1.4220us  cudaConfigureCall
+  0.01%  16.199us        54     299ns     284ns     569ns  cudaGetLastError
+  0.00%  12.223us         2  6.1110us  5.4010us  6.8220us  cuDeviceTotalMem
+  0.00%  10.802us         1  10.802us  10.802us  10.802us  cudaSetDevice
+  0.00%  5.1170us         2  2.5580us     853ns  4.2640us  cudaEventCreate
+  0.00%  3.1280us         3  1.0420us     284ns  2.5590us  cuDeviceGetCount
+  0.00%  2.5580us         6     426ns       0ns     853ns  cuDeviceGet
+  0.00%  1.1370us         1  1.1370us  1.1370us  1.1370us  cudaGetDeviceCount

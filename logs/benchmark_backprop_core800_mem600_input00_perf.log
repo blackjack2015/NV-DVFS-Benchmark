@@ -1,0 +1,52 @@
+"arg:65536" 
+gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+Random number generator seed: 7
+Input layer size : 65536
+Starting training kernel
+Performing GPU computation
+Adjust Iters to 27509 for meeting time requirement 10 secs.
+bpnn_layerforward_CUDA() iterated 27509, average time is 0.358075 msec
+Adjust Iters to 15785 for meeting time requirement 10 secs.
+bpnn_adjust_weights_cuda() iterated 15785, average time is 0.628482 msec
+Training done
+gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+Random number generator seed: 7
+Input layer size : 65536
+Starting training kernel
+Performing GPU computation
+bpnn_layerforward_CUDA() iterated 50, average time is 0.370917 msec
+bpnn_adjust_weights_cuda() iterated 50, average time is 0.628495 msec
+Training done
+==69384== NVPROF is profiling process 69384, command: applications/backprop 65536 -device=1 -iters=50
+==69384== Warning: Unified Memory Profiling is not supported on the current configuration because a pair of devices without peer-to-peer support is detected on this multi-GPU setup. When peer mappings are not available, system falls back to using zero-copy memory. It can cause kernels, which access unified memory, to run slower. More details can be found at: http://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#um-managed-memory
+==69384== Profiling application: applications/backprop 65536 -device=1 -iters=50
+==69384== Profiling result:
+Time(%)      Time     Calls       Avg       Min       Max  Name
+ 58.60%  40.588ms        70  579.83us  573.46us  589.24us  bpnn_adjust_weights_cuda(float*, int, float*, int, float*, float*)
+ 31.23%  21.627ms        70  308.95us  303.99us  315.19us  bpnn_layerforward_CUDA(float*, float*, float*, float*, int, int)
+  7.43%  5.1450ms         5  1.0290ms  2.8160us  1.7054ms  [CUDA memcpy HtoD]
+  2.74%  1.8974ms         3  632.48us  82.334us  1.7322ms  [CUDA memcpy DtoH]
+
+==69384== API calls:
+Time(%)      Time     Calls       Avg       Min       Max  Name
+ 67.48%  195.46ms         6  32.576ms  18.761us  191.87ms  cudaMalloc
+ 24.67%  71.451ms       140  510.36us  369.26us  957.40us  cudaDeviceSynchronize
+  2.73%  7.9111ms         8  988.89us  31.269us  2.0319ms  cudaMemcpy
+  2.01%  5.8351ms       140  41.679us  27.573us  61.117us  cudaEventSynchronize
+  0.80%  2.3216ms       140  16.582us  15.066us  66.233us  cudaLaunch
+  0.69%  1.9873ms       280  7.0970us  4.8320us  20.751us  cudaEventRecord
+  0.45%  1.3127ms       140  9.3760us  8.2430us  10.233us  cudaEventElapsedTime
+  0.37%  1.0808ms       182  5.9380us       0ns  309.28us  cuDeviceGetAttribute
+  0.28%  801.91us         6  133.65us  18.193us  204.10us  cudaFree
+  0.22%  623.11us         1  623.11us  623.11us  623.11us  cudaGetDeviceProperties
+  0.14%  407.63us       280  1.4550us     568ns  6.5380us  cudaEventCreate
+  0.06%  173.41us       840     206ns       0ns     853ns  cudaSetupArgument
+  0.05%  148.67us         2  74.335us  70.782us  77.888us  cuDeviceGetName
+  0.02%  57.996us       140     414ns     284ns  2.5590us  cudaConfigureCall
+  0.02%  56.845us       140     406ns     284ns     569ns  cudaGetLastError
+  0.01%  14.498us         1  14.498us  14.498us  14.498us  cudaSetDevice
+  0.00%  11.087us         2  5.5430us  5.4010us  5.6860us  cuDeviceTotalMem
+  0.00%  9.6650us         1  9.6650us  9.6650us  9.6650us  cudaThreadSynchronize
+  0.00%  3.1270us         3  1.0420us     284ns  2.2740us  cuDeviceGetCount
+  0.00%  2.2750us         1  2.2750us  2.2750us  2.2750us  cudaGetDeviceCount
+  0.00%  1.9900us         6     331ns       0ns     569ns  cuDeviceGet

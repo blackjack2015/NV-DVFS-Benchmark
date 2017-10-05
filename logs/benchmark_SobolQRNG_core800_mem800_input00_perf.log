@@ -1,0 +1,78 @@
+"arg:" 
+Sobol Quasi-Random Number Generator Starting...
+
+gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+> number of vectors = 100000
+> number of dimensions = 1000
+gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+Allocating CPU memory...
+Allocating GPU memory...
+Initializing direction numbers...
+Copying direction numbers to device...
+Executing QRNG on GPU...
+Running SobolQRNG for 100 runs...
+
+Adjust Iters to 1127 for meeting time requirement 10 secs.
+Total   Kernel Time binomialOptionsGPU() time: 9989.681452 msec
+Average Kernel Time binomialOptionsGPU() time: 8.863959 msec
+Reading results from GPU...
+
+Executing QRNG on CPU...
+Gsamples/s: 0.255951
+Checking results...
+L1-Error: 0
+Shutting down...
+Sobol Quasi-Random Number Generator Starting...
+
+gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+> number of vectors = 100000
+> number of dimensions = 1000
+gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+Allocating CPU memory...
+Allocating GPU memory...
+Initializing direction numbers...
+Copying direction numbers to device...
+Executing QRNG on GPU...
+Running SobolQRNG for 50 runs...
+
+Total   Kernel Time binomialOptionsGPU() time: 444.764417 msec
+Average Kernel Time binomialOptionsGPU() time: 8.895288 msec
+Reading results from GPU...
+
+Executing QRNG on CPU...
+Gsamples/s: 0.248587
+Checking results...
+L1-Error: 0
+Shutting down...
+==25508== NVPROF is profiling process 25508, command: applications/SobolQRNG -device=1 -iters=50
+==25508== Warning: Unified Memory Profiling is not supported on the current configuration because a pair of devices without peer-to-peer support is detected on this multi-GPU setup. When peer mappings are not available, system falls back to using zero-copy memory. It can cause kernels, which access unified memory, to run slower. More details can be found at: http://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#um-managed-memory
+==25508== Profiling application: applications/SobolQRNG -device=1 -iters=50
+==25508== Profiling result:
+Time(%)      Time     Calls       Avg       Min       Max  Name
+ 66.73%  449.00ms        51  8.8039ms  8.7621ms  8.8462ms  sobolGPU_kernel(unsigned int, unsigned int, unsigned int*, float*)
+ 33.27%  223.84ms         1  223.84ms  223.84ms  223.84ms  [CUDA memcpy DtoH]
+  0.01%  45.599us         1  45.599us  45.599us  45.599us  [CUDA memcpy HtoD]
+
+==25508== API calls:
+Time(%)      Time     Calls       Avg       Min       Max  Name
+ 44.33%  454.00ms        55  8.2545ms  7.1070us  8.9395ms  cudaDeviceSynchronize
+ 25.70%  263.26ms         2  131.63ms  71.104ms  192.15ms  cudaMalloc
+ 21.93%  224.60ms         2  112.30ms  56.853us  224.54ms  cudaMemcpy
+  6.65%  68.107ms         1  68.107ms  68.107ms  68.107ms  cudaDeviceReset
+  0.50%  5.1341ms         2  2.5671ms  218.03us  4.9161ms  cudaFree
+  0.37%  3.7878ms        51  74.271us  68.508us  140.71us  cudaEventSynchronize
+  0.16%  1.6334ms         3  544.46us  428.39us  609.75us  cudaGetDeviceProperties
+  0.12%  1.2283ms       182  6.7480us       0ns  321.50us  cuDeviceGetAttribute
+  0.09%  878.10us        51  17.217us  15.919us  42.356us  cudaLaunch
+  0.08%  840.86us       102  8.2430us  5.6860us  11.087us  cudaEventRecord
+  0.05%  495.19us        51  9.7090us  9.3800us  10.234us  cudaEventElapsedTime
+  0.02%  180.22us         2  90.112us  70.214us  110.01us  cuDeviceGetName
+  0.00%  42.932us       204     210ns       0ns     569ns  cudaSetupArgument
+  0.00%  23.591us        51     462ns     284ns  2.5590us  cudaConfigureCall
+  0.00%  15.634us         2  7.8170us  1.7050us  13.929us  cudaSetDevice
+  0.00%  12.507us         2  6.2530us  5.6850us  6.8220us  cuDeviceTotalMem
+  0.00%  6.8230us         2  3.4110us  1.1370us  5.6860us  cudaEventCreate
+  0.00%  3.4120us         3  1.1370us     284ns  2.5590us  cuDeviceGetCount
+  0.00%  2.2740us         6     379ns       0ns  1.1370us  cuDeviceGet
+  0.00%  1.4210us         1  1.4210us  1.4210us  1.4210us  cudaGetDevice
+  0.00%  1.1370us         2     568ns     285ns     852ns  cudaGetDeviceCount

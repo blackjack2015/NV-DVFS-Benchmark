@@ -1,0 +1,50 @@
+"arg:./datasets/nn/filelist_4 -r 5 -lat 30 -lng 90" 
+gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+Adjust Iters to 117791 for meeting time requirement 10 secs.
+Total   Kernel Time euclid() time: 4783.413792 msec
+Average Kernel Time euclid() time: 0.040609 msec
+1988 12 27  0 18 TONY       30.0  89.8  113   39 --> Distance=0.199997
+1980 10 22 18  3 ISAAC      30.1  90.4  110  778 --> Distance=0.412312
+1997 11 14 12 24 HELENE     30.5  89.8  134  529 --> Distance=0.538515
+2003  8 27 12 10 TONY       29.9  89.4  160  286 --> Distance=0.608275
+1974 12 22 18 24 JOYCE      30.6  89.9   80  593 --> Distance=0.608276
+gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+Total   Kernel Time euclid() time: 2.314624 msec
+Average Kernel Time euclid() time: 0.046292 msec
+1988 12 27  0 18 TONY       30.0  89.8  113   39 --> Distance=0.199997
+1980 10 22 18  3 ISAAC      30.1  90.4  110  778 --> Distance=0.412312
+1997 11 14 12 24 HELENE     30.5  89.8  134  529 --> Distance=0.538515
+2003  8 27 12 10 TONY       29.9  89.4  160  286 --> Distance=0.608275
+1974 12 22 18 24 JOYCE      30.6  89.9   80  593 --> Distance=0.608276
+==780== NVPROF is profiling process 780, command: applications/nn ./datasets/nn/filelist_4 -r 5 -lat 30 -lng 90 -device=1 -iters=50
+==780== Warning: Unified Memory Profiling is not supported on the current configuration because a pair of devices without peer-to-peer support is detected on this multi-GPU setup. When peer mappings are not available, system falls back to using zero-copy memory. It can cause kernels, which access unified memory, to run slower. More details can be found at: http://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#um-managed-memory
+==780== Profiling application: applications/nn ./datasets/nn/filelist_4 -r 5 -lat 30 -lng 90 -device=1 -iters=50
+==780== Profiling result:
+Time(%)      Time     Calls       Avg       Min       Max  Name
+ 55.51%  211.39us        52  4.0650us  3.7760us  9.4720us  euclid(latLong*, float*, int, float, float)
+ 30.12%  114.72us         1  114.72us  114.72us  114.72us  [CUDA memcpy HtoD]
+ 14.37%  54.719us         1  54.719us  54.719us  54.719us  [CUDA memcpy DtoH]
+
+==780== API calls:
+Time(%)      Time     Calls       Avg       Min       Max  Name
+ 94.32%  172.59ms         4  43.148ms  6.8220us  172.39ms  cudaThreadSynchronize
+  1.43%  2.6215ms        52  50.413us  7.1070us  54.863us  cudaDeviceSynchronize
+  0.84%  1.5316ms        51  30.031us  29.563us  33.259us  cudaEventSynchronize
+  0.64%  1.1754ms         2  587.72us  550.91us  624.53us  cudaGetDeviceProperties
+  0.62%  1.1311ms         2  565.54us  529.87us  601.22us  cudaMalloc
+  0.61%  1.1081ms       182  6.0880us       0ns  322.07us  cuDeviceGetAttribute
+  0.46%  850.23us        52  16.350us  15.350us  43.493us  cudaLaunch
+  0.40%  728.00us       102  7.1370us  5.1160us  9.9490us  cudaEventRecord
+  0.25%  451.41us        51  8.8510us  7.9600us  9.6650us  cudaEventElapsedTime
+  0.17%  312.12us         2  156.06us  87.553us  224.57us  cudaMemcpy
+  0.10%  182.50us         2  91.248us  83.858us  98.639us  cudaFree
+  0.09%  166.86us         2  83.431us  68.508us  98.355us  cuDeviceGetName
+  0.03%  59.131us       260     227ns       0ns     853ns  cudaSetupArgument
+  0.01%  24.736us        52     475ns     284ns  3.1270us  cudaConfigureCall
+  0.01%  19.899us         1  19.899us  19.899us  19.899us  cudaMemGetInfo
+  0.01%  13.361us         1  13.361us  13.361us  13.361us  cudaSetDevice
+  0.01%  12.224us         2  6.1120us  5.4020us  6.8220us  cuDeviceTotalMem
+  0.00%  5.4000us         2  2.7000us     852ns  4.5480us  cudaEventCreate
+  0.00%  3.1270us         3  1.0420us     285ns  2.2740us  cuDeviceGetCount
+  0.00%  2.8440us         6     474ns       0ns  1.1370us  cuDeviceGet
+  0.00%  1.9900us         1  1.9900us  1.9900us  1.9900us  cudaGetDeviceCount

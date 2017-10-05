@@ -1,0 +1,79 @@
+"arg:" 
+applications\scan Starting...
+
+gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+Allocating and initializing host arrays...
+Allocating and initializing CUDA arrays...
+Initializing CUDA-C scan...
+
+***Running GPU scan for large arrays (100 identical iterations)...
+
+Running scan for 262144 elements (26 arrays)...
+Adjust Iters to 4680 for meeting time requirement 10 secs.
+Validating the results...
+...reading back GPU results
+...scanExclusiveHost()
+ ...comparing the results
+ ...Results Match
+
+
+scan, Total Time = 9.90578 s
+scan, Throughput = 123.8503 MElements/s, Time = 0.00212 s, Size = 262144 Elements, NumDevsUsed = 1, Workgroup = 256
+
+Shutting down...
+applications/scan Starting...
+
+gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+Allocating and initializing host arrays...
+Allocating and initializing CUDA arrays...
+Initializing CUDA-C scan...
+
+***Running GPU scan for large arrays (50 identical iterations)...
+
+Running scan for 262144 elements (26 arrays)...
+Validating the results...
+...reading back GPU results
+...scanExclusiveHost()
+ ...comparing the results
+ ...Results Match
+
+
+scan, Total Time = 0.10585 s
+scan, Throughput = 123.8337 MElements/s, Time = 0.00212 s, Size = 262144 Elements, NumDevsUsed = 1, Workgroup = 256
+
+Shutting down...
+==36324== NVPROF is profiling process 36324, command: applications/scan -device=1 -iters=50
+==36324== Warning: Unified Memory Profiling is not supported on the current configuration because a pair of devices without peer-to-peer support is detected on this multi-GPU setup. When peer mappings are not available, system falls back to using zero-copy memory. It can cause kernels, which access unified memory, to run slower. More details can be found at: http://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#um-managed-memory
+==36324== Profiling application: applications/scan -device=1 -iters=50
+==36324== Profiling result:
+Time(%)      Time     Calls       Avg       Min       Max  Name
+ 40.21%  51.901ms        51  1.0177ms  1.0108ms  1.0245ms  uniformUpdate(uint4*, unsigned int*)
+ 40.21%  51.894ms        51  1.0175ms  1.0113ms  1.0240ms  scanExclusiveShared(uint4*, uint4*, unsigned int)
+  9.37%  12.089ms         1  12.089ms  12.089ms  12.089ms  [CUDA memcpy DtoH]
+  9.32%  12.026ms         1  12.026ms  12.026ms  12.026ms  [CUDA memcpy HtoD]
+  0.90%  1.1579ms        51  22.704us  20.223us  25.631us  scanExclusiveShared2(unsigned int*, unsigned int*, unsigned int*, unsigned int, unsigned int)
+
+==36324== API calls:
+Time(%)      Time     Calls       Avg       Min       Max  Name
+ 48.27%  198.25ms         3  66.084ms  1.4344ms  191.35ms  cudaMalloc
+ 26.37%  108.31ms        51  2.1238ms  2.1107ms  2.1601ms  cudaThreadSynchronize
+ 17.61%  72.309ms         1  72.309ms  72.309ms  72.309ms  cudaDeviceReset
+  5.70%  23.394ms         2  11.697ms  10.987ms  12.406ms  cudaMemcpy
+  0.56%  2.3045ms       153  15.062us  13.076us  51.168us  cudaLaunch
+  0.44%  1.8005ms        51  35.304us  29.563us  56.853us  cudaEventSynchronize
+  0.26%  1.0768ms       182  5.9160us       0ns  296.77us  cuDeviceGetAttribute
+  0.26%  1.0560ms         3  352.01us  184.49us  475.29us  cudaFree
+  0.17%  714.07us       102  7.0000us  4.8320us  9.9490us  cudaEventRecord
+  0.15%  599.23us         1  599.23us  599.23us  599.23us  cudaGetDeviceProperties
+  0.11%  451.70us        51  8.8560us  8.2430us  9.9490us  cudaEventElapsedTime
+  0.04%  177.95us         2  88.974us  68.223us  109.73us  cuDeviceGetName
+  0.02%  99.210us       510     194ns       0ns  1.1370us  cudaSetupArgument
+  0.01%  44.921us       153     293ns       0ns  4.2640us  cudaConfigureCall
+  0.01%  39.520us       153     258ns       0ns     285ns  cudaGetLastError
+  0.01%  24.731us         3  8.2430us  6.8220us  10.802us  cudaDeviceSynchronize
+  0.00%  11.939us         2  5.9690us  5.4010us  6.5380us  cuDeviceTotalMem
+  0.00%  11.087us         1  11.087us  11.087us  11.087us  cudaSetDevice
+  0.00%  8.2440us         2  4.1220us     853ns  7.3910us  cudaEventCreate
+  0.00%  3.4110us         6     568ns     284ns  1.1370us  cuDeviceGet
+  0.00%  2.8420us         3     947ns     284ns  2.2740us  cuDeviceGetCount
+  0.00%     853ns         1     853ns     853ns     853ns  cudaGetDeviceCount
