@@ -4,8 +4,6 @@ import sys,urllib,urllib2
 import csv
 import os, glob, re
 import cPickle as pickle
-# import MySQLdb
-# import scipy.io as sio
 import numpy as np
 import ConfigParser
 import json
@@ -29,7 +27,7 @@ cf_ks = ConfigParser.SafeConfigParser()
 cf_ks.read("configs/kernels_settings.cfg")
 benchmark_programs = cf_ks.sections()
 
-head = ["appName", "coreF", "memF", "argNo", "kernel", "time"] + metrics
+head = ["appName", "coreF", "memF", "argNo", "kernel", "time/ms"] + metrics
 print head
 
 # prepare csv file
@@ -57,23 +55,44 @@ for fp in perf_filelist:
     f.close()
     regex = re.compile(r'.*\%.*' + kernel)
     time = filter(regex.search, content)[0].split()[3].strip()
+    if 'us' in time:
+        time = float(time[:-2]) / 1000
+    else:
+        time = float(time[:-2])
     rec.append(time)
 
     # extract metrics information
     fm, number = re.subn('perf', 'metrics', fp)
     f = open(fm, 'r')
     content = f.readlines()
+    maxLen = len(content)
     f.close()
+    regex = re.compile(r'Kernel: (void )*' + kernel + r'[<(]+')
     message = [line.strip() \
                 for s, value in enumerate(content) \
-                    if 'Kernel: %s' % kernel in value or 'Kernel: void %s' % kernel in value \
-                for line in content[s+1:s+4]]
+                    for m in [regex.search(value)] if m \
+                for line in content[s+1:min(maxLen,s+4)]]
 
     for line in message:
-        rec.append(line.split()[-1])
+        value = line.split()[-1]
+
+        if '%' in value:
+            value = float(value[:-1]) / 100
+        elif 'TB/s' in value:
+            value = float(value[:-4]) * 1e3
+        elif 'GB/s' in value:
+            value = float(value[:-4])
+        elif 'MB/s' in value:
+            value = float(value[:-4]) * 1e-3
+        elif 'KB/s' in value:
+            value = float(value[:-4]) * 1e-6
+        elif 'B/s' in value:
+                value = float(value[:-3]) * 1e-9
+
+        rec.append(value)
 
     # print rec
-    csvWriter.writerow(rec)
+    csvWriter.writerow(rec[:len(head)])
 
 
 # tempf = open('perfData.bin', 'wb')

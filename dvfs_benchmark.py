@@ -93,6 +93,7 @@ for core_f in core_frequencies:
                 # execute program to collect metrics data
                 metCount = 0
 
+                # to be fixed, the stride should be a multiplier of the metric number
                 while metCount < len(metrics):
 
                     if metCount + 3 > len(metrics):
