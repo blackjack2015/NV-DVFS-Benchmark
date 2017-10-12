@@ -1,36 +1,15 @@
-"arg:" 
-[applications\convolutionTexture] - Starting...
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
-Initializing data...
-Running GPU rows convolution (100 identical iterations)...
-Adjust Iters to 4388 for meeting time requirement 10 secs.
-iterated 4388, average time is 2.266139 msec.
-Total   convolutionRowsGPU() time: 9943.819336 msecs
-Average convolutionRowsGPU() time: 2.266139 msecs; //2082.216245 Mpix/s
-Copying convolutionRowGPU() output back to the texture...
-cudaMemcpyToArray() time: 2.108389 msecs; //2238.007860 Mpix/s
-Running GPU columns convolution (1 iterations)
-Total   convolutionColumnsGPU() time: 2.265019 msecs
-Average convolutionColumnsGPU() time: 2.265019 msecs; //2083.245937 Mpix/s
-Reading back GPU results...
-Checking the results...
-...running convolutionRowsCPU()
-...running convolutionColumnsCPU()
-Relative L2 norm: 0.000000E+000
-Shutting down...
-Test passed
 [applications/convolutionTexture] - Starting...
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Initializing data...
-Running GPU rows convolution (50 identical iterations)...
-iterated 50, average time is 2.278445 msec.
-Total   convolutionRowsGPU() time: 113.922272 msecs
-Average convolutionRowsGPU() time: 2.278445 msecs; //2070.969894 Mpix/s
+Running GPU rows convolution (5 identical iterations)...
+iterated 5, average time is 2.291635 msec.
+Total   convolutionRowsGPU() time: 11.458177 msecs
+Average convolutionRowsGPU() time: 2.291635 msecs; //2059.050169 Mpix/s
 Copying convolutionRowGPU() output back to the texture...
-cudaMemcpyToArray() time: 2.149323 msecs; //2195.384771 Mpix/s
+cudaMemcpyToArray() time: 2.142548 msecs; //2202.327481 Mpix/s
 Running GPU columns convolution (1 iterations)
-Total   convolutionColumnsGPU() time: 2.309933 msecs
-Average convolutionColumnsGPU() time: 2.309933 msecs; //2042.739815 Mpix/s
+Total   convolutionColumnsGPU() time: 2.298101 msecs
+Average convolutionColumnsGPU() time: 2.298101 msecs; //2053.256635 Mpix/s
 Reading back GPU results...
 Checking the results...
 ...running convolutionRowsCPU()
@@ -38,45 +17,44 @@ Checking the results...
 Relative L2 norm: 0.000000E+000
 Shutting down...
 Test passed
-==50500== NVPROF is profiling process 50500, command: applications/convolutionTexture -device=1 -iters=50
-==50500== Warning: Unified Memory Profiling is not supported on the current configuration because a pair of devices without peer-to-peer support is detected on this multi-GPU setup. When peer mappings are not available, system falls back to using zero-copy memory. It can cause kernels, which access unified memory, to run slower. More details can be found at: http://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#um-managed-memory
-==50500== Profiling application: applications/convolutionTexture -device=1 -iters=50
-==50500== Profiling result:
+==11188== NVPROF is profiling process 11188, command: applications/convolutionTexture -device=0 -iters=5
+==11188== Profiling application: applications/convolutionTexture -device=0 -iters=5
+==11188== Profiling result:
 Time(%)      Time     Calls       Avg       Min       Max  Name
- 86.25%  132.53ms        60  2.2088ms  2.1983ms  2.2231ms  convolutionRowsKernel(float*, int, int)
-  5.68%  8.7224ms         1  8.7224ms  8.7224ms  8.7224ms  [CUDA memcpy DtoH]
-  5.36%  8.2389ms         1  8.2389ms  8.2389ms  8.2389ms  [CUDA memcpy HtoA]
-  1.42%  2.1753ms         1  2.1753ms  2.1753ms  2.1753ms  convolutionColumnsKernel(float*, int, int)
-  1.30%  1.9909ms         1  1.9909ms  1.9909ms  1.9909ms  [CUDA memcpy DtoA]
-  0.00%  3.2000us         1  3.2000us  3.2000us  3.2000us  [CUDA memcpy HtoD]
+ 62.86%  33.148ms        15  2.2099ms  2.1980ms  2.2237ms  convolutionRowsKernel(float*, int, int)
+ 15.45%  8.1450ms         1  8.1450ms  8.1450ms  8.1450ms  [CUDA memcpy DtoH]
+ 13.80%  7.2772ms         1  7.2772ms  7.2772ms  7.2772ms  [CUDA memcpy HtoA]
+  4.14%  2.1839ms         1  2.1839ms  2.1839ms  2.1839ms  convolutionColumnsKernel(float*, int, int)
+  3.75%  1.9774ms         1  1.9774ms  1.9774ms  1.9774ms  [CUDA memcpy DtoA]
+  0.01%  3.0720us         1  3.0720us  3.0720us  3.0720us  [CUDA memcpy HtoD]
 
-==50500== API calls:
+==11188== API calls:
 Time(%)      Time     Calls       Avg       Min       Max  Name
- 44.53%  192.02ms         1  192.02ms  192.02ms  192.02ms  cudaMallocArray
- 32.86%  141.68ms        67  2.1146ms  7.3910us  2.3460ms  cudaDeviceSynchronize
- 15.35%  66.195ms         1  66.195ms  66.195ms  66.195ms  cudaDeviceReset
-  2.12%  9.1323ms         1  9.1323ms  9.1323ms  9.1323ms  cudaMemcpy
-  1.97%  8.4913ms         2  4.2456ms  57.989us  8.4333ms  cudaMemcpyToArray
-  0.90%  3.8614ms         1  3.8614ms  3.8614ms  3.8614ms  cudaMalloc
-  0.73%  3.1460ms        60  52.432us  27.858us  88.974us  cudaEventSynchronize
-  0.45%  1.9503ms        61  31.972us  29.279us  96.650us  cudaLaunch
-  0.24%  1.0367ms       182  5.6960us       0ns  278.86us  cuDeviceGetAttribute
-  0.23%  987.25us       120  8.2270us  5.4010us  17.340us  cudaEventRecord
-  0.14%  623.39us        60  10.389us  7.9600us  21.036us  cudaEventElapsedTime
-  0.13%  571.37us         1  571.37us  571.37us  571.37us  cudaGetDeviceProperties
-  0.08%  362.44us         1  362.44us  362.44us  362.44us  cudaFree
-  0.08%  359.03us         1  359.03us  359.03us  359.03us  cudaFreeArray
-  0.05%  226.84us        61  3.7180us  3.4110us  13.076us  cudaBindTextureToArray
-  0.04%  151.80us         2  75.898us  71.350us  80.447us  cuDeviceGetName
-  0.02%  104.89us        61  1.7190us  1.4210us  2.5580us  cudaUnbindTexture
-  0.02%  84.995us         1  84.995us  84.995us  84.995us  cudaMemcpyToSymbol
-  0.01%  64.251us        61  1.0530us     852ns  1.9900us  cudaGetChannelDesc
-  0.01%  42.076us       183     229ns       0ns     853ns  cudaSetupArgument
-  0.01%  24.449us        61     400ns     284ns  1.1380us  cudaConfigureCall
-  0.01%  23.029us        61     377ns     284ns     569ns  cudaGetLastError
-  0.00%  11.655us         2  5.8270us  5.6850us  5.9700us  cuDeviceTotalMem
-  0.00%  11.655us         1  11.655us  11.655us  11.655us  cudaSetDevice
-  0.00%  10.233us         2  5.1160us  1.1370us  9.0960us  cudaEventCreate
-  0.00%  3.4100us         3  1.1360us     284ns  2.5580us  cuDeviceGetCount
-  0.00%  2.5570us         6     426ns     284ns     569ns  cuDeviceGet
-  0.00%     853ns         1     853ns     853ns     853ns  cudaGetDeviceCount
+ 56.66%  139.98ms         1  139.98ms  139.98ms  139.98ms  cudaMallocArray
+ 18.10%  44.719ms         1  44.719ms  44.719ms  44.719ms  cudaDeviceReset
+ 15.80%  39.023ms        22  1.7738ms  6.9200us  2.3285ms  cudaDeviceSynchronize
+  3.43%  8.4667ms         1  8.4667ms  8.4667ms  8.4667ms  cudaMemcpy
+  3.05%  7.5252ms         2  3.7626ms  47.237us  7.4780ms  cudaMemcpyToArray
+  1.49%  3.6867ms         1  3.6867ms  3.6867ms  3.6867ms  cudaMalloc
+  0.34%  847.57us        15  56.504us  53.858us  64.387us  cudaEventSynchronize
+  0.21%  509.09us        16  31.817us  26.778us  88.157us  cudaLaunch
+  0.17%  423.33us         1  423.33us  423.33us  423.33us  cudaGetDeviceProperties
+  0.17%  419.43us        91  4.6090us       0ns  236.19us  cuDeviceGetAttribute
+  0.12%  304.19us         1  304.19us  304.19us  304.19us  cudaFree
+  0.11%  273.20us        30  9.1060us  5.1150us  12.938us  cudaEventRecord
+  0.11%  263.87us         1  263.87us  263.87us  263.87us  cudaFreeArray
+  0.10%  255.45us        15  17.029us  14.442us  26.478us  cudaEventElapsedTime
+  0.04%  91.767us         1  91.767us  91.767us  91.767us  cuDeviceGetName
+  0.03%  80.635us         1  80.635us  80.635us  80.635us  cudaMemcpyToSymbol
+  0.02%  59.573us        16  3.7230us  3.0080us  12.035us  cudaBindTextureToArray
+  0.01%  23.468us        16  1.4660us  1.2030us  2.4070us  cudaUnbindTexture
+  0.01%  17.749us        16  1.1090us     902ns  1.8050us  cudaGetChannelDesc
+  0.01%  14.442us         2  7.2210us  2.1060us  12.336us  cudaEventCreate
+  0.00%  11.132us         1  11.132us  11.132us  11.132us  cudaSetDevice
+  0.00%  9.6280us        48     200ns       0ns     602ns  cudaSetupArgument
+  0.00%  6.6200us        16     413ns     301ns  1.2030us  cudaConfigureCall
+  0.00%  6.3180us         1  6.3180us  6.3180us  6.3180us  cuDeviceTotalMem
+  0.00%  4.8150us        16     300ns     300ns     301ns  cudaGetLastError
+  0.00%  3.6100us         3  1.2030us     301ns  2.4070us  cuDeviceGetCount
+  0.00%  1.8060us         3     602ns     301ns     903ns  cuDeviceGet
+  0.00%     903ns         1     903ns     903ns     903ns  cudaGetDeviceCount

@@ -1,6 +1,6 @@
 applications/scalarProd Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Initializing data...
 ...allocating CPU memory.
 ...allocating GPU memory.
@@ -8,8 +8,8 @@ Initializing data...
 ...copying input data to GPU mem.
 Data init done.
 Executing GPU kernel...
-GPU total   time: 422.717343 msecs.
-GPU average time: 8.454347 msecs.
+GPU total   time: 7.270048 msecs.
+GPU average time: 0.242335 msecs.
 Reading back GPU result...
 Checking GPU results...
 ..running CPU scalar product calculation
@@ -17,19 +17,51 @@ Checking GPU results...
 Shutting down...
 L1 error: 2.857647E-008
 Test passed
-==11248== NVPROF is profiling process 11248, command: applications/scalarProd -device=1 -iters=50
-==11248== Profiling application: applications/scalarProd -device=1 -iters=50
-==11248== Profiling result:
-==11248== Metric result:
-Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
-    Kernel: scalarProdGPU(float*, float*, float*, int, int)
-         51                        achieved_occupancy                        Achieved Occupancy    0.937471    0.957794    0.946036
-         51                             sm_efficiency                   Multiprocessor Activity      91.55%      95.13%      93.40%
-         51                 warp_execution_efficiency                 Warp Execution Efficiency      98.32%      98.32%      98.32%
+==6092== NVPROF is profiling process 6092, command: applications/scalarProd -device=0 -iters=30
+==6092== Profiling application: applications/scalarProd -device=0 -iters=30
+==6092== Profiling result:
+   Start  Duration            Grid Size      Block Size     Regs*    SSMem*    DSMem*      Size  Throughput           Device   Context    Stream  Name
+227.35ms  1.4090ms                    -               -         -         -         -  4.0000MB  2.7724GB/s  GeForce GTX 980         1         7  [CUDA memcpy HtoD]
+229.09ms  1.4782ms                    -               -         -         -         -  4.0000MB  2.6425GB/s  GeForce GTX 980         1         7  [CUDA memcpy HtoD]
+231.34ms  206.04us            (128 1 1)       (256 1 1)        24  4.0000KB        0B         -           -  GeForce GTX 980         1         7  scalarProdGPU(float*, float*, float*, int, int) [118]
+231.73ms  196.86us            (128 1 1)       (256 1 1)        24  4.0000KB        0B         -           -  GeForce GTX 980         1         7  scalarProdGPU(float*, float*, float*, int, int) [131]
+232.08ms  198.68us            (128 1 1)       (256 1 1)        24  4.0000KB        0B         -           -  GeForce GTX 980         1         7  scalarProdGPU(float*, float*, float*, int, int) [143]
+232.43ms  200.09us            (128 1 1)       (256 1 1)        24  4.0000KB        0B         -           -  GeForce GTX 980         1         7  scalarProdGPU(float*, float*, float*, int, int) [155]
+232.80ms  196.99us            (128 1 1)       (256 1 1)        24  4.0000KB        0B         -           -  GeForce GTX 980         1         7  scalarProdGPU(float*, float*, float*, int, int) [167]
+233.15ms  196.92us            (128 1 1)       (256 1 1)        24  4.0000KB        0B         -           -  GeForce GTX 980         1         7  scalarProdGPU(float*, float*, float*, int, int) [179]
+233.49ms  198.52us            (128 1 1)       (256 1 1)        24  4.0000KB        0B         -           -  GeForce GTX 980         1         7  scalarProdGPU(float*, float*, float*, int, int) [191]
+233.80ms  197.66us            (128 1 1)       (256 1 1)        24  4.0000KB        0B         -           -  GeForce GTX 980         1         7  scalarProdGPU(float*, float*, float*, int, int) [203]
+234.11ms  200.83us            (128 1 1)       (256 1 1)        24  4.0000KB        0B         -           -  GeForce GTX 980         1         7  scalarProdGPU(float*, float*, float*, int, int) [215]
+234.42ms  197.60us            (128 1 1)       (256 1 1)        24  4.0000KB        0B         -           -  GeForce GTX 980         1         7  scalarProdGPU(float*, float*, float*, int, int) [227]
+234.73ms  197.02us            (128 1 1)       (256 1 1)        24  4.0000KB        0B         -           -  GeForce GTX 980         1         7  scalarProdGPU(float*, float*, float*, int, int) [239]
+235.04ms  194.62us            (128 1 1)       (256 1 1)        24  4.0000KB        0B         -           -  GeForce GTX 980         1         7  scalarProdGPU(float*, float*, float*, int, int) [251]
+235.34ms  201.15us            (128 1 1)       (256 1 1)        24  4.0000KB        0B         -           -  GeForce GTX 980         1         7  scalarProdGPU(float*, float*, float*, int, int) [263]
+235.66ms  199.32us            (128 1 1)       (256 1 1)        24  4.0000KB        0B         -           -  GeForce GTX 980         1         7  scalarProdGPU(float*, float*, float*, int, int) [275]
+235.98ms  198.17us            (128 1 1)       (256 1 1)        24  4.0000KB        0B         -           -  GeForce GTX 980         1         7  scalarProdGPU(float*, float*, float*, int, int) [287]
+236.29ms  198.59us            (128 1 1)       (256 1 1)        24  4.0000KB        0B         -           -  GeForce GTX 980         1         7  scalarProdGPU(float*, float*, float*, int, int) [299]
+236.60ms  196.86us            (128 1 1)       (256 1 1)        24  4.0000KB        0B         -           -  GeForce GTX 980         1         7  scalarProdGPU(float*, float*, float*, int, int) [311]
+236.90ms  196.38us            (128 1 1)       (256 1 1)        24  4.0000KB        0B         -           -  GeForce GTX 980         1         7  scalarProdGPU(float*, float*, float*, int, int) [323]
+237.21ms  198.08us            (128 1 1)       (256 1 1)        24  4.0000KB        0B         -           -  GeForce GTX 980         1         7  scalarProdGPU(float*, float*, float*, int, int) [335]
+237.52ms  198.40us            (128 1 1)       (256 1 1)        24  4.0000KB        0B         -           -  GeForce GTX 980         1         7  scalarProdGPU(float*, float*, float*, int, int) [347]
+237.84ms  195.36us            (128 1 1)       (256 1 1)        24  4.0000KB        0B         -           -  GeForce GTX 980         1         7  scalarProdGPU(float*, float*, float*, int, int) [359]
+238.15ms  199.29us            (128 1 1)       (256 1 1)        24  4.0000KB        0B         -           -  GeForce GTX 980         1         7  scalarProdGPU(float*, float*, float*, int, int) [371]
+238.45ms  196.16us            (128 1 1)       (256 1 1)        24  4.0000KB        0B         -           -  GeForce GTX 980         1         7  scalarProdGPU(float*, float*, float*, int, int) [383]
+238.76ms  199.20us            (128 1 1)       (256 1 1)        24  4.0000KB        0B         -           -  GeForce GTX 980         1         7  scalarProdGPU(float*, float*, float*, int, int) [395]
+239.07ms  197.95us            (128 1 1)       (256 1 1)        24  4.0000KB        0B         -           -  GeForce GTX 980         1         7  scalarProdGPU(float*, float*, float*, int, int) [407]
+239.37ms  196.38us            (128 1 1)       (256 1 1)        24  4.0000KB        0B         -           -  GeForce GTX 980         1         7  scalarProdGPU(float*, float*, float*, int, int) [419]
+239.68ms  197.08us            (128 1 1)       (256 1 1)        24  4.0000KB        0B         -           -  GeForce GTX 980         1         7  scalarProdGPU(float*, float*, float*, int, int) [431]
+239.99ms  195.26us            (128 1 1)       (256 1 1)        24  4.0000KB        0B         -           -  GeForce GTX 980         1         7  scalarProdGPU(float*, float*, float*, int, int) [443]
+240.29ms  200.12us            (128 1 1)       (256 1 1)        24  4.0000KB        0B         -           -  GeForce GTX 980         1         7  scalarProdGPU(float*, float*, float*, int, int) [455]
+240.62ms  199.36us            (128 1 1)       (256 1 1)        24  4.0000KB        0B         -           -  GeForce GTX 980         1         7  scalarProdGPU(float*, float*, float*, int, int) [467]
+240.93ms  197.69us            (128 1 1)       (256 1 1)        24  4.0000KB        0B         -           -  GeForce GTX 980         1         7  scalarProdGPU(float*, float*, float*, int, int) [479]
+241.25ms  4.8000us                    -               -         -         -         -  1.0000KB  203.45MB/s  GeForce GTX 980         1         7  [CUDA memcpy DtoH]
+
+Regs: Number of registers used per CUDA thread. This number includes registers used internally by the CUDA driver and/or tools and can be more than what the compiler shows.
+SSMem: Static shared memory allocated per CUDA block.
+DSMem: Dynamic shared memory allocated per CUDA block.
 applications/scalarProd Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Initializing data...
 ...allocating CPU memory.
 ...allocating GPU memory.
@@ -37,8 +69,8 @@ Initializing data...
 ...copying input data to GPU mem.
 Data init done.
 Executing GPU kernel...
-GPU total   time: 740.306851 msecs.
-GPU average time: 14.806137 msecs.
+GPU total   time: 234.339200 msecs.
+GPU average time: 7.811307 msecs.
 Reading back GPU result...
 Checking GPU results...
 ..running CPU scalar product calculation
@@ -46,20 +78,19 @@ Checking GPU results...
 Shutting down...
 L1 error: 2.857647E-008
 Test passed
-==11240== NVPROF is profiling process 11240, command: applications/scalarProd -device=1 -iters=50
-==11240== Some kernel(s) will be replayed on device 1 in order to collect all events/metrics.
-==11240== Profiling application: applications/scalarProd -device=1 -iters=50
-==11240== Profiling result:
-==11240== Metric result:
+==5396== NVPROF is profiling process 5396, command: applications/scalarProd -device=0 -iters=30
+==5396== Profiling application: applications/scalarProd -device=0 -iters=30
+==5396== Profiling result:
+==5396== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: scalarProdGPU(float*, float*, float*, int, int)
-         51                  eligible_warps_per_cycle           Eligible Warps Per Active Cycle    0.646365    0.757637    0.696471
-         51                    dram_read_transactions           Device Memory Read Transactions      246963      249455      248239
-         51                      dram_read_throughput             Device Memory Read Throughput  39.489GB/s  40.174GB/s  39.801GB/s
+         31                        achieved_occupancy                        Achieved Occupancy    0.936932    0.955516    0.943595
+         31                             sm_efficiency                   Multiprocessor Activity      89.60%      94.60%      93.31%
+         31                 warp_execution_efficiency                 Warp Execution Efficiency      98.32%      98.32%      98.32%
 applications/scalarProd Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Initializing data...
 ...allocating CPU memory.
 ...allocating GPU memory.
@@ -67,8 +98,8 @@ Initializing data...
 ...copying input data to GPU mem.
 Data init done.
 Executing GPU kernel...
-GPU total   time: 593.800673 msecs.
-GPU average time: 11.876013 msecs.
+GPU total   time: 439.905088 msecs.
+GPU average time: 14.663503 msecs.
 Reading back GPU result...
 Checking GPU results...
 ..running CPU scalar product calculation
@@ -76,20 +107,20 @@ Checking GPU results...
 Shutting down...
 L1 error: 2.857647E-008
 Test passed
-==13124== NVPROF is profiling process 13124, command: applications/scalarProd -device=1 -iters=50
-==13124== Some kernel(s) will be replayed on device 1 in order to collect all events/metrics.
-==13124== Profiling application: applications/scalarProd -device=1 -iters=50
-==13124== Profiling result:
-==13124== Metric result:
+==4684== NVPROF is profiling process 4684, command: applications/scalarProd -device=0 -iters=30
+==4684== Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+==4684== Profiling application: applications/scalarProd -device=0 -iters=30
+==4684== Profiling result:
+==4684== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: scalarProdGPU(float*, float*, float*, int, int)
-         51                   dram_write_transactions          Device Memory Write Transactions       11300       12901       12098
-         51                     dram_write_throughput            Device Memory Write Throughput  1.8177GB/s  2.1076GB/s  1.9688GB/s
-         51                      l2_read_transactions                      L2 Read Transactions      262247      262945      262463
+         31                  eligible_warps_per_cycle           Eligible Warps Per Active Cycle    0.647917    0.745888    0.690041
+         31                    dram_read_transactions           Device Memory Read Transactions      247659      264295      249284
+         31                      dram_read_throughput             Device Memory Read Throughput  39.021GB/s  42.355GB/s  39.918GB/s
 applications/scalarProd Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Initializing data...
 ...allocating CPU memory.
 ...allocating GPU memory.
@@ -97,8 +128,8 @@ Initializing data...
 ...copying input data to GPU mem.
 Data init done.
 Executing GPU kernel...
-GPU total   time: 815.412930 msecs.
-GPU average time: 16.308259 msecs.
+GPU total   time: 356.413985 msecs.
+GPU average time: 11.880466 msecs.
 Reading back GPU result...
 Checking GPU results...
 ..running CPU scalar product calculation
@@ -106,20 +137,20 @@ Checking GPU results...
 Shutting down...
 L1 error: 2.857647E-008
 Test passed
-==9924== NVPROF is profiling process 9924, command: applications/scalarProd -device=1 -iters=50
-==9924== Some kernel(s) will be replayed on device 1 in order to collect all events/metrics.
-==9924== Profiling application: applications/scalarProd -device=1 -iters=50
-==9924== Profiling result:
-==9924== Metric result:
+==5836== NVPROF is profiling process 5836, command: applications/scalarProd -device=0 -iters=30
+==5836== Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+==5836== Profiling application: applications/scalarProd -device=0 -iters=30
+==5836== Profiling result:
+==5836== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: scalarProdGPU(float*, float*, float*, int, int)
-         51                        l2_read_throughput                     L2 Throughput (Reads)  42.128GB/s  43.445GB/s  42.735GB/s
-         51                     l2_write_transactions                     L2 Write Transactions         262         262         262
-         51                       l2_write_throughput                    L2 Throughput (Writes)  43.098MB/s  44.373MB/s  42.915MB/s
+         31                   dram_write_transactions          Device Memory Write Transactions        5117       12168       11129
+         31                     dram_write_throughput            Device Memory Write Throughput  840.07MB/s  1.9753GB/s  1.8086GB/s
+         31                      l2_read_transactions                      L2 Read Transactions      262247      269231      263035
 applications/scalarProd Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Initializing data...
 ...allocating CPU memory.
 ...allocating GPU memory.
@@ -127,8 +158,8 @@ Initializing data...
 ...copying input data to GPU mem.
 Data init done.
 Executing GPU kernel...
-GPU total   time: 166.787104 msecs.
-GPU average time: 3.335742 msecs.
+GPU total   time: 469.044990 msecs.
+GPU average time: 15.634833 msecs.
 Reading back GPU result...
 Checking GPU results...
 ..running CPU scalar product calculation
@@ -136,19 +167,20 @@ Checking GPU results...
 Shutting down...
 L1 error: 2.857647E-008
 Test passed
-==14640== NVPROF is profiling process 14640, command: applications/scalarProd -device=1 -iters=50
-==14640== Profiling application: applications/scalarProd -device=1 -iters=50
-==14640== Profiling result:
-==14640== Metric result:
+==2080== NVPROF is profiling process 2080, command: applications/scalarProd -device=0 -iters=30
+==2080== Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+==2080== Profiling application: applications/scalarProd -device=0 -iters=30
+==2080== Profiling result:
+==2080== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: scalarProdGPU(float*, float*, float*, int, int)
-         51                  shared_load_transactions                  Shared Load Transactions       18688       18688       18688
-         51                    shared_load_throughput             Shared Memory Load Throughput  10.895GB/s  11.389GB/s  11.130GB/s
-         51                 shared_store_transactions                 Shared Store Transactions       17408       17408       17408
+         31                        l2_read_throughput                     L2 Throughput (Reads)  41.730GB/s  43.645GB/s  42.809GB/s
+         31                     l2_write_transactions                     L2 Write Transactions         262         264         262
+         31                       l2_write_throughput                    L2 Throughput (Writes)  42.622MB/s  44.101MB/s  42.915MB/s
 applications/scalarProd Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Initializing data...
 ...allocating CPU memory.
 ...allocating GPU memory.
@@ -156,8 +188,8 @@ Initializing data...
 ...copying input data to GPU mem.
 Data init done.
 Executing GPU kernel...
-GPU total   time: 345.092128 msecs.
-GPU average time: 6.901843 msecs.
+GPU total   time: 94.414785 msecs.
+GPU average time: 3.147159 msecs.
 Reading back GPU result...
 Checking GPU results...
 ..running CPU scalar product calculation
@@ -165,19 +197,19 @@ Checking GPU results...
 Shutting down...
 L1 error: 2.857647E-008
 Test passed
-==12756== NVPROF is profiling process 12756, command: applications/scalarProd -device=1 -iters=50
-==12756== Profiling application: applications/scalarProd -device=1 -iters=50
-==12756== Profiling result:
-==12756== Metric result:
+==5904== NVPROF is profiling process 5904, command: applications/scalarProd -device=0 -iters=30
+==5904== Profiling application: applications/scalarProd -device=0 -iters=30
+==5904== Profiling result:
+==5904== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: scalarProdGPU(float*, float*, float*, int, int)
-         51                   shared_store_throughput            Shared Memory Store Throughput  10.162GB/s  10.995GB/s  10.369GB/s
-         51                         branch_efficiency                         Branch Efficiency     100.00%     100.00%     100.00%
-         51                               cf_executed        Executed Control-Flow Instructions      178432      178432      178432
+         31                  shared_load_transactions                  Shared Load Transactions       18688       18688       18688
+         31                    shared_load_throughput             Shared Memory Load Throughput  10.784GB/s  11.547GB/s  11.084GB/s
+         31                 shared_store_transactions                 Shared Store Transactions       17408       17408       17408
 applications/scalarProd Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Initializing data...
 ...allocating CPU memory.
 ...allocating GPU memory.
@@ -185,8 +217,8 @@ Initializing data...
 ...copying input data to GPU mem.
 Data init done.
 Executing GPU kernel...
-GPU total   time: 1199.686205 msecs.
-GPU average time: 23.993724 msecs.
+GPU total   time: 192.885505 msecs.
+GPU average time: 6.429517 msecs.
 Reading back GPU result...
 Checking GPU results...
 ..running CPU scalar product calculation
@@ -194,20 +226,49 @@ Checking GPU results...
 Shutting down...
 L1 error: 2.857647E-008
 Test passed
-==7528== NVPROF is profiling process 7528, command: applications/scalarProd -device=1 -iters=50
-==7528== Some kernel(s) will be replayed on device 1 in order to collect all events/metrics.
-==7528== Profiling application: applications/scalarProd -device=1 -iters=50
-==7528== Profiling result:
-==7528== Metric result:
+==5932== NVPROF is profiling process 5932, command: applications/scalarProd -device=0 -iters=30
+==5932== Profiling application: applications/scalarProd -device=0 -iters=30
+==5932== Profiling result:
+==5932== Metric result:
+Invocations                               Metric Name                        Metric Description         Min         Max         Avg
+Device "GeForce GTX 980 (0)"
+    Kernel: scalarProdGPU(float*, float*, float*, int, int)
+         31                   shared_store_throughput            Shared Memory Store Throughput  9.6061GB/s  10.852GB/s  10.278GB/s
+         31                         branch_efficiency                         Branch Efficiency     100.00%     100.00%     100.00%
+         31                               cf_executed        Executed Control-Flow Instructions      178432      178432      178432
+applications/scalarProd Starting...
+
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
+Initializing data...
+...allocating CPU memory.
+...allocating GPU memory.
+...generating input data in CPU mem.
+...copying input data to GPU mem.
+Data init done.
+Executing GPU kernel...
+GPU total   time: 731.900002 msecs.
+GPU average time: 24.396667 msecs.
+Reading back GPU result...
+Checking GPU results...
+..running CPU scalar product calculation
+...comparing the results
+Shutting down...
+L1 error: 2.857647E-008
+Test passed
+==5076== NVPROF is profiling process 5076, command: applications/scalarProd -device=0 -iters=30
+==5076== Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+==5076== Profiling application: applications/scalarProd -device=0 -iters=30
+==5076== Profiling result:
+==5076== Metric result:
 Invocations                               Metric Name                            Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: scalarProdGPU(float*, float*, float*, int, int)
-         51                                 cf_issued              Issued Control-Flow Instructions      178432      178432      178432
-         51                             flop_count_sp   Floating Point Operations(Single Precision)     2359040     2359040     2359040
-         51                        flop_sp_efficiency                  FLOP Efficiency(Peak Single)       0.68%       0.76%       0.71%
+         31                                 cf_issued              Issued Control-Flow Instructions      178432      178432      178432
+         31                             flop_count_sp   Floating Point Operations(Single Precision)     2359040     2359040     2359040
+         31                        flop_sp_efficiency                  FLOP Efficiency(Peak Single)       0.61%       0.77%       0.71%
 applications/scalarProd Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Initializing data...
 ...allocating CPU memory.
 ...allocating GPU memory.
@@ -215,8 +276,8 @@ Initializing data...
 ...copying input data to GPU mem.
 Data init done.
 Executing GPU kernel...
-GPU total   time: 1338.899237 msecs.
-GPU average time: 26.777985 msecs.
+GPU total   time: 779.161251 msecs.
+GPU average time: 25.972042 msecs.
 Reading back GPU result...
 Checking GPU results...
 ..running CPU scalar product calculation
@@ -224,20 +285,20 @@ Checking GPU results...
 Shutting down...
 L1 error: 2.857647E-008
 Test passed
-==14340== NVPROF is profiling process 14340, command: applications/scalarProd -device=1 -iters=50
-==14340== Some kernel(s) will be replayed on device 1 in order to collect all events/metrics.
-==14340== Profiling application: applications/scalarProd -device=1 -iters=50
-==14340== Profiling result:
-==14340== Metric result:
+==5752== NVPROF is profiling process 5752, command: applications/scalarProd -device=0 -iters=30
+==5752== Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+==5752== Profiling application: applications/scalarProd -device=0 -iters=30
+==5752== Profiling result:
+==5752== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: scalarProdGPU(float*, float*, float*, int, int)
-         51                            gld_throughput                    Global Load Throughput  41.464GB/s  42.433GB/s  42.052GB/s
-         51                          gld_transactions                  Global Load Transactions      524288      524288      524288
-         51                            gst_throughput                   Global Store Throughput  41.464MB/s  42.433MB/s  41.008MB/s
+         31                            gld_throughput                    Global Load Throughput  41.308GB/s  42.376GB/s  41.960GB/s
+         31                          gld_transactions                  Global Load Transactions      524288      524288      524288
+         31                            gst_throughput                   Global Store Throughput  41.308MB/s  42.376MB/s  41.008MB/s
 applications/scalarProd Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Initializing data...
 ...allocating CPU memory.
 ...allocating GPU memory.
@@ -245,8 +306,8 @@ Initializing data...
 ...copying input data to GPU mem.
 Data init done.
 Executing GPU kernel...
-GPU total   time: 371.866047 msecs.
-GPU average time: 7.437321 msecs.
+GPU total   time: 198.723488 msecs.
+GPU average time: 6.624116 msecs.
 Reading back GPU result...
 Checking GPU results...
 ..running CPU scalar product calculation
@@ -254,19 +315,19 @@ Checking GPU results...
 Shutting down...
 L1 error: 2.857647E-008
 Test passed
-==6216== NVPROF is profiling process 6216, command: applications/scalarProd -device=1 -iters=50
-==6216== Profiling application: applications/scalarProd -device=1 -iters=50
-==6216== Profiling result:
-==6216== Metric result:
+==5344== NVPROF is profiling process 5344, command: applications/scalarProd -device=0 -iters=30
+==5344== Profiling application: applications/scalarProd -device=0 -iters=30
+==5344== Profiling result:
+==5344== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: scalarProdGPU(float*, float*, float*, int, int)
-         51                          gst_transactions                 Global Store Transactions         256         256         256
-         51                               inst_issued                       Instructions Issued      721980      722688      722156
-         51                             inst_per_warp                     Instructions per warp  701.750000  701.750000  701.750000
+         31                          gst_transactions                 Global Store Transactions         256         256         256
+         31                               inst_issued                       Instructions Issued      722002      722457      722210
+         31                             inst_per_warp                     Instructions per warp  701.750000  701.750000  701.750000
 applications/scalarProd Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Initializing data...
 ...allocating CPU memory.
 ...allocating GPU memory.
@@ -274,8 +335,8 @@ Initializing data...
 ...copying input data to GPU mem.
 Data init done.
 Executing GPU kernel...
-GPU total   time: 211.998079 msecs.
-GPU average time: 4.239962 msecs.
+GPU total   time: 116.047520 msecs.
+GPU average time: 3.868251 msecs.
 Reading back GPU result...
 Checking GPU results...
 ..running CPU scalar product calculation
@@ -283,11 +344,11 @@ Checking GPU results...
 Shutting down...
 L1 error: 2.857647E-008
 Test passed
-==14048== NVPROF is profiling process 14048, command: applications/scalarProd -device=1 -iters=50
-==14048== Profiling application: applications/scalarProd -device=1 -iters=50
-==14048== Profiling result:
-==14048== Metric result:
+==3532== NVPROF is profiling process 3532, command: applications/scalarProd -device=0 -iters=30
+==3532== Profiling application: applications/scalarProd -device=0 -iters=30
+==3532== Profiling result:
+==3532== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: scalarProdGPU(float*, float*, float*, int, int)
-         51                                       ipc                              Executed IPC    0.579787    0.612651    0.586223
+         31                                       ipc                              Executed IPC    0.463186    0.619483    0.581536

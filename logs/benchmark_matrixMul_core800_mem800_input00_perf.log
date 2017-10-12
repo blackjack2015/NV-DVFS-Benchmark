@@ -1,56 +1,42 @@
-"arg:-wA=1024 -hA=1024 -wB=1024 -hB=1024" 
 [Matrix Multiply Using CUDA] - Starting...
-GPU Device 1: "GeForce GTX 980" with compute capability 5.2
+GPU Device 0: "GeForce GTX 980" with compute capability 5.2
 
 MatrixA(1024,1024), MatrixB(1024,1024)
 Computing result using CUDA Kernel...
 done
-Adjust Iters to 1922 for meeting time requirement 10 secs.
-iterated 1922, average time is 5.215539 msec
-Performance= 411.75 GFlop/s, Time= 5.216 msec, Size= 2147483648 Ops, WorkgroupSize= 1024 threads/block
+iterated 5, average time is 5.227290 msec
+Performance= 410.82 GFlop/s, Time= 5.227 msec, Size= 2147483648 Ops, WorkgroupSize= 1024 threads/block
 Checking computed result for correctness: Result = PASS
 
 Note: For peak performance, please refer to the matrixMulCUBLAS example.
-[Matrix Multiply Using CUDA] - Starting...
-GPU Device 1: "GeForce GTX 980" with compute capability 5.2
-
-MatrixA(1024,1024), MatrixB(1024,1024)
-Computing result using CUDA Kernel...
-done
-iterated 50, average time is 5.229801 msec
-Performance= 410.62 GFlop/s, Time= 5.230 msec, Size= 2147483648 Ops, WorkgroupSize= 1024 threads/block
-Checking computed result for correctness: Result = PASS
-
-Note: For peak performance, please refer to the matrixMulCUBLAS example.
-==20208== NVPROF is profiling process 20208, command: applications/matrixMul -wA=1024 -hA=1024 -wB=1024 -hB=1024 -device=1 -iters=50
-==20208== Warning: Unified Memory Profiling is not supported on the current configuration because a pair of devices without peer-to-peer support is detected on this multi-GPU setup. When peer mappings are not available, system falls back to using zero-copy memory. It can cause kernels, which access unified memory, to run slower. More details can be found at: http://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#um-managed-memory
-==20208== Profiling application: applications/matrixMul -wA=1024 -hA=1024 -wB=1024 -hB=1024 -device=1 -iters=50
-==20208== Profiling result:
+==11780== NVPROF is profiling process 11780, command: applications/matrixMul -wA=1024 -hA=1024 -wB=1024 -hB=1024 -device=0 -iters=5
+==11780== Profiling application: applications/matrixMul -wA=1024 -hA=1024 -wB=1024 -hB=1024 -device=0 -iters=5
+==11780== Profiling result:
 Time(%)      Time     Calls       Avg       Min       Max  Name
- 97.89%  268.11ms        52  5.1560ms  5.1331ms  5.1818ms  void matrixMulCUDA<int=32>(float*, float*, float*, int, int)
-  1.18%  3.2449ms         2  1.6225ms  1.5818ms  1.6631ms  [CUDA memcpy HtoD]
-  0.92%  2.5228ms         1  2.5228ms  2.5228ms  2.5228ms  [CUDA memcpy DtoH]
+ 87.43%  36.102ms         7  5.1574ms  5.1438ms  5.1694ms  void matrixMulCUDA<int=32>(float*, float*, float*, int, int)
+  7.16%  2.9563ms         2  1.4781ms  1.4405ms  1.5158ms  [CUDA memcpy HtoD]
+  5.41%  2.2336ms         1  2.2336ms  2.2336ms  2.2336ms  [CUDA memcpy DtoH]
 
-==20208== API calls:
+==11780== API calls:
 Time(%)      Time     Calls       Avg       Min       Max  Name
- 49.34%  266.65ms        51  5.2283ms  5.1901ms  5.2751ms  cudaThreadSynchronize
- 36.11%  195.17ms         3  65.058ms  1.0833ms  193.00ms  cudaMalloc
- 10.83%  58.526ms         1  58.526ms  58.526ms  58.526ms  cudaDeviceReset
-  1.17%  6.3317ms         3  2.1106ms  1.2582ms  3.1255ms  cudaMemcpy
-  1.10%  5.9443ms         3  1.9814ms  7.1060us  5.9201ms  cudaDeviceSynchronize
-  0.57%  3.0564ms        51  59.929us  30.416us  131.62us  cudaEventSynchronize
-  0.20%  1.0612ms       182  5.8300us       0ns  295.07us  cuDeviceGetAttribute
-  0.17%  892.87us        52  17.170us  15.066us  57.990us  cudaLaunch
-  0.15%  802.48us       102  7.8670us  5.4010us  17.055us  cudaEventRecord
-  0.11%  598.95us         1  598.95us  598.95us  598.95us  cudaGetDeviceProperties
-  0.09%  463.92us         3  154.64us  118.25us  182.50us  cudaFree
-  0.08%  410.76us        51  8.0540us  7.6750us  9.6650us  cudaEventElapsedTime
-  0.04%  198.42us       260     763ns       0ns  11.655us  cudaSetupArgument
-  0.03%  146.97us         2  73.482us  68.792us  78.173us  cuDeviceGetName
-  0.03%  144.12us        52  2.7710us     284ns  11.939us  cudaConfigureCall
-  0.00%  13.076us         1  13.076us  13.076us  13.076us  cudaSetDevice
-  0.00%  11.655us         2  5.8270us  5.4010us  6.2540us  cuDeviceTotalMem
-  0.00%  6.5380us         2  3.2690us  1.1370us  5.4010us  cudaEventCreate
-  0.00%  3.1270us         3  1.0420us     284ns  2.5580us  cuDeviceGetCount
-  0.00%  2.5580us         1  2.5580us  2.5580us  2.5580us  cudaGetDevice
-  0.00%  2.2750us         6     379ns     284ns     569ns  cuDeviceGet
+ 62.45%  140.51ms         3  46.838ms  1.0597ms  138.37ms  cudaMalloc
+ 17.48%  39.323ms         1  39.323ms  39.323ms  39.323ms  cudaDeviceReset
+ 13.95%  31.383ms         6  5.2305ms  5.2118ms  5.2443ms  cudaThreadSynchronize
+  2.61%  5.8819ms         3  1.9606ms  6.9200us  5.8650ms  cudaDeviceSynchronize
+  2.49%  5.6014ms         3  1.8671ms  1.1418ms  2.7308ms  cudaMemcpy
+  0.24%  546.39us         3  182.13us  151.94us  205.20us  cudaFree
+  0.19%  438.08us        91  4.8140us       0ns  256.35us  cuDeviceGetAttribute
+  0.19%  422.13us         1  422.13us  422.13us  422.13us  cudaGetDeviceProperties
+  0.18%  415.51us         6  69.251us  48.441us  148.33us  cudaEventSynchronize
+  0.07%  147.43us         7  21.061us  13.841us  53.255us  cudaLaunch
+  0.05%  103.80us        12  8.6500us  5.1140us  13.539us  cudaEventRecord
+  0.04%  100.49us         6  16.748us  15.044us  17.451us  cudaEventElapsedTime
+  0.03%  73.414us         1  73.414us  73.414us  73.414us  cuDeviceGetName
+  0.01%  12.636us         1  12.636us  12.636us  12.636us  cudaSetDevice
+  0.00%  8.1230us         2  4.0610us  1.5040us  6.6190us  cudaEventCreate
+  0.00%  8.1230us        35     232ns       0ns     903ns  cudaSetupArgument
+  0.00%  6.3190us         7     902ns     301ns  3.0090us  cudaConfigureCall
+  0.00%  5.7170us         1  5.7170us  5.7170us  5.7170us  cuDeviceTotalMem
+  0.00%  2.7070us         3     902ns     300ns  2.1060us  cuDeviceGetCount
+  0.00%  2.4070us         1  2.4070us  2.4070us  2.4070us  cudaGetDevice
+  0.00%  1.5050us         3     501ns     301ns     903ns  cuDeviceGet

@@ -1,7 +1,7 @@
 applications/reduction Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
-Using Device 1: GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
+Using Device 0: GeForce GTX 980
 
 Reducing array of type float
 
@@ -9,26 +9,59 @@ Reducing array of type float
 256 threads (max)
 65536 blocks
 
-iterated 50, average time is 12.052383 msecs.
+iterated 30, average time is 4.152722 msecs.
 
 GPU result = 65282.058594
 CPU result = 65281.992188
 
 Test passed
-==70660== NVPROF is profiling process 70660, command: applications/reduction -type=float --kernel=2 -device=1 -iters=50
-==70660== Profiling application: applications/reduction -type=float --kernel=2 -device=1 -iters=50
-==70660== Profiling result:
-==70660== Metric result:
-Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
-    Kernel: void reduce2<float>(float*, float*, unsigned int)
-         52                        achieved_occupancy                        Achieved Occupancy    0.935789    0.936209    0.935863
-         52                             sm_efficiency                   Multiprocessor Activity      99.73%      99.80%      99.79%
-         52                 warp_execution_efficiency                 Warp Execution Efficiency      95.41%      95.41%      95.41%
+==1800== NVPROF is profiling process 1800, command: applications/reduction -type=float --kernel=2 -device=0 -iters=30
+==1800== Profiling application: applications/reduction -type=float --kernel=2 -device=0 -iters=30
+==1800== Profiling result:
+   Start  Duration            Grid Size      Block Size     Regs*    SSMem*    DSMem*      Size  Throughput           Device   Context    Stream  Name
+511.45ms  27.362ms                    -               -         -         -         -  64.000MB  2.2842GB/s  GeForce GTX 980         1         7  [CUDA memcpy HtoD]
+539.01ms  82.589us                    -               -         -         -         -  256.00KB  2.9561GB/s  GeForce GTX 980         1         7  [CUDA memcpy HtoD]
+539.11ms  3.9110ms          (65536 1 1)       (256 1 1)         9        0B  1.0000KB         -           -  GeForce GTX 980         1         7  void reduce2<float>(float*, float*, unsigned int) [115]
+543.14ms  3.9054ms          (65536 1 1)       (256 1 1)         9        0B  1.0000KB         -           -  GeForce GTX 980         1         7  void reduce2<float>(float*, float*, unsigned int) [124]
+547.91ms  3.9063ms          (65536 1 1)       (256 1 1)         9        0B  1.0000KB         -           -  GeForce GTX 980         1         7  void reduce2<float>(float*, float*, unsigned int) [135]
+552.10ms  3.9019ms          (65536 1 1)       (256 1 1)         9        0B  1.0000KB         -           -  GeForce GTX 980         1         7  void reduce2<float>(float*, float*, unsigned int) [145]
+556.18ms  3.9008ms          (65536 1 1)       (256 1 1)         9        0B  1.0000KB         -           -  GeForce GTX 980         1         7  void reduce2<float>(float*, float*, unsigned int) [155]
+560.97ms  3.9058ms          (65536 1 1)       (256 1 1)         9        0B  1.0000KB         -           -  GeForce GTX 980         1         7  void reduce2<float>(float*, float*, unsigned int) [165]
+565.12ms  3.9015ms          (65536 1 1)       (256 1 1)         9        0B  1.0000KB         -           -  GeForce GTX 980         1         7  void reduce2<float>(float*, float*, unsigned int) [175]
+569.14ms  3.9013ms          (65536 1 1)       (256 1 1)         9        0B  1.0000KB         -           -  GeForce GTX 980         1         7  void reduce2<float>(float*, float*, unsigned int) [185]
+573.21ms  3.9020ms          (65536 1 1)       (256 1 1)         9        0B  1.0000KB         -           -  GeForce GTX 980         1         7  void reduce2<float>(float*, float*, unsigned int) [195]
+578.00ms  3.9052ms          (65536 1 1)       (256 1 1)         9        0B  1.0000KB         -           -  GeForce GTX 980         1         7  void reduce2<float>(float*, float*, unsigned int) [205]
+582.20ms  3.9023ms          (65536 1 1)       (256 1 1)         9        0B  1.0000KB         -           -  GeForce GTX 980         1         7  void reduce2<float>(float*, float*, unsigned int) [215]
+586.33ms  3.9014ms          (65536 1 1)       (256 1 1)         9        0B  1.0000KB         -           -  GeForce GTX 980         1         7  void reduce2<float>(float*, float*, unsigned int) [225]
+590.41ms  3.9046ms          (65536 1 1)       (256 1 1)         9        0B  1.0000KB         -           -  GeForce GTX 980         1         7  void reduce2<float>(float*, float*, unsigned int) [235]
+595.15ms  3.9055ms          (65536 1 1)       (256 1 1)         9        0B  1.0000KB         -           -  GeForce GTX 980         1         7  void reduce2<float>(float*, float*, unsigned int) [245]
+599.34ms  3.9015ms          (65536 1 1)       (256 1 1)         9        0B  1.0000KB         -           -  GeForce GTX 980         1         7  void reduce2<float>(float*, float*, unsigned int) [255]
+603.42ms  3.9014ms          (65536 1 1)       (256 1 1)         9        0B  1.0000KB         -           -  GeForce GTX 980         1         7  void reduce2<float>(float*, float*, unsigned int) [265]
+607.48ms  3.9046ms          (65536 1 1)       (256 1 1)         9        0B  1.0000KB         -           -  GeForce GTX 980         1         7  void reduce2<float>(float*, float*, unsigned int) [275]
+612.25ms  3.9057ms          (65536 1 1)       (256 1 1)         9        0B  1.0000KB         -           -  GeForce GTX 980         1         7  void reduce2<float>(float*, float*, unsigned int) [285]
+616.42ms  3.9006ms          (65536 1 1)       (256 1 1)         9        0B  1.0000KB         -           -  GeForce GTX 980         1         7  void reduce2<float>(float*, float*, unsigned int) [295]
+620.51ms  3.9004ms          (65536 1 1)       (256 1 1)         9        0B  1.0000KB         -           -  GeForce GTX 980         1         7  void reduce2<float>(float*, float*, unsigned int) [305]
+624.58ms  3.9061ms          (65536 1 1)       (256 1 1)         9        0B  1.0000KB         -           -  GeForce GTX 980         1         7  void reduce2<float>(float*, float*, unsigned int) [315]
+629.39ms  3.9053ms          (65536 1 1)       (256 1 1)         9        0B  1.0000KB         -           -  GeForce GTX 980         1         7  void reduce2<float>(float*, float*, unsigned int) [325]
+633.58ms  3.9005ms          (65536 1 1)       (256 1 1)         9        0B  1.0000KB         -           -  GeForce GTX 980         1         7  void reduce2<float>(float*, float*, unsigned int) [335]
+637.65ms  3.9005ms          (65536 1 1)       (256 1 1)         9        0B  1.0000KB         -           -  GeForce GTX 980         1         7  void reduce2<float>(float*, float*, unsigned int) [345]
+641.73ms  3.9048ms          (65536 1 1)       (256 1 1)         9        0B  1.0000KB         -           -  GeForce GTX 980         1         7  void reduce2<float>(float*, float*, unsigned int) [355]
+646.53ms  3.9055ms          (65536 1 1)       (256 1 1)         9        0B  1.0000KB         -           -  GeForce GTX 980         1         7  void reduce2<float>(float*, float*, unsigned int) [365]
+650.72ms  3.9016ms          (65536 1 1)       (256 1 1)         9        0B  1.0000KB         -           -  GeForce GTX 980         1         7  void reduce2<float>(float*, float*, unsigned int) [375]
+654.80ms  3.9011ms          (65536 1 1)       (256 1 1)         9        0B  1.0000KB         -           -  GeForce GTX 980         1         7  void reduce2<float>(float*, float*, unsigned int) [385]
+658.87ms  3.9049ms          (65536 1 1)       (256 1 1)         9        0B  1.0000KB         -           -  GeForce GTX 980         1         7  void reduce2<float>(float*, float*, unsigned int) [395]
+663.65ms  3.9047ms          (65536 1 1)       (256 1 1)         9        0B  1.0000KB         -           -  GeForce GTX 980         1         7  void reduce2<float>(float*, float*, unsigned int) [405]
+667.84ms  3.9015ms          (65536 1 1)       (256 1 1)         9        0B  1.0000KB         -           -  GeForce GTX 980         1         7  void reduce2<float>(float*, float*, unsigned int) [415]
+671.91ms  3.9015ms          (65536 1 1)       (256 1 1)         9        0B  1.0000KB         -           -  GeForce GTX 980         1         7  void reduce2<float>(float*, float*, unsigned int) [425]
+675.99ms  83.326us                    -               -         -         -         -  256.00KB  2.9299GB/s  GeForce GTX 980         1         7  [CUDA memcpy DtoH]
+
+Regs: Number of registers used per CUDA thread. This number includes registers used internally by the CUDA driver and/or tools and can be more than what the compiler shows.
+SSMem: Static shared memory allocated per CUDA block.
+DSMem: Dynamic shared memory allocated per CUDA block.
 applications/reduction Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
-Using Device 1: GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
+Using Device 0: GeForce GTX 980
 
 Reducing array of type float
 
@@ -36,27 +69,26 @@ Reducing array of type float
 256 threads (max)
 65536 blocks
 
-iterated 50, average time is 46.170220 msecs.
+iterated 30, average time is 11.637235 msecs.
 
 GPU result = 65282.058594
 CPU result = 65281.992188
 
 Test passed
-==69236== NVPROF is profiling process 69236, command: applications/reduction -type=float --kernel=2 -device=1 -iters=50
-==69236== Some kernel(s) will be replayed on device 1 in order to collect all events/metrics.
-==69236== Profiling application: applications/reduction -type=float --kernel=2 -device=1 -iters=50
-==69236== Profiling result:
-==69236== Metric result:
+==4812== NVPROF is profiling process 4812, command: applications/reduction -type=float --kernel=2 -device=0 -iters=30
+==4812== Profiling application: applications/reduction -type=float --kernel=2 -device=0 -iters=30
+==4812== Profiling result:
+==4812== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: void reduce2<float>(float*, float*, unsigned int)
-         52                  eligible_warps_per_cycle           Eligible Warps Per Active Cycle    2.178185    2.180475    2.179350
-         52                    dram_read_transactions           Device Memory Read Transactions     2097176     2097336     2097185
-         52                      dram_read_throughput             Device Memory Read Throughput  17.133GB/s  17.152GB/s  17.147GB/s
+         32                        achieved_occupancy                        Achieved Occupancy    0.935854    0.936170    0.935953
+         32                             sm_efficiency                   Multiprocessor Activity      99.63%      99.80%      99.76%
+         32                 warp_execution_efficiency                 Warp Execution Efficiency      95.41%      95.41%      95.41%
 applications/reduction Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
-Using Device 1: GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
+Using Device 0: GeForce GTX 980
 
 Reducing array of type float
 
@@ -64,27 +96,27 @@ Reducing array of type float
 256 threads (max)
 65536 blocks
 
-iterated 50, average time is 43.435957 msecs.
+iterated 30, average time is 47.803289 msecs.
 
 GPU result = 65282.058594
 CPU result = 65281.992188
 
 Test passed
-==72228== NVPROF is profiling process 72228, command: applications/reduction -type=float --kernel=2 -device=1 -iters=50
-==72228== Some kernel(s) will be replayed on device 1 in order to collect all events/metrics.
-==72228== Profiling application: applications/reduction -type=float --kernel=2 -device=1 -iters=50
-==72228== Profiling result:
-==72228== Metric result:
+==3208== NVPROF is profiling process 3208, command: applications/reduction -type=float --kernel=2 -device=0 -iters=30
+==3208== Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+==3208== Profiling application: applications/reduction -type=float --kernel=2 -device=0 -iters=30
+==3208== Profiling result:
+==3208== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: void reduce2<float>(float*, float*, unsigned int)
-         52                   dram_write_transactions          Device Memory Write Transactions       35077       40589       40123
-         52                     dram_write_throughput            Device Memory Write Throughput  293.44MB/s  339.83MB/s  334.74MB/s
-         52                      l2_read_transactions                      L2 Read Transactions     2097223     2097375     2097297
+         32                  eligible_warps_per_cycle           Eligible Warps Per Active Cycle    2.173135    2.179751    2.178053
+         32                    dram_read_transactions           Device Memory Read Transactions     2097172     2176023     2127717
+         32                      dram_read_throughput             Device Memory Read Throughput  17.120GB/s  17.779GB/s  17.385GB/s
 applications/reduction Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
-Using Device 1: GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
+Using Device 0: GeForce GTX 980
 
 Reducing array of type float
 
@@ -92,27 +124,27 @@ Reducing array of type float
 256 threads (max)
 65536 blocks
 
-iterated 50, average time is 47.506559 msecs.
+iterated 30, average time is 45.139925 msecs.
 
 GPU result = 65282.058594
 CPU result = 65281.992188
 
 Test passed
-==71328== NVPROF is profiling process 71328, command: applications/reduction -type=float --kernel=2 -device=1 -iters=50
-==71328== Some kernel(s) will be replayed on device 1 in order to collect all events/metrics.
-==71328== Profiling application: applications/reduction -type=float --kernel=2 -device=1 -iters=50
-==71328== Profiling result:
-==71328== Metric result:
+==3284== NVPROF is profiling process 3284, command: applications/reduction -type=float --kernel=2 -device=0 -iters=30
+==3284== Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+==3284== Profiling application: applications/reduction -type=float --kernel=2 -device=0 -iters=30
+==3284== Profiling result:
+==3284== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: void reduce2<float>(float*, float*, unsigned int)
-         52                        l2_read_throughput                     L2 Throughput (Reads)  17.131GB/s  17.152GB/s  17.146GB/s
-         52                     l2_write_transactions                     L2 Write Transactions       65542       65542       65542
-         52                       l2_write_throughput                    L2 Throughput (Writes)  548.12MB/s  548.85MB/s  547.41MB/s
+         32                   dram_write_transactions          Device Memory Write Transactions       31544       40372       36671
+         32                     dram_write_throughput            Device Memory Write Throughput  263.54MB/s  337.62MB/s  306.13MB/s
+         32                      l2_read_transactions                      L2 Read Transactions     2097351     2251306     2121870
 applications/reduction Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
-Using Device 1: GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
+Using Device 0: GeForce GTX 980
 
 Reducing array of type float
 
@@ -120,26 +152,27 @@ Reducing array of type float
 256 threads (max)
 65536 blocks
 
-iterated 50, average time is 6.922985 msecs.
+iterated 30, average time is 49.628897 msecs.
 
 GPU result = 65282.058594
 CPU result = 65281.992188
 
 Test passed
-==70268== NVPROF is profiling process 70268, command: applications/reduction -type=float --kernel=2 -device=1 -iters=50
-==70268== Profiling application: applications/reduction -type=float --kernel=2 -device=1 -iters=50
-==70268== Profiling result:
-==70268== Metric result:
+==3152== NVPROF is profiling process 3152, command: applications/reduction -type=float --kernel=2 -device=0 -iters=30
+==3152== Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+==3152== Profiling application: applications/reduction -type=float --kernel=2 -device=0 -iters=30
+==3152== Profiling result:
+==3152== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: void reduce2<float>(float*, float*, unsigned int)
-         52                  shared_load_transactions                  Shared Load Transactions     1638400     1638400     1638400
-         52                    shared_load_throughput             Shared Memory Load Throughput  53.376GB/s  53.644GB/s  53.614GB/s
-         52                 shared_store_transactions                 Shared Store Transactions     1310720     1310720     1310720
+         32                        l2_read_throughput                     L2 Throughput (Reads)  17.128GB/s  18.381GB/s  17.338GB/s
+         32                     l2_write_transactions                     L2 Write Transactions       65542       65545       65542
+         32                       l2_write_throughput                    L2 Throughput (Writes)  547.72MB/s  548.54MB/s  547.41MB/s
 applications/reduction Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
-Using Device 1: GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
+Using Device 0: GeForce GTX 980
 
 Reducing array of type float
 
@@ -147,26 +180,26 @@ Reducing array of type float
 256 threads (max)
 65536 blocks
 
-iterated 50, average time is 10.448013 msecs.
+iterated 30, average time is 7.122484 msecs.
 
 GPU result = 65282.058594
 CPU result = 65281.992188
 
 Test passed
-==71196== NVPROF is profiling process 71196, command: applications/reduction -type=float --kernel=2 -device=1 -iters=50
-==71196== Profiling application: applications/reduction -type=float --kernel=2 -device=1 -iters=50
-==71196== Profiling result:
-==71196== Metric result:
+==2168== NVPROF is profiling process 2168, command: applications/reduction -type=float --kernel=2 -device=0 -iters=30
+==2168== Profiling application: applications/reduction -type=float --kernel=2 -device=0 -iters=30
+==2168== Profiling result:
+==2168== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: void reduce2<float>(float*, float*, unsigned int)
-         52                   shared_store_throughput            Shared Memory Store Throughput  42.717GB/s  42.917GB/s  42.892GB/s
-         52                         branch_efficiency                         Branch Efficiency     100.00%     100.00%     100.00%
-         52                               cf_executed        Executed Control-Flow Instructions    16056320    16056320    16056320
+         32                  shared_load_transactions                  Shared Load Transactions     1638400     1638400     1638400
+         32                    shared_load_throughput             Shared Memory Load Throughput  53.417GB/s  53.637GB/s  53.560GB/s
+         32                 shared_store_transactions                 Shared Store Transactions     1310720     1310720     1310720
 applications/reduction Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
-Using Device 1: GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
+Using Device 0: GeForce GTX 980
 
 Reducing array of type float
 
@@ -174,27 +207,54 @@ Reducing array of type float
 256 threads (max)
 65536 blocks
 
-iterated 50, average time is 77.497295 msecs.
+iterated 30, average time is 10.213070 msecs.
 
 GPU result = 65282.058594
 CPU result = 65281.992188
 
 Test passed
-==69704== NVPROF is profiling process 69704, command: applications/reduction -type=float --kernel=2 -device=1 -iters=50
-==69704== Some kernel(s) will be replayed on device 1 in order to collect all events/metrics.
-==69704== Profiling application: applications/reduction -type=float --kernel=2 -device=1 -iters=50
-==69704== Profiling result:
-==69704== Metric result:
+==3456== NVPROF is profiling process 3456, command: applications/reduction -type=float --kernel=2 -device=0 -iters=30
+==3456== Profiling application: applications/reduction -type=float --kernel=2 -device=0 -iters=30
+==3456== Profiling result:
+==3456== Metric result:
+Invocations                               Metric Name                        Metric Description         Min         Max         Avg
+Device "GeForce GTX 980 (0)"
+    Kernel: void reduce2<float>(float*, float*, unsigned int)
+         32                   shared_store_throughput            Shared Memory Store Throughput  42.660GB/s  42.924GB/s  42.843GB/s
+         32                         branch_efficiency                         Branch Efficiency     100.00%     100.00%     100.00%
+         32                               cf_executed        Executed Control-Flow Instructions    16056320    16056320    16056320
+applications/reduction Starting...
+
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
+Using Device 0: GeForce GTX 980
+
+Reducing array of type float
+
+16777216 elements
+256 threads (max)
+65536 blocks
+
+iterated 30, average time is 82.362972 msecs.
+
+GPU result = 65282.058594
+CPU result = 65281.992188
+
+Test passed
+==2964== NVPROF is profiling process 2964, command: applications/reduction -type=float --kernel=2 -device=0 -iters=30
+==2964== Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+==2964== Profiling application: applications/reduction -type=float --kernel=2 -device=0 -iters=30
+==2964== Profiling result:
+==2964== Metric result:
 Invocations                               Metric Name                            Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: void reduce2<float>(float*, float*, unsigned int)
-         52                                 cf_issued              Issued Control-Flow Instructions    16056320    16056320    16056320
-         52                             flop_count_sp   Floating Point Operations(Single Precision)    16711680    16711680    16711680
-         52                        flop_sp_efficiency                  FLOP Efficiency(Peak Single)       0.28%       0.28%       0.28%
+         32                                 cf_issued              Issued Control-Flow Instructions    16056320    16056320    16056320
+         32                             flop_count_sp   Floating Point Operations(Single Precision)    16711680    16711680    16711680
+         32                        flop_sp_efficiency                  FLOP Efficiency(Peak Single)       0.28%       0.28%       0.28%
 applications/reduction Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
-Using Device 1: GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
+Using Device 0: GeForce GTX 980
 
 Reducing array of type float
 
@@ -202,27 +262,27 @@ Reducing array of type float
 256 threads (max)
 65536 blocks
 
-iterated 50, average time is 65.451087 msecs.
+iterated 30, average time is 66.444525 msecs.
 
 GPU result = 65282.058594
 CPU result = 65281.992188
 
 Test passed
-==72164== NVPROF is profiling process 72164, command: applications/reduction -type=float --kernel=2 -device=1 -iters=50
-==72164== Some kernel(s) will be replayed on device 1 in order to collect all events/metrics.
-==72164== Profiling application: applications/reduction -type=float --kernel=2 -device=1 -iters=50
-==72164== Profiling result:
-==72164== Metric result:
+==5044== NVPROF is profiling process 5044, command: applications/reduction -type=float --kernel=2 -device=0 -iters=30
+==5044== Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+==5044== Profiling application: applications/reduction -type=float --kernel=2 -device=0 -iters=30
+==5044== Profiling result:
+==5044== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: void reduce2<float>(float*, float*, unsigned int)
-         52                            gld_throughput                    Global Load Throughput  17.137GB/s  17.151GB/s  17.148GB/s
-         52                          gld_transactions                  Global Load Transactions     4194304     4194304     4194304
-         52                            gst_throughput                   Global Store Throughput  548.39MB/s  548.82MB/s  548.36MB/s
+         32                            gld_throughput                    Global Load Throughput  17.110GB/s  17.137GB/s  17.131GB/s
+         32                          gld_transactions                  Global Load Transactions     4194304     4194304     4194304
+         32                            gst_throughput                   Global Store Throughput  547.53MB/s  548.39MB/s  547.41MB/s
 applications/reduction Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
-Using Device 1: GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
+Using Device 0: GeForce GTX 980
 
 Reducing array of type float
 
@@ -230,26 +290,26 @@ Reducing array of type float
 256 threads (max)
 65536 blocks
 
-iterated 50, average time is 10.953068 msecs.
+iterated 30, average time is 10.724271 msecs.
 
 GPU result = 65282.058594
 CPU result = 65281.992188
 
 Test passed
-==67260== NVPROF is profiling process 67260, command: applications/reduction -type=float --kernel=2 -device=1 -iters=50
-==67260== Profiling application: applications/reduction -type=float --kernel=2 -device=1 -iters=50
-==67260== Profiling result:
-==67260== Metric result:
+==4756== NVPROF is profiling process 4756, command: applications/reduction -type=float --kernel=2 -device=0 -iters=30
+==4756== Profiling application: applications/reduction -type=float --kernel=2 -device=0 -iters=30
+==4756== Profiling result:
+==4756== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: void reduce2<float>(float*, float*, unsigned int)
-         52                          gst_transactions                 Global Store Transactions       65536       65536       65536
-         52                               inst_issued                       Instructions Issued    47253635    47253970    47253778
-         52                             inst_per_warp                     Instructions per warp   90.125000   90.125000   90.125000
+         32                          gst_transactions                 Global Store Transactions       65536       65536       65536
+         32                               inst_issued                       Instructions Issued    47253644    47254184    47253930
+         32                             inst_per_warp                     Instructions per warp   90.125000   90.125000   90.125000
 applications/reduction Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
-Using Device 1: GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
+Using Device 0: GeForce GTX 980
 
 Reducing array of type float
 
@@ -257,17 +317,17 @@ Reducing array of type float
 256 threads (max)
 65536 blocks
 
-iterated 50, average time is 7.737007 msecs.
+iterated 30, average time is 7.900248 msecs.
 
 GPU result = 65282.058594
 CPU result = 65281.992188
 
 Test passed
-==69644== NVPROF is profiling process 69644, command: applications/reduction -type=float --kernel=2 -device=1 -iters=50
-==69644== Profiling application: applications/reduction -type=float --kernel=2 -device=1 -iters=50
-==69644== Profiling result:
-==69644== Metric result:
+==3212== NVPROF is profiling process 3212, command: applications/reduction -type=float --kernel=2 -device=0 -iters=30
+==3212== Profiling application: applications/reduction -type=float --kernel=2 -device=0 -iters=30
+==3212== Profiling result:
+==3212== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: void reduce2<float>(float*, float*, unsigned int)
-         52                                       ipc                              Executed IPC    1.996619    2.005572    2.004497
+         32                                       ipc                              Executed IPC    1.997632    2.004828    2.002669

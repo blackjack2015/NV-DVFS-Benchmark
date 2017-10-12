@@ -1,0 +1,62 @@
+applications/quasirandomGenerator Starting...
+
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
+Allocating GPU memory...
+Allocating CPU memory...
+Initializing QRNG tables...
+
+Testing QRNG...
+
+quasirandomGenerator, Total Time = 0.00195 s
+quasirandomGenerator, Throughput = 8.0713 GNumbers/s, Time = 0.00039 s, Size = 3145728 Numbers, NumDevsUsed = 1, Workgroup = 384
+
+Reading GPU results...
+Comparing to the CPU results...
+
+L1 norm: 7.275964E-012
+
+Testing inverseCNDgpu()...
+
+quasirandomGenerator-inverse, Total Time = 0.00076 s
+quasirandomGenerator-inverse, Throughput = 8.3044 GNumbers/s, Time = 0.00038 s, Size = 3145728 Numbers, NumDevsUsed = 1, Workgroup = 128
+Reading GPU results...
+
+Comparing to the CPU results...
+L1 norm: 9.439909E-008
+
+Shutting down...
+==13152== NVPROF is profiling process 13152, command: applications/quasirandomGenerator -device=0 -iters=5
+==13152== Profiling application: applications/quasirandomGenerator -device=0 -iters=5
+==13152== Profiling result:
+Time(%)      Time     Calls       Avg       Min       Max  Name
+ 81.57%  12.627ms         2  6.3136ms  4.7276ms  7.8997ms  [CUDA memcpy DtoH]
+ 12.25%  1.8963ms         6  316.05us  315.29us  317.62us  quasirandomGeneratorKernel(float*, unsigned int, unsigned int)
+  6.15%  951.34us         3  317.11us  316.02us  318.42us  inverseCNDKernel(float*, unsigned int*, unsigned int)
+  0.02%  2.6240us         1  2.6240us  2.6240us  2.6240us  [CUDA memcpy HtoD]
+  0.01%  2.1120us         2  1.0560us  1.0560us  1.0560us  [CUDA memset]
+
+==13152== API calls:
+Time(%)      Time     Calls       Avg       Min       Max  Name
+ 71.63%  151.16ms         1  151.16ms  151.16ms  151.16ms  cudaMalloc
+ 18.62%  39.292ms         1  39.292ms  39.292ms  39.292ms  cudaDeviceReset
+  6.46%  13.643ms         2  6.8216ms  5.0006ms  8.6427ms  cudaMemcpy
+  1.98%  4.1741ms        10  417.41us  6.0170us  813.57us  cudaDeviceSynchronize
+  0.41%  869.84us         2  434.92us  434.47us  435.37us  cudaGetDeviceProperties
+  0.31%  655.01us        91  7.1970us       0ns  292.45us  cuDeviceGetAttribute
+  0.15%  325.85us         6  54.308us  34.902us  61.078us  cudaEventSynchronize
+  0.14%  297.27us         1  297.27us  297.27us  297.27us  cudaFree
+  0.08%  158.56us         9  17.618us  14.141us  25.274us  cudaLaunch
+  0.05%  105.91us        12  8.8250us  5.1150us  12.336us  cudaEventRecord
+  0.05%  105.01us         2  52.502us  35.503us  69.502us  cudaMemset
+  0.04%  91.768us         1  91.768us  91.768us  91.768us  cuDeviceGetName
+  0.04%  87.857us         6  14.642us  8.4250us  16.248us  cudaEventElapsedTime
+  0.01%  28.583us         1  28.583us  28.583us  28.583us  cudaMemcpyToSymbol
+  0.01%  11.735us         1  11.735us  11.735us  11.735us  cudaSetDevice
+  0.00%  6.6200us         1  6.6200us  6.6200us  6.6200us  cuDeviceTotalMem
+  0.00%  6.6200us        27     245ns       0ns  1.2040us  cudaSetupArgument
+  0.00%  5.7180us         9     635ns     300ns  1.8060us  cudaConfigureCall
+  0.00%  4.8150us         2  2.4070us     903ns  3.9120us  cudaEventCreate
+  0.00%  3.6110us         3  1.2030us     301ns  2.4070us  cuDeviceGetCount
+  0.00%  2.4070us         9     267ns       0ns     301ns  cudaGetLastError
+  0.00%  2.4060us         3     802ns     601ns  1.2030us  cuDeviceGet
+  0.00%     903ns         1     903ns     903ns     903ns  cudaGetDeviceCount

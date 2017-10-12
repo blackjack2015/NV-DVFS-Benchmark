@@ -1,0 +1,42 @@
+[Matrix Multiply Using CUDA] - Starting...
+GPU Device 0: "GeForce GTX 980" with compute capability 5.2
+
+MatrixA(1024,1024), MatrixB(1024,1024)
+Computing result using CUDA Kernel...
+done
+iterated 5, average time is 5.790547 msec
+Performance= 370.86 GFlop/s, Time= 5.791 msec, Size= 2147483648 Ops, WorkgroupSize= 1024 threads/block
+Checking computed result for correctness: Result = PASS
+
+Note: For peak performance, please refer to the matrixMulCUBLAS example.
+==10768== NVPROF is profiling process 10768, command: applications/matrixMul -wA=1024 -hA=1024 -wB=1024 -hB=1024 -device=0 -iters=5
+==10768== Profiling application: applications/matrixMul -wA=1024 -hA=1024 -wB=1024 -hB=1024 -device=0 -iters=5
+==10768== Profiling result:
+Time(%)      Time     Calls       Avg       Min       Max  Name
+ 88.96%  39.983ms         7  5.7119ms  5.6914ms  5.7369ms  void matrixMulCUDA<int=32>(float*, float*, float*, int, int)
+  6.63%  2.9812ms         2  1.4906ms  1.4551ms  1.5260ms  [CUDA memcpy HtoD]
+  4.41%  1.9810ms         1  1.9810ms  1.9810ms  1.9810ms  [CUDA memcpy DtoH]
+
+==10768== API calls:
+Time(%)      Time     Calls       Avg       Min       Max  Name
+ 57.84%  138.38ms         3  46.125ms  1.0458ms  136.28ms  cudaMalloc
+ 21.85%  52.280ms         1  52.280ms  52.280ms  52.280ms  cudaDeviceReset
+ 14.52%  34.730ms         6  5.7883ms  5.7699ms  5.8090ms  cudaThreadSynchronize
+  2.69%  6.4276ms         3  2.1425ms  7.8230us  6.4099ms  cudaDeviceSynchronize
+  2.21%  5.2756ms         3  1.7585ms  1.1779ms  2.3192ms  cudaMemcpy
+  0.22%  532.55us         3  177.52us  119.15us  259.66us  cudaFree
+  0.17%  405.88us        91  4.4600us       0ns  227.46us  cuDeviceGetAttribute
+  0.17%  402.88us         1  402.88us  402.88us  402.88us  cudaGetDeviceProperties
+  0.15%  347.82us         6  57.969us  55.362us  61.379us  cudaEventSynchronize
+  0.05%  130.88us         7  18.697us  13.840us  43.627us  cudaLaunch
+  0.05%  110.42us        12  9.2010us  5.4160us  12.637us  cudaEventRecord
+  0.04%  97.183us         6  16.197us  14.442us  18.053us  cudaEventElapsedTime
+  0.03%  79.130us         1  79.130us  79.130us  79.130us  cuDeviceGetName
+  0.01%  12.937us         1  12.937us  12.937us  12.937us  cudaSetDevice
+  0.00%  8.1240us        35     232ns       0ns     903ns  cudaSetupArgument
+  0.00%  6.3180us         2  3.1590us  1.2030us  5.1150us  cudaEventCreate
+  0.00%  6.0180us         1  6.0180us  6.0180us  6.0180us  cuDeviceTotalMem
+  0.00%  4.5130us         7     644ns     300ns  2.4070us  cudaConfigureCall
+  0.00%  3.6110us         3  1.2030us     301ns  2.7080us  cuDeviceGetCount
+  0.00%  2.4070us         1  2.4070us  2.4070us  2.4070us  cudaGetDevice
+  0.00%  1.5050us         3     501ns     301ns     903ns  cuDeviceGet

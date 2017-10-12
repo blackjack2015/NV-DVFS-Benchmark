@@ -1,11 +1,11 @@
 applications/scan Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Allocating and initializing host arrays...
 Allocating and initializing CUDA arrays...
 Initializing CUDA-C scan...
 
-***Running GPU scan for large arrays (50 identical iterations)...
+***Running GPU scan for large arrays (30 identical iterations)...
 
 Running scan for 262144 elements (26 arrays)...
 Validating the results...
@@ -15,36 +15,121 @@ Validating the results...
  ...Results Match
 
 
-scan, Total Time = 1.41079 s
-scan, Throughput = 9.2907 MElements/s, Time = 0.02822 s, Size = 262144 Elements, NumDevsUsed = 1, Workgroup = 256
+scan, Total Time = 0.11289 s
+scan, Throughput = 69.6662 MElements/s, Time = 0.00376 s, Size = 262144 Elements, NumDevsUsed = 1, Workgroup = 256
 
 Shutting down...
-==72068== NVPROF is profiling process 72068, command: applications/scan -device=1 -iters=50
-==72068== Profiling application: applications/scan -device=1 -iters=50
-==72068== Profiling result:
-==72068== Metric result:
-Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
-    Kernel: scanExclusiveShared2(unsigned int*, unsigned int*, unsigned int*, unsigned int, unsigned int)
-         51                        achieved_occupancy                        Achieved Occupancy    0.202223    0.210293    0.207635
-         51                             sm_efficiency                   Multiprocessor Activity      66.61%      74.97%      71.69%
-         51                 warp_execution_efficiency                 Warp Execution Efficiency     100.00%     100.00%     100.00%
-    Kernel: scanExclusiveShared(uint4*, uint4*, unsigned int)
-         51                        achieved_occupancy                        Achieved Occupancy    0.951361    0.953976    0.952740
-         51                             sm_efficiency                   Multiprocessor Activity      99.08%      99.45%      99.31%
-         51                 warp_execution_efficiency                 Warp Execution Efficiency     100.00%     100.00%     100.00%
-    Kernel: uniformUpdate(uint4*, unsigned int*)
-         51                        achieved_occupancy                        Achieved Occupancy    0.897927    0.904170    0.901381
-         51                             sm_efficiency                   Multiprocessor Activity      98.87%      99.46%      99.29%
-         51                 warp_execution_efficiency                 Warp Execution Efficiency      97.06%      97.06%      97.06%
+==3208== NVPROF is profiling process 3208, command: applications/scan -device=0 -iters=30
+==3208== Profiling application: applications/scan -device=0 -iters=30
+==3208== Profiling result:
+   Start  Duration            Grid Size      Block Size     Regs*    SSMem*    DSMem*      Size  Throughput           Device   Context    Stream  Name
+309.30ms  11.574ms                    -               -         -         -         -  26.000MB  2.1938GB/s  GeForce GTX 980         1         7  [CUDA memcpy HtoD]
+321.08ms  1.7173ms           (6656 1 1)       (256 1 1)        14  2.0000KB        0B         -           -  GeForce GTX 980         1         7  scanExclusiveShared(uint4*, uint4*, unsigned int) [115]
+322.80ms  29.791us             (26 1 1)       (256 1 1)        11  2.0000KB        0B         -           -  GeForce GTX 980         1         7  scanExclusiveShared2(unsigned int*, unsigned int*, unsigned int*, unsigned int, unsigned int) [123]
+322.84ms  1.8803ms           (6656 1 1)       (256 1 1)         8        4B        0B         -           -  GeForce GTX 980         1         7  uniformUpdate(uint4*, unsigned int*) [128]
+325.62ms  1.7398ms           (6656 1 1)       (256 1 1)        14  2.0000KB        0B         -           -  GeForce GTX 980         1         7  scanExclusiveShared(uint4*, uint4*, unsigned int) [140]
+327.37ms  31.071us             (26 1 1)       (256 1 1)        11  2.0000KB        0B         -           -  GeForce GTX 980         1         7  scanExclusiveShared2(unsigned int*, unsigned int*, unsigned int*, unsigned int, unsigned int) [148]
+327.41ms  1.7242ms           (6656 1 1)       (256 1 1)         8        4B        0B         -           -  GeForce GTX 980         1         7  uniformUpdate(uint4*, unsigned int*) [153]
+329.40ms  1.7098ms           (6656 1 1)       (256 1 1)        14  2.0000KB        0B         -           -  GeForce GTX 980         1         7  scanExclusiveShared(uint4*, uint4*, unsigned int) [164]
+331.12ms  30.047us             (26 1 1)       (256 1 1)        11  2.0000KB        0B         -           -  GeForce GTX 980         1         7  scanExclusiveShared2(unsigned int*, unsigned int*, unsigned int*, unsigned int, unsigned int) [172]
+331.15ms  1.7063ms           (6656 1 1)       (256 1 1)         8        4B        0B         -           -  GeForce GTX 980         1         7  uniformUpdate(uint4*, unsigned int*) [177]
+333.01ms  1.7153ms           (6656 1 1)       (256 1 1)        14  2.0000KB        0B         -           -  GeForce GTX 980         1         7  scanExclusiveShared(uint4*, uint4*, unsigned int) [188]
+334.73ms  28.767us             (26 1 1)       (256 1 1)        11  2.0000KB        0B         -           -  GeForce GTX 980         1         7  scanExclusiveShared2(unsigned int*, unsigned int*, unsigned int*, unsigned int, unsigned int) [196]
+334.77ms  1.7061ms           (6656 1 1)       (256 1 1)         8        4B        0B         -           -  GeForce GTX 980         1         7  uniformUpdate(uint4*, unsigned int*) [201]
+336.62ms  1.7104ms           (6656 1 1)       (256 1 1)        14  2.0000KB        0B         -           -  GeForce GTX 980         1         7  scanExclusiveShared(uint4*, uint4*, unsigned int) [212]
+338.34ms  30.815us             (26 1 1)       (256 1 1)        11  2.0000KB        0B         -           -  GeForce GTX 980         1         7  scanExclusiveShared2(unsigned int*, unsigned int*, unsigned int*, unsigned int, unsigned int) [220]
+338.37ms  1.7056ms           (6656 1 1)       (256 1 1)         8        4B        0B         -           -  GeForce GTX 980         1         7  uniformUpdate(uint4*, unsigned int*) [225]
+340.23ms  1.8971ms           (6656 1 1)       (256 1 1)        14  2.0000KB        0B         -           -  GeForce GTX 980         1         7  scanExclusiveShared(uint4*, uint4*, unsigned int) [236]
+342.13ms  29.311us             (26 1 1)       (256 1 1)        11  2.0000KB        0B         -           -  GeForce GTX 980         1         7  scanExclusiveShared2(unsigned int*, unsigned int*, unsigned int*, unsigned int, unsigned int) [244]
+342.17ms  1.7375ms           (6656 1 1)       (256 1 1)         8        4B        0B         -           -  GeForce GTX 980         1         7  uniformUpdate(uint4*, unsigned int*) [249]
+344.82ms  1.7127ms           (6656 1 1)       (256 1 1)        14  2.0000KB        0B         -           -  GeForce GTX 980         1         7  scanExclusiveShared(uint4*, uint4*, unsigned int) [260]
+346.54ms  32.031us             (26 1 1)       (256 1 1)        11  2.0000KB        0B         -           -  GeForce GTX 980         1         7  scanExclusiveShared2(unsigned int*, unsigned int*, unsigned int*, unsigned int, unsigned int) [268]
+346.58ms  1.7097ms           (6656 1 1)       (256 1 1)         8        4B        0B         -           -  GeForce GTX 980         1         7  uniformUpdate(uint4*, unsigned int*) [273]
+348.63ms  1.7124ms           (6656 1 1)       (256 1 1)        14  2.0000KB        0B         -           -  GeForce GTX 980         1         7  scanExclusiveShared(uint4*, uint4*, unsigned int) [284]
+350.34ms  27.647us             (26 1 1)       (256 1 1)        11  2.0000KB        0B         -           -  GeForce GTX 980         1         7  scanExclusiveShared2(unsigned int*, unsigned int*, unsigned int*, unsigned int, unsigned int) [292]
+350.38ms  1.7073ms           (6656 1 1)       (256 1 1)         8        4B        0B         -           -  GeForce GTX 980         1         7  uniformUpdate(uint4*, unsigned int*) [297]
+352.28ms  1.7124ms           (6656 1 1)       (256 1 1)        14  2.0000KB        0B         -           -  GeForce GTX 980         1         7  scanExclusiveShared(uint4*, uint4*, unsigned int) [308]
+354.00ms  28.256us             (26 1 1)       (256 1 1)        11  2.0000KB        0B         -           -  GeForce GTX 980         1         7  scanExclusiveShared2(unsigned int*, unsigned int*, unsigned int*, unsigned int, unsigned int) [316]
+354.03ms  1.7056ms           (6656 1 1)       (256 1 1)         8        4B        0B         -           -  GeForce GTX 980         1         7  uniformUpdate(uint4*, unsigned int*) [321]
+355.94ms  1.8772ms           (6656 1 1)       (256 1 1)        14  2.0000KB        0B         -           -  GeForce GTX 980         1         7  scanExclusiveShared(uint4*, uint4*, unsigned int) [332]
+357.82ms  29.311us             (26 1 1)       (256 1 1)        11  2.0000KB        0B         -           -  GeForce GTX 980         1         7  scanExclusiveShared2(unsigned int*, unsigned int*, unsigned int*, unsigned int, unsigned int) [340]
+357.85ms  1.7508ms           (6656 1 1)       (256 1 1)         8        4B        0B         -           -  GeForce GTX 980         1         7  uniformUpdate(uint4*, unsigned int*) [345]
+360.49ms  1.7385ms           (6656 1 1)       (256 1 1)        14  2.0000KB        0B         -           -  GeForce GTX 980         1         7  scanExclusiveShared(uint4*, uint4*, unsigned int) [356]
+362.25ms  30.271us             (26 1 1)       (256 1 1)        11  2.0000KB        0B         -           -  GeForce GTX 980         1         7  scanExclusiveShared2(unsigned int*, unsigned int*, unsigned int*, unsigned int, unsigned int) [364]
+362.28ms  1.7042ms           (6656 1 1)       (256 1 1)         8        4B        0B         -           -  GeForce GTX 980         1         7  uniformUpdate(uint4*, unsigned int*) [369]
+364.30ms  1.7091ms           (6656 1 1)       (256 1 1)        14  2.0000KB        0B         -           -  GeForce GTX 980         1         7  scanExclusiveShared(uint4*, uint4*, unsigned int) [380]
+366.01ms  29.535us             (26 1 1)       (256 1 1)        11  2.0000KB        0B         -           -  GeForce GTX 980         1         7  scanExclusiveShared2(unsigned int*, unsigned int*, unsigned int*, unsigned int, unsigned int) [388]
+366.05ms  1.7072ms           (6656 1 1)       (256 1 1)         8        4B        0B         -           -  GeForce GTX 980         1         7  uniformUpdate(uint4*, unsigned int*) [393]
+367.96ms  1.7111ms           (6656 1 1)       (256 1 1)        14  2.0000KB        0B         -           -  GeForce GTX 980         1         7  scanExclusiveShared(uint4*, uint4*, unsigned int) [404]
+369.68ms  29.055us             (26 1 1)       (256 1 1)        11  2.0000KB        0B         -           -  GeForce GTX 980         1         7  scanExclusiveShared2(unsigned int*, unsigned int*, unsigned int*, unsigned int, unsigned int) [412]
+369.71ms  1.7084ms           (6656 1 1)       (256 1 1)         8        4B        0B         -           -  GeForce GTX 980         1         7  uniformUpdate(uint4*, unsigned int*) [417]
+371.63ms  1.7102ms           (6656 1 1)       (256 1 1)        14  2.0000KB        0B         -           -  GeForce GTX 980         1         7  scanExclusiveShared(uint4*, uint4*, unsigned int) [428]
+373.35ms  28.991us             (26 1 1)       (256 1 1)        11  2.0000KB        0B         -           -  GeForce GTX 980         1         7  scanExclusiveShared2(unsigned int*, unsigned int*, unsigned int*, unsigned int, unsigned int) [436]
+373.38ms  1.8920ms           (6656 1 1)       (256 1 1)         8        4B        0B         -           -  GeForce GTX 980         1         7  uniformUpdate(uint4*, unsigned int*) [441]
+376.19ms  1.7356ms           (6656 1 1)       (256 1 1)        14  2.0000KB        0B         -           -  GeForce GTX 980         1         7  scanExclusiveShared(uint4*, uint4*, unsigned int) [452]
+377.93ms  30.784us             (26 1 1)       (256 1 1)        11  2.0000KB        0B         -           -  GeForce GTX 980         1         7  scanExclusiveShared2(unsigned int*, unsigned int*, unsigned int*, unsigned int, unsigned int) [460]
+377.97ms  1.7092ms           (6656 1 1)       (256 1 1)         8        4B        0B         -           -  GeForce GTX 980         1         7  uniformUpdate(uint4*, unsigned int*) [465]
+380.00ms  1.7117ms           (6656 1 1)       (256 1 1)        14  2.0000KB        0B         -           -  GeForce GTX 980         1         7  scanExclusiveShared(uint4*, uint4*, unsigned int) [476]
+381.72ms  30.047us             (26 1 1)       (256 1 1)        11  2.0000KB        0B         -           -  GeForce GTX 980         1         7  scanExclusiveShared2(unsigned int*, unsigned int*, unsigned int*, unsigned int, unsigned int) [484]
+381.76ms  1.7025ms           (6656 1 1)       (256 1 1)         8        4B        0B         -           -  GeForce GTX 980         1         7  uniformUpdate(uint4*, unsigned int*) [489]
+383.67ms  1.7180ms           (6656 1 1)       (256 1 1)        14  2.0000KB        0B         -           -  GeForce GTX 980         1         7  scanExclusiveShared(uint4*, uint4*, unsigned int) [500]
+385.39ms  28.223us             (26 1 1)       (256 1 1)        11  2.0000KB        0B         -           -  GeForce GTX 980         1         7  scanExclusiveShared2(unsigned int*, unsigned int*, unsigned int*, unsigned int, unsigned int) [508]
+385.43ms  1.7031ms           (6656 1 1)       (256 1 1)         8        4B        0B         -           -  GeForce GTX 980         1         7  uniformUpdate(uint4*, unsigned int*) [513]
+387.35ms  1.7095ms           (6656 1 1)       (256 1 1)        14  2.0000KB        0B         -           -  GeForce GTX 980         1         7  scanExclusiveShared(uint4*, uint4*, unsigned int) [524]
+389.06ms  31.519us             (26 1 1)       (256 1 1)        11  2.0000KB        0B         -           -  GeForce GTX 980         1         7  scanExclusiveShared2(unsigned int*, unsigned int*, unsigned int*, unsigned int, unsigned int) [532]
+389.10ms  1.8665ms           (6656 1 1)       (256 1 1)         8        4B        0B         -           -  GeForce GTX 980         1         7  uniformUpdate(uint4*, unsigned int*) [537]
+391.87ms  1.7384ms           (6656 1 1)       (256 1 1)        14  2.0000KB        0B         -           -  GeForce GTX 980         1         7  scanExclusiveShared(uint4*, uint4*, unsigned int) [548]
+393.61ms  29.695us             (26 1 1)       (256 1 1)        11  2.0000KB        0B         -           -  GeForce GTX 980         1         7  scanExclusiveShared2(unsigned int*, unsigned int*, unsigned int*, unsigned int, unsigned int) [556]
+393.65ms  1.7326ms           (6656 1 1)       (256 1 1)         8        4B        0B         -           -  GeForce GTX 980         1         7  uniformUpdate(uint4*, unsigned int*) [561]
+395.71ms  1.7099ms           (6656 1 1)       (256 1 1)        14  2.0000KB        0B         -           -  GeForce GTX 980         1         7  scanExclusiveShared(uint4*, uint4*, unsigned int) [572]
+397.42ms  28.383us             (26 1 1)       (256 1 1)        11  2.0000KB        0B         -           -  GeForce GTX 980         1         7  scanExclusiveShared2(unsigned int*, unsigned int*, unsigned int*, unsigned int, unsigned int) [580]
+397.46ms  1.7051ms           (6656 1 1)       (256 1 1)         8        4B        0B         -           -  GeForce GTX 980         1         7  uniformUpdate(uint4*, unsigned int*) [585]
+399.36ms  1.7095ms           (6656 1 1)       (256 1 1)        14  2.0000KB        0B         -           -  GeForce GTX 980         1         7  scanExclusiveShared(uint4*, uint4*, unsigned int) [596]
+401.07ms  28.735us             (26 1 1)       (256 1 1)        11  2.0000KB        0B         -           -  GeForce GTX 980         1         7  scanExclusiveShared2(unsigned int*, unsigned int*, unsigned int*, unsigned int, unsigned int) [604]
+401.11ms  1.7105ms           (6656 1 1)       (256 1 1)         8        4B        0B         -           -  GeForce GTX 980         1         7  uniformUpdate(uint4*, unsigned int*) [609]
+403.02ms  1.7190ms           (6656 1 1)       (256 1 1)        14  2.0000KB        0B         -           -  GeForce GTX 980         1         7  scanExclusiveShared(uint4*, uint4*, unsigned int) [620]
+404.75ms  29.823us             (26 1 1)       (256 1 1)        11  2.0000KB        0B         -           -  GeForce GTX 980         1         7  scanExclusiveShared2(unsigned int*, unsigned int*, unsigned int*, unsigned int, unsigned int) [628]
+404.78ms  1.7034ms           (6656 1 1)       (256 1 1)         8        4B        0B         -           -  GeForce GTX 980         1         7  uniformUpdate(uint4*, unsigned int*) [633]
+406.70ms  1.8940ms           (6656 1 1)       (256 1 1)        14  2.0000KB        0B         -           -  GeForce GTX 980         1         7  scanExclusiveShared(uint4*, uint4*, unsigned int) [644]
+408.60ms  31.039us             (26 1 1)       (256 1 1)        11  2.0000KB        0B         -           -  GeForce GTX 980         1         7  scanExclusiveShared2(unsigned int*, unsigned int*, unsigned int*, unsigned int, unsigned int) [652]
+408.63ms  1.7379ms           (6656 1 1)       (256 1 1)         8        4B        0B         -           -  GeForce GTX 980         1         7  uniformUpdate(uint4*, unsigned int*) [657]
+411.27ms  1.7066ms           (6656 1 1)       (256 1 1)        14  2.0000KB        0B         -           -  GeForce GTX 980         1         7  scanExclusiveShared(uint4*, uint4*, unsigned int) [668]
+412.99ms  30.335us             (26 1 1)       (256 1 1)        11  2.0000KB        0B         -           -  GeForce GTX 980         1         7  scanExclusiveShared2(unsigned int*, unsigned int*, unsigned int*, unsigned int, unsigned int) [676]
+413.03ms  1.7094ms           (6656 1 1)       (256 1 1)         8        4B        0B         -           -  GeForce GTX 980         1         7  uniformUpdate(uint4*, unsigned int*) [681]
+415.07ms  1.7062ms           (6656 1 1)       (256 1 1)        14  2.0000KB        0B         -           -  GeForce GTX 980         1         7  scanExclusiveShared(uint4*, uint4*, unsigned int) [692]
+416.78ms  29.280us             (26 1 1)       (256 1 1)        11  2.0000KB        0B         -           -  GeForce GTX 980         1         7  scanExclusiveShared2(unsigned int*, unsigned int*, unsigned int*, unsigned int, unsigned int) [700]
+416.81ms  1.7038ms           (6656 1 1)       (256 1 1)         8        4B        0B         -           -  GeForce GTX 980         1         7  uniformUpdate(uint4*, unsigned int*) [705]
+418.73ms  1.7096ms           (6656 1 1)       (256 1 1)        14  2.0000KB        0B         -           -  GeForce GTX 980         1         7  scanExclusiveShared(uint4*, uint4*, unsigned int) [716]
+420.44ms  29.919us             (26 1 1)       (256 1 1)        11  2.0000KB        0B         -           -  GeForce GTX 980         1         7  scanExclusiveShared2(unsigned int*, unsigned int*, unsigned int*, unsigned int, unsigned int) [724]
+420.48ms  1.7041ms           (6656 1 1)       (256 1 1)         8        4B        0B         -           -  GeForce GTX 980         1         7  uniformUpdate(uint4*, unsigned int*) [729]
+422.40ms  1.8735ms           (6656 1 1)       (256 1 1)        14  2.0000KB        0B         -           -  GeForce GTX 980         1         7  scanExclusiveShared(uint4*, uint4*, unsigned int) [740]
+424.28ms  31.263us             (26 1 1)       (256 1 1)        11  2.0000KB        0B         -           -  GeForce GTX 980         1         7  scanExclusiveShared2(unsigned int*, unsigned int*, unsigned int*, unsigned int, unsigned int) [748]
+424.32ms  1.7545ms           (6656 1 1)       (256 1 1)         8        4B        0B         -           -  GeForce GTX 980         1         7  uniformUpdate(uint4*, unsigned int*) [753]
+426.98ms  1.7337ms           (6656 1 1)       (256 1 1)        14  2.0000KB        0B         -           -  GeForce GTX 980         1         7  scanExclusiveShared(uint4*, uint4*, unsigned int) [764]
+428.72ms  30.303us             (26 1 1)       (256 1 1)        11  2.0000KB        0B         -           -  GeForce GTX 980         1         7  scanExclusiveShared2(unsigned int*, unsigned int*, unsigned int*, unsigned int, unsigned int) [772]
+428.76ms  1.7033ms           (6656 1 1)       (256 1 1)         8        4B        0B         -           -  GeForce GTX 980         1         7  uniformUpdate(uint4*, unsigned int*) [777]
+430.82ms  1.7121ms           (6656 1 1)       (256 1 1)        14  2.0000KB        0B         -           -  GeForce GTX 980         1         7  scanExclusiveShared(uint4*, uint4*, unsigned int) [788]
+432.54ms  29.696us             (26 1 1)       (256 1 1)        11  2.0000KB        0B         -           -  GeForce GTX 980         1         7  scanExclusiveShared2(unsigned int*, unsigned int*, unsigned int*, unsigned int, unsigned int) [796]
+432.58ms  1.7125ms           (6656 1 1)       (256 1 1)         8        4B        0B         -           -  GeForce GTX 980         1         7  uniformUpdate(uint4*, unsigned int*) [801]
+434.55ms  1.7113ms           (6656 1 1)       (256 1 1)        14  2.0000KB        0B         -           -  GeForce GTX 980         1         7  scanExclusiveShared(uint4*, uint4*, unsigned int) [812]
+436.27ms  28.480us             (26 1 1)       (256 1 1)        11  2.0000KB        0B         -           -  GeForce GTX 980         1         7  scanExclusiveShared2(unsigned int*, unsigned int*, unsigned int*, unsigned int, unsigned int) [820]
+436.30ms  1.7075ms           (6656 1 1)       (256 1 1)         8        4B        0B         -           -  GeForce GTX 980         1         7  uniformUpdate(uint4*, unsigned int*) [825]
+438.21ms  1.7121ms           (6656 1 1)       (256 1 1)        14  2.0000KB        0B         -           -  GeForce GTX 980         1         7  scanExclusiveShared(uint4*, uint4*, unsigned int) [836]
+439.93ms  29.503us             (26 1 1)       (256 1 1)        11  2.0000KB        0B         -           -  GeForce GTX 980         1         7  scanExclusiveShared2(unsigned int*, unsigned int*, unsigned int*, unsigned int, unsigned int) [844]
+439.96ms  1.8915ms           (6656 1 1)       (256 1 1)         8        4B        0B         -           -  GeForce GTX 980         1         7  uniformUpdate(uint4*, unsigned int*) [849]
+442.76ms  12.617ms                    -               -         -         -         -  26.000MB  2.0123GB/s  GeForce GTX 980         1         7  [CUDA memcpy DtoH]
+
+Regs: Number of registers used per CUDA thread. This number includes registers used internally by the CUDA driver and/or tools and can be more than what the compiler shows.
+SSMem: Static shared memory allocated per CUDA block.
+DSMem: Dynamic shared memory allocated per CUDA block.
 applications/scan Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Allocating and initializing host arrays...
 Allocating and initializing CUDA arrays...
 Initializing CUDA-C scan...
 
-***Running GPU scan for large arrays (50 identical iterations)...
+***Running GPU scan for large arrays (30 identical iterations)...
 
 Running scan for 262144 elements (26 arrays)...
 Validating the results...
@@ -54,37 +139,36 @@ Validating the results...
  ...Results Match
 
 
-scan, Total Time = 5.39374 s
-scan, Throughput = 2.4301 MElements/s, Time = 0.10787 s, Size = 262144 Elements, NumDevsUsed = 1, Workgroup = 256
+scan, Total Time = 0.81458 s
+scan, Throughput = 9.6545 MElements/s, Time = 0.02715 s, Size = 262144 Elements, NumDevsUsed = 1, Workgroup = 256
 
 Shutting down...
-==68948== NVPROF is profiling process 68948, command: applications/scan -device=1 -iters=50
-==68948== Some kernel(s) will be replayed on device 1 in order to collect all events/metrics.
-==68948== Profiling application: applications/scan -device=1 -iters=50
-==68948== Profiling result:
-==68948== Metric result:
+==2120== NVPROF is profiling process 2120, command: applications/scan -device=0 -iters=30
+==2120== Profiling application: applications/scan -device=0 -iters=30
+==2120== Profiling result:
+==2120== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: scanExclusiveShared2(unsigned int*, unsigned int*, unsigned int*, unsigned int, unsigned int)
-         51                  eligible_warps_per_cycle           Eligible Warps Per Active Cycle    0.144393    0.184298    0.161984
-         51                    dram_read_transactions           Device Memory Read Transactions       13124       13218       13193
-         51                      dram_read_throughput             Device Memory Read Throughput  11.679GB/s  13.313GB/s  12.693GB/s
+         31                        achieved_occupancy                        Achieved Occupancy    0.200758    0.206513    0.203371
+         31                             sm_efficiency                   Multiprocessor Activity      55.61%      73.11%      68.32%
+         31                 warp_execution_efficiency                 Warp Execution Efficiency     100.00%     100.00%     100.00%
     Kernel: scanExclusiveShared(uint4*, uint4*, unsigned int)
-         51                  eligible_warps_per_cycle           Eligible Warps Per Active Cycle    0.619109    0.625062    0.621959
-         51                    dram_read_transactions           Device Memory Read Transactions      851984      852172      852005
-         51                      dram_read_throughput             Device Memory Read Throughput  14.797GB/s  14.843GB/s  14.826GB/s
+         31                        achieved_occupancy                        Achieved Occupancy    0.950775    0.953978    0.952442
+         31                             sm_efficiency                   Multiprocessor Activity      98.98%      99.48%      99.23%
+         31                 warp_execution_efficiency                 Warp Execution Efficiency     100.00%     100.00%     100.00%
     Kernel: uniformUpdate(uint4*, unsigned int*)
-         51                  eligible_warps_per_cycle           Eligible Warps Per Active Cycle    0.097737    0.098769    0.098314
-         51                    dram_read_transactions           Device Memory Read Transactions      852816      852840      852823
-         51                      dram_read_throughput             Device Memory Read Throughput  14.779GB/s  14.826GB/s  14.804GB/s
+         31                        achieved_occupancy                        Achieved Occupancy    0.899568    0.904747    0.902547
+         31                             sm_efficiency                   Multiprocessor Activity      98.99%      99.47%      99.27%
+         31                 warp_execution_efficiency                 Warp Execution Efficiency      97.06%      97.06%      97.06%
 applications/scan Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Allocating and initializing host arrays...
 Allocating and initializing CUDA arrays...
 Initializing CUDA-C scan...
 
-***Running GPU scan for large arrays (50 identical iterations)...
+***Running GPU scan for large arrays (30 identical iterations)...
 
 Running scan for 262144 elements (26 arrays)...
 Validating the results...
@@ -94,37 +178,37 @@ Validating the results...
  ...Results Match
 
 
-scan, Total Time = 4.94171 s
-scan, Throughput = 2.6524 MElements/s, Time = 0.09883 s, Size = 262144 Elements, NumDevsUsed = 1, Workgroup = 256
+scan, Total Time = 3.59288 s
+scan, Throughput = 2.1889 MElements/s, Time = 0.11976 s, Size = 262144 Elements, NumDevsUsed = 1, Workgroup = 256
 
 Shutting down...
-==70192== NVPROF is profiling process 70192, command: applications/scan -device=1 -iters=50
-==70192== Some kernel(s) will be replayed on device 1 in order to collect all events/metrics.
-==70192== Profiling application: applications/scan -device=1 -iters=50
-==70192== Profiling result:
-==70192== Metric result:
+==3892== NVPROF is profiling process 3892, command: applications/scan -device=0 -iters=30
+==3892== Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+==3892== Profiling application: applications/scan -device=0 -iters=30
+==3892== Profiling result:
+==3892== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: scanExclusiveShared2(unsigned int*, unsigned int*, unsigned int*, unsigned int, unsigned int)
-         51                   dram_write_transactions          Device Memory Write Transactions        5480        6820        6100
-         51                     dram_write_throughput            Device Memory Write Throughput  5.5054GB/s  6.6561GB/s  5.9353GB/s
-         51                      l2_read_transactions                      L2 Read Transactions       13383       13519       13455
+         31                  eligible_warps_per_cycle           Eligible Warps Per Active Cycle    0.146991    0.198554    0.169052
+         31                    dram_read_transactions           Device Memory Read Transactions       13111       13464       13265
+         31                      dram_read_throughput             Device Memory Read Throughput  12.210GB/s  13.766GB/s  12.821GB/s
     Kernel: scanExclusiveShared(uint4*, uint4*, unsigned int)
-         51                   dram_write_transactions          Device Memory Write Transactions      840771      847096      844200
-         51                     dram_write_throughput            Device Memory Write Throughput  14.695GB/s  14.767GB/s  14.733GB/s
-         51                      l2_read_transactions                      L2 Read Transactions      852039      853080      852127
+         31                  eligible_warps_per_cycle           Eligible Warps Per Active Cycle    0.557909    0.624681    0.612802
+         31                    dram_read_transactions           Device Memory Read Transactions      851988      920234      868198
+         31                      dram_read_throughput             Device Memory Read Throughput  14.767GB/s  15.986GB/s  15.038GB/s
     Kernel: uniformUpdate(uint4*, unsigned int*)
-         51                   dram_write_transactions          Device Memory Write Transactions      843837      847902      846081
-         51                     dram_write_throughput            Device Memory Write Throughput  14.706GB/s  14.756GB/s  14.733GB/s
-         51                      l2_read_transactions                      L2 Read Transactions      858695      858799      858740
+         31                  eligible_warps_per_cycle           Eligible Warps Per Active Cycle    0.088402    0.098674    0.097563
+         31                    dram_read_transactions           Device Memory Read Transactions      852812      922312      865655
+         31                      dram_read_throughput             Device Memory Read Throughput  14.745GB/s  15.967GB/s  14.951GB/s
 applications/scan Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Allocating and initializing host arrays...
 Allocating and initializing CUDA arrays...
 Initializing CUDA-C scan...
 
-***Running GPU scan for large arrays (50 identical iterations)...
+***Running GPU scan for large arrays (30 identical iterations)...
 
 Running scan for 262144 elements (26 arrays)...
 Validating the results...
@@ -134,37 +218,37 @@ Validating the results...
  ...Results Match
 
 
-scan, Total Time = 5.61106 s
-scan, Throughput = 2.3360 MElements/s, Time = 0.11222 s, Size = 262144 Elements, NumDevsUsed = 1, Workgroup = 256
+scan, Total Time = 3.27235 s
+scan, Throughput = 2.4033 MElements/s, Time = 0.10908 s, Size = 262144 Elements, NumDevsUsed = 1, Workgroup = 256
 
 Shutting down...
-==74580== NVPROF is profiling process 74580, command: applications/scan -device=1 -iters=50
-==74580== Some kernel(s) will be replayed on device 1 in order to collect all events/metrics.
-==74580== Profiling application: applications/scan -device=1 -iters=50
-==74580== Profiling result:
-==74580== Metric result:
+==3780== NVPROF is profiling process 3780, command: applications/scan -device=0 -iters=30
+==3780== Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+==3780== Profiling application: applications/scan -device=0 -iters=30
+==3780== Profiling result:
+==3780== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: scanExclusiveShared2(unsigned int*, unsigned int*, unsigned int*, unsigned int, unsigned int)
-         51                        l2_read_throughput                     L2 Throughput (Reads)  12.320GB/s  14.142GB/s  13.108GB/s
-         51                     l2_write_transactions                     L2 Write Transactions         838         838         838
-         51                       l2_write_throughput                    L2 Throughput (Writes)  781.98MB/s  897.64MB/s  833.51MB/s
+         31                   dram_write_transactions          Device Memory Write Transactions        4947        6884        5903
+         31                     dram_write_throughput            Device Memory Write Throughput  4.7584GB/s  6.6115GB/s  5.7174GB/s
+         31                      l2_read_transactions                      L2 Read Transactions       13383       14415       13520
     Kernel: scanExclusiveShared(uint4*, uint4*, unsigned int)
-         51                        l2_read_throughput                     L2 Throughput (Reads)  14.836GB/s  14.902GB/s  14.870GB/s
-         51                     l2_write_transactions                     L2 Write Transactions      851974      852002      851974
-         51                       l2_write_throughput                    L2 Throughput (Writes)  14.832GB/s  14.898GB/s  14.867GB/s
+         31                   dram_write_transactions          Device Memory Write Transactions      836343      845487      842224
+         31                     dram_write_throughput            Device Memory Write Throughput  14.528GB/s  14.775GB/s  14.663GB/s
+         31                      l2_read_transactions                      L2 Read Transactions      852039      881154      855407
     Kernel: uniformUpdate(uint4*, unsigned int*)
-         51                        l2_read_throughput                     L2 Throughput (Reads)  14.940GB/s  14.979GB/s  14.956GB/s
-         51                     l2_write_transactions                     L2 Write Transactions      851974      851974      851974
-         51                       l2_write_throughput                    L2 Throughput (Writes)  14.823GB/s  14.860GB/s  14.838GB/s
+         31                   dram_write_transactions          Device Memory Write Transactions      840229      846983      843510
+         31                     dram_write_throughput            Device Memory Write Throughput  14.502GB/s  14.751GB/s  14.651GB/s
+         31                      l2_read_transactions                      L2 Read Transactions      858695      994916      874875
 applications/scan Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Allocating and initializing host arrays...
 Allocating and initializing CUDA arrays...
 Initializing CUDA-C scan...
 
-***Running GPU scan for large arrays (50 identical iterations)...
+***Running GPU scan for large arrays (30 identical iterations)...
 
 Running scan for 262144 elements (26 arrays)...
 Validating the results...
@@ -174,36 +258,37 @@ Validating the results...
  ...Results Match
 
 
-scan, Total Time = 0.66792 s
-scan, Throughput = 19.6238 MElements/s, Time = 0.01336 s, Size = 262144 Elements, NumDevsUsed = 1, Workgroup = 256
+scan, Total Time = 3.74595 s
+scan, Throughput = 2.0994 MElements/s, Time = 0.12486 s, Size = 262144 Elements, NumDevsUsed = 1, Workgroup = 256
 
 Shutting down...
-==73808== NVPROF is profiling process 73808, command: applications/scan -device=1 -iters=50
-==73808== Profiling application: applications/scan -device=1 -iters=50
-==73808== Profiling result:
-==73808== Metric result:
+==1456== NVPROF is profiling process 1456, command: applications/scan -device=0 -iters=30
+==1456== Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+==1456== Profiling application: applications/scan -device=0 -iters=30
+==1456== Profiling result:
+==1456== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: scanExclusiveShared2(unsigned int*, unsigned int*, unsigned int*, unsigned int, unsigned int)
-         51                  shared_load_transactions                  Shared Load Transactions        3536        3536        3536
-         51                    shared_load_throughput             Shared Memory Load Throughput  11.668GB/s  15.124GB/s  12.733GB/s
-         51                 shared_store_transactions                 Shared Store Transactions        2080        2080        2080
+         31                        l2_read_throughput                     L2 Throughput (Reads)  12.692GB/s  13.964GB/s  13.189GB/s
+         31                     l2_write_transactions                     L2 Write Transactions         838         838         838
+         31                       l2_write_throughput                    L2 Throughput (Writes)  796.39MB/s  886.35MB/s  833.51MB/s
     Kernel: scanExclusiveShared(uint4*, uint4*, unsigned int)
-         51                  shared_load_transactions                  Shared Load Transactions      905216      905216      905216
-         51                    shared_load_throughput             Shared Memory Load Throughput  62.643GB/s  63.109GB/s  62.908GB/s
-         51                 shared_store_transactions                 Shared Store Transactions      532480      532480      532480
+         31                        l2_read_throughput                     L2 Throughput (Reads)  14.143GB/s  17.176GB/s  15.000GB/s
+         31                     l2_write_transactions                     L2 Write Transactions      851974      851983      851974
+         31                       l2_write_throughput                    L2 Throughput (Writes)  14.140GB/s  14.898GB/s  14.802GB/s
     Kernel: uniformUpdate(uint4*, unsigned int*)
-         51                  shared_load_transactions                  Shared Load Transactions       53248       53248       53248
-         51                    shared_load_throughput             Shared Memory Load Throughput  3.7023GB/s  3.7246GB/s  3.7123GB/s
-         51                 shared_store_transactions                 Shared Store Transactions        6656        6656        6656
+         31                        l2_read_throughput                     L2 Throughput (Reads)  14.776GB/s  17.253GB/s  15.204GB/s
+         31                     l2_write_transactions                     L2 Write Transactions      851974      851977      851974
+         31                       l2_write_throughput                    L2 Throughput (Writes)  14.151GB/s  14.882GB/s  14.743GB/s
 applications/scan Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Allocating and initializing host arrays...
 Allocating and initializing CUDA arrays...
 Initializing CUDA-C scan...
 
-***Running GPU scan for large arrays (50 identical iterations)...
+***Running GPU scan for large arrays (30 identical iterations)...
 
 Running scan for 262144 elements (26 arrays)...
 Validating the results...
@@ -213,36 +298,36 @@ Validating the results...
  ...Results Match
 
 
-scan, Total Time = 1.18651 s
-scan, Throughput = 11.0469 MElements/s, Time = 0.02373 s, Size = 262144 Elements, NumDevsUsed = 1, Workgroup = 256
+scan, Total Time = 0.39677 s
+scan, Throughput = 19.8210 MElements/s, Time = 0.01323 s, Size = 262144 Elements, NumDevsUsed = 1, Workgroup = 256
 
 Shutting down...
-==74160== NVPROF is profiling process 74160, command: applications/scan -device=1 -iters=50
-==74160== Profiling application: applications/scan -device=1 -iters=50
-==74160== Profiling result:
-==74160== Metric result:
+==3380== NVPROF is profiling process 3380, command: applications/scan -device=0 -iters=30
+==3380== Profiling application: applications/scan -device=0 -iters=30
+==3380== Profiling result:
+==3380== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: scanExclusiveShared2(unsigned int*, unsigned int*, unsigned int*, unsigned int, unsigned int)
-         51                   shared_store_throughput            Shared Memory Store Throughput  7.1616GB/s  8.0050GB/s  7.5642GB/s
-         51                         branch_efficiency                         Branch Efficiency     100.00%     100.00%     100.00%
-         51                               cf_executed        Executed Control-Flow Instructions        2288        2288        2288
+         31                  shared_load_transactions                  Shared Load Transactions        3536        3536        3536
+         31                    shared_load_throughput             Shared Memory Load Throughput  12.074GB/s  15.193GB/s  13.357GB/s
+         31                 shared_store_transactions                 Shared Store Transactions        2080        2080        2080
     Kernel: scanExclusiveShared(uint4*, uint4*, unsigned int)
-         51                   shared_store_throughput            Shared Memory Store Throughput  36.890GB/s  37.134GB/s  37.023GB/s
-         51                         branch_efficiency                         Branch Efficiency     100.00%     100.00%     100.00%
-         51                               cf_executed        Executed Control-Flow Instructions      532480      532480      532480
+         31                  shared_load_transactions                  Shared Load Transactions      905216      905216      905216
+         31                    shared_load_throughput             Shared Memory Load Throughput  60.184GB/s  63.234GB/s  62.664GB/s
+         31                 shared_store_transactions                 Shared Store Transactions      532480      532480      532480
     Kernel: uniformUpdate(uint4*, unsigned int*)
-         51                   shared_store_throughput            Shared Memory Store Throughput  472.79MB/s  477.21MB/s  473.98MB/s
-         51                         branch_efficiency                         Branch Efficiency     100.00%     100.00%     100.00%
-         51                               cf_executed        Executed Control-Flow Instructions      166400      166400      166400
+         31                  shared_load_transactions                  Shared Load Transactions       53248       53248       53248
+         31                    shared_load_throughput             Shared Memory Load Throughput  3.3478GB/s  3.7301GB/s  3.6526GB/s
+         31                 shared_store_transactions                 Shared Store Transactions        6656        6656        6656
 applications/scan Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Allocating and initializing host arrays...
 Allocating and initializing CUDA arrays...
 Initializing CUDA-C scan...
 
-***Running GPU scan for large arrays (50 identical iterations)...
+***Running GPU scan for large arrays (30 identical iterations)...
 
 Running scan for 262144 elements (26 arrays)...
 Validating the results...
@@ -252,37 +337,76 @@ Validating the results...
  ...Results Match
 
 
-scan, Total Time = 7.45258 s
-scan, Throughput = 1.7587 MElements/s, Time = 0.14905 s, Size = 262144 Elements, NumDevsUsed = 1, Workgroup = 256
+scan, Total Time = 0.71691 s
+scan, Throughput = 10.9698 MElements/s, Time = 0.02390 s, Size = 262144 Elements, NumDevsUsed = 1, Workgroup = 256
 
 Shutting down...
-==74008== NVPROF is profiling process 74008, command: applications/scan -device=1 -iters=50
-==74008== Some kernel(s) will be replayed on device 1 in order to collect all events/metrics.
-==74008== Profiling application: applications/scan -device=1 -iters=50
-==74008== Profiling result:
-==74008== Metric result:
+==3864== NVPROF is profiling process 3864, command: applications/scan -device=0 -iters=30
+==3864== Profiling application: applications/scan -device=0 -iters=30
+==3864== Profiling result:
+==3864== Metric result:
+Invocations                               Metric Name                        Metric Description         Min         Max         Avg
+Device "GeForce GTX 980 (0)"
+    Kernel: scanExclusiveShared2(unsigned int*, unsigned int*, unsigned int*, unsigned int, unsigned int)
+         31                   shared_store_throughput            Shared Memory Store Throughput  6.2947GB/s  9.5902GB/s  7.8492GB/s
+         31                         branch_efficiency                         Branch Efficiency     100.00%     100.00%     100.00%
+         31                               cf_executed        Executed Control-Flow Instructions        2288        2288        2288
+    Kernel: scanExclusiveShared(uint4*, uint4*, unsigned int)
+         31                   shared_store_throughput            Shared Memory Store Throughput  33.798GB/s  37.183GB/s  36.708GB/s
+         31                         branch_efficiency                         Branch Efficiency     100.00%     100.00%     100.00%
+         31                               cf_executed        Executed Control-Flow Instructions      532480      532480      532480
+    Kernel: uniformUpdate(uint4*, unsigned int*)
+         31                   shared_store_throughput            Shared Memory Store Throughput  427.71MB/s  477.09MB/s  469.21MB/s
+         31                         branch_efficiency                         Branch Efficiency     100.00%     100.00%     100.00%
+         31                               cf_executed        Executed Control-Flow Instructions      166400      166400      166400
+applications/scan Starting...
+
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
+Allocating and initializing host arrays...
+Allocating and initializing CUDA arrays...
+Initializing CUDA-C scan...
+
+***Running GPU scan for large arrays (30 identical iterations)...
+
+Running scan for 262144 elements (26 arrays)...
+Validating the results...
+...reading back GPU results
+...scanExclusiveHost()
+ ...comparing the results
+ ...Results Match
+
+
+scan, Total Time = 5.03017 s
+scan, Throughput = 1.5634 MElements/s, Time = 0.16767 s, Size = 262144 Elements, NumDevsUsed = 1, Workgroup = 256
+
+Shutting down...
+==3224== NVPROF is profiling process 3224, command: applications/scan -device=0 -iters=30
+==3224== Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+==3224== Profiling application: applications/scan -device=0 -iters=30
+==3224== Profiling result:
+==3224== Metric result:
 Invocations                               Metric Name                            Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: scanExclusiveShared2(unsigned int*, unsigned int*, unsigned int*, unsigned int, unsigned int)
-         51                                 cf_issued              Issued Control-Flow Instructions        2288        2288        2288
-         51                             flop_count_sp   Floating Point Operations(Single Precision)           0           0           0
-         51                        flop_sp_efficiency                  FLOP Efficiency(Peak Single)       0.00%       0.00%       0.00%
+         31                                 cf_issued              Issued Control-Flow Instructions        2288        2288        2288
+         31                             flop_count_sp   Floating Point Operations(Single Precision)           0           0           0
+         31                        flop_sp_efficiency                  FLOP Efficiency(Peak Single)       0.00%       0.00%       0.00%
     Kernel: scanExclusiveShared(uint4*, uint4*, unsigned int)
-         51                                 cf_issued              Issued Control-Flow Instructions      532480      532480      532480
-         51                             flop_count_sp   Floating Point Operations(Single Precision)           0           0           0
-         51                        flop_sp_efficiency                  FLOP Efficiency(Peak Single)       0.00%       0.00%       0.00%
+         31                                 cf_issued              Issued Control-Flow Instructions      532480      532480      532480
+         31                             flop_count_sp   Floating Point Operations(Single Precision)           0           0           0
+         31                        flop_sp_efficiency                  FLOP Efficiency(Peak Single)       0.00%       0.00%       0.00%
     Kernel: uniformUpdate(uint4*, unsigned int*)
-         51                                 cf_issued              Issued Control-Flow Instructions      166400      166400      166400
-         51                             flop_count_sp   Floating Point Operations(Single Precision)           0           0           0
-         51                        flop_sp_efficiency                  FLOP Efficiency(Peak Single)       0.00%       0.00%       0.00%
+         31                                 cf_issued              Issued Control-Flow Instructions      166400      166400      166400
+         31                             flop_count_sp   Floating Point Operations(Single Precision)           0           0           0
+         31                        flop_sp_efficiency                  FLOP Efficiency(Peak Single)       0.00%       0.00%       0.00%
 applications/scan Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Allocating and initializing host arrays...
 Allocating and initializing CUDA arrays...
 Initializing CUDA-C scan...
 
-***Running GPU scan for large arrays (50 identical iterations)...
+***Running GPU scan for large arrays (30 identical iterations)...
 
 Running scan for 262144 elements (26 arrays)...
 Validating the results...
@@ -292,37 +416,37 @@ Validating the results...
  ...Results Match
 
 
-scan, Total Time = 7.83229 s
-scan, Throughput = 1.6735 MElements/s, Time = 0.15665 s, Size = 262144 Elements, NumDevsUsed = 1, Workgroup = 256
+scan, Total Time = 5.18858 s
+scan, Throughput = 1.5157 MElements/s, Time = 0.17295 s, Size = 262144 Elements, NumDevsUsed = 1, Workgroup = 256
 
 Shutting down...
-==72200== NVPROF is profiling process 72200, command: applications/scan -device=1 -iters=50
-==72200== Some kernel(s) will be replayed on device 1 in order to collect all events/metrics.
-==72200== Profiling application: applications/scan -device=1 -iters=50
-==72200== Profiling result:
-==72200== Metric result:
+==5028== NVPROF is profiling process 5028, command: applications/scan -device=0 -iters=30
+==5028== Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+==5028== Profiling application: applications/scan -device=0 -iters=30
+==5028== Profiling result:
+==5028== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: scanExclusiveShared2(unsigned int*, unsigned int*, unsigned int*, unsigned int, unsigned int)
-         51                            gld_throughput                    Global Load Throughput  12.382GB/s  13.829GB/s  12.851GB/s
-         51                          gld_transactions                  Global Load Transactions       13312       13312       13312
-         51                            gst_throughput                   Global Store Throughput  792.47MB/s  885.06MB/s  821.11MB/s
+         31                            gld_throughput                    Global Load Throughput  12.299GB/s  13.661GB/s  12.978GB/s
+         31                          gld_transactions                  Global Load Transactions       13312       13312       13312
+         31                            gst_throughput                   Global Store Throughput  787.16MB/s  874.33MB/s  829.70MB/s
     Kernel: scanExclusiveShared(uint4*, uint4*, unsigned int)
-         51                            gld_throughput                    Global Load Throughput  14.804GB/s  14.846GB/s  14.824GB/s
-         51                          gld_transactions                  Global Load Transactions      851968      851968      851968
-         51                            gst_throughput                   Global Store Throughput  14.804GB/s  14.846GB/s  14.824GB/s
+         31                            gld_throughput                    Global Load Throughput  14.633GB/s  14.854GB/s  14.777GB/s
+         31                          gld_transactions                  Global Load Transactions      851968      851968      851968
+         31                            gst_throughput                   Global Store Throughput  14.633GB/s  14.854GB/s  14.777GB/s
     Kernel: uniformUpdate(uint4*, unsigned int*)
-         51                            gld_throughput                    Global Load Throughput  14.888GB/s  14.928GB/s  14.907GB/s
-         51                          gld_transactions                  Global Load Transactions      858624      858624      858624
-         51                            gst_throughput                   Global Store Throughput  14.772GB/s  14.813GB/s  14.791GB/s
+         31                            gld_throughput                    Global Load Throughput  14.596GB/s  14.926GB/s  14.839GB/s
+         31                          gld_transactions                  Global Load Transactions      858624      858624      858624
+         31                            gst_throughput                   Global Store Throughput  14.482GB/s  14.810GB/s  14.723GB/s
 applications/scan Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Allocating and initializing host arrays...
 Allocating and initializing CUDA arrays...
 Initializing CUDA-C scan...
 
-***Running GPU scan for large arrays (50 identical iterations)...
+***Running GPU scan for large arrays (30 identical iterations)...
 
 Running scan for 262144 elements (26 arrays)...
 Validating the results...
@@ -332,36 +456,36 @@ Validating the results...
  ...Results Match
 
 
-scan, Total Time = 1.26796 s
-scan, Throughput = 10.3372 MElements/s, Time = 0.02536 s, Size = 262144 Elements, NumDevsUsed = 1, Workgroup = 256
+scan, Total Time = 0.74607 s
+scan, Throughput = 10.5409 MElements/s, Time = 0.02487 s, Size = 262144 Elements, NumDevsUsed = 1, Workgroup = 256
 
 Shutting down...
-==74048== NVPROF is profiling process 74048, command: applications/scan -device=1 -iters=50
-==74048== Profiling application: applications/scan -device=1 -iters=50
-==74048== Profiling result:
-==74048== Metric result:
+==2044== NVPROF is profiling process 2044, command: applications/scan -device=0 -iters=30
+==2044== Profiling application: applications/scan -device=0 -iters=30
+==2044== Profiling result:
+==2044== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: scanExclusiveShared2(unsigned int*, unsigned int*, unsigned int*, unsigned int, unsigned int)
-         51                          gst_transactions                 Global Store Transactions         832         832         832
-         51                               inst_issued                       Instructions Issued       26832       26849       26833
-         51                             inst_per_warp                     Instructions per warp  126.000000  126.000000  126.000000
+         31                          gst_transactions                 Global Store Transactions         832         832         832
+         31                               inst_issued                       Instructions Issued       26832       26880       26835
+         31                             inst_per_warp                     Instructions per warp  126.000000  126.000000  126.000000
     Kernel: scanExclusiveShared(uint4*, uint4*, unsigned int)
-         51                          gst_transactions                 Global Store Transactions      851968      851968      851968
-         51                               inst_issued                       Instructions Issued     6499264     6499690     6499369
-         51                             inst_per_warp                     Instructions per warp  122.000000  122.000000  122.000000
+         31                          gst_transactions                 Global Store Transactions      851968      851968      851968
+         31                               inst_issued                       Instructions Issued     6499404     6499708     6499613
+         31                             inst_per_warp                     Instructions per warp  122.000000  122.000000  122.000000
     Kernel: uniformUpdate(uint4*, unsigned int*)
-         51                          gst_transactions                 Global Store Transactions      851968      851968      851968
-         51                               inst_issued                       Instructions Issued     1099263     1099722     1099396
-         51                             inst_per_warp                     Instructions per warp   20.625000   20.625000   20.625000
+         31                          gst_transactions                 Global Store Transactions      851968      851968      851968
+         31                               inst_issued                       Instructions Issued     1099501     1099707     1099605
+         31                             inst_per_warp                     Instructions per warp   20.625000   20.625000   20.625000
 applications/scan Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Allocating and initializing host arrays...
 Allocating and initializing CUDA arrays...
 Initializing CUDA-C scan...
 
-***Running GPU scan for large arrays (50 identical iterations)...
+***Running GPU scan for large arrays (30 identical iterations)...
 
 Running scan for 262144 elements (26 arrays)...
 Validating the results...
@@ -371,19 +495,19 @@ Validating the results...
  ...Results Match
 
 
-scan, Total Time = 0.78271 s
-scan, Throughput = 16.7458 MElements/s, Time = 0.01565 s, Size = 262144 Elements, NumDevsUsed = 1, Workgroup = 256
+scan, Total Time = 0.49036 s
+scan, Throughput = 16.0378 MElements/s, Time = 0.01635 s, Size = 262144 Elements, NumDevsUsed = 1, Workgroup = 256
 
 Shutting down...
-==74336== NVPROF is profiling process 74336, command: applications/scan -device=1 -iters=50
-==74336== Profiling application: applications/scan -device=1 -iters=50
-==74336== Profiling result:
-==74336== Metric result:
+==480== NVPROF is profiling process 480, command: applications/scan -device=0 -iters=30
+==480== Profiling application: applications/scan -device=0 -iters=30
+==480== Profiling result:
+==480== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: scanExclusiveShared2(unsigned int*, unsigned int*, unsigned int*, unsigned int, unsigned int)
-         51                                       ipc                              Executed IPC    0.148906    0.172870    0.159380
+         31                                       ipc                              Executed IPC    0.145280    0.200055    0.175296
     Kernel: scanExclusiveShared(uint4*, uint4*, unsigned int)
-         51                                       ipc                              Executed IPC    0.585475    0.590024    0.587795
+         31                                       ipc                              Executed IPC    0.524027    0.590297    0.550350
     Kernel: uniformUpdate(uint4*, unsigned int*)
-         51                                       ipc                              Executed IPC    0.099299    0.099920    0.099662
+         31                                       ipc                              Executed IPC    0.090376    0.099984    0.099097

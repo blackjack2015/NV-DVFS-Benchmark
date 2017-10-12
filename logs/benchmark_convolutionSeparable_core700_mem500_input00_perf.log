@@ -1,0 +1,54 @@
+[applications/convolutionSeparable] - Starting...
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
+Image Width x Height = 3072 x 3072
+
+Allocating and initializing host arrays...
+Allocating and initializing CUDA arrays...
+Running GPU convolution (5 identical iterations)...
+
+iterated 5, average time is 6.269658 msec.
+
+Reading back GPU results...
+
+Checking the results...
+ ...running convolutionRowCPU()
+ ...running convolutionColumnCPU()
+ ...comparing the results
+ ...Relative L2 norm: 0.000000E+000
+
+Shutting down...
+Test passed
+==6544== NVPROF is profiling process 6544, command: applications/convolutionSeparable -device=0 -iters=5
+==6544== Profiling application: applications/convolutionSeparable -device=0 -iters=5
+==6544== Profiling result:
+Time(%)      Time     Calls       Avg       Min       Max  Name
+ 28.11%  19.416ms         6  3.2361ms  3.1628ms  3.3526ms  convolutionColumnsKernel(float*, float*, int, int, int)
+ 25.99%  17.947ms         6  2.9911ms  2.9446ms  3.1203ms  convolutionRowsKernel(float*, float*, int, int, int)
+ 25.32%  17.489ms         1  17.489ms  17.489ms  17.489ms  [CUDA memcpy DtoH]
+ 20.57%  14.209ms         2  7.1046ms  2.8800us  14.206ms  [CUDA memcpy HtoD]
+
+==6544== API calls:
+Time(%)      Time     Calls       Avg       Min       Max  Name
+ 56.66%  156.43ms         3  52.145ms  6.9855ms  142.25ms  cudaMalloc
+ 16.82%  46.435ms         1  46.435ms  46.435ms  46.435ms  cudaDeviceReset
+ 13.89%  38.358ms         6  6.3929ms  6.1686ms  7.0312ms  cudaThreadSynchronize
+ 11.44%  31.594ms         2  15.797ms  13.789ms  17.805ms  cudaMemcpy
+  0.55%  1.5125ms         3  504.17us  448.01us  587.61us  cudaFree
+  0.20%  552.41us        91  6.0700us       0ns  276.21us  cuDeviceGetAttribute
+  0.15%  409.49us         1  409.49us  409.49us  409.49us  cudaGetDeviceProperties
+  0.08%  230.77us         6  38.462us  26.176us  61.379us  cudaEventSynchronize
+  0.08%  210.91us        12  17.576us  12.637us  55.662us  cudaLaunch
+  0.03%  94.777us         1  94.777us  94.777us  94.777us  cuDeviceGetName
+  0.03%  86.955us        12  7.2460us  4.5130us  12.035us  cudaEventRecord
+  0.02%  62.884us         6  10.480us  7.5220us  17.451us  cudaEventElapsedTime
+  0.01%  30.088us         1  30.088us  30.088us  30.088us  cudaMemcpyToSymbol
+  0.01%  14.443us         2  7.2210us  6.6200us  7.8230us  cudaDeviceSynchronize
+  0.01%  13.840us         2  6.9200us  1.2030us  12.637us  cudaEventCreate
+  0.00%  11.433us         1  11.433us  11.433us  11.433us  cudaSetDevice
+  0.00%  10.833us        60     180ns       0ns  1.5050us  cudaSetupArgument
+  0.00%  6.3190us         1  6.3190us  6.3190us  6.3190us  cuDeviceTotalMem
+  0.00%  6.3180us        12     526ns       0ns  3.6110us  cudaConfigureCall
+  0.00%  3.3100us         3  1.1030us     301ns  2.1060us  cuDeviceGetCount
+  0.00%  3.3100us        12     275ns       0ns     301ns  cudaGetLastError
+  0.00%  1.8050us         3     601ns     300ns     903ns  cuDeviceGet
+  0.00%     903ns         1     903ns     903ns     903ns  cudaGetDeviceCount

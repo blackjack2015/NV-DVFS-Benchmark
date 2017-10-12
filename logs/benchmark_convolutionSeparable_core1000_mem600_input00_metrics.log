@@ -1,12 +1,12 @@
 [applications/convolutionSeparable] - Starting...
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Image Width x Height = 3072 x 3072
 
 Allocating and initializing host arrays...
 Allocating and initializing CUDA arrays...
-Running GPU convolution (50 identical iterations)...
+Running GPU convolution (15 identical iterations)...
 
-iterated 50, average time is 21.022675 msec.
+iterated 15, average time is 4.998716 msec.
 
 Reading back GPU results...
 
@@ -18,29 +18,58 @@ Checking the results...
 
 Shutting down...
 Test passed
-==80536== NVPROF is profiling process 80536, command: applications/convolutionSeparable -device=1 -iters=50
-==80536== Profiling application: applications/convolutionSeparable -device=1 -iters=50
-==80536== Profiling result:
-==80536== Metric result:
-Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
-    Kernel: convolutionColumnsKernel(float*, float*, int, int, int)
-         51                        achieved_occupancy                        Achieved Occupancy    0.900074    0.909483    0.905530
-         51                             sm_efficiency                   Multiprocessor Activity      99.48%      99.71%      99.63%
-         51                 warp_execution_efficiency                 Warp Execution Efficiency     100.00%     100.00%     100.00%
-    Kernel: convolutionRowsKernel(float*, float*, int, int, int)
-         51                        achieved_occupancy                        Achieved Occupancy    0.897200    0.913141    0.906757
-         51                             sm_efficiency                   Multiprocessor Activity      99.29%      99.64%      99.51%
-         51                 warp_execution_efficiency                 Warp Execution Efficiency     100.00%     100.00%     100.00%
+==11788== NVPROF is profiling process 11788, command: applications/convolutionSeparable -device=0 -iters=15
+==11788== Profiling application: applications/convolutionSeparable -device=0 -iters=15
+==11788== Profiling result:
+   Start  Duration            Grid Size      Block Size     Regs*    SSMem*    DSMem*      Size  Throughput           Device   Context    Stream  Name
+353.48ms  2.6240us                    -               -         -         -         -       68B  24.714MB/s  GeForce GTX 980         1         7  [CUDA memcpy HtoD]
+353.87ms  14.680ms                    -               -         -         -         -  36.000MB  2.3948GB/s  GeForce GTX 980         1         7  [CUDA memcpy HtoD]
+368.57ms  2.3875ms           (24 768 1)        (16 4 1)        30  2.5000KB        0B         -           -  GeForce GTX 980         1         7  convolutionRowsKernel(float*, float*, int, int, int) [117]
+370.96ms  2.5496ms           (192 48 1)        (16 8 1)        31  5.0625KB        0B         -           -  GeForce GTX 980         1         7  convolutionColumnsKernel(float*, float*, int, int, int) [125]
+373.70ms  2.3750ms           (24 768 1)        (16 4 1)        30  2.5000KB        0B         -           -  GeForce GTX 980         1         7  convolutionRowsKernel(float*, float*, int, int, int) [139]
+376.08ms  2.5487ms           (192 48 1)        (16 8 1)        31  5.0625KB        0B         -           -  GeForce GTX 980         1         7  convolutionColumnsKernel(float*, float*, int, int, int) [147]
+378.81ms  2.3749ms           (24 768 1)        (16 4 1)        30  2.5000KB        0B         -           -  GeForce GTX 980         1         7  convolutionRowsKernel(float*, float*, int, int, int) [160]
+381.19ms  2.5402ms           (192 48 1)        (16 8 1)        31  5.0625KB        0B         -           -  GeForce GTX 980         1         7  convolutionColumnsKernel(float*, float*, int, int, int) [168]
+383.92ms  2.3759ms           (24 768 1)        (16 4 1)        30  2.5000KB        0B         -           -  GeForce GTX 980         1         7  convolutionRowsKernel(float*, float*, int, int, int) [181]
+386.30ms  2.5486ms           (192 48 1)        (16 8 1)        31  5.0625KB        0B         -           -  GeForce GTX 980         1         7  convolutionColumnsKernel(float*, float*, int, int, int) [189]
+389.04ms  2.3726ms           (24 768 1)        (16 4 1)        30  2.5000KB        0B         -           -  GeForce GTX 980         1         7  convolutionRowsKernel(float*, float*, int, int, int) [202]
+391.42ms  2.5426ms           (192 48 1)        (16 8 1)        31  5.0625KB        0B         -           -  GeForce GTX 980         1         7  convolutionColumnsKernel(float*, float*, int, int, int) [210]
+394.14ms  2.3794ms           (24 768 1)        (16 4 1)        30  2.5000KB        0B         -           -  GeForce GTX 980         1         7  convolutionRowsKernel(float*, float*, int, int, int) [223]
+396.53ms  2.5468ms           (192 48 1)        (16 8 1)        31  5.0625KB        0B         -           -  GeForce GTX 980         1         7  convolutionColumnsKernel(float*, float*, int, int, int) [231]
+399.25ms  2.3776ms           (24 768 1)        (16 4 1)        30  2.5000KB        0B         -           -  GeForce GTX 980         1         7  convolutionRowsKernel(float*, float*, int, int, int) [244]
+401.63ms  2.5435ms           (192 48 1)        (16 8 1)        31  5.0625KB        0B         -           -  GeForce GTX 980         1         7  convolutionColumnsKernel(float*, float*, int, int, int) [252]
+404.37ms  2.3764ms           (24 768 1)        (16 4 1)        30  2.5000KB        0B         -           -  GeForce GTX 980         1         7  convolutionRowsKernel(float*, float*, int, int, int) [265]
+406.75ms  2.5477ms           (192 48 1)        (16 8 1)        31  5.0625KB        0B         -           -  GeForce GTX 980         1         7  convolutionColumnsKernel(float*, float*, int, int, int) [273]
+409.50ms  2.3755ms           (24 768 1)        (16 4 1)        30  2.5000KB        0B         -           -  GeForce GTX 980         1         7  convolutionRowsKernel(float*, float*, int, int, int) [286]
+411.88ms  2.5426ms           (192 48 1)        (16 8 1)        31  5.0625KB        0B         -           -  GeForce GTX 980         1         7  convolutionColumnsKernel(float*, float*, int, int, int) [294]
+414.62ms  2.3761ms           (24 768 1)        (16 4 1)        30  2.5000KB        0B         -           -  GeForce GTX 980         1         7  convolutionRowsKernel(float*, float*, int, int, int) [307]
+417.01ms  2.5381ms           (192 48 1)        (16 8 1)        31  5.0625KB        0B         -           -  GeForce GTX 980         1         7  convolutionColumnsKernel(float*, float*, int, int, int) [315]
+419.81ms  2.3756ms           (24 768 1)        (16 4 1)        30  2.5000KB        0B         -           -  GeForce GTX 980         1         7  convolutionRowsKernel(float*, float*, int, int, int) [328]
+422.19ms  2.5415ms           (192 48 1)        (16 8 1)        31  5.0625KB        0B         -           -  GeForce GTX 980         1         7  convolutionColumnsKernel(float*, float*, int, int, int) [336]
+424.86ms  2.3749ms           (24 768 1)        (16 4 1)        30  2.5000KB        0B         -           -  GeForce GTX 980         1         7  convolutionRowsKernel(float*, float*, int, int, int) [349]
+427.24ms  2.5452ms           (192 48 1)        (16 8 1)        31  5.0625KB        0B         -           -  GeForce GTX 980         1         7  convolutionColumnsKernel(float*, float*, int, int, int) [357]
+429.91ms  2.3728ms           (24 768 1)        (16 4 1)        30  2.5000KB        0B         -           -  GeForce GTX 980         1         7  convolutionRowsKernel(float*, float*, int, int, int) [370]
+432.29ms  2.5474ms           (192 48 1)        (16 8 1)        31  5.0625KB        0B         -           -  GeForce GTX 980         1         7  convolutionColumnsKernel(float*, float*, int, int, int) [378]
+435.05ms  2.3779ms           (24 768 1)        (16 4 1)        30  2.5000KB        0B         -           -  GeForce GTX 980         1         7  convolutionRowsKernel(float*, float*, int, int, int) [391]
+437.44ms  2.5460ms           (192 48 1)        (16 8 1)        31  5.0625KB        0B         -           -  GeForce GTX 980         1         7  convolutionColumnsKernel(float*, float*, int, int, int) [399]
+440.19ms  2.3787ms           (24 768 1)        (16 4 1)        30  2.5000KB        0B         -           -  GeForce GTX 980         1         7  convolutionRowsKernel(float*, float*, int, int, int) [412]
+442.57ms  2.5391ms           (192 48 1)        (16 8 1)        31  5.0625KB        0B         -           -  GeForce GTX 980         1         7  convolutionColumnsKernel(float*, float*, int, int, int) [420]
+445.31ms  2.3738ms           (24 768 1)        (16 4 1)        30  2.5000KB        0B         -           -  GeForce GTX 980         1         7  convolutionRowsKernel(float*, float*, int, int, int) [433]
+447.69ms  2.5509ms           (192 48 1)        (16 8 1)        31  5.0625KB        0B         -           -  GeForce GTX 980         1         7  convolutionColumnsKernel(float*, float*, int, int, int) [441]
+450.43ms  17.520ms                    -               -         -         -         -  36.000MB  2.0066GB/s  GeForce GTX 980         1         7  [CUDA memcpy DtoH]
+
+Regs: Number of registers used per CUDA thread. This number includes registers used internally by the CUDA driver and/or tools and can be more than what the compiler shows.
+SSMem: Static shared memory allocated per CUDA block.
+DSMem: Dynamic shared memory allocated per CUDA block.
 [applications/convolutionSeparable] - Starting...
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Image Width x Height = 3072 x 3072
 
 Allocating and initializing host arrays...
 Allocating and initializing CUDA arrays...
-Running GPU convolution (50 identical iterations)...
+Running GPU convolution (15 identical iterations)...
 
-iterated 50, average time is 119.292287 msec.
+iterated 15, average time is 18.188047 msec.
 
 Reading back GPU results...
 
@@ -52,30 +81,29 @@ Checking the results...
 
 Shutting down...
 Test passed
-==73788== NVPROF is profiling process 73788, command: applications/convolutionSeparable -device=1 -iters=50
-==73788== Some kernel(s) will be replayed on device 1 in order to collect all events/metrics.
-==73788== Profiling application: applications/convolutionSeparable -device=1 -iters=50
-==73788== Profiling result:
-==73788== Metric result:
+==12924== NVPROF is profiling process 12924, command: applications/convolutionSeparable -device=0 -iters=15
+==12924== Profiling application: applications/convolutionSeparable -device=0 -iters=15
+==12924== Profiling result:
+==12924== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: convolutionColumnsKernel(float*, float*, int, int, int)
-         51                  eligible_warps_per_cycle           Eligible Warps Per Active Cycle    0.237493    0.245450    0.241233
-         51                    dram_read_transactions           Device Memory Read Transactions     1288764     1302910     1294271
-         51                      dram_read_throughput             Device Memory Read Throughput  15.092GB/s  15.256GB/s  15.156GB/s
+         16                        achieved_occupancy                        Achieved Occupancy    0.902807    0.910415    0.906239
+         16                             sm_efficiency                   Multiprocessor Activity      99.53%      99.72%      99.65%
+         16                 warp_execution_efficiency                 Warp Execution Efficiency     100.00%     100.00%     100.00%
     Kernel: convolutionRowsKernel(float*, float*, int, int, int)
-         51                  eligible_warps_per_cycle           Eligible Warps Per Active Cycle    0.223629    0.233379    0.228955
-         51                    dram_read_transactions           Device Memory Read Transactions     1180432     1181059     1180724
-         51                      dram_read_throughput             Device Memory Read Throughput  14.774GB/s  14.837GB/s  14.800GB/s
+         16                        achieved_occupancy                        Achieved Occupancy    0.894429    0.915907    0.906271
+         16                             sm_efficiency                   Multiprocessor Activity      99.41%      99.66%      99.51%
+         16                 warp_execution_efficiency                 Warp Execution Efficiency     100.00%     100.00%     100.00%
 [applications/convolutionSeparable] - Starting...
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Image Width x Height = 3072 x 3072
 
 Allocating and initializing host arrays...
 Allocating and initializing CUDA arrays...
-Running GPU convolution (50 identical iterations)...
+Running GPU convolution (15 identical iterations)...
 
-iterated 50, average time is 114.051747 msec.
+iterated 15, average time is 117.002634 msec.
 
 Reading back GPU results...
 
@@ -87,30 +115,30 @@ Checking the results...
 
 Shutting down...
 Test passed
-==79320== NVPROF is profiling process 79320, command: applications/convolutionSeparable -device=1 -iters=50
-==79320== Some kernel(s) will be replayed on device 1 in order to collect all events/metrics.
-==79320== Profiling application: applications/convolutionSeparable -device=1 -iters=50
-==79320== Profiling result:
-==79320== Metric result:
+==12144== NVPROF is profiling process 12144, command: applications/convolutionSeparable -device=0 -iters=15
+==12144== Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+==12144== Profiling application: applications/convolutionSeparable -device=0 -iters=15
+==12144== Profiling result:
+==12144== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: convolutionColumnsKernel(float*, float*, int, int, int)
-         51                   dram_write_transactions          Device Memory Write Transactions     1177440     1182476     1179697
-         51                     dram_write_throughput            Device Memory Write Throughput  13.765GB/s  13.819GB/s  13.789GB/s
-         51                      l2_read_transactions                      L2 Read Transactions     1468519     1469087     1468769
+         16                  eligible_warps_per_cycle           Eligible Warps Per Active Cycle    0.237738    0.243281    0.241758
+         16                    dram_read_transactions           Device Memory Read Transactions     1288810     1304645     1298246
+         16                      dram_read_throughput             Device Memory Read Throughput  15.052GB/s  15.244GB/s  15.176GB/s
     Kernel: convolutionRowsKernel(float*, float*, int, int, int)
-         51                   dram_write_transactions          Device Memory Write Transactions     1170177     1177648     1173865
-         51                     dram_write_throughput            Device Memory Write Throughput  14.735GB/s  14.811GB/s  14.774GB/s
-         51                      l2_read_transactions                      L2 Read Transactions     1462375     1463544     1462602
+         16                  eligible_warps_per_cycle           Eligible Warps Per Active Cycle    0.227557    0.232945    0.230520
+         16                    dram_read_transactions           Device Memory Read Transactions     1180721     1181494     1181073
+         16                      dram_read_throughput             Device Memory Read Throughput  14.774GB/s  14.812GB/s  14.795GB/s
 [applications/convolutionSeparable] - Starting...
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Image Width x Height = 3072 x 3072
 
 Allocating and initializing host arrays...
 Allocating and initializing CUDA arrays...
-Running GPU convolution (50 identical iterations)...
+Running GPU convolution (15 identical iterations)...
 
-iterated 50, average time is 122.659928 msec.
+iterated 15, average time is 112.203482 msec.
 
 Reading back GPU results...
 
@@ -122,30 +150,30 @@ Checking the results...
 
 Shutting down...
 Test passed
-==78988== NVPROF is profiling process 78988, command: applications/convolutionSeparable -device=1 -iters=50
-==78988== Some kernel(s) will be replayed on device 1 in order to collect all events/metrics.
-==78988== Profiling application: applications/convolutionSeparable -device=1 -iters=50
-==78988== Profiling result:
-==78988== Metric result:
+==14072== NVPROF is profiling process 14072, command: applications/convolutionSeparable -device=0 -iters=15
+==14072== Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+==14072== Profiling application: applications/convolutionSeparable -device=0 -iters=15
+==14072== Profiling result:
+==14072== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: convolutionColumnsKernel(float*, float*, int, int, int)
-         51                        l2_read_throughput                     L2 Throughput (Reads)  17.141GB/s  17.204GB/s  17.168GB/s
-         51                     l2_write_transactions                     L2 Write Transactions     1179654     1179654     1179654
-         51                       l2_write_throughput                    L2 Throughput (Writes)  13.768GB/s  13.816GB/s  13.788GB/s
+         16                   dram_write_transactions          Device Memory Write Transactions     1175229     1181225     1179209
+         16                     dram_write_throughput            Device Memory Write Throughput  13.730GB/s  13.790GB/s  13.768GB/s
+         16                      l2_read_transactions                      L2 Read Transactions     1468519     1469151     1468832
     Kernel: convolutionRowsKernel(float*, float*, int, int, int)
-         51                        l2_read_throughput                     L2 Throughput (Reads)  18.383GB/s  18.427GB/s  18.402GB/s
-         51                     l2_write_transactions                     L2 Write Transactions     1179654     1179654     1179654
-         51                       l2_write_throughput                    L2 Throughput (Writes)  14.829GB/s  14.864GB/s  14.842GB/s
+         16                   dram_write_transactions          Device Memory Write Transactions     1170320     1177459     1174619
+         16                     dram_write_throughput            Device Memory Write Throughput  14.746GB/s  14.807GB/s  14.780GB/s
+         16                      l2_read_transactions                      L2 Read Transactions     1462375     1463465     1462799
 [applications/convolutionSeparable] - Starting...
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Image Width x Height = 3072 x 3072
 
 Allocating and initializing host arrays...
 Allocating and initializing CUDA arrays...
-Running GPU convolution (50 identical iterations)...
+Running GPU convolution (15 identical iterations)...
 
-iterated 50, average time is 11.411395 msec.
+iterated 15, average time is 119.686403 msec.
 
 Reading back GPU results...
 
@@ -157,29 +185,30 @@ Checking the results...
 
 Shutting down...
 Test passed
-==80460== NVPROF is profiling process 80460, command: applications/convolutionSeparable -device=1 -iters=50
-==80460== Profiling application: applications/convolutionSeparable -device=1 -iters=50
-==80460== Profiling result:
-==80460== Metric result:
+==11280== NVPROF is profiling process 11280, command: applications/convolutionSeparable -device=0 -iters=15
+==11280== Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+==11280== Profiling application: applications/convolutionSeparable -device=0 -iters=15
+==11280== Profiling result:
+==11280== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: convolutionColumnsKernel(float*, float*, int, int, int)
-         51                  shared_load_transactions                  Shared Load Transactions     5382144     5382144     5382144
-         51                    shared_load_throughput             Shared Memory Load Throughput  251.00GB/s  253.28GB/s  252.09GB/s
-         51                 shared_store_transactions                 Shared Store Transactions      737280      737280      737280
+         16                        l2_read_throughput                     L2 Throughput (Reads)  17.112GB/s  17.180GB/s  17.148GB/s
+         16                     l2_write_transactions                     L2 Write Transactions     1179654     1179654     1179654
+         16                       l2_write_throughput                    L2 Throughput (Writes)  13.746GB/s  13.796GB/s  13.771GB/s
     Kernel: convolutionRowsKernel(float*, float*, int, int, int)
-         51                  shared_load_transactions                  Shared Load Transactions     9510912     9510912     9510912
-         51                    shared_load_throughput             Shared Memory Load Throughput  475.08GB/s  478.64GB/s  476.71GB/s
-         51                 shared_store_transactions                 Shared Store Transactions      737280      737280      737280
+         16                        l2_read_throughput                     L2 Throughput (Reads)  18.384GB/s  18.424GB/s  18.404GB/s
+         16                     l2_write_transactions                     L2 Write Transactions     1179654     1179654     1179654
+         16                       l2_write_throughput                    L2 Throughput (Writes)  14.824GB/s  14.856GB/s  14.842GB/s
 [applications/convolutionSeparable] - Starting...
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Image Width x Height = 3072 x 3072
 
 Allocating and initializing host arrays...
 Allocating and initializing CUDA arrays...
-Running GPU convolution (50 identical iterations)...
+Running GPU convolution (15 identical iterations)...
 
-iterated 50, average time is 18.031199 msec.
+iterated 15, average time is 10.442959 msec.
 
 Reading back GPU results...
 
@@ -191,29 +220,29 @@ Checking the results...
 
 Shutting down...
 Test passed
-==79792== NVPROF is profiling process 79792, command: applications/convolutionSeparable -device=1 -iters=50
-==79792== Profiling application: applications/convolutionSeparable -device=1 -iters=50
-==79792== Profiling result:
-==79792== Metric result:
+==13228== NVPROF is profiling process 13228, command: applications/convolutionSeparable -device=0 -iters=15
+==13228== Profiling application: applications/convolutionSeparable -device=0 -iters=15
+==13228== Profiling result:
+==13228== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: convolutionColumnsKernel(float*, float*, int, int, int)
-         51                   shared_store_throughput            Shared Memory Store Throughput  34.415GB/s  34.658GB/s  34.532GB/s
-         51                         branch_efficiency                         Branch Efficiency     100.00%     100.00%     100.00%
-         51                               cf_executed        Executed Control-Flow Instructions       36864       36864       36864
+         16                  shared_load_transactions                  Shared Load Transactions     5382144     5382144     5382144
+         16                    shared_load_throughput             Shared Memory Load Throughput  251.42GB/s  252.92GB/s  251.92GB/s
+         16                 shared_store_transactions                 Shared Store Transactions      737280      737280      737280
     Kernel: convolutionRowsKernel(float*, float*, int, int, int)
-         51                   shared_store_throughput            Shared Memory Store Throughput  36.847GB/s  37.044GB/s  36.949GB/s
-         51                         branch_efficiency                         Branch Efficiency     100.00%     100.00%     100.00%
-         51                               cf_executed        Executed Control-Flow Instructions       36864       36864       36864
+         16                  shared_load_transactions                  Shared Load Transactions     9510912     9510912     9510912
+         16                    shared_load_throughput             Shared Memory Load Throughput  474.73GB/s  477.31GB/s  476.46GB/s
+         16                 shared_store_transactions                 Shared Store Transactions      737280      737280      737280
 [applications/convolutionSeparable] - Starting...
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Image Width x Height = 3072 x 3072
 
 Allocating and initializing host arrays...
 Allocating and initializing CUDA arrays...
-Running GPU convolution (50 identical iterations)...
+Running GPU convolution (15 identical iterations)...
 
-iterated 50, average time is 255.108340 msec.
+iterated 15, average time is 16.065873 msec.
 
 Reading back GPU results...
 
@@ -225,30 +254,64 @@ Checking the results...
 
 Shutting down...
 Test passed
-==79984== NVPROF is profiling process 79984, command: applications/convolutionSeparable -device=1 -iters=50
-==79984== Some kernel(s) will be replayed on device 1 in order to collect all events/metrics.
-==79984== Profiling application: applications/convolutionSeparable -device=1 -iters=50
-==79984== Profiling result:
-==79984== Metric result:
+==13460== NVPROF is profiling process 13460, command: applications/convolutionSeparable -device=0 -iters=15
+==13460== Profiling application: applications/convolutionSeparable -device=0 -iters=15
+==13460== Profiling result:
+==13460== Metric result:
+Invocations                               Metric Name                        Metric Description         Min         Max         Avg
+Device "GeForce GTX 980 (0)"
+    Kernel: convolutionColumnsKernel(float*, float*, int, int, int)
+         16                   shared_store_throughput            Shared Memory Store Throughput  34.374GB/s  34.547GB/s  34.473GB/s
+         16                         branch_efficiency                         Branch Efficiency     100.00%     100.00%     100.00%
+         16                               cf_executed        Executed Control-Flow Instructions       36864       36864       36864
+    Kernel: convolutionRowsKernel(float*, float*, int, int, int)
+         16                   shared_store_throughput            Shared Memory Store Throughput  36.815GB/s  37.013GB/s  36.936GB/s
+         16                         branch_efficiency                         Branch Efficiency     100.00%     100.00%     100.00%
+         16                               cf_executed        Executed Control-Flow Instructions       36864       36864       36864
+[applications/convolutionSeparable] - Starting...
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
+Image Width x Height = 3072 x 3072
+
+Allocating and initializing host arrays...
+Allocating and initializing CUDA arrays...
+Running GPU convolution (15 identical iterations)...
+
+iterated 15, average time is 266.960465 msec.
+
+Reading back GPU results...
+
+Checking the results...
+ ...running convolutionRowCPU()
+ ...running convolutionColumnCPU()
+ ...comparing the results
+ ...Relative L2 norm: 0.000000E+000
+
+Shutting down...
+Test passed
+==13508== NVPROF is profiling process 13508, command: applications/convolutionSeparable -device=0 -iters=15
+==13508== Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+==13508== Profiling application: applications/convolutionSeparable -device=0 -iters=15
+==13508== Profiling result:
+==13508== Metric result:
 Invocations                               Metric Name                            Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: convolutionColumnsKernel(float*, float*, int, int, int)
-         51                                 cf_issued              Issued Control-Flow Instructions       36864       36864       36864
-         51                             flop_count_sp   Floating Point Operations(Single Precision)   320864256   320864256   320864256
-         51                        flop_sp_efficiency                  FLOP Efficiency(Peak Single)       3.09%       3.11%       3.10%
+         16                                 cf_issued              Issued Control-Flow Instructions       36864       36864       36864
+         16                             flop_count_sp   Floating Point Operations(Single Precision)   320864256   320864256   320864256
+         16                        flop_sp_efficiency                  FLOP Efficiency(Peak Single)       3.08%       3.10%       3.09%
     Kernel: convolutionRowsKernel(float*, float*, int, int, int)
-         51                                 cf_issued              Issued Control-Flow Instructions       36864       36864       36864
-         51                             flop_count_sp   Floating Point Operations(Single Precision)   320864256   320864256   320864256
-         51                        flop_sp_efficiency                  FLOP Efficiency(Peak Single)       3.30%       3.32%       3.31%
+         16                                 cf_issued              Issued Control-Flow Instructions       36864       36864       36864
+         16                             flop_count_sp   Floating Point Operations(Single Precision)   320864256   320864256   320864256
+         16                        flop_sp_efficiency                  FLOP Efficiency(Peak Single)       3.31%       3.32%       3.31%
 [applications/convolutionSeparable] - Starting...
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Image Width x Height = 3072 x 3072
 
 Allocating and initializing host arrays...
 Allocating and initializing CUDA arrays...
-Running GPU convolution (50 identical iterations)...
+Running GPU convolution (15 identical iterations)...
 
-iterated 50, average time is 160.207316 msec.
+iterated 15, average time is 154.627747 msec.
 
 Reading back GPU results...
 
@@ -260,30 +323,30 @@ Checking the results...
 
 Shutting down...
 Test passed
-==72088== NVPROF is profiling process 72088, command: applications/convolutionSeparable -device=1 -iters=50
-==72088== Some kernel(s) will be replayed on device 1 in order to collect all events/metrics.
-==72088== Profiling application: applications/convolutionSeparable -device=1 -iters=50
-==72088== Profiling result:
-==72088== Metric result:
+==10428== NVPROF is profiling process 10428, command: applications/convolutionSeparable -device=0 -iters=15
+==10428== Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+==10428== Profiling application: applications/convolutionSeparable -device=0 -iters=15
+==10428== Profiling result:
+==10428== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: convolutionColumnsKernel(float*, float*, int, int, int)
-         51                            gld_throughput                    Global Load Throughput  17.161GB/s  17.224GB/s  17.195GB/s
-         51                          gld_transactions                  Global Load Transactions     2936832     2936832     2936832
-         51                            gst_throughput                   Global Store Throughput  13.786GB/s  13.837GB/s  13.813GB/s
+         16                            gld_throughput                    Global Load Throughput  17.133GB/s  17.210GB/s  17.167GB/s
+         16                          gld_transactions                  Global Load Transactions     2936832     2936832     2936832
+         16                            gst_throughput                   Global Store Throughput  13.763GB/s  13.825GB/s  13.791GB/s
     Kernel: convolutionRowsKernel(float*, float*, int, int, int)
-         51                            gld_throughput                    Global Load Throughput  18.311GB/s  18.353GB/s  18.329GB/s
-         51                          gld_transactions                  Global Load Transactions     2924544     2924544     2924544
-         51                            gst_throughput                   Global Store Throughput  14.772GB/s  14.806GB/s  14.787GB/s
+         16                            gld_throughput                    Global Load Throughput  18.303GB/s  18.344GB/s  18.320GB/s
+         16                          gld_transactions                  Global Load Transactions     2924544     2924544     2924544
+         16                            gst_throughput                   Global Store Throughput  14.766GB/s  14.798GB/s  14.779GB/s
 [applications/convolutionSeparable] - Starting...
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Image Width x Height = 3072 x 3072
 
 Allocating and initializing host arrays...
 Allocating and initializing CUDA arrays...
-Running GPU convolution (50 identical iterations)...
+Running GPU convolution (15 identical iterations)...
 
-iterated 50, average time is 19.175791 msec.
+iterated 15, average time is 16.848004 msec.
 
 Reading back GPU results...
 
@@ -295,29 +358,29 @@ Checking the results...
 
 Shutting down...
 Test passed
-==78380== NVPROF is profiling process 78380, command: applications/convolutionSeparable -device=1 -iters=50
-==78380== Profiling application: applications/convolutionSeparable -device=1 -iters=50
-==78380== Profiling result:
-==78380== Metric result:
+==12416== NVPROF is profiling process 12416, command: applications/convolutionSeparable -device=0 -iters=15
+==12416== Profiling application: applications/convolutionSeparable -device=0 -iters=15
+==12416== Profiling result:
+==12416== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: convolutionColumnsKernel(float*, float*, int, int, int)
-         51                          gst_transactions                 Global Store Transactions     1179648     1179648     1179648
-         51                               inst_issued                       Instructions Issued    11762960    11764933    11763298
-         51                             inst_per_warp                     Instructions per warp  319.000000  319.000000  319.000000
+         16                          gst_transactions                 Global Store Transactions     1179648     1179648     1179648
+         16                               inst_issued                       Instructions Issued    11763093    11764702    11763611
+         16                             inst_per_warp                     Instructions per warp  319.000000  319.000000  319.000000
     Kernel: convolutionRowsKernel(float*, float*, int, int, int)
-         51                          gst_transactions                 Global Store Transactions     1179648     1179648     1179648
-         51                               inst_issued                       Instructions Issued    12093909    12097619    12094251
-         51                             inst_per_warp                     Instructions per warp  328.000000  328.000000  328.000000
+         16                          gst_transactions                 Global Store Transactions     1179648     1179648     1179648
+         16                               inst_issued                       Instructions Issued    12094007    12096594    12094523
+         16                             inst_per_warp                     Instructions per warp  328.000000  328.000000  328.000000
 [applications/convolutionSeparable] - Starting...
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Image Width x Height = 3072 x 3072
 
 Allocating and initializing host arrays...
 Allocating and initializing CUDA arrays...
-Running GPU convolution (50 identical iterations)...
+Running GPU convolution (15 identical iterations)...
 
-iterated 50, average time is 12.680806 msec.
+iterated 15, average time is 11.776164 msec.
 
 Reading back GPU results...
 
@@ -329,13 +392,13 @@ Checking the results...
 
 Shutting down...
 Test passed
-==78496== NVPROF is profiling process 78496, command: applications/convolutionSeparable -device=1 -iters=50
-==78496== Profiling application: applications/convolutionSeparable -device=1 -iters=50
-==78496== Profiling result:
-==78496== Metric result:
+==13928== NVPROF is profiling process 13928, command: applications/convolutionSeparable -device=0 -iters=15
+==13928== Profiling application: applications/convolutionSeparable -device=0 -iters=15
+==13928== Profiling result:
+==13928== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: convolutionColumnsKernel(float*, float*, int, int, int)
-         51                                       ipc                              Executed IPC    0.290646    0.292846    0.291583
+         16                                       ipc                              Executed IPC    0.290436    0.292298    0.291522
     Kernel: convolutionRowsKernel(float*, float*, int, int, int)
-         51                                       ipc                              Executed IPC    0.320262    0.321870    0.321114
+         16                                       ipc                              Executed IPC    0.320611    0.322006    0.321151

@@ -1,8 +1,8 @@
 [applications/binomialOptions] - Starting...
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Generating input data...
 Running GPU binomial tree...
-iterated 50, average time is 116.318840 msec.
+iterated 15, average time is 108.170914 msec.
 Options count            : 512     
 Time steps               : 2048     
 Running CPU binomial tree...
@@ -15,21 +15,37 @@ CPU binomial vs. GPU binomial
 L1 norm: 1.889593E-008
 Shutting down...
 Test passed
-==21740== NVPROF is profiling process 21740, command: applications/binomialOptions -device=1 -iters=50
-==21740== Profiling application: applications/binomialOptions -device=1 -iters=50
-==21740== Profiling result:
-==21740== Metric result:
-Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
-    Kernel: binomialOptionsKernel(void)
-         51                        achieved_occupancy                        Achieved Occupancy    0.997936    0.998100    0.998005
-         51                             sm_efficiency                   Multiprocessor Activity      98.01%      98.11%      98.06%
-         51                 warp_execution_efficiency                 Warp Execution Efficiency      99.97%      99.97%      99.97%
+==7828== NVPROF is profiling process 7828, command: applications/binomialOptions -device=0 -iters=15
+==7828== Profiling application: applications/binomialOptions -device=0 -iters=15
+==7828== Profiling result:
+   Start  Duration            Grid Size      Block Size     Regs*    SSMem*    DSMem*      Size  Throughput           Device   Context    Stream  Name
+197.23ms  7.5840us                    -               -         -         -         -  20.000KB  2.5150GB/s  GeForce GTX 980         1         7  [CUDA memcpy HtoD]
+197.34ms  108.06ms            (512 1 1)       (256 1 1)        21  4.0156KB        0B         -           -  GeForce GTX 980         1         7  binomialOptionsKernel(void) [111]
+305.60ms  108.06ms            (512 1 1)       (256 1 1)        21  4.0156KB        0B         -           -  GeForce GTX 980         1         7  binomialOptionsKernel(void) [119]
+413.85ms  108.07ms            (512 1 1)       (256 1 1)        21  4.0156KB        0B         -           -  GeForce GTX 980         1         7  binomialOptionsKernel(void) [126]
+522.12ms  108.06ms            (512 1 1)       (256 1 1)        21  4.0156KB        0B         -           -  GeForce GTX 980         1         7  binomialOptionsKernel(void) [133]
+630.37ms  108.06ms            (512 1 1)       (256 1 1)        21  4.0156KB        0B         -           -  GeForce GTX 980         1         7  binomialOptionsKernel(void) [140]
+738.67ms  108.07ms            (512 1 1)       (256 1 1)        21  4.0156KB        0B         -           -  GeForce GTX 980         1         7  binomialOptionsKernel(void) [147]
+846.95ms  108.07ms            (512 1 1)       (256 1 1)        21  4.0156KB        0B         -           -  GeForce GTX 980         1         7  binomialOptionsKernel(void) [154]
+955.31ms  108.08ms            (512 1 1)       (256 1 1)        21  4.0156KB        0B         -           -  GeForce GTX 980         1         7  binomialOptionsKernel(void) [161]
+1.06360s  108.07ms            (512 1 1)       (256 1 1)        21  4.0156KB        0B         -           -  GeForce GTX 980         1         7  binomialOptionsKernel(void) [168]
+1.17188s  108.08ms            (512 1 1)       (256 1 1)        21  4.0156KB        0B         -           -  GeForce GTX 980         1         7  binomialOptionsKernel(void) [175]
+1.28016s  108.08ms            (512 1 1)       (256 1 1)        21  4.0156KB        0B         -           -  GeForce GTX 980         1         7  binomialOptionsKernel(void) [182]
+1.38844s  108.07ms            (512 1 1)       (256 1 1)        21  4.0156KB        0B         -           -  GeForce GTX 980         1         7  binomialOptionsKernel(void) [189]
+1.49679s  108.07ms            (512 1 1)       (256 1 1)        21  4.0156KB        0B         -           -  GeForce GTX 980         1         7  binomialOptionsKernel(void) [196]
+1.60506s  108.08ms            (512 1 1)       (256 1 1)        21  4.0156KB        0B         -           -  GeForce GTX 980         1         7  binomialOptionsKernel(void) [203]
+1.71334s  108.08ms            (512 1 1)       (256 1 1)        21  4.0156KB        0B         -           -  GeForce GTX 980         1         7  binomialOptionsKernel(void) [210]
+1.82162s  108.07ms            (512 1 1)       (256 1 1)        21  4.0156KB        0B         -           -  GeForce GTX 980         1         7  binomialOptionsKernel(void) [217]
+1.92989s  4.8320us                    -               -         -         -         -  2.0000KB  404.21MB/s  GeForce GTX 980         1         7  [CUDA memcpy DtoH]
+
+Regs: Number of registers used per CUDA thread. This number includes registers used internally by the CUDA driver and/or tools and can be more than what the compiler shows.
+SSMem: Static shared memory allocated per CUDA block.
+DSMem: Dynamic shared memory allocated per CUDA block.
 [applications/binomialOptions] - Starting...
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Generating input data...
 Running GPU binomial tree...
-iterated 50, average time is 338.877408 msec.
+iterated 15, average time is 114.998735 msec.
 Options count            : 512     
 Time steps               : 2048     
 Running CPU binomial tree...
@@ -42,22 +58,21 @@ CPU binomial vs. GPU binomial
 L1 norm: 1.889593E-008
 Shutting down...
 Test passed
-==25680== NVPROF is profiling process 25680, command: applications/binomialOptions -device=1 -iters=50
-==25680== Some kernel(s) will be replayed on device 1 in order to collect all events/metrics.
-==25680== Profiling application: applications/binomialOptions -device=1 -iters=50
-==25680== Profiling result:
-==25680== Metric result:
+==7724== NVPROF is profiling process 7724, command: applications/binomialOptions -device=0 -iters=15
+==7724== Profiling application: applications/binomialOptions -device=0 -iters=15
+==7724== Profiling result:
+==7724== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: binomialOptionsKernel(void)
-         51                  eligible_warps_per_cycle           Eligible Warps Per Active Cycle    0.316645    0.316698    0.316669
-         51                    dram_read_transactions           Device Memory Read Transactions      106336      167407      125206
-         51                      dram_read_throughput             Device Memory Read Throughput  30.084MB/s  47.274MB/s  34.332MB/s
+         16                        achieved_occupancy                        Achieved Occupancy    0.997964    0.998102    0.998022
+         16                             sm_efficiency                   Multiprocessor Activity      99.42%      99.46%      99.45%
+         16                 warp_execution_efficiency                 Warp Execution Efficiency      99.97%      99.97%      99.97%
 [applications/binomialOptions] - Starting...
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Generating input data...
 Running GPU binomial tree...
-iterated 50, average time is 336.253002 msec.
+iterated 15, average time is 337.869657 msec.
 Options count            : 512     
 Time steps               : 2048     
 Running CPU binomial tree...
@@ -70,22 +85,22 @@ CPU binomial vs. GPU binomial
 L1 norm: 1.889593E-008
 Shutting down...
 Test passed
-==25312== NVPROF is profiling process 25312, command: applications/binomialOptions -device=1 -iters=50
-==25312== Some kernel(s) will be replayed on device 1 in order to collect all events/metrics.
-==25312== Profiling application: applications/binomialOptions -device=1 -iters=50
-==25312== Profiling result:
-==25312== Metric result:
+==8352== NVPROF is profiling process 8352, command: applications/binomialOptions -device=0 -iters=15
+==8352== Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+==8352== Profiling application: applications/binomialOptions -device=0 -iters=15
+==8352== Profiling result:
+==8352== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: binomialOptionsKernel(void)
-         51                   dram_write_transactions          Device Memory Write Transactions     6134275     6155860     6145798
-         51                     dram_write_throughput            Device Memory Write Throughput  1.6916GB/s  1.6975GB/s  1.6941GB/s
-         51                      l2_read_transactions                      L2 Read Transactions     9623328     9624099     9623577
+         16                  eligible_warps_per_cycle           Eligible Warps Per Active Cycle    0.316651    0.316680    0.316668
+         16                    dram_read_transactions           Device Memory Read Transactions      145194      157743      150996
+         16                      dram_read_throughput             Device Memory Read Throughput  40.999MB/s  44.541MB/s  41.962MB/s
 [applications/binomialOptions] - Starting...
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Generating input data...
 Running GPU binomial tree...
-iterated 50, average time is 341.631797 msec.
+iterated 15, average time is 335.086861 msec.
 Options count            : 512     
 Time steps               : 2048     
 Running CPU binomial tree...
@@ -98,22 +113,22 @@ CPU binomial vs. GPU binomial
 L1 norm: 1.889593E-008
 Shutting down...
 Test passed
-==20428== NVPROF is profiling process 20428, command: applications/binomialOptions -device=1 -iters=50
-==20428== Some kernel(s) will be replayed on device 1 in order to collect all events/metrics.
-==20428== Profiling application: applications/binomialOptions -device=1 -iters=50
-==20428== Profiling result:
-==20428== Metric result:
+==7468== NVPROF is profiling process 7468, command: applications/binomialOptions -device=0 -iters=15
+==7468== Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+==7468== Profiling application: applications/binomialOptions -device=0 -iters=15
+==7468== Profiling result:
+==7468== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: binomialOptionsKernel(void)
-         51                        l2_read_throughput                     L2 Throughput (Reads)  2.6537GB/s  2.6541GB/s  2.6533GB/s
-         51                     l2_write_transactions                     L2 Write Transactions     8553478     8553506     8553484
-         51                       l2_write_throughput                    L2 Throughput (Writes)  2.3586GB/s  2.3590GB/s  2.3581GB/s
+         16                   dram_write_transactions          Device Memory Write Transactions     6187712     6203446     6197305
+         16                     dram_write_throughput            Device Memory Write Throughput  1.7063GB/s  1.7106GB/s  1.7080GB/s
+         16                      l2_read_transactions                      L2 Read Transactions     9623311     9626337     9623990
 [applications/binomialOptions] - Starting...
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Generating input data...
 Running GPU binomial tree...
-iterated 50, average time is 111.640184 msec.
+iterated 15, average time is 338.024019 msec.
 Options count            : 512     
 Time steps               : 2048     
 Running CPU binomial tree...
@@ -126,21 +141,22 @@ CPU binomial vs. GPU binomial
 L1 norm: 1.889593E-008
 Shutting down...
 Test passed
-==24312== NVPROF is profiling process 24312, command: applications/binomialOptions -device=1 -iters=50
-==24312== Profiling application: applications/binomialOptions -device=1 -iters=50
-==24312== Profiling result:
-==24312== Metric result:
+==9012== NVPROF is profiling process 9012, command: applications/binomialOptions -device=0 -iters=15
+==9012== Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+==9012== Profiling application: applications/binomialOptions -device=0 -iters=15
+==9012== Profiling result:
+==9012== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: binomialOptionsKernel(void)
-         51                  shared_load_transactions                  Shared Load Transactions   172491264   172491264   172491264
-         51                    shared_load_throughput             Shared Memory Load Throughput  190.25GB/s  190.29GB/s  190.27GB/s
-         51                 shared_store_transactions                 Shared Store Transactions    87659520    87659520    87659520
+         16                        l2_read_throughput                     L2 Throughput (Reads)  2.6536GB/s  2.6545GB/s  2.6533GB/s
+         16                     l2_write_transactions                     L2 Write Transactions     8553478     8555296     8553707
+         16                       l2_write_throughput                    L2 Throughput (Writes)  2.3585GB/s  2.3592GB/s  2.3581GB/s
 [applications/binomialOptions] - Starting...
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Generating input data...
 Running GPU binomial tree...
-iterated 50, average time is 115.040546 msec.
+iterated 15, average time is 111.003477 msec.
 Options count            : 512     
 Time steps               : 2048     
 Running CPU binomial tree...
@@ -153,21 +169,21 @@ CPU binomial vs. GPU binomial
 L1 norm: 1.889593E-008
 Shutting down...
 Test passed
-==27224== NVPROF is profiling process 27224, command: applications/binomialOptions -device=1 -iters=50
-==27224== Profiling application: applications/binomialOptions -device=1 -iters=50
-==27224== Profiling result:
-==27224== Metric result:
+==8624== NVPROF is profiling process 8624, command: applications/binomialOptions -device=0 -iters=15
+==8624== Profiling application: applications/binomialOptions -device=0 -iters=15
+==8624== Profiling result:
+==8624== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: binomialOptionsKernel(void)
-         51                   shared_store_throughput            Shared Memory Store Throughput  96.687GB/s  96.705GB/s  96.694GB/s
-         51                         branch_efficiency                         Branch Efficiency     100.00%     100.00%     100.00%
-         51                               cf_executed        Executed Control-Flow Instructions    27119616    27119616    27119616
+         16                  shared_load_transactions                  Shared Load Transactions   172491264   172491264   172491264
+         16                    shared_load_throughput             Shared Memory Load Throughput  190.26GB/s  190.30GB/s  190.27GB/s
+         16                 shared_store_transactions                 Shared Store Transactions    87659520    87659520    87659520
 [applications/binomialOptions] - Starting...
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Generating input data...
 Running GPU binomial tree...
-iterated 50, average time is 459.470145 msec.
+iterated 15, average time is 114.182869 msec.
 Options count            : 512     
 Time steps               : 2048     
 Running CPU binomial tree...
@@ -180,22 +196,49 @@ CPU binomial vs. GPU binomial
 L1 norm: 1.889593E-008
 Shutting down...
 Test passed
-==21856== NVPROF is profiling process 21856, command: applications/binomialOptions -device=1 -iters=50
-==21856== Some kernel(s) will be replayed on device 1 in order to collect all events/metrics.
-==21856== Profiling application: applications/binomialOptions -device=1 -iters=50
-==21856== Profiling result:
-==21856== Metric result:
+==8548== NVPROF is profiling process 8548, command: applications/binomialOptions -device=0 -iters=15
+==8548== Profiling application: applications/binomialOptions -device=0 -iters=15
+==8548== Profiling result:
+==8548== Metric result:
+Invocations                               Metric Name                        Metric Description         Min         Max         Avg
+Device "GeForce GTX 980 (0)"
+    Kernel: binomialOptionsKernel(void)
+         16                   shared_store_throughput            Shared Memory Store Throughput  96.678GB/s  96.703GB/s  96.690GB/s
+         16                         branch_efficiency                         Branch Efficiency     100.00%     100.00%     100.00%
+         16                               cf_executed        Executed Control-Flow Instructions    27119616    27119616    27119616
+[applications/binomialOptions] - Starting...
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
+Generating input data...
+Running GPU binomial tree...
+iterated 15, average time is 458.932444 msec.
+Options count            : 512     
+Time steps               : 2048     
+Running CPU binomial tree...
+Comparing the results...
+GPU binomial vs. Black-Scholes
+L1 norm: 1.045294E-004
+CPU binomial vs. Black-Scholes
+L1 norm: 1.045245E-004
+CPU binomial vs. GPU binomial
+L1 norm: 1.889593E-008
+Shutting down...
+Test passed
+==8028== NVPROF is profiling process 8028, command: applications/binomialOptions -device=0 -iters=15
+==8028== Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+==8028== Profiling application: applications/binomialOptions -device=0 -iters=15
+==8028== Profiling result:
+==8028== Metric result:
 Invocations                               Metric Name                            Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: binomialOptionsKernel(void)
-         51                                 cf_issued              Issued Control-Flow Instructions    27119616    27119616    27119616
-         51                             flop_count_sp   Floating Point Operations(Single Precision)    13638144    13638144    13638144
-         51                        flop_sp_efficiency                  FLOP Efficiency(Peak Single)       0.01%       0.01%       0.01%
+         16                                 cf_issued              Issued Control-Flow Instructions    27119616    27119616    27119616
+         16                             flop_count_sp   Floating Point Operations(Single Precision)    13638144    13638144    13638144
+         16                        flop_sp_efficiency                  FLOP Efficiency(Peak Single)       0.01%       0.01%       0.01%
 [applications/binomialOptions] - Starting...
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Generating input data...
 Running GPU binomial tree...
-iterated 50, average time is 459.172490 msec.
+iterated 15, average time is 456.038812 msec.
 Options count            : 512     
 Time steps               : 2048     
 Running CPU binomial tree...
@@ -208,22 +251,22 @@ CPU binomial vs. GPU binomial
 L1 norm: 1.889593E-008
 Shutting down...
 Test passed
-==22600== NVPROF is profiling process 22600, command: applications/binomialOptions -device=1 -iters=50
-==22600== Some kernel(s) will be replayed on device 1 in order to collect all events/metrics.
-==22600== Profiling application: applications/binomialOptions -device=1 -iters=50
-==22600== Profiling result:
-==22600== Metric result:
+==7356== NVPROF is profiling process 7356, command: applications/binomialOptions -device=0 -iters=15
+==7356== Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+==7356== Profiling application: applications/binomialOptions -device=0 -iters=15
+==7356== Profiling result:
+==7356== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: binomialOptionsKernel(void)
-         51                            gld_throughput                    Global Load Throughput  2.6530GB/s  2.6535GB/s  2.6524GB/s
-         51                          gld_transactions                  Global Load Transactions     9621504     9621504     9621504
-         51                            gst_throughput                   Global Store Throughput  2.3585GB/s  2.3589GB/s  2.3581GB/s
+         16                            gld_throughput                    Global Load Throughput  2.6530GB/s  2.6534GB/s  2.6524GB/s
+         16                          gld_transactions                  Global Load Transactions     9621504     9621504     9621504
+         16                            gst_throughput                   Global Store Throughput  2.3585GB/s  2.3589GB/s  2.3581GB/s
 [applications/binomialOptions] - Starting...
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Generating input data...
 Running GPU binomial tree...
-iterated 50, average time is 115.554096 msec.
+iterated 15, average time is 114.912373 msec.
 Options count            : 512     
 Time steps               : 2048     
 Running CPU binomial tree...
@@ -236,21 +279,21 @@ CPU binomial vs. GPU binomial
 L1 norm: 1.889593E-008
 Shutting down...
 Test passed
-==23180== NVPROF is profiling process 23180, command: applications/binomialOptions -device=1 -iters=50
-==23180== Profiling application: applications/binomialOptions -device=1 -iters=50
-==23180== Profiling result:
-==23180== Metric result:
+==8184== NVPROF is profiling process 8184, command: applications/binomialOptions -device=0 -iters=15
+==8184== Profiling application: applications/binomialOptions -device=0 -iters=15
+==8184== Profiling result:
+==8184== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: binomialOptionsKernel(void)
-         51                          gst_transactions                 Global Store Transactions     8553472     8553472     8553472
-         51                               inst_issued                       Instructions Issued   377977778   377978460   377977983
-         51                             inst_per_warp                     Instructions per warp  9.2279e+04  9.2279e+04  9.2279e+04
+         16                          gst_transactions                 Global Store Transactions     8553472     8553472     8553472
+         16                               inst_issued                       Instructions Issued   377977744   377978321   377977943
+         16                             inst_per_warp                     Instructions per warp  9.2279e+04  9.2279e+04  9.2279e+04
 [applications/binomialOptions] - Starting...
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Generating input data...
 Running GPU binomial tree...
-iterated 50, average time is 112.412462 msec.
+iterated 15, average time is 111.792944 msec.
 Options count            : 512     
 Time steps               : 2048     
 Running CPU binomial tree...
@@ -263,11 +306,11 @@ CPU binomial vs. GPU binomial
 L1 norm: 1.889593E-008
 Shutting down...
 Test passed
-==27188== NVPROF is profiling process 27188, command: applications/binomialOptions -device=1 -iters=50
-==27188== Profiling application: applications/binomialOptions -device=1 -iters=50
-==27188== Profiling result:
-==27188== Metric result:
+==8496== NVPROF is profiling process 8496, command: applications/binomialOptions -device=0 -iters=15
+==8496== Profiling application: applications/binomialOptions -device=0 -iters=15
+==8496== Profiling result:
+==8496== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: binomialOptionsKernel(void)
-         51                                       ipc                              Executed IPC    0.374588    0.374620    0.374606
+         16                                       ipc                              Executed IPC    0.374588    0.374617    0.374605

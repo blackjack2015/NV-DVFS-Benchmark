@@ -1,8 +1,8 @@
 Transpose Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 MapSMtoCores for SM 5.2 is undefined.  Default to use 128 Cores/SM
-> Device 1: "GeForce GTX 980"
+> Device 0: "GeForce GTX 980"
 > SM Capability 5.2 detected:
 MapSMtoCores for SM 5.2 is undefined.  Default to use 128 Cores/SM
 MapSMtoCores for SM 5.2 is undefined.  Default to use 128 Cores/SM
@@ -13,25 +13,43 @@ MapSMtoCores for SM 5.2 is undefined.  Default to use 128 Cores/SM
 
 Matrix size: 8192x8192 (512x512 tiles), tile size: 16x16, block size: 16x16
 
-iterated 50, average time is 20.723668 msec
-transpose coalesced         , Total Time = 1036.18342 ms
-transpose coalesced         , Throughput = 24.1270 GB/s, Time = 20.72367 ms, Size = 67108864 fp32 elements, NumDevsUsed = 1, Workgroup = 256
+iterated 15, average time is 12.991919 msec
+transpose coalesced         , Total Time = 194.87878 ms
+transpose coalesced         , Throughput = 38.4855 GB/s, Time = 12.99192 ms, Size = 67108864 fp32 elements, NumDevsUsed = 1, Workgroup = 256
 Test passed
-==31524== NVPROF is profiling process 31524, command: applications/transpose -dimX=8192 -dimY=8192 -device=1 -iters=50
-==31524== Profiling application: applications/transpose -dimX=8192 -dimY=8192 -device=1 -iters=50
-==31524== Profiling result:
-==31524== Metric result:
-Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
-    Kernel: transposeCoalesced(float*, float*, int, int)
-         52                        achieved_occupancy                        Achieved Occupancy    0.960921    0.961208    0.961075
-         52                             sm_efficiency                   Multiprocessor Activity      99.94%      99.96%      99.95%
-         52                 warp_execution_efficiency                 Warp Execution Efficiency     100.00%     100.00%     100.00%
+==13248== NVPROF is profiling process 13248, command: applications/transpose -dimX=8192 -dimY=8192 -device=0 -iters=15
+==13248== Profiling application: applications/transpose -dimX=8192 -dimY=8192 -device=0 -iters=15
+==13248== Profiling result:
+   Start  Duration            Grid Size      Block Size     Regs*    SSMem*    DSMem*      Size  Throughput           Device   Context    Stream  Name
+345.06ms  940.32ms                    -               -         -         -         -  256.00MB  272.25MB/s  GeForce GTX 980         1         7  [CUDA memcpy HtoD]
+1.28539s  12.829ms          (512 512 1)       (16 16 1)        11  1.0000KB        0B         -           -  GeForce GTX 980         1         7  transposeCoalesced(float*, float*, int, int) [116]
+1.29837s  12.945ms          (512 512 1)       (16 16 1)        11  1.0000KB        0B         -           -  GeForce GTX 980         1         7  transposeCoalesced(float*, float*, int, int) [126]
+1.31153s  12.945ms          (512 512 1)       (16 16 1)        11  1.0000KB        0B         -           -  GeForce GTX 980         1         7  transposeCoalesced(float*, float*, int, int) [138]
+1.32467s  12.944ms          (512 512 1)       (16 16 1)        11  1.0000KB        0B         -           -  GeForce GTX 980         1         7  transposeCoalesced(float*, float*, int, int) [149]
+1.33781s  12.874ms          (512 512 1)       (16 16 1)        11  1.0000KB        0B         -           -  GeForce GTX 980         1         7  transposeCoalesced(float*, float*, int, int) [160]
+1.35088s  12.825ms          (512 512 1)       (16 16 1)        11  1.0000KB        0B         -           -  GeForce GTX 980         1         7  transposeCoalesced(float*, float*, int, int) [171]
+1.36389s  12.941ms          (512 512 1)       (16 16 1)        11  1.0000KB        0B         -           -  GeForce GTX 980         1         7  transposeCoalesced(float*, float*, int, int) [182]
+1.37702s  12.945ms          (512 512 1)       (16 16 1)        11  1.0000KB        0B         -           -  GeForce GTX 980         1         7  transposeCoalesced(float*, float*, int, int) [193]
+1.39016s  12.909ms          (512 512 1)       (16 16 1)        11  1.0000KB        0B         -           -  GeForce GTX 980         1         7  transposeCoalesced(float*, float*, int, int) [204]
+1.40331s  12.781ms          (512 512 1)       (16 16 1)        11  1.0000KB        0B         -           -  GeForce GTX 980         1         7  transposeCoalesced(float*, float*, int, int) [215]
+1.41643s  12.868ms          (512 512 1)       (16 16 1)        11  1.0000KB        0B         -           -  GeForce GTX 980         1         7  transposeCoalesced(float*, float*, int, int) [226]
+1.42946s  12.943ms          (512 512 1)       (16 16 1)        11  1.0000KB        0B         -           -  GeForce GTX 980         1         7  transposeCoalesced(float*, float*, int, int) [237]
+1.44260s  12.948ms          (512 512 1)       (16 16 1)        11  1.0000KB        0B         -           -  GeForce GTX 980         1         7  transposeCoalesced(float*, float*, int, int) [248]
+1.45573s  12.886ms          (512 512 1)       (16 16 1)        11  1.0000KB        0B         -           -  GeForce GTX 980         1         7  transposeCoalesced(float*, float*, int, int) [259]
+1.46881s  12.803ms          (512 512 1)       (16 16 1)        11  1.0000KB        0B         -           -  GeForce GTX 980         1         7  transposeCoalesced(float*, float*, int, int) [270]
+1.48182s  12.948ms          (512 512 1)       (16 16 1)        11  1.0000KB        0B         -           -  GeForce GTX 980         1         7  transposeCoalesced(float*, float*, int, int) [281]
+1.49496s  12.945ms          (512 512 1)       (16 16 1)        11  1.0000KB        0B         -           -  GeForce GTX 980         1         7  transposeCoalesced(float*, float*, int, int) [292]
+1.50810s  136.79ms                    -               -         -         -         -  256.00MB  1.8276GB/s  GeForce GTX 980         1         7  [CUDA memcpy DtoH]
+1.74790s  104.01ms                    -               -         -         -         -  256.00MB  2.4036GB/s  GeForce GTX 980         1         7  [CUDA memcpy DtoH]
+
+Regs: Number of registers used per CUDA thread. This number includes registers used internally by the CUDA driver and/or tools and can be more than what the compiler shows.
+SSMem: Static shared memory allocated per CUDA block.
+DSMem: Dynamic shared memory allocated per CUDA block.
 Transpose Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 MapSMtoCores for SM 5.2 is undefined.  Default to use 128 Cores/SM
-> Device 1: "GeForce GTX 980"
+> Device 0: "GeForce GTX 980"
 > SM Capability 5.2 detected:
 MapSMtoCores for SM 5.2 is undefined.  Default to use 128 Cores/SM
 MapSMtoCores for SM 5.2 is undefined.  Default to use 128 Cores/SM
@@ -42,26 +60,25 @@ MapSMtoCores for SM 5.2 is undefined.  Default to use 128 Cores/SM
 
 Matrix size: 8192x8192 (512x512 tiles), tile size: 16x16, block size: 16x16
 
-iterated 50, average time is 223.054809 msec
-transpose coalesced         , Total Time = 11152.74046 ms
-transpose coalesced         , Throughput = 2.2416 GB/s, Time = 223.05481 ms, Size = 67108864 fp32 elements, NumDevsUsed = 1, Workgroup = 256
+iterated 15, average time is 20.105060 msec
+transpose coalesced         , Total Time = 301.57590 ms
+transpose coalesced         , Throughput = 24.8694 GB/s, Time = 20.10506 ms, Size = 67108864 fp32 elements, NumDevsUsed = 1, Workgroup = 256
 Test passed
-==30612== NVPROF is profiling process 30612, command: applications/transpose -dimX=8192 -dimY=8192 -device=1 -iters=50
-==30612== Some kernel(s) will be replayed on device 1 in order to collect all events/metrics.
-==30612== Profiling application: applications/transpose -dimX=8192 -dimY=8192 -device=1 -iters=50
-==30612== Profiling result:
-==30612== Metric result:
+==15252== NVPROF is profiling process 15252, command: applications/transpose -dimX=8192 -dimY=8192 -device=0 -iters=15
+==15252== Profiling application: applications/transpose -dimX=8192 -dimY=8192 -device=0 -iters=15
+==15252== Profiling result:
+==15252== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: transposeCoalesced(float*, float*, int, int)
-         52                  eligible_warps_per_cycle           Eligible Warps Per Active Cycle    0.437647    0.441309    0.440620
-         52                    dram_read_transactions           Device Memory Read Transactions     8388624     8392646     8388720
-         52                      dram_read_throughput             Device Memory Read Throughput  19.601GB/s  19.621GB/s  19.610GB/s
+         17                        achieved_occupancy                        Achieved Occupancy    0.959975    0.960925    0.960707
+         17                             sm_efficiency                   Multiprocessor Activity      99.94%      99.96%      99.95%
+         17                 warp_execution_efficiency                 Warp Execution Efficiency     100.00%     100.00%     100.00%
 Transpose Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 MapSMtoCores for SM 5.2 is undefined.  Default to use 128 Cores/SM
-> Device 1: "GeForce GTX 980"
+> Device 0: "GeForce GTX 980"
 > SM Capability 5.2 detected:
 MapSMtoCores for SM 5.2 is undefined.  Default to use 128 Cores/SM
 MapSMtoCores for SM 5.2 is undefined.  Default to use 128 Cores/SM
@@ -72,26 +89,26 @@ MapSMtoCores for SM 5.2 is undefined.  Default to use 128 Cores/SM
 
 Matrix size: 8192x8192 (512x512 tiles), tile size: 16x16, block size: 16x16
 
-iterated 50, average time is 219.794297 msec
-transpose coalesced         , Total Time = 10989.71484 ms
-transpose coalesced         , Throughput = 2.2749 GB/s, Time = 219.79430 ms, Size = 67108864 fp32 elements, NumDevsUsed = 1, Workgroup = 256
+iterated 15, average time is 223.415855 msec
+transpose coalesced         , Total Time = 3351.23782 ms
+transpose coalesced         , Throughput = 2.2380 GB/s, Time = 223.41585 ms, Size = 67108864 fp32 elements, NumDevsUsed = 1, Workgroup = 256
 Test passed
-==33304== NVPROF is profiling process 33304, command: applications/transpose -dimX=8192 -dimY=8192 -device=1 -iters=50
-==33304== Some kernel(s) will be replayed on device 1 in order to collect all events/metrics.
-==33304== Profiling application: applications/transpose -dimX=8192 -dimY=8192 -device=1 -iters=50
-==33304== Profiling result:
-==33304== Metric result:
+==12244== NVPROF is profiling process 12244, command: applications/transpose -dimX=8192 -dimY=8192 -device=0 -iters=15
+==12244== Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+==12244== Profiling application: applications/transpose -dimX=8192 -dimY=8192 -device=0 -iters=15
+==12244== Profiling result:
+==12244== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: transposeCoalesced(float*, float*, int, int)
-         52                   dram_write_transactions          Device Memory Write Transactions     8388585     8393621     8391418
-         52                     dram_write_throughput            Device Memory Write Throughput  19.684GB/s  19.707GB/s  19.699GB/s
-         52                      l2_read_transactions                      L2 Read Transactions     8388679     8402794     8389045
+         17                  eligible_warps_per_cycle           Eligible Warps Per Active Cycle    0.426714    0.431951    0.428567
+         17                    dram_read_transactions           Device Memory Read Transactions     8481394     8539880     8504747
+         17                      dram_read_throughput             Device Memory Read Throughput  19.626GB/s  19.744GB/s  19.666GB/s
 Transpose Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 MapSMtoCores for SM 5.2 is undefined.  Default to use 128 Cores/SM
-> Device 1: "GeForce GTX 980"
+> Device 0: "GeForce GTX 980"
 > SM Capability 5.2 detected:
 MapSMtoCores for SM 5.2 is undefined.  Default to use 128 Cores/SM
 MapSMtoCores for SM 5.2 is undefined.  Default to use 128 Cores/SM
@@ -102,26 +119,26 @@ MapSMtoCores for SM 5.2 is undefined.  Default to use 128 Cores/SM
 
 Matrix size: 8192x8192 (512x512 tiles), tile size: 16x16, block size: 16x16
 
-iterated 50, average time is 224.645570 msec
-transpose coalesced         , Total Time = 11232.27852 ms
-transpose coalesced         , Throughput = 2.2257 GB/s, Time = 224.64557 ms, Size = 67108864 fp32 elements, NumDevsUsed = 1, Workgroup = 256
+iterated 15, average time is 220.471373 msec
+transpose coalesced         , Total Time = 3307.07060 ms
+transpose coalesced         , Throughput = 2.2679 GB/s, Time = 220.47137 ms, Size = 67108864 fp32 elements, NumDevsUsed = 1, Workgroup = 256
 Test passed
-==25684== NVPROF is profiling process 25684, command: applications/transpose -dimX=8192 -dimY=8192 -device=1 -iters=50
-==25684== Some kernel(s) will be replayed on device 1 in order to collect all events/metrics.
-==25684== Profiling application: applications/transpose -dimX=8192 -dimY=8192 -device=1 -iters=50
-==25684== Profiling result:
-==25684== Metric result:
+==14976== NVPROF is profiling process 14976, command: applications/transpose -dimX=8192 -dimY=8192 -device=0 -iters=15
+==14976== Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+==14976== Profiling application: applications/transpose -dimX=8192 -dimY=8192 -device=0 -iters=15
+==14976== Profiling result:
+==14976== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: transposeCoalesced(float*, float*, int, int)
-         52                        l2_read_throughput                     L2 Throughput (Reads)  19.686GB/s  19.716GB/s  19.694GB/s
-         52                     l2_write_transactions                     L2 Write Transactions     8388614     8388614     8388614
-         52                       l2_write_throughput                    L2 Throughput (Writes)  19.683GB/s  19.699GB/s  19.693GB/s
+         17                   dram_write_transactions          Device Memory Write Transactions     8387175     8393300     8389644
+         17                     dram_write_throughput            Device Memory Write Throughput  19.413GB/s  19.475GB/s  19.452GB/s
+         17                      l2_read_transactions                      L2 Read Transactions     8435503     8553912     8525755
 Transpose Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 MapSMtoCores for SM 5.2 is undefined.  Default to use 128 Cores/SM
-> Device 1: "GeForce GTX 980"
+> Device 0: "GeForce GTX 980"
 > SM Capability 5.2 detected:
 MapSMtoCores for SM 5.2 is undefined.  Default to use 128 Cores/SM
 MapSMtoCores for SM 5.2 is undefined.  Default to use 128 Cores/SM
@@ -132,25 +149,26 @@ MapSMtoCores for SM 5.2 is undefined.  Default to use 128 Cores/SM
 
 Matrix size: 8192x8192 (512x512 tiles), tile size: 16x16, block size: 16x16
 
-iterated 50, average time is 16.048467 msec
-transpose coalesced         , Total Time = 802.42336 ms
-transpose coalesced         , Throughput = 31.1556 GB/s, Time = 16.04847 ms, Size = 67108864 fp32 elements, NumDevsUsed = 1, Workgroup = 256
+iterated 15, average time is 224.843335 msec
+transpose coalesced         , Total Time = 3372.65002 ms
+transpose coalesced         , Throughput = 2.2238 GB/s, Time = 224.84333 ms, Size = 67108864 fp32 elements, NumDevsUsed = 1, Workgroup = 256
 Test passed
-==32220== NVPROF is profiling process 32220, command: applications/transpose -dimX=8192 -dimY=8192 -device=1 -iters=50
-==32220== Profiling application: applications/transpose -dimX=8192 -dimY=8192 -device=1 -iters=50
-==32220== Profiling result:
-==32220== Metric result:
+==14376== NVPROF is profiling process 14376, command: applications/transpose -dimX=8192 -dimY=8192 -device=0 -iters=15
+==14376== Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+==14376== Profiling application: applications/transpose -dimX=8192 -dimY=8192 -device=0 -iters=15
+==14376== Profiling result:
+==14376== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: transposeCoalesced(float*, float*, int, int)
-         52                  shared_load_transactions                  Shared Load Transactions    16777216    16777216    16777216
-         52                    shared_load_throughput             Shared Memory Load Throughput  156.35GB/s  157.03GB/s  156.90GB/s
-         52                 shared_store_transactions                 Shared Store Transactions     2097152     2097152     2097152
+         17                        l2_read_throughput                     L2 Throughput (Reads)  19.576GB/s  19.902GB/s  19.751GB/s
+         17                     l2_write_transactions                     L2 Write Transactions     8388614     8388621     8388615
+         17                       l2_write_throughput                    L2 Throughput (Writes)  19.381GB/s  19.519GB/s  19.453GB/s
 Transpose Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 MapSMtoCores for SM 5.2 is undefined.  Default to use 128 Cores/SM
-> Device 1: "GeForce GTX 980"
+> Device 0: "GeForce GTX 980"
 > SM Capability 5.2 detected:
 MapSMtoCores for SM 5.2 is undefined.  Default to use 128 Cores/SM
 MapSMtoCores for SM 5.2 is undefined.  Default to use 128 Cores/SM
@@ -161,25 +179,25 @@ MapSMtoCores for SM 5.2 is undefined.  Default to use 128 Cores/SM
 
 Matrix size: 8192x8192 (512x512 tiles), tile size: 16x16, block size: 16x16
 
-iterated 50, average time is 19.402804 msec
-transpose coalesced         , Total Time = 970.14022 ms
-transpose coalesced         , Throughput = 25.7695 GB/s, Time = 19.40280 ms, Size = 67108864 fp32 elements, NumDevsUsed = 1, Workgroup = 256
+iterated 15, average time is 15.717342 msec
+transpose coalesced         , Total Time = 235.76013 ms
+transpose coalesced         , Throughput = 31.8120 GB/s, Time = 15.71734 ms, Size = 67108864 fp32 elements, NumDevsUsed = 1, Workgroup = 256
 Test passed
-==29888== NVPROF is profiling process 29888, command: applications/transpose -dimX=8192 -dimY=8192 -device=1 -iters=50
-==29888== Profiling application: applications/transpose -dimX=8192 -dimY=8192 -device=1 -iters=50
-==29888== Profiling result:
-==29888== Metric result:
+==14532== NVPROF is profiling process 14532, command: applications/transpose -dimX=8192 -dimY=8192 -device=0 -iters=15
+==14532== Profiling application: applications/transpose -dimX=8192 -dimY=8192 -device=0 -iters=15
+==14532== Profiling result:
+==14532== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: transposeCoalesced(float*, float*, int, int)
-         52                   shared_store_throughput            Shared Memory Store Throughput  19.544GB/s  19.633GB/s  19.615GB/s
-         52                         branch_efficiency                         Branch Efficiency     100.00%     100.00%     100.00%
-         52                               cf_executed        Executed Control-Flow Instructions     2097152     2097152     2097152
+         17                  shared_load_transactions                  Shared Load Transactions    16777216    16777216    16777216
+         17                    shared_load_throughput             Shared Memory Load Throughput  154.42GB/s  155.60GB/s  154.83GB/s
+         17                 shared_store_transactions                 Shared Store Transactions     2097152     2097152     2097152
 Transpose Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 MapSMtoCores for SM 5.2 is undefined.  Default to use 128 Cores/SM
-> Device 1: "GeForce GTX 980"
+> Device 0: "GeForce GTX 980"
 > SM Capability 5.2 detected:
 MapSMtoCores for SM 5.2 is undefined.  Default to use 128 Cores/SM
 MapSMtoCores for SM 5.2 is undefined.  Default to use 128 Cores/SM
@@ -190,26 +208,55 @@ MapSMtoCores for SM 5.2 is undefined.  Default to use 128 Cores/SM
 
 Matrix size: 8192x8192 (512x512 tiles), tile size: 16x16, block size: 16x16
 
-iterated 50, average time is 269.120925 msec
-transpose coalesced         , Total Time = 13456.04626 ms
-transpose coalesced         , Throughput = 1.8579 GB/s, Time = 269.12093 ms, Size = 67108864 fp32 elements, NumDevsUsed = 1, Workgroup = 256
+iterated 15, average time is 18.679147 msec
+transpose coalesced         , Total Time = 280.18720 ms
+transpose coalesced         , Throughput = 26.7678 GB/s, Time = 18.67915 ms, Size = 67108864 fp32 elements, NumDevsUsed = 1, Workgroup = 256
 Test passed
-==36624== NVPROF is profiling process 36624, command: applications/transpose -dimX=8192 -dimY=8192 -device=1 -iters=50
-==36624== Some kernel(s) will be replayed on device 1 in order to collect all events/metrics.
-==36624== Profiling application: applications/transpose -dimX=8192 -dimY=8192 -device=1 -iters=50
-==36624== Profiling result:
-==36624== Metric result:
+==13996== NVPROF is profiling process 13996, command: applications/transpose -dimX=8192 -dimY=8192 -device=0 -iters=15
+==13996== Profiling application: applications/transpose -dimX=8192 -dimY=8192 -device=0 -iters=15
+==13996== Profiling result:
+==13996== Metric result:
+Invocations                               Metric Name                        Metric Description         Min         Max         Avg
+Device "GeForce GTX 980 (0)"
+    Kernel: transposeCoalesced(float*, float*, int, int)
+         17                   shared_store_throughput            Shared Memory Store Throughput  19.322GB/s  19.540GB/s  19.410GB/s
+         17                         branch_efficiency                         Branch Efficiency     100.00%     100.00%     100.00%
+         17                               cf_executed        Executed Control-Flow Instructions     2097152     2097152     2097152
+Transpose Starting...
+
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
+MapSMtoCores for SM 5.2 is undefined.  Default to use 128 Cores/SM
+> Device 0: "GeForce GTX 980"
+> SM Capability 5.2 detected:
+MapSMtoCores for SM 5.2 is undefined.  Default to use 128 Cores/SM
+MapSMtoCores for SM 5.2 is undefined.  Default to use 128 Cores/SM
+> [GeForce GTX 980] has 16 MP(s) x 128 (Cores/MP) = 2048 (Cores)
+> Compute performance scaling factor = 1.00
+> MatrixSize X = 8192 is greater than the recommended size = 1024
+> MatrixSize Y = 8192 is greater than the recommended size = 1024
+
+Matrix size: 8192x8192 (512x512 tiles), tile size: 16x16, block size: 16x16
+
+iterated 15, average time is 270.187453 msec
+transpose coalesced         , Total Time = 4052.81180 ms
+transpose coalesced         , Throughput = 1.8506 GB/s, Time = 270.18745 ms, Size = 67108864 fp32 elements, NumDevsUsed = 1, Workgroup = 256
+Test passed
+==8080== NVPROF is profiling process 8080, command: applications/transpose -dimX=8192 -dimY=8192 -device=0 -iters=15
+==8080== Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+==8080== Profiling application: applications/transpose -dimX=8192 -dimY=8192 -device=0 -iters=15
+==8080== Profiling result:
+==8080== Metric result:
 Invocations                               Metric Name                            Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: transposeCoalesced(float*, float*, int, int)
-         52                                 cf_issued              Issued Control-Flow Instructions     2097152     2097152     2097152
-         52                             flop_count_sp   Floating Point Operations(Single Precision)           0           0           0
-         52                        flop_sp_efficiency                  FLOP Efficiency(Peak Single)       0.00%       0.00%       0.00%
+         17                                 cf_issued              Issued Control-Flow Instructions     2097152     2097152     2097152
+         17                             flop_count_sp   Floating Point Operations(Single Precision)           0           0           0
+         17                        flop_sp_efficiency                  FLOP Efficiency(Peak Single)       0.00%       0.00%       0.00%
 Transpose Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 MapSMtoCores for SM 5.2 is undefined.  Default to use 128 Cores/SM
-> Device 1: "GeForce GTX 980"
+> Device 0: "GeForce GTX 980"
 > SM Capability 5.2 detected:
 MapSMtoCores for SM 5.2 is undefined.  Default to use 128 Cores/SM
 MapSMtoCores for SM 5.2 is undefined.  Default to use 128 Cores/SM
@@ -220,26 +267,26 @@ MapSMtoCores for SM 5.2 is undefined.  Default to use 128 Cores/SM
 
 Matrix size: 8192x8192 (512x512 tiles), tile size: 16x16, block size: 16x16
 
-iterated 50, average time is 269.288692 msec
-transpose coalesced         , Total Time = 13464.43460 ms
-transpose coalesced         , Throughput = 1.8567 GB/s, Time = 269.28869 ms, Size = 67108864 fp32 elements, NumDevsUsed = 1, Workgroup = 256
+iterated 15, average time is 270.158671 msec
+transpose coalesced         , Total Time = 4052.38007 ms
+transpose coalesced         , Throughput = 1.8508 GB/s, Time = 270.15867 ms, Size = 67108864 fp32 elements, NumDevsUsed = 1, Workgroup = 256
 Test passed
-==32796== NVPROF is profiling process 32796, command: applications/transpose -dimX=8192 -dimY=8192 -device=1 -iters=50
-==32796== Some kernel(s) will be replayed on device 1 in order to collect all events/metrics.
-==32796== Profiling application: applications/transpose -dimX=8192 -dimY=8192 -device=1 -iters=50
-==32796== Profiling result:
-==32796== Metric result:
+==15112== NVPROF is profiling process 15112, command: applications/transpose -dimX=8192 -dimY=8192 -device=0 -iters=15
+==15112== Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+==15112== Profiling application: applications/transpose -dimX=8192 -dimY=8192 -device=0 -iters=15
+==15112== Profiling result:
+==15112== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: transposeCoalesced(float*, float*, int, int)
-         52                            gld_throughput                    Global Load Throughput  19.598GB/s  19.619GB/s  19.608GB/s
-         52                          gld_transactions                  Global Load Transactions    16777216    16777216    16777216
-         52                            gst_throughput                   Global Store Throughput  19.598GB/s  19.619GB/s  19.608GB/s
+         17                            gld_throughput                    Global Load Throughput  19.339GB/s  19.423GB/s  19.383GB/s
+         17                          gld_transactions                  Global Load Transactions    16777216    16777216    16777216
+         17                            gst_throughput                   Global Store Throughput  19.339GB/s  19.423GB/s  19.383GB/s
 Transpose Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 MapSMtoCores for SM 5.2 is undefined.  Default to use 128 Cores/SM
-> Device 1: "GeForce GTX 980"
+> Device 0: "GeForce GTX 980"
 > SM Capability 5.2 detected:
 MapSMtoCores for SM 5.2 is undefined.  Default to use 128 Cores/SM
 MapSMtoCores for SM 5.2 is undefined.  Default to use 128 Cores/SM
@@ -250,25 +297,25 @@ MapSMtoCores for SM 5.2 is undefined.  Default to use 128 Cores/SM
 
 Matrix size: 8192x8192 (512x512 tiles), tile size: 16x16, block size: 16x16
 
-iterated 50, average time is 19.898723 msec
-transpose coalesced         , Total Time = 994.93613 ms
-transpose coalesced         , Throughput = 25.1272 GB/s, Time = 19.89872 ms, Size = 67108864 fp32 elements, NumDevsUsed = 1, Workgroup = 256
+iterated 15, average time is 18.687885 msec
+transpose coalesced         , Total Time = 280.31827 ms
+transpose coalesced         , Throughput = 26.7553 GB/s, Time = 18.68788 ms, Size = 67108864 fp32 elements, NumDevsUsed = 1, Workgroup = 256
 Test passed
-==35032== NVPROF is profiling process 35032, command: applications/transpose -dimX=8192 -dimY=8192 -device=1 -iters=50
-==35032== Profiling application: applications/transpose -dimX=8192 -dimY=8192 -device=1 -iters=50
-==35032== Profiling result:
-==35032== Metric result:
+==14552== NVPROF is profiling process 14552, command: applications/transpose -dimX=8192 -dimY=8192 -device=0 -iters=15
+==14552== Profiling application: applications/transpose -dimX=8192 -dimY=8192 -device=0 -iters=15
+==14552== Profiling result:
+==14552== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: transposeCoalesced(float*, float*, int, int)
-         52                          gst_transactions                 Global Store Transactions     8388608     8388608     8388608
-         52                               inst_issued                       Instructions Issued    69212936    69213935    69213202
-         52                             inst_per_warp                     Instructions per warp   33.000000   33.000000   33.000000
+         17                          gst_transactions                 Global Store Transactions     8388608     8388608     8388608
+         17                               inst_issued                       Instructions Issued    69212839    69213800    69213138
+         17                             inst_per_warp                     Instructions per warp   33.000000   33.000000   33.000000
 Transpose Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 MapSMtoCores for SM 5.2 is undefined.  Default to use 128 Cores/SM
-> Device 1: "GeForce GTX 980"
+> Device 0: "GeForce GTX 980"
 > SM Capability 5.2 detected:
 MapSMtoCores for SM 5.2 is undefined.  Default to use 128 Cores/SM
 MapSMtoCores for SM 5.2 is undefined.  Default to use 128 Cores/SM
@@ -279,15 +326,15 @@ MapSMtoCores for SM 5.2 is undefined.  Default to use 128 Cores/SM
 
 Matrix size: 8192x8192 (512x512 tiles), tile size: 16x16, block size: 16x16
 
-iterated 50, average time is 16.746263 msec
-transpose coalesced         , Total Time = 837.31315 ms
-transpose coalesced         , Throughput = 29.8574 GB/s, Time = 16.74626 ms, Size = 67108864 fp32 elements, NumDevsUsed = 1, Workgroup = 256
+iterated 15, average time is 16.317334 msec
+transpose coalesced         , Total Time = 244.76001 ms
+transpose coalesced         , Throughput = 30.6423 GB/s, Time = 16.31733 ms, Size = 67108864 fp32 elements, NumDevsUsed = 1, Workgroup = 256
 Test passed
-==34752== NVPROF is profiling process 34752, command: applications/transpose -dimX=8192 -dimY=8192 -device=1 -iters=50
-==34752== Profiling application: applications/transpose -dimX=8192 -dimY=8192 -device=1 -iters=50
-==34752== Profiling result:
-==34752== Metric result:
+==14480== NVPROF is profiling process 14480, command: applications/transpose -dimX=8192 -dimY=8192 -device=0 -iters=15
+==14480== Profiling application: applications/transpose -dimX=8192 -dimY=8192 -device=0 -iters=15
+==14480== Profiling result:
+==14480== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: transposeCoalesced(float*, float*, int, int)
-         52                                       ipc                              Executed IPC    0.340367    0.342139    0.341759
+         17                                       ipc                              Executed IPC    0.336305    0.338505    0.337254

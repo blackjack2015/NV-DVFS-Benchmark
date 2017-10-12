@@ -1,5 +1,5 @@
 [[histogram]] - Starting...
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 CUDA device [GeForce GTX 980] has 16 Multi-Processors, Compute 5.2
 Initializing data...
 ...allocating CPU memory.
@@ -7,12 +7,12 @@ Initializing data...
 ...allocating GPU memory and copying input data
 
 Initializing 256-bin histogram...
-Running 256-bin GPU histogram for 67108864 bytes (50 runs)...
+Running 256-bin GPU histogram for 67108864 bytes (15 runs)...
 
-iterated 50, average time is 19.641500 msec.
-histogram256() time (total) : 0.98208 sec, 3416.6873 MB/sec
+iterated 15, average time is 3.566445 msec.
+histogram256() time (total) : 0.05350 sec, 18816.7399 MB/sec
 
-histogram256, Throughput = 3416.6873 MB/s, Time = 0.01964 s, Size = 67108864 Bytes, NumDevsUsed = 1, Workgroup = 192
+histogram256, Throughput = 18816.7399 MB/s, Time = 0.00357 s, Size = 67108864 Bytes, NumDevsUsed = 1, Workgroup = 192
 
 Validating GPU results...
  ...reading back GPU results
@@ -26,22 +26,50 @@ Shutting down 256-bin histogram...
 Shutting down...
 [histogram] - Test Summary
 Test passed
-==53528== NVPROF is profiling process 53528, command: applications/histogram -device=1 -iters=50
-==53528== Profiling application: applications/histogram -device=1 -iters=50
-==53528== Profiling result:
-==53528== Metric result:
-Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
-    Kernel: histogram256Kernel(unsigned int*, unsigned int*, unsigned int)
-         51                        achieved_occupancy                        Achieved Occupancy    0.818064    0.911504    0.857196
-         51                             sm_efficiency                   Multiprocessor Activity      81.35%      88.63%      85.01%
-         51                 warp_execution_efficiency                 Warp Execution Efficiency      66.12%      66.12%      66.12%
-    Kernel: mergeHistogram256Kernel(unsigned int*, unsigned int*, unsigned int)
-         51                        achieved_occupancy                        Achieved Occupancy    0.782187    0.829688    0.803905
-         51                             sm_efficiency                   Multiprocessor Activity      47.97%      74.44%      64.41%
-         51                 warp_execution_efficiency                 Warp Execution Efficiency      96.43%      96.43%      96.43%
+==9224== NVPROF is profiling process 9224, command: applications/histogram -device=0 -iters=15
+==9224== Profiling application: applications/histogram -device=0 -iters=15
+==9224== Profiling result:
+   Start  Duration            Grid Size      Block Size     Regs*    SSMem*    DSMem*      Size  Throughput           Device   Context    Stream  Name
+1.21397s  26.459ms                    -               -         -         -         -  64.000MB  2.3621GB/s  GeForce GTX 980         1         7  [CUDA memcpy HtoD]
+1.24061s  3.5255ms            (240 1 1)       (192 1 1)        32  6.0000KB        0B         -           -  GeForce GTX 980         1         7  histogram256Kernel(unsigned int*, unsigned int*, unsigned int) [115]
+1.24414s  18.432us            (256 1 1)       (256 1 1)        15  1.0000KB        0B         -           -  GeForce GTX 980         1         7  mergeHistogram256Kernel(unsigned int*, unsigned int*, unsigned int) [121]
+1.24437s  3.4787ms            (240 1 1)       (192 1 1)        32  6.0000KB        0B         -           -  GeForce GTX 980         1         7  histogram256Kernel(unsigned int*, unsigned int*, unsigned int) [133]
+1.24785s  15.135us            (256 1 1)       (256 1 1)        15  1.0000KB        0B         -           -  GeForce GTX 980         1         7  mergeHistogram256Kernel(unsigned int*, unsigned int*, unsigned int) [139]
+1.24807s  3.4627ms            (240 1 1)       (192 1 1)        32  6.0000KB        0B         -           -  GeForce GTX 980         1         7  histogram256Kernel(unsigned int*, unsigned int*, unsigned int) [150]
+1.25154s  14.880us            (256 1 1)       (256 1 1)        15  1.0000KB        0B         -           -  GeForce GTX 980         1         7  mergeHistogram256Kernel(unsigned int*, unsigned int*, unsigned int) [156]
+1.25175s  3.4611ms            (240 1 1)       (192 1 1)        32  6.0000KB        0B         -           -  GeForce GTX 980         1         7  histogram256Kernel(unsigned int*, unsigned int*, unsigned int) [167]
+1.25521s  15.615us            (256 1 1)       (256 1 1)        15  1.0000KB        0B         -           -  GeForce GTX 980         1         7  mergeHistogram256Kernel(unsigned int*, unsigned int*, unsigned int) [173]
+1.25542s  3.4609ms            (240 1 1)       (192 1 1)        32  6.0000KB        0B         -           -  GeForce GTX 980         1         7  histogram256Kernel(unsigned int*, unsigned int*, unsigned int) [184]
+1.25889s  16.000us            (256 1 1)       (256 1 1)        15  1.0000KB        0B         -           -  GeForce GTX 980         1         7  mergeHistogram256Kernel(unsigned int*, unsigned int*, unsigned int) [190]
+1.25911s  3.4753ms            (240 1 1)       (192 1 1)        32  6.0000KB        0B         -           -  GeForce GTX 980         1         7  histogram256Kernel(unsigned int*, unsigned int*, unsigned int) [201]
+1.26259s  15.392us            (256 1 1)       (256 1 1)        15  1.0000KB        0B         -           -  GeForce GTX 980         1         7  mergeHistogram256Kernel(unsigned int*, unsigned int*, unsigned int) [207]
+1.26280s  3.4785ms            (240 1 1)       (192 1 1)        32  6.0000KB        0B         -           -  GeForce GTX 980         1         7  histogram256Kernel(unsigned int*, unsigned int*, unsigned int) [218]
+1.26628s  15.456us            (256 1 1)       (256 1 1)        15  1.0000KB        0B         -           -  GeForce GTX 980         1         7  mergeHistogram256Kernel(unsigned int*, unsigned int*, unsigned int) [224]
+1.26650s  3.4749ms            (240 1 1)       (192 1 1)        32  6.0000KB        0B         -           -  GeForce GTX 980         1         7  histogram256Kernel(unsigned int*, unsigned int*, unsigned int) [235]
+1.26998s  14.944us            (256 1 1)       (256 1 1)        15  1.0000KB        0B         -           -  GeForce GTX 980         1         7  mergeHistogram256Kernel(unsigned int*, unsigned int*, unsigned int) [241]
+1.27019s  3.4627ms            (240 1 1)       (192 1 1)        32  6.0000KB        0B         -           -  GeForce GTX 980         1         7  histogram256Kernel(unsigned int*, unsigned int*, unsigned int) [252]
+1.27366s  16.159us            (256 1 1)       (256 1 1)        15  1.0000KB        0B         -           -  GeForce GTX 980         1         7  mergeHistogram256Kernel(unsigned int*, unsigned int*, unsigned int) [258]
+1.27388s  3.4818ms            (240 1 1)       (192 1 1)        32  6.0000KB        0B         -           -  GeForce GTX 980         1         7  histogram256Kernel(unsigned int*, unsigned int*, unsigned int) [269]
+1.27736s  15.712us            (256 1 1)       (256 1 1)        15  1.0000KB        0B         -           -  GeForce GTX 980         1         7  mergeHistogram256Kernel(unsigned int*, unsigned int*, unsigned int) [275]
+1.27758s  3.4624ms            (240 1 1)       (192 1 1)        32  6.0000KB        0B         -           -  GeForce GTX 980         1         7  histogram256Kernel(unsigned int*, unsigned int*, unsigned int) [286]
+1.28104s  15.679us            (256 1 1)       (256 1 1)        15  1.0000KB        0B         -           -  GeForce GTX 980         1         7  mergeHistogram256Kernel(unsigned int*, unsigned int*, unsigned int) [292]
+1.28126s  3.4986ms            (240 1 1)       (192 1 1)        32  6.0000KB        0B         -           -  GeForce GTX 980         1         7  histogram256Kernel(unsigned int*, unsigned int*, unsigned int) [303]
+1.28476s  16.288us            (256 1 1)       (256 1 1)        15  1.0000KB        0B         -           -  GeForce GTX 980         1         7  mergeHistogram256Kernel(unsigned int*, unsigned int*, unsigned int) [309]
+1.28497s  3.4834ms            (240 1 1)       (192 1 1)        32  6.0000KB        0B         -           -  GeForce GTX 980         1         7  histogram256Kernel(unsigned int*, unsigned int*, unsigned int) [320]
+1.28846s  14.976us            (256 1 1)       (256 1 1)        15  1.0000KB        0B         -           -  GeForce GTX 980         1         7  mergeHistogram256Kernel(unsigned int*, unsigned int*, unsigned int) [326]
+1.28868s  3.4515ms            (240 1 1)       (192 1 1)        32  6.0000KB        0B         -           -  GeForce GTX 980         1         7  histogram256Kernel(unsigned int*, unsigned int*, unsigned int) [337]
+1.29213s  15.199us            (256 1 1)       (256 1 1)        15  1.0000KB        0B         -           -  GeForce GTX 980         1         7  mergeHistogram256Kernel(unsigned int*, unsigned int*, unsigned int) [343]
+1.29234s  3.4923ms            (240 1 1)       (192 1 1)        32  6.0000KB        0B         -           -  GeForce GTX 980         1         7  histogram256Kernel(unsigned int*, unsigned int*, unsigned int) [354]
+1.29584s  15.360us            (256 1 1)       (256 1 1)        15  1.0000KB        0B         -           -  GeForce GTX 980         1         7  mergeHistogram256Kernel(unsigned int*, unsigned int*, unsigned int) [360]
+1.29605s  3.4552ms            (240 1 1)       (192 1 1)        32  6.0000KB        0B         -           -  GeForce GTX 980         1         7  histogram256Kernel(unsigned int*, unsigned int*, unsigned int) [371]
+1.29951s  15.232us            (256 1 1)       (256 1 1)        15  1.0000KB        0B         -           -  GeForce GTX 980         1         7  mergeHistogram256Kernel(unsigned int*, unsigned int*, unsigned int) [377]
+1.29971s  3.8080us                    -               -         -         -         -  1.0000KB  256.45MB/s  GeForce GTX 980         1         7  [CUDA memcpy DtoH]
+
+Regs: Number of registers used per CUDA thread. This number includes registers used internally by the CUDA driver and/or tools and can be more than what the compiler shows.
+SSMem: Static shared memory allocated per CUDA block.
+DSMem: Dynamic shared memory allocated per CUDA block.
 [[histogram]] - Starting...
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 CUDA device [GeForce GTX 980] has 16 Multi-Processors, Compute 5.2
 Initializing data...
 ...allocating CPU memory.
@@ -49,12 +77,12 @@ Initializing data...
 ...allocating GPU memory and copying input data
 
 Initializing 256-bin histogram...
-Running 256-bin GPU histogram for 67108864 bytes (50 runs)...
+Running 256-bin GPU histogram for 67108864 bytes (15 runs)...
 
-iterated 50, average time is 109.653335 msec.
-histogram256() time (total) : 5.48267 sec, 612.0093 MB/sec
+iterated 15, average time is 17.246620 msec.
+histogram256() time (total) : 0.25870 sec, 3891.1314 MB/sec
 
-histogram256, Throughput = 612.0093 MB/s, Time = 0.10965 s, Size = 67108864 Bytes, NumDevsUsed = 1, Workgroup = 192
+histogram256, Throughput = 3891.1314 MB/s, Time = 0.01725 s, Size = 67108864 Bytes, NumDevsUsed = 1, Workgroup = 192
 
 Validating GPU results...
  ...reading back GPU results
@@ -68,23 +96,22 @@ Shutting down 256-bin histogram...
 Shutting down...
 [histogram] - Test Summary
 Test passed
-==53684== NVPROF is profiling process 53684, command: applications/histogram -device=1 -iters=50
-==53684== Some kernel(s) will be replayed on device 1 in order to collect all events/metrics.
-==53684== Profiling application: applications/histogram -device=1 -iters=50
-==53684== Profiling result:
-==53684== Metric result:
+==10372== NVPROF is profiling process 10372, command: applications/histogram -device=0 -iters=15
+==10372== Profiling application: applications/histogram -device=0 -iters=15
+==10372== Profiling result:
+==10372== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: histogram256Kernel(unsigned int*, unsigned int*, unsigned int)
-         51                  eligible_warps_per_cycle           Eligible Warps Per Active Cycle    1.464369    1.622927    1.528212
-         51                    dram_read_transactions           Device Memory Read Transactions     2097208     2097429     2097221
-         51                      dram_read_throughput             Device Memory Read Throughput  17.644GB/s  17.915GB/s  17.717GB/s
+         16                        achieved_occupancy                        Achieved Occupancy    0.800807    0.912627    0.858758
+         16                             sm_efficiency                   Multiprocessor Activity      81.29%      89.48%      84.77%
+         16                 warp_execution_efficiency                 Warp Execution Efficiency      66.12%      66.12%      66.12%
     Kernel: mergeHistogram256Kernel(unsigned int*, unsigned int*, unsigned int)
-         51                  eligible_warps_per_cycle           Eligible Warps Per Active Cycle    0.583048    0.677318    0.628338
-         51                    dram_read_transactions           Device Memory Read Transactions        7696        7744        7716
-         51                      dram_read_throughput             Device Memory Read Throughput  7.5487GB/s  8.5402GB/s  8.2785GB/s
+         16                        achieved_occupancy                        Achieved Occupancy    0.793614    0.823994    0.802497
+         16                             sm_efficiency                   Multiprocessor Activity      68.23%      72.46%      70.14%
+         16                 warp_execution_efficiency                 Warp Execution Efficiency      96.43%      96.43%      96.43%
 [[histogram]] - Starting...
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 CUDA device [GeForce GTX 980] has 16 Multi-Processors, Compute 5.2
 Initializing data...
 ...allocating CPU memory.
@@ -92,12 +119,12 @@ Initializing data...
 ...allocating GPU memory and copying input data
 
 Initializing 256-bin histogram...
-Running 256-bin GPU histogram for 67108864 bytes (50 runs)...
+Running 256-bin GPU histogram for 67108864 bytes (15 runs)...
 
-iterated 50, average time is 102.194067 msec.
-histogram256() time (total) : 5.10970 sec, 656.6806 MB/sec
+iterated 15, average time is 99.918169 msec.
+histogram256() time (total) : 1.49877 sec, 671.6382 MB/sec
 
-histogram256, Throughput = 656.6806 MB/s, Time = 0.10219 s, Size = 67108864 Bytes, NumDevsUsed = 1, Workgroup = 192
+histogram256, Throughput = 671.6382 MB/s, Time = 0.09992 s, Size = 67108864 Bytes, NumDevsUsed = 1, Workgroup = 192
 
 Validating GPU results...
  ...reading back GPU results
@@ -111,23 +138,23 @@ Shutting down 256-bin histogram...
 Shutting down...
 [histogram] - Test Summary
 Test passed
-==56228== NVPROF is profiling process 56228, command: applications/histogram -device=1 -iters=50
-==56228== Some kernel(s) will be replayed on device 1 in order to collect all events/metrics.
-==56228== Profiling application: applications/histogram -device=1 -iters=50
-==56228== Profiling result:
-==56228== Metric result:
+==10824== NVPROF is profiling process 10824, command: applications/histogram -device=0 -iters=15
+==10824== Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+==10824== Profiling application: applications/histogram -device=0 -iters=15
+==10824== Profiling result:
+==10824== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: histogram256Kernel(unsigned int*, unsigned int*, unsigned int)
-         51                   dram_write_transactions          Device Memory Write Transactions       35936       38760       38245
-         51                     dram_write_throughput            Device Memory Write Throughput  310.15MB/s  335.15MB/s  329.02MB/s
-         51                      l2_read_transactions                      L2 Read Transactions     2097223     2098024     2097474
+         16                  eligible_warps_per_cycle           Eligible Warps Per Active Cycle    1.471213    1.594696    1.534152
+         16                    dram_read_transactions           Device Memory Read Transactions     2097188     2097428     2097227
+         16                      dram_read_throughput             Device Memory Read Throughput  17.631GB/s  17.798GB/s  17.710GB/s
     Kernel: mergeHistogram256Kernel(unsigned int*, unsigned int*, unsigned int)
-         51                   dram_write_transactions          Device Memory Write Transactions        3567        4506        4176
-         51                     dram_write_throughput            Device Memory Write Throughput  3.8124GB/s  4.8319GB/s  4.4042GB/s
-         51                      l2_read_transactions                      L2 Read Transactions       61511       61744       61656
+         16                  eligible_warps_per_cycle           Eligible Warps Per Active Cycle    0.588230    0.668790    0.630451
+         16                    dram_read_transactions           Device Memory Read Transactions        7716        7724        7720
+         16                      dram_read_throughput             Device Memory Read Throughput  8.3626GB/s  8.6579GB/s  8.4676GB/s
 [[histogram]] - Starting...
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 CUDA device [GeForce GTX 980] has 16 Multi-Processors, Compute 5.2
 Initializing data...
 ...allocating CPU memory.
@@ -135,12 +162,12 @@ Initializing data...
 ...allocating GPU memory and copying input data
 
 Initializing 256-bin histogram...
-Running 256-bin GPU histogram for 67108864 bytes (50 runs)...
+Running 256-bin GPU histogram for 67108864 bytes (15 runs)...
 
-iterated 50, average time is 111.769084 msec.
-histogram256() time (total) : 5.58845 sec, 600.4242 MB/sec
+iterated 15, average time is 97.630603 msec.
+histogram256() time (total) : 1.46446 sec, 687.3753 MB/sec
 
-histogram256, Throughput = 600.4242 MB/s, Time = 0.11177 s, Size = 67108864 Bytes, NumDevsUsed = 1, Workgroup = 192
+histogram256, Throughput = 687.3753 MB/s, Time = 0.09763 s, Size = 67108864 Bytes, NumDevsUsed = 1, Workgroup = 192
 
 Validating GPU results...
  ...reading back GPU results
@@ -154,23 +181,23 @@ Shutting down 256-bin histogram...
 Shutting down...
 [histogram] - Test Summary
 Test passed
-==55916== NVPROF is profiling process 55916, command: applications/histogram -device=1 -iters=50
-==55916== Some kernel(s) will be replayed on device 1 in order to collect all events/metrics.
-==55916== Profiling application: applications/histogram -device=1 -iters=50
-==55916== Profiling result:
-==55916== Metric result:
+==10428== NVPROF is profiling process 10428, command: applications/histogram -device=0 -iters=15
+==10428== Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+==10428== Profiling application: applications/histogram -device=0 -iters=15
+==10428== Profiling result:
+==10428== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: histogram256Kernel(unsigned int*, unsigned int*, unsigned int)
-         51                        l2_read_throughput                     L2 Throughput (Reads)  17.621GB/s  17.833GB/s  17.685GB/s
-         51                     l2_write_transactions                     L2 Write Transactions        7686        7686        7686
-         51                       l2_write_throughput                    L2 Throughput (Writes)  66.129MB/s  66.911MB/s  65.804MB/s
+         16                   dram_write_transactions          Device Memory Write Transactions       34839       38577       37728
+         16                     dram_write_throughput            Device Memory Write Throughput  301.44MB/s  333.15MB/s  325.20MB/s
+         16                      l2_read_transactions                      L2 Read Transactions     2097223     2097791     2097433
     Kernel: mergeHistogram256Kernel(unsigned int*, unsigned int*, unsigned int)
-         51                        l2_read_throughput                     L2 Throughput (Reads)  62.554GB/s  66.554GB/s  65.012GB/s
-         51                     l2_write_transactions                     L2 Write Transactions         262         262         262
-         51                       l2_write_throughput                    L2 Throughput (Writes)  271.81MB/s  289.36MB/s  282.29MB/s
+         16                   dram_write_transactions          Device Memory Write Transactions        3765        4126        3957
+         16                     dram_write_throughput            Device Memory Write Throughput  4.0046GB/s  4.4424GB/s  4.2357GB/s
+         16                      l2_read_transactions                      L2 Read Transactions       61511       61743       61612
 [[histogram]] - Starting...
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 CUDA device [GeForce GTX 980] has 16 Multi-Processors, Compute 5.2
 Initializing data...
 ...allocating CPU memory.
@@ -178,12 +205,12 @@ Initializing data...
 ...allocating GPU memory and copying input data
 
 Initializing 256-bin histogram...
-Running 256-bin GPU histogram for 67108864 bytes (50 runs)...
+Running 256-bin GPU histogram for 67108864 bytes (15 runs)...
 
-iterated 50, average time is 10.174458 msec.
-histogram256() time (total) : 0.50872 sec, 6595.8173 MB/sec
+iterated 15, average time is 108.029332 msec.
+histogram256() time (total) : 1.62044 sec, 621.2097 MB/sec
 
-histogram256, Throughput = 6595.8173 MB/s, Time = 0.01017 s, Size = 67108864 Bytes, NumDevsUsed = 1, Workgroup = 192
+histogram256, Throughput = 621.2097 MB/s, Time = 0.10803 s, Size = 67108864 Bytes, NumDevsUsed = 1, Workgroup = 192
 
 Validating GPU results...
  ...reading back GPU results
@@ -197,22 +224,23 @@ Shutting down 256-bin histogram...
 Shutting down...
 [histogram] - Test Summary
 Test passed
-==55428== NVPROF is profiling process 55428, command: applications/histogram -device=1 -iters=50
-==55428== Profiling application: applications/histogram -device=1 -iters=50
-==55428== Profiling result:
-==55428== Metric result:
+==9480== NVPROF is profiling process 9480, command: applications/histogram -device=0 -iters=15
+==9480== Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+==9480== Profiling application: applications/histogram -device=0 -iters=15
+==9480== Profiling result:
+==9480== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: histogram256Kernel(unsigned int*, unsigned int*, unsigned int)
-         51                  shared_load_transactions                  Shared Load Transactions    17327488    17327488    17327488
-         51                    shared_load_throughput             Shared Memory Load Throughput  585.29GB/s  598.12GB/s  593.86GB/s
-         51                 shared_store_transactions                 Shared Store Transactions     8669504     8669504     8669504
+         16                        l2_read_throughput                     L2 Throughput (Reads)  17.596GB/s  17.890GB/s  17.686GB/s
+         16                     l2_write_transactions                     L2 Write Transactions        7686        7686        7686
+         16                       l2_write_throughput                    L2 Throughput (Writes)  66.034MB/s  67.126MB/s  65.804MB/s
     Kernel: mergeHistogram256Kernel(unsigned int*, unsigned int*, unsigned int)
-         51                  shared_load_transactions                  Shared Load Transactions        6400        6400        6400
-         51                    shared_load_throughput             Shared Memory Load Throughput  29.077GB/s  45.072GB/s  38.767GB/s
-         51                 shared_store_transactions                 Shared Store Transactions        5120        5120        5120
+         16                        l2_read_throughput                     L2 Throughput (Reads)  64.755GB/s  67.432GB/s  66.196GB/s
+         16                     l2_write_transactions                     L2 Write Transactions         262         262         262
+         16                       l2_write_throughput                    L2 Throughput (Writes)  281.38MB/s  293.01MB/s  287.06MB/s
 [[histogram]] - Starting...
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 CUDA device [GeForce GTX 980] has 16 Multi-Processors, Compute 5.2
 Initializing data...
 ...allocating CPU memory.
@@ -220,12 +248,12 @@ Initializing data...
 ...allocating GPU memory and copying input data
 
 Initializing 256-bin histogram...
-Running 256-bin GPU histogram for 67108864 bytes (50 runs)...
+Running 256-bin GPU histogram for 67108864 bytes (15 runs)...
 
-iterated 50, average time is 17.010206 msec.
-histogram256() time (total) : 0.85051 sec, 3945.2117 MB/sec
+iterated 15, average time is 9.028070 msec.
+histogram256() time (total) : 0.13542 sec, 7433.3563 MB/sec
 
-histogram256, Throughput = 3945.2117 MB/s, Time = 0.01701 s, Size = 67108864 Bytes, NumDevsUsed = 1, Workgroup = 192
+histogram256, Throughput = 7433.3563 MB/s, Time = 0.00903 s, Size = 67108864 Bytes, NumDevsUsed = 1, Workgroup = 192
 
 Validating GPU results...
  ...reading back GPU results
@@ -239,22 +267,22 @@ Shutting down 256-bin histogram...
 Shutting down...
 [histogram] - Test Summary
 Test passed
-==48092== NVPROF is profiling process 48092, command: applications/histogram -device=1 -iters=50
-==48092== Profiling application: applications/histogram -device=1 -iters=50
-==48092== Profiling result:
-==48092== Metric result:
+==10472== NVPROF is profiling process 10472, command: applications/histogram -device=0 -iters=15
+==10472== Profiling application: applications/histogram -device=0 -iters=15
+==10472== Profiling result:
+==10472== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: histogram256Kernel(unsigned int*, unsigned int*, unsigned int)
-         51                   shared_store_throughput            Shared Memory Store Throughput  293.34GB/s  301.71GB/s  297.18GB/s
-         51                         branch_efficiency                         Branch Efficiency      77.30%      77.30%      77.30%
-         51                               cf_executed        Executed Control-Flow Instructions    10767200    10767200    10767200
+         16                  shared_load_transactions                  Shared Load Transactions    17327488    17327488    17327488
+         16                    shared_load_throughput             Shared Memory Load Throughput  584.54GB/s  596.52GB/s  592.99GB/s
+         16                 shared_store_transactions                 Shared Store Transactions     8669504     8669504     8669504
     Kernel: mergeHistogram256Kernel(unsigned int*, unsigned int*, unsigned int)
-         51                   shared_store_throughput            Shared Memory Store Throughput  22.926GB/s  35.258GB/s  26.856GB/s
-         51                         branch_efficiency                         Branch Efficiency     100.00%     100.00%     100.00%
-         51                               cf_executed        Executed Control-Flow Instructions       24832       24832       24832
+         16                  shared_load_transactions                  Shared Load Transactions        6400        6400        6400
+         16                    shared_load_throughput             Shared Memory Load Throughput  31.454GB/s  43.669GB/s  40.484GB/s
+         16                 shared_store_transactions                 Shared Store Transactions        5120        5120        5120
 [[histogram]] - Starting...
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 CUDA device [GeForce GTX 980] has 16 Multi-Processors, Compute 5.2
 Initializing data...
 ...allocating CPU memory.
@@ -262,12 +290,12 @@ Initializing data...
 ...allocating GPU memory and copying input data
 
 Initializing 256-bin histogram...
-Running 256-bin GPU histogram for 67108864 bytes (50 runs)...
+Running 256-bin GPU histogram for 67108864 bytes (15 runs)...
 
-iterated 50, average time is 142.864843 msec.
-histogram256() time (total) : 7.14324 sec, 469.7367 MB/sec
+iterated 15, average time is 14.789743 msec.
+histogram256() time (total) : 0.22185 sec, 4537.5274 MB/sec
 
-histogram256, Throughput = 469.7367 MB/s, Time = 0.14286 s, Size = 67108864 Bytes, NumDevsUsed = 1, Workgroup = 192
+histogram256, Throughput = 4537.5274 MB/s, Time = 0.01479 s, Size = 67108864 Bytes, NumDevsUsed = 1, Workgroup = 192
 
 Validating GPU results...
  ...reading back GPU results
@@ -281,23 +309,65 @@ Shutting down 256-bin histogram...
 Shutting down...
 [histogram] - Test Summary
 Test passed
-==55868== NVPROF is profiling process 55868, command: applications/histogram -device=1 -iters=50
-==55868== Some kernel(s) will be replayed on device 1 in order to collect all events/metrics.
-==55868== Profiling application: applications/histogram -device=1 -iters=50
-==55868== Profiling result:
-==55868== Metric result:
+==10640== NVPROF is profiling process 10640, command: applications/histogram -device=0 -iters=15
+==10640== Profiling application: applications/histogram -device=0 -iters=15
+==10640== Profiling result:
+==10640== Metric result:
+Invocations                               Metric Name                        Metric Description         Min         Max         Avg
+Device "GeForce GTX 980 (0)"
+    Kernel: histogram256Kernel(unsigned int*, unsigned int*, unsigned int)
+         16                   shared_store_throughput            Shared Memory Store Throughput  292.16GB/s  298.36GB/s  297.07GB/s
+         16                         branch_efficiency                         Branch Efficiency      77.30%      77.30%      77.30%
+         16                               cf_executed        Executed Control-Flow Instructions    10767200    10767200    10767200
+    Kernel: mergeHistogram256Kernel(unsigned int*, unsigned int*, unsigned int)
+         16                   shared_store_throughput            Shared Memory Store Throughput  31.791GB/s  35.193GB/s  33.680GB/s
+         16                         branch_efficiency                         Branch Efficiency     100.00%     100.00%     100.00%
+         16                               cf_executed        Executed Control-Flow Instructions       24832       24832       24832
+[[histogram]] - Starting...
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
+CUDA device [GeForce GTX 980] has 16 Multi-Processors, Compute 5.2
+Initializing data...
+...allocating CPU memory.
+...generating input data
+...allocating GPU memory and copying input data
+
+Initializing 256-bin histogram...
+Running 256-bin GPU histogram for 67108864 bytes (15 runs)...
+
+iterated 15, average time is 140.320580 msec.
+histogram256() time (total) : 2.10481 sec, 478.2539 MB/sec
+
+histogram256, Throughput = 478.2539 MB/s, Time = 0.14032 s, Size = 67108864 Bytes, NumDevsUsed = 1, Workgroup = 192
+
+Validating GPU results...
+ ...reading back GPU results
+ ...histogram256CPU()
+ ...comparing the results
+ ...256-bin histograms match
+
+Shutting down 256-bin histogram...
+
+
+Shutting down...
+[histogram] - Test Summary
+Test passed
+==10268== NVPROF is profiling process 10268, command: applications/histogram -device=0 -iters=15
+==10268== Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+==10268== Profiling application: applications/histogram -device=0 -iters=15
+==10268== Profiling result:
+==10268== Metric result:
 Invocations                               Metric Name                            Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: histogram256Kernel(unsigned int*, unsigned int*, unsigned int)
-         51                                 cf_issued              Issued Control-Flow Instructions    10767200    10767200    10767200
-         51                             flop_count_sp   Floating Point Operations(Single Precision)           0           0           0
-         51                        flop_sp_efficiency                  FLOP Efficiency(Peak Single)       0.00%       0.00%       0.00%
+         16                                 cf_issued              Issued Control-Flow Instructions    10767200    10767200    10767200
+         16                             flop_count_sp   Floating Point Operations(Single Precision)           0           0           0
+         16                        flop_sp_efficiency                  FLOP Efficiency(Peak Single)       0.00%       0.00%       0.00%
     Kernel: mergeHistogram256Kernel(unsigned int*, unsigned int*, unsigned int)
-         51                                 cf_issued              Issued Control-Flow Instructions       24832       24832       24832
-         51                             flop_count_sp   Floating Point Operations(Single Precision)           0           0           0
-         51                        flop_sp_efficiency                  FLOP Efficiency(Peak Single)       0.00%       0.00%       0.00%
+         16                                 cf_issued              Issued Control-Flow Instructions       24832       24832       24832
+         16                             flop_count_sp   Floating Point Operations(Single Precision)           0           0           0
+         16                        flop_sp_efficiency                  FLOP Efficiency(Peak Single)       0.00%       0.00%       0.00%
 [[histogram]] - Starting...
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 CUDA device [GeForce GTX 980] has 16 Multi-Processors, Compute 5.2
 Initializing data...
 ...allocating CPU memory.
@@ -305,12 +375,12 @@ Initializing data...
 ...allocating GPU memory and copying input data
 
 Initializing 256-bin histogram...
-Running 256-bin GPU histogram for 67108864 bytes (50 runs)...
+Running 256-bin GPU histogram for 67108864 bytes (15 runs)...
 
-iterated 50, average time is 153.218457 msec.
-histogram256() time (total) : 7.66092 sec, 437.9946 MB/sec
+iterated 15, average time is 136.796070 msec.
+histogram256() time (total) : 2.05194 sec, 490.5760 MB/sec
 
-histogram256, Throughput = 437.9946 MB/s, Time = 0.15322 s, Size = 67108864 Bytes, NumDevsUsed = 1, Workgroup = 192
+histogram256, Throughput = 490.5760 MB/s, Time = 0.13680 s, Size = 67108864 Bytes, NumDevsUsed = 1, Workgroup = 192
 
 Validating GPU results...
  ...reading back GPU results
@@ -324,23 +394,23 @@ Shutting down 256-bin histogram...
 Shutting down...
 [histogram] - Test Summary
 Test passed
-==56092== NVPROF is profiling process 56092, command: applications/histogram -device=1 -iters=50
-==56092== Some kernel(s) will be replayed on device 1 in order to collect all events/metrics.
-==56092== Profiling application: applications/histogram -device=1 -iters=50
-==56092== Profiling result:
-==56092== Metric result:
+==10252== NVPROF is profiling process 10252, command: applications/histogram -device=0 -iters=15
+==10252== Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+==10252== Profiling application: applications/histogram -device=0 -iters=15
+==10252== Profiling result:
+==10252== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: histogram256Kernel(unsigned int*, unsigned int*, unsigned int)
-         51                            gld_throughput                    Global Load Throughput  17.656GB/s  17.771GB/s  17.711GB/s
-         51                          gld_transactions                  Global Load Transactions     4194304     4194304     4194304
-         51                            gst_throughput                   Global Store Throughput  66.208MB/s  66.641MB/s  65.804MB/s
+         16                            gld_throughput                    Global Load Throughput  17.672GB/s  17.747GB/s  17.708GB/s
+         16                          gld_transactions                  Global Load Transactions     4194304     4194304     4194304
+         16                            gst_throughput                   Global Store Throughput  66.271MB/s  66.552MB/s  65.804MB/s
     Kernel: mergeHistogram256Kernel(unsigned int*, unsigned int*, unsigned int)
-         51                            gld_throughput                    Global Load Throughput  64.311GB/s  68.790GB/s  66.643GB/s
-         51                          gld_transactions                  Global Load Transactions       61440       61440       61440
-         51                            gst_throughput                   Global Store Throughput  274.39MB/s  293.50MB/s  283.24MB/s
+         16                            gld_throughput                    Global Load Throughput  66.189GB/s  68.188GB/s  67.302GB/s
+         16                          gld_transactions                  Global Load Transactions       61440       61440       61440
+         16                            gst_throughput                   Global Store Throughput  282.41MB/s  290.94MB/s  286.10MB/s
 [[histogram]] - Starting...
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 CUDA device [GeForce GTX 980] has 16 Multi-Processors, Compute 5.2
 Initializing data...
 ...allocating CPU memory.
@@ -348,12 +418,12 @@ Initializing data...
 ...allocating GPU memory and copying input data
 
 Initializing 256-bin histogram...
-Running 256-bin GPU histogram for 67108864 bytes (50 runs)...
+Running 256-bin GPU histogram for 67108864 bytes (15 runs)...
 
-iterated 50, average time is 17.872440 msec.
-histogram256() time (total) : 0.89362 sec, 3754.8797 MB/sec
+iterated 15, average time is 15.543162 msec.
+histogram256() time (total) : 0.23315 sec, 4317.5813 MB/sec
 
-histogram256, Throughput = 3754.8797 MB/s, Time = 0.01787 s, Size = 67108864 Bytes, NumDevsUsed = 1, Workgroup = 192
+histogram256, Throughput = 4317.5813 MB/s, Time = 0.01554 s, Size = 67108864 Bytes, NumDevsUsed = 1, Workgroup = 192
 
 Validating GPU results...
  ...reading back GPU results
@@ -367,22 +437,22 @@ Shutting down 256-bin histogram...
 Shutting down...
 [histogram] - Test Summary
 Test passed
-==54764== NVPROF is profiling process 54764, command: applications/histogram -device=1 -iters=50
-==54764== Profiling application: applications/histogram -device=1 -iters=50
-==54764== Profiling result:
-==54764== Metric result:
+==10048== NVPROF is profiling process 10048, command: applications/histogram -device=0 -iters=15
+==10048== Profiling application: applications/histogram -device=0 -iters=15
+==10048== Profiling result:
+==10048== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: histogram256Kernel(unsigned int*, unsigned int*, unsigned int)
-         51                          gst_transactions                 Global Store Transactions        7680        7680        7680
-         51                               inst_issued                       Instructions Issued    49262714    49264107    49262853
-         51                             inst_per_warp                     Instructions per warp  3.4209e+04  3.4209e+04  3.4209e+04
+         16                          gst_transactions                 Global Store Transactions        7680        7680        7680
+         16                               inst_issued                       Instructions Issued    49262729    49264016    49262942
+         16                             inst_per_warp                     Instructions per warp  3.4209e+04  3.4209e+04  3.4209e+04
     Kernel: mergeHistogram256Kernel(unsigned int*, unsigned int*, unsigned int)
-         51                          gst_transactions                 Global Store Transactions         256         256         256
-         51                               inst_issued                       Instructions Issued      167825      168451      167871
-         51                             inst_per_warp                     Instructions per warp   81.250000   81.250000   81.250000
+         16                          gst_transactions                 Global Store Transactions         256         256         256
+         16                               inst_issued                       Instructions Issued      167816      168448      167909
+         16                             inst_per_warp                     Instructions per warp   81.250000   81.250000   81.250000
 [[histogram]] - Starting...
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 CUDA device [GeForce GTX 980] has 16 Multi-Processors, Compute 5.2
 Initializing data...
 ...allocating CPU memory.
@@ -390,12 +460,12 @@ Initializing data...
 ...allocating GPU memory and copying input data
 
 Initializing 256-bin histogram...
-Running 256-bin GPU histogram for 67108864 bytes (50 runs)...
+Running 256-bin GPU histogram for 67108864 bytes (15 runs)...
 
-iterated 50, average time is 11.426157 msec.
-histogram256() time (total) : 0.57131 sec, 5873.2665 MB/sec
+iterated 15, average time is 10.337357 msec.
+histogram256() time (total) : 0.15506 sec, 6491.8784 MB/sec
 
-histogram256, Throughput = 5873.2665 MB/s, Time = 0.01143 s, Size = 67108864 Bytes, NumDevsUsed = 1, Workgroup = 192
+histogram256, Throughput = 6491.8784 MB/s, Time = 0.01034 s, Size = 67108864 Bytes, NumDevsUsed = 1, Workgroup = 192
 
 Validating GPU results...
  ...reading back GPU results
@@ -409,13 +479,13 @@ Shutting down 256-bin histogram...
 Shutting down...
 [histogram] - Test Summary
 Test passed
-==57056== NVPROF is profiling process 57056, command: applications/histogram -device=1 -iters=50
-==57056== Profiling application: applications/histogram -device=1 -iters=50
-==57056== Profiling result:
-==57056== Metric result:
+==8132== NVPROF is profiling process 8132, command: applications/histogram -device=0 -iters=15
+==8132== Profiling application: applications/histogram -device=0 -iters=15
+==8132== Profiling result:
+==8132== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: histogram256Kernel(unsigned int*, unsigned int*, unsigned int)
-         51                                       ipc                              Executed IPC    1.262882    1.393771    1.334255
+         16                                       ipc                              Executed IPC    1.296369    1.376540    1.337343
     Kernel: mergeHistogram256Kernel(unsigned int*, unsigned int*, unsigned int)
-         51                                       ipc                              Executed IPC    0.774490    1.017208    0.941014
+         16                                       ipc                              Executed IPC    0.771914    0.977398    0.924312

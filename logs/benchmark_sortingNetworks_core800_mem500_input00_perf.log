@@ -1,0 +1,54 @@
+applications/sortingNetworks Starting...
+
+Starting up CUDA context...
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
+Allocating and initializing host arrays...
+
+Allocating and initializing CUDA arrays...
+
+Running GPU bitonic sort (5 identical iterations)...
+
+Testing array length 1048576 (1 arrays per batch)...
+iterated 5, average time is 43.243021 msec.
+sortingNetworks-bitonic, Throughput = 24.2484 MElements/s, Time = 0.04324 s, Size = 1048576 elements, NumDevsUsed = 1, Workgroup = 512
+
+Validating the results...
+...reading back GPU results
+...inspecting keys array: OK
+...inspecting keys and values array: OK
+...stability property: NOT stable
+
+Shutting down...
+==10940== NVPROF is profiling process 10940, command: applications/sortingNetworks -device=0 -iters=5
+==10940== Profiling application: applications/sortingNetworks -device=0 -iters=5
+==10940== Profiling result:
+Time(%)      Time     Calls       Avg       Min       Max  Name
+ 80.87%  212.83ms       330  644.93us  638.42us  656.46us  bitonicMergeGlobal(unsigned int*, unsigned int*, unsigned int*, unsigned int*, unsigned int, unsigned int, unsigned int, unsigned int)
+ 14.58%  38.373ms        60  639.55us  632.05us  645.74us  bitonicMergeShared(unsigned int*, unsigned int*, unsigned int*, unsigned int*, unsigned int, unsigned int, unsigned int)
+  2.23%  5.8691ms         6  978.18us  975.94us  979.85us  bitonicSortShared1(unsigned int*, unsigned int*, unsigned int*, unsigned int*)
+  1.20%  3.1649ms         2  1.5824ms  1.5411ms  1.6238ms  [CUDA memcpy DtoH]
+  1.11%  2.9276ms         2  1.4638ms  1.4577ms  1.4698ms  [CUDA memcpy HtoD]
+
+==10940== API calls:
+Time(%)      Time     Calls       Avg       Min       Max  Name
+ 57.30%  255.19ms         6  42.532ms  42.513ms  42.554ms  cudaThreadSynchronize
+ 30.12%  134.15ms         4  33.537ms  1.0934ms  130.84ms  cudaMalloc
+  9.19%  40.934ms         1  40.934ms  40.934ms  40.934ms  cudaDeviceReset
+  1.52%  6.7565ms         4  1.6891ms  1.1879ms  1.9539ms  cudaMemcpy
+  1.10%  4.9103ms       396  12.399us  11.132us  43.928us  cudaLaunch
+  0.16%  706.76us         3  235.59us  7.5220us  691.42us  cudaDeviceSynchronize
+  0.14%  615.90us         4  153.97us  120.35us  181.43us  cudaFree
+  0.12%  515.38us      3084     167ns       0ns     902ns  cudaSetupArgument
+  0.10%  430.26us        91  4.7280us       0ns  229.87us  cuDeviceGetAttribute
+  0.09%  415.51us         1  415.51us  415.51us  415.51us  cudaGetDeviceProperties
+  0.08%  352.93us         6  58.821us  55.361us  61.078us  cudaEventSynchronize
+  0.03%  112.53us        12  9.3770us  5.1150us  13.239us  cudaEventRecord
+  0.02%  101.10us       396     255ns       0ns  2.1060us  cudaConfigureCall
+  0.02%  96.883us         6  16.147us  14.743us  17.752us  cudaEventElapsedTime
+  0.02%  74.016us         1  74.016us  74.016us  74.016us  cuDeviceGetName
+  0.00%  11.735us         2  5.8670us  2.7080us  9.0270us  cudaEventCreate
+  0.00%  11.433us         1  11.433us  11.433us  11.433us  cudaSetDevice
+  0.00%  5.4150us         1  5.4150us  5.4150us  5.4150us  cuDeviceTotalMem
+  0.00%  3.0090us         3  1.0030us     301ns  2.1060us  cuDeviceGetCount
+  0.00%  1.5030us         3     501ns     300ns     902ns  cuDeviceGet
+  0.00%  1.2040us         1  1.2040us  1.2040us  1.2040us  cudaGetDeviceCount

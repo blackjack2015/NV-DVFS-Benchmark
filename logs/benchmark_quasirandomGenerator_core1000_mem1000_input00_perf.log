@@ -1,43 +1,14 @@
-"arg:" 
-applications\quasirandomGenerator Starting...
-
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
-Allocating GPU memory...
-Allocating CPU memory...
-Initializing QRNG tables...
-
-Testing QRNG...
-
-Adjust Iters to 34935 for meeting time requirement 10 secs.
-quasirandomGenerator, Total Time = 9.21095 s
-quasirandomGenerator, Throughput = 11.9310 GNumbers/s, Time = 0.00026 s, Size = 3145728 Numbers, NumDevsUsed = 1, Workgroup = 384
-
-Reading GPU results...
-Comparing to the CPU results...
-
-L1 norm: 7.275964E-012
-
-Testing inverseCNDgpu()...
-
-quasirandomGenerator-inverse, Total Time = 0.00053 s
-quasirandomGenerator-inverse, Throughput = 11.9635 GNumbers/s, Time = 0.00026 s, Size = 3145728 Numbers, NumDevsUsed = 1, Workgroup = 128
-Reading GPU results...
-
-Comparing to the CPU results...
-L1 norm: 9.439909E-008
-
-Shutting down...
 applications/quasirandomGenerator Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Allocating GPU memory...
 Allocating CPU memory...
 Initializing QRNG tables...
 
 Testing QRNG...
 
-quasirandomGenerator, Total Time = 0.01286 s
-quasirandomGenerator, Throughput = 12.2323 GNumbers/s, Time = 0.00026 s, Size = 3145728 Numbers, NumDevsUsed = 1, Workgroup = 384
+quasirandomGenerator, Total Time = 0.00144 s
+quasirandomGenerator, Throughput = 10.8881 GNumbers/s, Time = 0.00029 s, Size = 3145728 Numbers, NumDevsUsed = 1, Workgroup = 384
 
 Reading GPU results...
 Comparing to the CPU results...
@@ -46,47 +17,46 @@ L1 norm: 7.275964E-012
 
 Testing inverseCNDgpu()...
 
-quasirandomGenerator-inverse, Total Time = 0.00057 s
-quasirandomGenerator-inverse, Throughput = 11.0441 GNumbers/s, Time = 0.00028 s, Size = 3145728 Numbers, NumDevsUsed = 1, Workgroup = 128
+quasirandomGenerator-inverse, Total Time = 0.00056 s
+quasirandomGenerator-inverse, Throughput = 11.2603 GNumbers/s, Time = 0.00028 s, Size = 3145728 Numbers, NumDevsUsed = 1, Workgroup = 128
 Reading GPU results...
 
 Comparing to the CPU results...
 L1 norm: 9.439909E-008
 
 Shutting down...
-==41492== NVPROF is profiling process 41492, command: applications/quasirandomGenerator -device=1 -iters=50
-==41492== Warning: Unified Memory Profiling is not supported on the current configuration because a pair of devices without peer-to-peer support is detected on this multi-GPU setup. When peer mappings are not available, system falls back to using zero-copy memory. It can cause kernels, which access unified memory, to run slower. More details can be found at: http://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#um-managed-memory
-==41492== Profiling application: applications/quasirandomGenerator -device=1 -iters=50
-==41492== Profiling result:
+==16176== NVPROF is profiling process 16176, command: applications/quasirandomGenerator -device=0 -iters=5
+==16176== Profiling application: applications/quasirandomGenerator -device=0 -iters=5
+==16176== Profiling result:
 Time(%)      Time     Calls       Avg       Min       Max  Name
- 49.99%  11.649ms         2  5.8247ms  4.9075ms  6.7419ms  [CUDA memcpy DtoH]
- 47.22%  11.004ms        51  215.77us  213.50us  217.98us  quasirandomGeneratorKernel(float*, unsigned int, unsigned int)
-  2.77%  645.78us         3  215.26us  214.46us  216.25us  inverseCNDKernel(float*, unsigned int*, unsigned int)
-  0.01%  2.4000us         1  2.4000us  2.4000us  2.4000us  [CUDA memcpy HtoD]
-  0.01%  2.1760us         2  1.0880us  1.0880us  1.0880us  [CUDA memset]
+ 85.93%  11.872ms         2  5.9360ms  4.7044ms  7.1675ms  [CUDA memcpy DtoH]
+  9.37%  1.2946ms         6  215.77us  214.75us  216.67us  quasirandomGeneratorKernel(float*, unsigned int, unsigned int)
+  4.67%  645.30us         3  215.10us  214.59us  215.77us  inverseCNDKernel(float*, unsigned int*, unsigned int)
+  0.02%  2.4640us         1  2.4640us  2.4640us  2.4640us  [CUDA memcpy HtoD]
+  0.02%  2.1120us         2  1.0560us  1.0560us  1.0560us  [CUDA memset]
 
-==41492== API calls:
+==16176== API calls:
 Time(%)      Time     Calls       Avg       Min       Max  Name
- 67.99%  196.09ms         1  196.09ms  196.09ms  196.09ms  cudaMalloc
- 20.35%  58.686ms         1  58.686ms  58.686ms  58.686ms  cudaDeviceReset
-  5.11%  14.732ms        55  267.86us  7.3910us  575.07us  cudaDeviceSynchronize
-  4.33%  12.498ms         2  6.2490ms  5.1807ms  7.3173ms  cudaMemcpy
-  0.50%  1.4552ms        51  28.532us  26.721us  30.417us  cudaEventSynchronize
-  0.40%  1.1527ms         2  576.35us  574.50us  578.19us  cudaGetDeviceProperties
-  0.36%  1.0518ms       182  5.7790us       0ns  281.42us  cuDeviceGetAttribute
-  0.29%  848.53us        54  15.713us  13.929us  27.290us  cudaLaunch
-  0.25%  721.47us       102  7.0730us  4.8330us  9.0970us  cudaEventRecord
-  0.15%  439.76us        51  8.6220us  7.9590us  9.6650us  cudaEventElapsedTime
-  0.12%  335.15us         1  335.15us  335.15us  335.15us  cudaFree
-  0.06%  171.98us         2  85.990us  69.360us  102.62us  cuDeviceGetName
-  0.04%  107.17us         2  53.584us  38.660us  68.508us  cudaMemset
-  0.01%  35.243us       162     217ns       0ns  1.9890us  cudaSetupArgument
-  0.01%  30.985us         1  30.985us  30.985us  30.985us  cudaMemcpyToSymbol
-  0.01%  23.879us        54     442ns     284ns  1.7060us  cudaConfigureCall
-  0.01%  14.495us        54     268ns       0ns     285ns  cudaGetLastError
-  0.00%  12.508us         2  6.2540us  5.6860us  6.8220us  cuDeviceTotalMem
-  0.00%  11.655us         1  11.655us  11.655us  11.655us  cudaSetDevice
-  0.00%  4.8310us         2  2.4150us     852ns  3.9790us  cudaEventCreate
-  0.00%  2.8420us         6     473ns       0ns     853ns  cuDeviceGet
-  0.00%  2.8420us         3     947ns     284ns  2.2740us  cuDeviceGetCount
-  0.00%     852ns         1     852ns     852ns     852ns  cudaGetDeviceCount
+ 66.05%  132.86ms         1  132.86ms  132.86ms  132.86ms  cudaMalloc
+ 24.77%  49.828ms         1  49.828ms  49.828ms  49.828ms  cudaDeviceReset
+  6.37%  12.810ms         2  6.4049ms  4.9248ms  7.8851ms  cudaMemcpy
+  1.51%  3.0359ms        10  303.58us  8.7250us  554.52us  cudaDeviceSynchronize
+  0.44%  878.26us         2  439.13us  434.47us  443.79us  cudaGetDeviceProperties
+  0.22%  448.91us        91  4.9330us       0ns  248.53us  cuDeviceGetAttribute
+  0.17%  336.08us         6  56.013us  53.556us  58.671us  cudaEventSynchronize
+  0.16%  313.82us         1  313.82us  313.82us  313.82us  cudaFree
+  0.08%  162.17us         9  18.019us  13.840us  27.380us  cudaLaunch
+  0.06%  111.33us         2  55.662us  33.698us  77.627us  cudaMemset
+  0.05%  105.01us        12  8.7500us  5.4160us  11.434us  cudaEventRecord
+  0.05%  94.174us         1  94.174us  94.174us  94.174us  cuDeviceGetName
+  0.05%  93.572us         6  15.595us  14.442us  16.247us  cudaEventElapsedTime
+  0.01%  28.583us         1  28.583us  28.583us  28.583us  cudaMemcpyToSymbol
+  0.01%  10.831us         1  10.831us  10.831us  10.831us  cudaSetDevice
+  0.00%  6.0170us         1  6.0170us  6.0170us  6.0170us  cuDeviceTotalMem
+  0.00%  6.0170us        27     222ns       0ns  1.5050us  cudaSetupArgument
+  0.00%  5.4170us         9     601ns     301ns  1.5040us  cudaConfigureCall
+  0.00%  4.8140us         2  2.4070us     903ns  3.9110us  cudaEventCreate
+  0.00%  3.3090us         3  1.1030us     301ns  2.1060us  cuDeviceGetCount
+  0.00%  3.0100us         9     334ns     301ns     602ns  cudaGetLastError
+  0.00%  2.1060us         3     702ns     602ns     902ns  cuDeviceGet
+  0.00%     903ns         1     903ns     903ns     903ns  cudaGetDeviceCount
