@@ -1,0 +1,40 @@
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
+WG size of kernel = 16 X 16
+pyramidHeight: 1
+gridSize: [512, 512]
+border:[1, 1]
+blockGrid:[37, 37]
+targetBlock:[14, 14]
+Start computing the transient temperature
+iterated 5, average time is 0.265728 msec.
+Ending simulation
+==5908== NVPROF is profiling process 5908, command: applications/hotspot 512 1 ./datasets/hotspot/temp_512 ./datasets/hotspot/power_512 output.out -device=0 -iters=5
+==5908== Profiling application: applications/hotspot 512 1 ./datasets/hotspot/temp_512 ./datasets/hotspot/power_512 output.out -device=0 -iters=5
+==5908== Profiling result:
+Time(%)      Time     Calls       Avg       Min       Max  Name
+ 58.92%  1.3613ms         6  226.89us  225.50us  229.02us  calculate_temp(int, float*, float*, float*, int, int, int, int, float, float, float, float, float)
+ 27.45%  634.19us         2  317.10us  316.98us  317.21us  [CUDA memcpy HtoD]
+ 13.63%  314.94us         1  314.94us  314.94us  314.94us  [CUDA memcpy DtoH]
+
+==5908== API calls:
+Time(%)      Time     Calls       Avg       Min       Max  Name
+ 96.17%  135.41ms         3  45.136ms  487.72us  134.11ms  cudaMalloc
+  1.39%  1.9599ms         6  326.65us  268.68us  608.98us  cudaThreadSynchronize
+  1.09%  1.5369ms         3  512.29us  171.20us  1.1779ms  cudaMemcpy
+  0.33%  467.56us         3  155.85us  102.30us  190.46us  cudaFree
+  0.31%  442.29us         1  442.29us  442.29us  442.29us  cudaGetDeviceProperties
+  0.31%  437.17us        91  4.8040us       0ns  253.94us  cuDeviceGetAttribute
+  0.12%  168.49us         6  28.081us  27.680us  29.185us  cudaEventSynchronize
+  0.08%  118.24us         6  19.707us  13.539us  46.636us  cudaLaunch
+  0.05%  77.026us        12  6.4180us  4.8140us  8.1240us  cudaEventRecord
+  0.05%  75.521us         1  75.521us  75.521us  75.521us  cuDeviceGetName
+  0.03%  48.140us         6  8.0230us  7.8220us  8.7250us  cudaEventElapsedTime
+  0.01%  18.653us        78     239ns       0ns     602ns  cudaSetupArgument
+  0.01%  14.141us         2  7.0700us  6.9200us  7.2210us  cudaDeviceSynchronize
+  0.01%  13.239us         1  13.239us  13.239us  13.239us  cudaSetDevice
+  0.00%  6.6190us         2  3.3090us     902ns  5.7170us  cudaEventCreate
+  0.00%  6.0180us         1  6.0180us  6.0180us  6.0180us  cuDeviceTotalMem
+  0.00%  3.6120us         6     602ns     301ns  2.1070us  cudaConfigureCall
+  0.00%  3.3100us         3  1.1030us     301ns  2.7080us  cuDeviceGetCount
+  0.00%  1.8050us         1  1.8050us  1.8050us  1.8050us  cudaGetDeviceCount
+  0.00%  1.2030us         3     401ns       0ns     602ns  cuDeviceGet

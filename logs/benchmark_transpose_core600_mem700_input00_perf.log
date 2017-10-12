@@ -1,0 +1,53 @@
+Transpose Starting...
+
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
+MapSMtoCores for SM 5.2 is undefined.  Default to use 128 Cores/SM
+> Device 0: "GeForce GTX 980"
+> SM Capability 5.2 detected:
+MapSMtoCores for SM 5.2 is undefined.  Default to use 128 Cores/SM
+MapSMtoCores for SM 5.2 is undefined.  Default to use 128 Cores/SM
+> [GeForce GTX 980] has 16 MP(s) x 128 (Cores/MP) = 2048 (Cores)
+> Compute performance scaling factor = 1.00
+> MatrixSize X = 8192 is greater than the recommended size = 1024
+> MatrixSize Y = 8192 is greater than the recommended size = 1024
+
+Matrix size: 8192x8192 (512x512 tiles), tile size: 16x16, block size: 16x16
+
+iterated 5, average time is 15.961395 msec
+transpose coalesced         , Total Time = 79.80698 ms
+transpose coalesced         , Throughput = 31.3256 GB/s, Time = 15.96140 ms, Size = 67108864 fp32 elements, NumDevsUsed = 1, Workgroup = 256
+Test passed
+==8100== NVPROF is profiling process 8100, command: applications/transpose -dimX=8192 -dimY=8192 -device=0 -iters=5
+==8100== Profiling application: applications/transpose -dimX=8192 -dimY=8192 -device=0 -iters=5
+==8100== Profiling result:
+Time(%)      Time     Calls       Avg       Min       Max  Name
+ 73.25%  963.91ms         1  963.91ms  963.91ms  963.91ms  [CUDA memcpy HtoD]
+ 18.29%  240.72ms         2  120.36ms  103.92ms  136.80ms  [CUDA memcpy DtoH]
+  8.45%  111.22ms         7  15.888ms  15.881ms  15.899ms  transposeCoalesced(float*, float*, int, int)
+
+==8100== API calls:
+Time(%)      Time     Calls       Avg       Min       Max  Name
+ 45.33%  345.57ms         3  115.19ms  104.10ms  137.14ms  cudaMemcpy
+ 32.21%  245.58ms         2  122.79ms  48.251ms  197.33ms  cudaMalloc
+ 12.56%  95.785ms         6  15.964ms  15.952ms  15.974ms  cudaThreadSynchronize
+  6.56%  50.041ms         1  50.041ms  50.041ms  50.041ms  cudaDeviceReset
+  2.20%  16.793ms         3  5.5975ms  7.8230us  16.777ms  cudaDeviceSynchronize
+  0.83%  6.3142ms         2  3.1571ms  3.0551ms  3.2591ms  cudaFree
+  0.12%  902.93us         2  451.47us  451.02us  451.92us  cudaGetDeviceProperties
+  0.06%  444.40us        91  4.8830us       0ns  262.06us  cuDeviceGetAttribute
+  0.05%  345.11us         6  57.517us  49.644us  64.688us  cudaEventSynchronize
+  0.03%  202.49us         7  28.927us  15.345us  79.432us  cudaLaunch
+  0.02%  121.26us        12  10.104us  4.8140us  19.858us  cudaEventRecord
+  0.01%  103.80us         6  17.300us  16.247us  18.955us  cudaEventElapsedTime
+  0.01%  91.467us         1  91.467us  91.467us  91.467us  cuDeviceGetName
+  0.00%  27.379us         4  6.8440us  1.5040us  19.557us  cudaEventCreate
+  0.00%  11.433us         1  11.433us  11.433us  11.433us  cudaSetDevice
+  0.00%  7.5220us        28     268ns       0ns     903ns  cudaSetupArgument
+  0.00%  6.9200us         2  3.4600us  1.2030us  5.7170us  cudaEventDestroy
+  0.00%  6.3190us         1  6.3190us  6.3190us  6.3190us  cuDeviceTotalMem
+  0.00%  6.3180us         7     902ns     300ns  3.9110us  cudaConfigureCall
+  0.00%  3.6110us         3  1.2030us     301ns  2.4070us  cuDeviceGetCount
+  0.00%  2.1060us         1  2.1060us  2.1060us  2.1060us  cudaGetDevice
+  0.00%  1.8050us         3     601ns     301ns     903ns  cuDeviceGet
+  0.00%  1.2040us         1  1.2040us  1.2040us  1.2040us  cudaGetLastError
+  0.00%     601ns         1     601ns     601ns     601ns  cudaGetDeviceCount

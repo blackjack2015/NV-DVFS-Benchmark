@@ -1,323 +1,371 @@
 Sobol Quasi-Random Number Generator Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 > number of vectors = 100000
 > number of dimensions = 1000
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Allocating CPU memory...
 Allocating GPU memory...
 Initializing direction numbers...
 Copying direction numbers to device...
 Executing QRNG on GPU...
-Running SobolQRNG for 50 runs...
+Running SobolQRNG for 15 runs...
 
-Total   Kernel Time binomialOptionsGPU() time: 1020.603489 msec
-Average Kernel Time binomialOptionsGPU() time: 20.412070 msec
+Total   Kernel Time binomialOptionsGPU() time: 183.801247 msec
+Average Kernel Time binomialOptionsGPU() time: 12.253416 msec
 Reading results from GPU...
 
 Executing QRNG on CPU...
-Gsamples/s: 0.243034
+Gsamples/s: 0.256584
 Checking results...
 L1-Error: 0
 Shutting down...
-==35100== NVPROF is profiling process 35100, command: applications/SobolQRNG -device=1 -iters=50
-==35100== Profiling application: applications/SobolQRNG -device=1 -iters=50
-==35100== Profiling result:
-==35100== Metric result:
-Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
-    Kernel: sobolGPU_kernel(unsigned int, unsigned int, unsigned int*, float*)
-         51                        achieved_occupancy                        Achieved Occupancy    0.970395    0.974795    0.972797
-         51                             sm_efficiency                   Multiprocessor Activity      97.38%      98.72%      98.08%
-         51                 warp_execution_efficiency                 Warp Execution Efficiency     100.00%     100.00%     100.00%
+==15044== NVPROF is profiling process 15044, command: applications/SobolQRNG -device=0 -iters=15
+==15044== Profiling application: applications/SobolQRNG -device=0 -iters=15
+==15044== Profiling result:
+   Start  Duration            Grid Size      Block Size     Regs*    SSMem*    DSMem*      Size  Throughput           Device   Context    Stream  Name
+261.71ms  42.718us                    -               -         -         -         -  125.00KB  2.7906GB/s  GeForce GTX 980         1         7  [CUDA memcpy HtoD]
+262.30ms  12.060ms           (1 1000 1)        (64 1 1)        19      128B        0B         -           -  GeForce GTX 980         1         7  sobolGPU_kernel(unsigned int, unsigned int, unsigned int*, float*) [120]
+274.56ms  12.205ms           (1 1000 1)        (64 1 1)        19      128B        0B         -           -  GeForce GTX 980         1         7  sobolGPU_kernel(unsigned int, unsigned int, unsigned int*, float*) [132]
+287.11ms  12.121ms           (1 1000 1)        (64 1 1)        19      128B        0B         -           -  GeForce GTX 980         1         7  sobolGPU_kernel(unsigned int, unsigned int, unsigned int*, float*) [143]
+299.41ms  12.159ms           (1 1000 1)        (64 1 1)        19      128B        0B         -           -  GeForce GTX 980         1         7  sobolGPU_kernel(unsigned int, unsigned int, unsigned int*, float*) [154]
+311.73ms  12.133ms           (1 1000 1)        (64 1 1)        19      128B        0B         -           -  GeForce GTX 980         1         7  sobolGPU_kernel(unsigned int, unsigned int, unsigned int*, float*) [165]
+324.05ms  12.118ms           (1 1000 1)        (64 1 1)        19      128B        0B         -           -  GeForce GTX 980         1         7  sobolGPU_kernel(unsigned int, unsigned int, unsigned int*, float*) [176]
+336.36ms  12.146ms           (1 1000 1)        (64 1 1)        19      128B        0B         -           -  GeForce GTX 980         1         7  sobolGPU_kernel(unsigned int, unsigned int, unsigned int*, float*) [187]
+348.88ms  12.191ms           (1 1000 1)        (64 1 1)        19      128B        0B         -           -  GeForce GTX 980         1         7  sobolGPU_kernel(unsigned int, unsigned int, unsigned int*, float*) [198]
+361.26ms  12.178ms           (1 1000 1)        (64 1 1)        19      128B        0B         -           -  GeForce GTX 980         1         7  sobolGPU_kernel(unsigned int, unsigned int, unsigned int*, float*) [209]
+373.70ms  12.104ms           (1 1000 1)        (64 1 1)        19      128B        0B         -           -  GeForce GTX 980         1         7  sobolGPU_kernel(unsigned int, unsigned int, unsigned int*, float*) [220]
+385.93ms  12.098ms           (1 1000 1)        (64 1 1)        19      128B        0B         -           -  GeForce GTX 980         1         7  sobolGPU_kernel(unsigned int, unsigned int, unsigned int*, float*) [231]
+398.21ms  12.127ms           (1 1000 1)        (64 1 1)        19      128B        0B         -           -  GeForce GTX 980         1         7  sobolGPU_kernel(unsigned int, unsigned int, unsigned int*, float*) [242]
+410.70ms  12.113ms           (1 1000 1)        (64 1 1)        19      128B        0B         -           -  GeForce GTX 980         1         7  sobolGPU_kernel(unsigned int, unsigned int, unsigned int*, float*) [253]
+422.98ms  12.123ms           (1 1000 1)        (64 1 1)        19      128B        0B         -           -  GeForce GTX 980         1         7  sobolGPU_kernel(unsigned int, unsigned int, unsigned int*, float*) [264]
+435.27ms  12.174ms           (1 1000 1)        (64 1 1)        19      128B        0B         -           -  GeForce GTX 980         1         7  sobolGPU_kernel(unsigned int, unsigned int, unsigned int*, float*) [275]
+447.61ms  12.198ms           (1 1000 1)        (64 1 1)        19      128B        0B         -           -  GeForce GTX 980         1         7  sobolGPU_kernel(unsigned int, unsigned int, unsigned int*, float*) [286]
+460.06ms  178.15ms                    -               -         -         -         -  381.47MB  2.0911GB/s  GeForce GTX 980         1         7  [CUDA memcpy DtoH]
+
+Regs: Number of registers used per CUDA thread. This number includes registers used internally by the CUDA driver and/or tools and can be more than what the compiler shows.
+SSMem: Static shared memory allocated per CUDA block.
+DSMem: Dynamic shared memory allocated per CUDA block.
 Sobol Quasi-Random Number Generator Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 > number of vectors = 100000
 > number of dimensions = 1000
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Allocating CPU memory...
 Allocating GPU memory...
 Initializing direction numbers...
 Copying direction numbers to device...
 Executing QRNG on GPU...
-Running SobolQRNG for 50 runs...
+Running SobolQRNG for 15 runs...
 
-Total   Kernel Time binomialOptionsGPU() time: 8349.290726 msec
-Average Kernel Time binomialOptionsGPU() time: 166.985815 msec
+Total   Kernel Time binomialOptionsGPU() time: 289.085245 msec
+Average Kernel Time binomialOptionsGPU() time: 19.272350 msec
 Reading results from GPU...
 
 Executing QRNG on CPU...
-Gsamples/s: 0.256448
+Gsamples/s: 0.255491
 Checking results...
 L1-Error: 0
 Shutting down...
-==35384== NVPROF is profiling process 35384, command: applications/SobolQRNG -device=1 -iters=50
-==35384== Some kernel(s) will be replayed on device 1 in order to collect all events/metrics.
-==35384== Profiling application: applications/SobolQRNG -device=1 -iters=50
-==35384== Profiling result:
-==35384== Metric result:
+==11896== NVPROF is profiling process 11896, command: applications/SobolQRNG -device=0 -iters=15
+==11896== Profiling application: applications/SobolQRNG -device=0 -iters=15
+==11896== Profiling result:
+==11896== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: sobolGPU_kernel(unsigned int, unsigned int, unsigned int*, float*)
-         51                  eligible_warps_per_cycle           Eligible Warps Per Active Cycle    0.953105    0.976677    0.965193
-         51                    dram_read_transactions           Device Memory Read Transactions        1988        3220        2041
-         51                      dram_read_throughput             Device Memory Read Throughput  4.9859MB/s  8.1090MB/s  4.7684MB/s
+         16                        achieved_occupancy                        Achieved Occupancy    0.971088    0.975003    0.972540
+         16                             sm_efficiency                   Multiprocessor Activity      97.71%      98.63%      98.16%
+         16                 warp_execution_efficiency                 Warp Execution Efficiency     100.00%     100.00%     100.00%
 Sobol Quasi-Random Number Generator Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 > number of vectors = 100000
 > number of dimensions = 1000
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Allocating CPU memory...
 Allocating GPU memory...
 Initializing direction numbers...
 Copying direction numbers to device...
 Executing QRNG on GPU...
-Running SobolQRNG for 50 runs...
+Running SobolQRNG for 15 runs...
 
-Total   Kernel Time binomialOptionsGPU() time: 8096.403610 msec
-Average Kernel Time binomialOptionsGPU() time: 161.928072 msec
+Total   Kernel Time binomialOptionsGPU() time: 2500.532028 msec
+Average Kernel Time binomialOptionsGPU() time: 166.702135 msec
 Reading results from GPU...
 
 Executing QRNG on CPU...
-Gsamples/s: 0.242812
+Gsamples/s: 0.257101
 Checking results...
 L1-Error: 0
 Shutting down...
-==33256== NVPROF is profiling process 33256, command: applications/SobolQRNG -device=1 -iters=50
-==33256== Some kernel(s) will be replayed on device 1 in order to collect all events/metrics.
-==33256== Profiling application: applications/SobolQRNG -device=1 -iters=50
-==33256== Profiling result:
-==33256== Metric result:
+==13824== NVPROF is profiling process 13824, command: applications/SobolQRNG -device=0 -iters=15
+==13824== Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+==13824== Profiling application: applications/SobolQRNG -device=0 -iters=15
+==13824== Profiling result:
+==13824== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: sobolGPU_kernel(unsigned int, unsigned int, unsigned int*, float*)
-         51                   dram_write_transactions          Device Memory Write Transactions    12490965    12494653    12493705
-         51                     dram_write_throughput            Device Memory Write Throughput  31.020GB/s  31.250GB/s  31.161GB/s
-         51                      l2_read_transactions                      L2 Read Transactions        4103        4717        4253
+         16                  eligible_warps_per_cycle           Eligible Warps Per Active Cycle    0.958890    0.978486    0.967750
+         16                    dram_read_transactions           Device Memory Read Transactions        1980        3217        2113
+         16                      dram_read_throughput             Device Memory Read Throughput  4.9594MB/s  8.0910MB/s  4.7684MB/s
 Sobol Quasi-Random Number Generator Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 > number of vectors = 100000
 > number of dimensions = 1000
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Allocating CPU memory...
 Allocating GPU memory...
 Initializing direction numbers...
 Copying direction numbers to device...
 Executing QRNG on GPU...
-Running SobolQRNG for 50 runs...
+Running SobolQRNG for 15 runs...
 
-Total   Kernel Time binomialOptionsGPU() time: 8321.938248 msec
-Average Kernel Time binomialOptionsGPU() time: 166.438765 msec
+Total   Kernel Time binomialOptionsGPU() time: 2419.849686 msec
+Average Kernel Time binomialOptionsGPU() time: 161.323312 msec
 Reading results from GPU...
 
 Executing QRNG on CPU...
-Gsamples/s: 0.241282
+Gsamples/s: 0.256597
 Checking results...
 L1-Error: 0
 Shutting down...
-==36652== NVPROF is profiling process 36652, command: applications/SobolQRNG -device=1 -iters=50
-==36652== Some kernel(s) will be replayed on device 1 in order to collect all events/metrics.
-==36652== Profiling application: applications/SobolQRNG -device=1 -iters=50
-==36652== Profiling result:
-==36652== Metric result:
+==13824== NVPROF is profiling process 13824, command: applications/SobolQRNG -device=0 -iters=15
+==13824== Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+==13824== Profiling application: applications/SobolQRNG -device=0 -iters=15
+==13824== Profiling result:
+==13824== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: sobolGPU_kernel(unsigned int, unsigned int, unsigned int*, float*)
-         51                        l2_read_throughput                     L2 Throughput (Reads)  10.446MB/s  11.410MB/s  9.5367MB/s
-         51                     l2_write_transactions                     L2 Write Transactions    12500006    12500034    12500006
-         51                       l2_write_throughput                    L2 Throughput (Writes)  31.079GB/s  31.299GB/s  31.173GB/s
+         16                   dram_write_transactions          Device Memory Write Transactions    12489385    12494286    12492387
+         16                     dram_write_throughput            Device Memory Write Throughput  30.964GB/s  31.271GB/s  31.210GB/s
+         16                      l2_read_transactions                      L2 Read Transactions        4103        4450        4303
 Sobol Quasi-Random Number Generator Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 > number of vectors = 100000
 > number of dimensions = 1000
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Allocating CPU memory...
 Allocating GPU memory...
 Initializing direction numbers...
 Copying direction numbers to device...
 Executing QRNG on GPU...
-Running SobolQRNG for 50 runs...
+Running SobolQRNG for 15 runs...
 
-Total   Kernel Time binomialOptionsGPU() time: 770.116832 msec
-Average Kernel Time binomialOptionsGPU() time: 15.402337 msec
+Total   Kernel Time binomialOptionsGPU() time: 2484.371719 msec
+Average Kernel Time binomialOptionsGPU() time: 165.624781 msec
 Reading results from GPU...
 
 Executing QRNG on CPU...
-Gsamples/s: 0.247277
+Gsamples/s: 0.257681
 Checking results...
 L1-Error: 0
 Shutting down...
-==37756== NVPROF is profiling process 37756, command: applications/SobolQRNG -device=1 -iters=50
-==37756== Profiling application: applications/SobolQRNG -device=1 -iters=50
-==37756== Profiling result:
-==37756== Metric result:
+==15408== NVPROF is profiling process 15408, command: applications/SobolQRNG -device=0 -iters=15
+==15408== Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+==15408== Profiling application: applications/SobolQRNG -device=0 -iters=15
+==15408== Profiling result:
+==15408== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: sobolGPU_kernel(unsigned int, unsigned int, unsigned int*, float*)
-         51                  shared_load_transactions                  Shared Load Transactions     3137000     3137000     3137000
-         51                    shared_load_throughput             Shared Memory Load Throughput  30.632GB/s  31.028GB/s  30.803GB/s
-         51                 shared_store_transactions                 Shared Store Transactions        1000        1000        1000
+         16                        l2_read_throughput                     L2 Throughput (Reads)  10.488MB/s  18.845MB/s  10.490MB/s
+         16                     l2_write_transactions                     L2 Write Transactions    12500006    12500287    12500045
+         16                       l2_write_throughput                    L2 Throughput (Writes)  31.130GB/s  31.299GB/s  31.215GB/s
 Sobol Quasi-Random Number Generator Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 > number of vectors = 100000
 > number of dimensions = 1000
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Allocating CPU memory...
 Allocating GPU memory...
 Initializing direction numbers...
 Copying direction numbers to device...
 Executing QRNG on GPU...
-Running SobolQRNG for 50 runs...
+Running SobolQRNG for 15 runs...
 
-Total   Kernel Time binomialOptionsGPU() time: 941.868544 msec
-Average Kernel Time binomialOptionsGPU() time: 18.837371 msec
+Total   Kernel Time binomialOptionsGPU() time: 230.231647 msec
+Average Kernel Time binomialOptionsGPU() time: 15.348776 msec
 Reading results from GPU...
 
 Executing QRNG on CPU...
-Gsamples/s: 0.273027
+Gsamples/s: 0.258185
 Checking results...
 L1-Error: 0
 Shutting down...
-==34836== NVPROF is profiling process 34836, command: applications/SobolQRNG -device=1 -iters=50
-==34836== Profiling application: applications/SobolQRNG -device=1 -iters=50
-==34836== Profiling result:
-==34836== Metric result:
+==15536== NVPROF is profiling process 15536, command: applications/SobolQRNG -device=0 -iters=15
+==15536== Profiling application: applications/SobolQRNG -device=0 -iters=15
+==15536== Profiling result:
+==15536== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: sobolGPU_kernel(unsigned int, unsigned int, unsigned int*, float*)
-         51                   shared_store_throughput            Shared Memory Store Throughput  9.9776MB/s  10.096MB/s  9.5367MB/s
-         51                         branch_efficiency                         Branch Efficiency     100.00%     100.00%     100.00%
-         51                               cf_executed        Executed Control-Flow Instructions     3148000     3148000     3148000
+         16                  shared_load_transactions                  Shared Load Transactions     3137000     3137000     3137000
+         16                    shared_load_throughput             Shared Memory Load Throughput  30.649GB/s  30.935GB/s  30.800GB/s
+         16                 shared_store_transactions                 Shared Store Transactions        1000        1000        1000
 Sobol Quasi-Random Number Generator Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 > number of vectors = 100000
 > number of dimensions = 1000
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Allocating CPU memory...
 Allocating GPU memory...
 Initializing direction numbers...
 Copying direction numbers to device...
 Executing QRNG on GPU...
-Running SobolQRNG for 50 runs...
+Running SobolQRNG for 15 runs...
 
-Total   Kernel Time binomialOptionsGPU() time: 11965.687866 msec
-Average Kernel Time binomialOptionsGPU() time: 239.313757 msec
+Total   Kernel Time binomialOptionsGPU() time: 272.146492 msec
+Average Kernel Time binomialOptionsGPU() time: 18.143099 msec
 Reading results from GPU...
 
 Executing QRNG on CPU...
-Gsamples/s: 0.272839
+Gsamples/s: 0.255772
 Checking results...
 L1-Error: 0
 Shutting down...
-==37000== NVPROF is profiling process 37000, command: applications/SobolQRNG -device=1 -iters=50
-==37000== Some kernel(s) will be replayed on device 1 in order to collect all events/metrics.
-==37000== Profiling application: applications/SobolQRNG -device=1 -iters=50
-==37000== Profiling result:
-==37000== Metric result:
+==15604== NVPROF is profiling process 15604, command: applications/SobolQRNG -device=0 -iters=15
+==15604== Profiling application: applications/SobolQRNG -device=0 -iters=15
+==15604== Profiling result:
+==15604== Metric result:
+Invocations                               Metric Name                        Metric Description         Min         Max         Avg
+Device "GeForce GTX 980 (0)"
+    Kernel: sobolGPU_kernel(unsigned int, unsigned int, unsigned int*, float*)
+         16                   shared_store_throughput            Shared Memory Store Throughput  10.018MB/s  10.127MB/s  9.5367MB/s
+         16                         branch_efficiency                         Branch Efficiency     100.00%     100.00%     100.00%
+         16                               cf_executed        Executed Control-Flow Instructions     3148000     3148000     3148000
+Sobol Quasi-Random Number Generator Starting...
+
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
+> number of vectors = 100000
+> number of dimensions = 1000
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
+Allocating CPU memory...
+Allocating GPU memory...
+Initializing direction numbers...
+Copying direction numbers to device...
+Executing QRNG on GPU...
+Running SobolQRNG for 15 runs...
+
+Total   Kernel Time binomialOptionsGPU() time: 3627.982010 msec
+Average Kernel Time binomialOptionsGPU() time: 241.865467 msec
+Reading results from GPU...
+
+Executing QRNG on CPU...
+Gsamples/s: 0.275433
+Checking results...
+L1-Error: 0
+Shutting down...
+==15668== NVPROF is profiling process 15668, command: applications/SobolQRNG -device=0 -iters=15
+==15668== Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+==15668== Profiling application: applications/SobolQRNG -device=0 -iters=15
+==15668== Profiling result:
+==15668== Metric result:
 Invocations                               Metric Name                            Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: sobolGPU_kernel(unsigned int, unsigned int, unsigned int*, float*)
-         51                                 cf_issued              Issued Control-Flow Instructions     3148000     3148000     3148000
-         51                             flop_count_sp   Floating Point Operations(Single Precision)   100000000   100000000   100000000
-         51                        flop_sp_efficiency                  FLOP Efficiency(Peak Single)       0.49%       0.50%       0.50%
+         16                                 cf_issued              Issued Control-Flow Instructions     3148000     3148000     3148000
+         16                             flop_count_sp   Floating Point Operations(Single Precision)   100000000   100000000   100000000
+         16                        flop_sp_efficiency                  FLOP Efficiency(Peak Single)       0.49%       0.50%       0.50%
 Sobol Quasi-Random Number Generator Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 > number of vectors = 100000
 > number of dimensions = 1000
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Allocating CPU memory...
 Allocating GPU memory...
 Initializing direction numbers...
 Copying direction numbers to device...
 Executing QRNG on GPU...
-Running SobolQRNG for 50 runs...
+Running SobolQRNG for 15 runs...
 
-Total   Kernel Time binomialOptionsGPU() time: 10250.933395 msec
-Average Kernel Time binomialOptionsGPU() time: 205.018668 msec
+Total   Kernel Time binomialOptionsGPU() time: 3030.693649 msec
+Average Kernel Time binomialOptionsGPU() time: 202.046243 msec
 Reading results from GPU...
 
 Executing QRNG on CPU...
-Gsamples/s: 0.273288
+Gsamples/s: 0.256627
 Checking results...
 L1-Error: 0
 Shutting down...
-==35312== NVPROF is profiling process 35312, command: applications/SobolQRNG -device=1 -iters=50
-==35312== Some kernel(s) will be replayed on device 1 in order to collect all events/metrics.
-==35312== Profiling application: applications/SobolQRNG -device=1 -iters=50
-==35312== Profiling result:
-==35312== Metric result:
+==15732== NVPROF is profiling process 15732, command: applications/SobolQRNG -device=0 -iters=15
+==15732== Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+==15732== Profiling application: applications/SobolQRNG -device=0 -iters=15
+==15732== Profiling result:
+==15732== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: sobolGPU_kernel(unsigned int, unsigned int, unsigned int*, float*)
-         51                            gld_throughput                    Global Load Throughput  10.020MB/s  10.097MB/s  9.5367MB/s
-         51                          gld_transactions                  Global Load Transactions        8000        8000        8000
-         51                            gst_throughput                   Global Store Throughput  30.579GB/s  30.813GB/s  30.674GB/s
+         16                            gld_throughput                    Global Load Throughput  10.042MB/s  10.088MB/s  9.5367MB/s
+         16                          gld_transactions                  Global Load Transactions        8000        8000        8000
+         16                            gst_throughput                   Global Store Throughput  30.646GB/s  30.787GB/s  30.712GB/s
 Sobol Quasi-Random Number Generator Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 > number of vectors = 100000
 > number of dimensions = 1000
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Allocating CPU memory...
 Allocating GPU memory...
 Initializing direction numbers...
 Copying direction numbers to device...
 Executing QRNG on GPU...
-Running SobolQRNG for 50 runs...
+Running SobolQRNG for 15 runs...
 
-Total   Kernel Time binomialOptionsGPU() time: 970.061953 msec
-Average Kernel Time binomialOptionsGPU() time: 19.401239 msec
+Total   Kernel Time binomialOptionsGPU() time: 279.129280 msec
+Average Kernel Time binomialOptionsGPU() time: 18.608619 msec
 Reading results from GPU...
 
 Executing QRNG on CPU...
-Gsamples/s: 0.273072
+Gsamples/s: 0.257605
 Checking results...
 L1-Error: 0
 Shutting down...
-==34088== NVPROF is profiling process 34088, command: applications/SobolQRNG -device=1 -iters=50
-==34088== Profiling application: applications/SobolQRNG -device=1 -iters=50
-==34088== Profiling result:
-==34088== Metric result:
+==15800== NVPROF is profiling process 15800, command: applications/SobolQRNG -device=0 -iters=15
+==15800== Profiling application: applications/SobolQRNG -device=0 -iters=15
+==15800== Profiling result:
+==15800== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: sobolGPU_kernel(unsigned int, unsigned int, unsigned int*, float*)
-         51                          gst_transactions                 Global Store Transactions    12500000    12500000    12500000
-         51                               inst_issued                       Instructions Issued    65794863    65797328    65795213
-         51                             inst_per_warp                     Instructions per warp  3.2896e+04  3.2896e+04  3.2896e+04
+         16                          gst_transactions                 Global Store Transactions    12500000    12500000    12500000
+         16                               inst_issued                       Instructions Issued    65794827    65796947    65795397
+         16                             inst_per_warp                     Instructions per warp  3.2896e+04  3.2896e+04  3.2896e+04
 Sobol Quasi-Random Number Generator Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 > number of vectors = 100000
 > number of dimensions = 1000
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Allocating CPU memory...
 Allocating GPU memory...
 Initializing direction numbers...
 Copying direction numbers to device...
 Executing QRNG on GPU...
-Running SobolQRNG for 50 runs...
+Running SobolQRNG for 15 runs...
 
-Total   Kernel Time binomialOptionsGPU() time: 809.218914 msec
-Average Kernel Time binomialOptionsGPU() time: 16.184378 msec
+Total   Kernel Time binomialOptionsGPU() time: 238.305279 msec
+Average Kernel Time binomialOptionsGPU() time: 15.887019 msec
 Reading results from GPU...
 
 Executing QRNG on CPU...
-Gsamples/s: 0.273271
+Gsamples/s: 0.256957
 Checking results...
 L1-Error: 0
 Shutting down...
-==31188== NVPROF is profiling process 31188, command: applications/SobolQRNG -device=1 -iters=50
-==31188== Profiling application: applications/SobolQRNG -device=1 -iters=50
-==31188== Profiling result:
-==31188== Metric result:
+==15868== NVPROF is profiling process 15868, command: applications/SobolQRNG -device=0 -iters=15
+==15868== Profiling application: applications/SobolQRNG -device=0 -iters=15
+==15868== Profiling result:
+==15868== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: sobolGPU_kernel(unsigned int, unsigned int, unsigned int*, float*)
-         51                                       ipc                              Executed IPC    0.845851    0.861055    0.853041
+         16                                       ipc                              Executed IPC    0.844400    0.856891    0.851761

@@ -66,26 +66,34 @@ for core_f in core_frequencies:
                 perflog = 'benchmark_%s_core%d_mem%d_input%02d_perf.log' % (app, core_f, mem_f, argNo)
                 metricslog = 'benchmark_%s_core%d_mem%d_input%02d_metrics.log' % (app, core_f, mem_f, argNo)
 
-                # start record power data
-                os.system("echo \"arg:%s\" >> %s/%s" % (arg, LOG_ROOT, powerlog))
-                command = 'start /B nvml_samples.exe -device=%d -output=%s/%s > nul' % (nvIns_dev_id, LOG_ROOT, powerlog)
-                print command
-                os.system(command)
-                time.sleep(rest_int)
 
-                # execute program to collect power data
-                os.system("echo \"arg:%s\" >> %s/%s" % (arg, LOG_ROOT, perflog))
-                command = '%s\\%s %s -device=%d -secs=%d >> %s/%s' % (APP_ROOT, app, arg, cuda_dev_id, running_time, LOG_ROOT, perflog)
-                print command
-                os.system(command)
-                time.sleep(rest_int)
+                # # start record power data
+                # os.system("echo \"arg:%s\" >> %s/%s" % (arg, LOG_ROOT, powerlog))
+                # command = 'start /B nvml_samples.exe -device=%d -output=%s/%s > nul' % (nvIns_dev_id, LOG_ROOT, powerlog)
+                # print command
+                # os.system(command)
+                # time.sleep(rest_int)
 
-                # stop record power data
-                os.system('tasklist|findstr "nvml_samples.exe" && taskkill /F /IM nvml_samples.exe')
+                # # execute program to collect power data
+                # os.system("echo \"arg:%s\" >> %s/%s" % (arg, LOG_ROOT, perflog))
+                # command = '%s\\%s %s -device=%d -secs=%d >> %s/%s' % (APP_ROOT, app, arg, cuda_dev_id, running_time, LOG_ROOT, perflog)
+                # print command
+                # os.system(command)
+                # time.sleep(rest_int)
+
+                # # stop record power data
+                # os.system('tasklist|findstr "nvml_samples.exe" && taskkill /F /IM nvml_samples.exe')
+
 
                 # execute program to collect time data
                 # arg, number = re.subn('-iters=[0-9]*', '-iters=10', arg)
-                command = 'nvprof --profile-child-processes %s/%s %s -device=%d -iters=50 >> %s/%s 2>&1' % (APP_ROOT, app, arg, cuda_dev_id, LOG_ROOT, perflog)
+                command = 'nvprof --profile-child-processes %s/%s %s -device=%d -iters=5 >> %s/%s 2>&1' % (APP_ROOT, app, arg, cuda_dev_id, LOG_ROOT, perflog)
+                print command
+                os.system(command)
+                time.sleep(rest_int)
+
+                # collect grid and block settings
+                command = 'nvprof --print-gpu-trace --profile-child-processes %s/%s %s -device=%d -iters=15 >> %s/%s 2>&1' % (APP_ROOT, app, arg, cuda_dev_id, LOG_ROOT, metricslog)
                 print command
                 os.system(command)
                 time.sleep(rest_int)
@@ -99,7 +107,7 @@ for core_f in core_frequencies:
                         metStr = ','.join(metrics[metCount:])
                     else:
                         metStr = ','.join(metrics[metCount:metCount + 3])
-                    command = 'nvprof --devices %s --metrics %s %s/%s %s -device=%d -iters=50 >> %s/%s 2>&1' % (cuda_dev_id, metStr, APP_ROOT, app, arg, cuda_dev_id, LOG_ROOT, metricslog)
+                    command = 'nvprof --devices %s --metrics %s %s/%s %s -device=%d -iters=15 >> %s/%s 2>&1' % (cuda_dev_id, metStr, APP_ROOT, app, arg, cuda_dev_id, LOG_ROOT, metricslog)
                     print command
                     os.system(command)
                     time.sleep(rest_int)

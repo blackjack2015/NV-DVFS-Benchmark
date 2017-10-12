@@ -1,359 +1,741 @@
 applications/fastWalshTransform Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Initializing data...
 ...allocating CPU memory
 ...allocating GPU memory
 ...generating data
 Data length: 8388608; kernel length: 128
 Running GPU dyadic convolution using Fast Walsh Transform...
-iterated 50, average time is 225.139294 msecs.
-GPU total   time: 11256.964706 ms
-GPU average time: 225.139294 ms; GOP/s: 1.285457
+iterated 15, average time is 47.922987 msecs.
+GPU total   time: 718.844807 ms
+GPU average time: 47.922987 ms; GOP/s: 6.039001
 Reading back GPU results...
 Running straightforward CPU dyadic convolution...
 Comparing the results...
 Shutting down...
 L2 norm: 1.#QNAN0E+000
 Test failed!
-==76540== NVPROF is profiling process 76540, command: applications/fastWalshTransform -device=1 -iters=50
-==76540== Profiling application: applications/fastWalshTransform -device=1 -iters=50
-==76540== Profiling result:
-==76540== Metric result:
-Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
-    Kernel: fwtBatch1Kernel(float*, float*, int)
-        153                        achieved_occupancy                        Achieved Occupancy    0.978042    0.982996    0.981262
-        153                             sm_efficiency                   Multiprocessor Activity      99.05%      99.63%      99.40%
-        153                 warp_execution_efficiency                 Warp Execution Efficiency     100.00%     100.00%     100.00%
-    Kernel: fwtBatch2Kernel(float*, float*, int)
-        918                        achieved_occupancy                        Achieved Occupancy    0.808293    0.830773    0.819967
-        918                             sm_efficiency                   Multiprocessor Activity      99.13%      99.66%      99.50%
-        918                 warp_execution_efficiency                 Warp Execution Efficiency     100.00%     100.00%     100.00%
-    Kernel: modulateKernel(float*, float*, int)
-         51                        achieved_occupancy                        Achieved Occupancy    0.992792    0.995871    0.994217
-         51                             sm_efficiency                   Multiprocessor Activity      98.95%      99.61%      99.34%
-         51                 warp_execution_efficiency                 Warp Execution Efficiency     100.00%     100.00%     100.00%
+==9020== NVPROF is profiling process 9020, command: applications/fastWalshTransform -device=0 -iters=15
+==9020== Profiling application: applications/fastWalshTransform -device=0 -iters=15
+==9020== Profiling result:
+   Start  Duration            Grid Size      Block Size     Regs*    SSMem*    DSMem*      Size  Throughput           Device   Context    Stream  Name
+333.03ms  1.0550us                    -               -         -         -         -  32.000MB   3e+04GB/s  GeForce GTX 980         1         7  [CUDA memset]
+334.10ms  2.2400us                    -               -         -         -         -      512B  217.98MB/s  GeForce GTX 980         1         7  [CUDA memcpy HtoD]
+334.50ms  12.933ms                    -               -         -         -         -  32.000MB  2.4164GB/s  GeForce GTX 980         1         7  [CUDA memcpy HtoD]
+347.90ms  2.1168ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [116]
+350.02ms  2.1204ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [122]
+352.15ms  2.1112ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [128]
+354.26ms  2.1264ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [134]
+356.39ms  2.1042ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [140]
+358.50ms  2.1091ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [146]
+360.62ms  2.1398ms           (4096 1 1)       (512 1 1)        16        0B  8.0000KB         -           -  GeForce GTX 980         1         7  fwtBatch1Kernel(float*, float*, int) [152]
+362.76ms  2.1082ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [158]
+364.87ms  2.1225ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [164]
+367.00ms  2.1089ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [170]
+369.12ms  2.1225ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [176]
+371.24ms  2.1098ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [182]
+373.36ms  2.1139ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [188]
+375.48ms  2.1414ms           (4096 1 1)       (512 1 1)        16        0B  8.0000KB         -           -  GeForce GTX 980         1         7  fwtBatch1Kernel(float*, float*, int) [194]
+377.62ms  3.1536ms            (128 1 1)       (256 1 1)        12        0B        0B         -           -  GeForce GTX 980         1         7  modulateKernel(float*, float*, int) [200]
+380.78ms  2.1075ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [205]
+382.89ms  2.1221ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [211]
+385.02ms  2.1081ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [217]
+387.13ms  2.1256ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [223]
+389.26ms  2.1017ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [229]
+391.37ms  2.1153ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [235]
+393.49ms  2.1387ms           (4096 1 1)       (512 1 1)        16        0B  8.0000KB         -           -  GeForce GTX 980         1         7  fwtBatch1Kernel(float*, float*, int) [241]
+396.13ms  2.1124ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [253]
+398.24ms  2.1253ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [259]
+400.53ms  2.1089ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [265]
+402.65ms  2.1239ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [271]
+404.78ms  2.1016ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [277]
+406.88ms  2.1128ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [283]
+409.00ms  2.1399ms           (4096 1 1)       (512 1 1)        16        0B  8.0000KB         -           -  GeForce GTX 980         1         7  fwtBatch1Kernel(float*, float*, int) [289]
+411.15ms  2.1116ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [295]
+413.26ms  2.1210ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [301]
+415.39ms  2.1094ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [307]
+417.50ms  2.1238ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [313]
+419.63ms  2.1035ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [319]
+421.74ms  2.1094ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [325]
+423.85ms  2.1356ms           (4096 1 1)       (512 1 1)        16        0B  8.0000KB         -           -  GeForce GTX 980         1         7  fwtBatch1Kernel(float*, float*, int) [331]
+425.99ms  3.1526ms            (128 1 1)       (256 1 1)        12        0B        0B         -           -  GeForce GTX 980         1         7  modulateKernel(float*, float*, int) [337]
+429.15ms  2.1064ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [342]
+431.26ms  2.1268ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [348]
+433.39ms  2.1082ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [354]
+435.51ms  2.1219ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [360]
+437.63ms  2.0983ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [366]
+439.74ms  2.1099ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [372]
+441.85ms  2.1408ms           (4096 1 1)       (512 1 1)        16        0B  8.0000KB         -           -  GeForce GTX 980         1         7  fwtBatch1Kernel(float*, float*, int) [378]
+444.42ms  2.1097ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [389]
+446.54ms  2.1217ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [395]
+448.66ms  2.1087ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [401]
+450.78ms  2.1242ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [407]
+452.90ms  2.1050ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [413]
+455.01ms  2.1093ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [419]
+457.13ms  2.1396ms           (4096 1 1)       (512 1 1)        16        0B  8.0000KB         -           -  GeForce GTX 980         1         7  fwtBatch1Kernel(float*, float*, int) [425]
+459.27ms  2.1142ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [431]
+461.55ms  2.1185ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [437]
+463.68ms  2.1103ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [443]
+465.79ms  2.1272ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [449]
+467.93ms  2.1043ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [455]
+470.04ms  2.1129ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [461]
+472.15ms  2.1336ms           (4096 1 1)       (512 1 1)        16        0B  8.0000KB         -           -  GeForce GTX 980         1         7  fwtBatch1Kernel(float*, float*, int) [467]
+474.29ms  3.1522ms            (128 1 1)       (256 1 1)        12        0B        0B         -           -  GeForce GTX 980         1         7  modulateKernel(float*, float*, int) [473]
+477.45ms  2.1022ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [478]
+479.56ms  2.1245ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [484]
+481.69ms  2.1108ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [490]
+483.80ms  2.1208ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [496]
+485.93ms  2.1019ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [502]
+488.03ms  2.1083ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [508]
+490.15ms  2.1411ms           (4096 1 1)       (512 1 1)        16        0B  8.0000KB         -           -  GeForce GTX 980         1         7  fwtBatch1Kernel(float*, float*, int) [514]
+492.71ms  2.1140ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [525]
+494.83ms  2.1210ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [531]
+496.95ms  2.1073ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [537]
+499.06ms  2.1233ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [543]
+501.19ms  2.1072ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [549]
+503.30ms  2.1087ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [555]
+505.42ms  2.1397ms           (4096 1 1)       (512 1 1)        16        0B  8.0000KB         -           -  GeForce GTX 980         1         7  fwtBatch1Kernel(float*, float*, int) [561]
+507.56ms  2.1128ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [567]
+509.68ms  2.1212ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [573]
+511.81ms  2.1082ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [579]
+513.92ms  2.1200ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [585]
+516.04ms  2.1031ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [591]
+518.15ms  2.1115ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [597]
+520.27ms  2.1428ms           (4096 1 1)       (512 1 1)        16        0B  8.0000KB         -           -  GeForce GTX 980         1         7  fwtBatch1Kernel(float*, float*, int) [603]
+522.42ms  3.1549ms            (128 1 1)       (256 1 1)        12        0B        0B         -           -  GeForce GTX 980         1         7  modulateKernel(float*, float*, int) [609]
+525.74ms  2.1060ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [614]
+527.85ms  2.1195ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [620]
+529.97ms  2.1114ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [626]
+532.09ms  2.1265ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [632]
+534.22ms  2.0999ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [638]
+536.32ms  2.1122ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [644]
+538.44ms  2.1323ms           (4096 1 1)       (512 1 1)        16        0B  8.0000KB         -           -  GeForce GTX 980         1         7  fwtBatch1Kernel(float*, float*, int) [650]
+541.06ms  2.1102ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [661]
+543.18ms  2.1226ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [667]
+545.30ms  2.1116ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [673]
+547.42ms  2.1296ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [679]
+549.56ms  2.1020ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [685]
+551.66ms  2.1115ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [691]
+553.78ms  2.1371ms           (4096 1 1)       (512 1 1)        16        0B  8.0000KB         -           -  GeForce GTX 980         1         7  fwtBatch1Kernel(float*, float*, int) [697]
+555.92ms  2.1146ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [703]
+558.04ms  2.1243ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [709]
+560.17ms  2.1085ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [715]
+562.28ms  2.1274ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [721]
+564.41ms  2.1017ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [727]
+566.52ms  2.1103ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [733]
+568.64ms  2.1410ms           (4096 1 1)       (512 1 1)        16        0B  8.0000KB         -           -  GeForce GTX 980         1         7  fwtBatch1Kernel(float*, float*, int) [739]
+570.78ms  3.1481ms            (128 1 1)       (256 1 1)        12        0B        0B         -           -  GeForce GTX 980         1         7  modulateKernel(float*, float*, int) [745]
+573.93ms  2.1030ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [750]
+576.04ms  2.1246ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [756]
+578.17ms  2.1075ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [762]
+580.28ms  2.1217ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [768]
+582.41ms  2.1040ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [774]
+584.52ms  2.1094ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [780]
+586.80ms  2.1452ms           (4096 1 1)       (512 1 1)        16        0B  8.0000KB         -           -  GeForce GTX 980         1         7  fwtBatch1Kernel(float*, float*, int) [786]
+589.42ms  2.1125ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [797]
+591.54ms  2.1209ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [803]
+593.67ms  2.1100ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [809]
+595.78ms  2.1255ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [815]
+597.91ms  2.1056ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [821]
+600.02ms  2.1117ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [827]
+602.14ms  2.1410ms           (4096 1 1)       (512 1 1)        16        0B  8.0000KB         -           -  GeForce GTX 980         1         7  fwtBatch1Kernel(float*, float*, int) [833]
+604.29ms  2.1138ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [839]
+606.40ms  2.1208ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [845]
+608.53ms  2.1071ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [851]
+610.64ms  2.1248ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [857]
+612.77ms  2.1020ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [863]
+614.88ms  2.1155ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [869]
+617.00ms  2.1373ms           (4096 1 1)       (512 1 1)        16        0B  8.0000KB         -           -  GeForce GTX 980         1         7  fwtBatch1Kernel(float*, float*, int) [875]
+619.14ms  3.1562ms            (128 1 1)       (256 1 1)        12        0B        0B         -           -  GeForce GTX 980         1         7  modulateKernel(float*, float*, int) [881]
+622.30ms  2.1065ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [886]
+624.41ms  2.1216ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [892]
+626.54ms  2.1085ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [898]
+628.65ms  2.1234ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [904]
+630.78ms  2.1036ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [910]
+632.89ms  2.1095ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [916]
+635.00ms  2.1404ms           (4096 1 1)       (512 1 1)        16        0B  8.0000KB         -           -  GeForce GTX 980         1         7  fwtBatch1Kernel(float*, float*, int) [922]
+637.61ms  2.1095ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [933]
+639.73ms  2.1230ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [939]
+641.85ms  2.1053ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [945]
+643.96ms  2.1244ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [951]
+646.09ms  2.1045ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [957]
+648.20ms  2.1133ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [963]
+650.48ms  2.1386ms           (4096 1 1)       (512 1 1)        16        0B  8.0000KB         -           -  GeForce GTX 980         1         7  fwtBatch1Kernel(float*, float*, int) [969]
+652.63ms  2.1147ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [975]
+654.74ms  2.1218ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [981]
+656.87ms  2.1086ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [987]
+658.98ms  2.1251ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [993]
+661.11ms  2.1006ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [999]
+663.22ms  2.1086ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1005]
+665.33ms  2.1445ms           (4096 1 1)       (512 1 1)        16        0B  8.0000KB         -           -  GeForce GTX 980         1         7  fwtBatch1Kernel(float*, float*, int) [1011]
+667.48ms  3.1532ms            (128 1 1)       (256 1 1)        12        0B        0B         -           -  GeForce GTX 980         1         7  modulateKernel(float*, float*, int) [1017]
+670.64ms  2.1070ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1022]
+672.75ms  2.1219ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1028]
+674.88ms  2.1124ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1034]
+677.00ms  2.1235ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1040]
+679.13ms  2.1023ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1046]
+681.23ms  2.1079ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1052]
+683.35ms  2.1416ms           (4096 1 1)       (512 1 1)        16        0B  8.0000KB         -           -  GeForce GTX 980         1         7  fwtBatch1Kernel(float*, float*, int) [1058]
+685.97ms  2.1068ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1069]
+688.08ms  2.1164ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1075]
+690.20ms  2.1056ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1081]
+692.32ms  2.1252ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1087]
+694.45ms  2.1062ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1093]
+696.56ms  2.1104ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1099]
+698.67ms  2.1445ms           (4096 1 1)       (512 1 1)        16        0B  8.0000KB         -           -  GeForce GTX 980         1         7  fwtBatch1Kernel(float*, float*, int) [1105]
+700.82ms  2.1114ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1111]
+702.94ms  2.1253ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1117]
+705.07ms  2.1086ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1123]
+707.18ms  2.1232ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1129]
+709.31ms  2.1019ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1135]
+711.58ms  2.1082ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1141]
+713.69ms  2.1389ms           (4096 1 1)       (512 1 1)        16        0B  8.0000KB         -           -  GeForce GTX 980         1         7  fwtBatch1Kernel(float*, float*, int) [1147]
+715.84ms  3.1529ms            (128 1 1)       (256 1 1)        12        0B        0B         -           -  GeForce GTX 980         1         7  modulateKernel(float*, float*, int) [1153]
+718.99ms  2.1062ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1158]
+721.11ms  2.1236ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1164]
+723.23ms  2.1072ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1170]
+725.35ms  2.1250ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1176]
+727.48ms  2.1064ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1182]
+729.59ms  2.1086ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1188]
+731.70ms  2.1426ms           (4096 1 1)       (512 1 1)        16        0B  8.0000KB         -           -  GeForce GTX 980         1         7  fwtBatch1Kernel(float*, float*, int) [1194]
+734.31ms  2.1053ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1205]
+736.42ms  2.1205ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1211]
+738.55ms  2.1082ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1217]
+740.66ms  2.1276ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1223]
+742.79ms  2.1041ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1229]
+744.90ms  2.1106ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1235]
+747.02ms  2.1364ms           (4096 1 1)       (512 1 1)        16        0B  8.0000KB         -           -  GeForce GTX 980         1         7  fwtBatch1Kernel(float*, float*, int) [1241]
+749.16ms  2.1090ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1247]
+751.27ms  2.1232ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1253]
+753.40ms  2.1095ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1259]
+755.51ms  2.1266ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1265]
+757.64ms  2.1042ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1271]
+759.75ms  2.1105ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1277]
+761.87ms  2.1366ms           (4096 1 1)       (512 1 1)        16        0B  8.0000KB         -           -  GeForce GTX 980         1         7  fwtBatch1Kernel(float*, float*, int) [1283]
+764.01ms  3.1501ms            (128 1 1)       (256 1 1)        12        0B        0B         -           -  GeForce GTX 980         1         7  modulateKernel(float*, float*, int) [1289]
+767.16ms  2.1063ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1294]
+769.28ms  2.1215ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1300]
+771.40ms  2.1080ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1306]
+773.51ms  2.1210ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1312]
+775.80ms  2.1017ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1318]
+777.91ms  2.1138ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1324]
+780.03ms  2.1360ms           (4096 1 1)       (512 1 1)        16        0B  8.0000KB         -           -  GeForce GTX 980         1         7  fwtBatch1Kernel(float*, float*, int) [1330]
+782.64ms  2.1098ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1341]
+784.75ms  2.1201ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1347]
+786.88ms  2.1085ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1353]
+788.99ms  2.1260ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1359]
+791.12ms  2.1008ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1365]
+793.23ms  2.1064ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1371]
+795.34ms  2.1379ms           (4096 1 1)       (512 1 1)        16        0B  8.0000KB         -           -  GeForce GTX 980         1         7  fwtBatch1Kernel(float*, float*, int) [1377]
+797.48ms  2.1128ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1383]
+799.60ms  2.1222ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1389]
+801.72ms  2.1075ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1395]
+803.84ms  2.1227ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1401]
+805.96ms  2.1020ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1407]
+808.07ms  2.1098ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1413]
+810.19ms  2.1418ms           (4096 1 1)       (512 1 1)        16        0B  8.0000KB         -           -  GeForce GTX 980         1         7  fwtBatch1Kernel(float*, float*, int) [1419]
+812.33ms  3.1501ms            (128 1 1)       (256 1 1)        12        0B        0B         -           -  GeForce GTX 980         1         7  modulateKernel(float*, float*, int) [1425]
+815.49ms  2.1035ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1430]
+817.60ms  2.1229ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1436]
+819.72ms  2.1077ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1442]
+821.84ms  2.1290ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1448]
+823.97ms  2.1035ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1454]
+826.08ms  2.1107ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1460]
+828.19ms  2.1361ms           (4096 1 1)       (512 1 1)        16        0B  8.0000KB         -           -  GeForce GTX 980         1         7  fwtBatch1Kernel(float*, float*, int) [1466]
+830.81ms  2.1099ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1477]
+832.92ms  2.1207ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1483]
+835.21ms  2.1078ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1489]
+837.32ms  2.1276ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1495]
+839.45ms  2.1047ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1501]
+841.56ms  2.1127ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1507]
+843.68ms  2.1372ms           (4096 1 1)       (512 1 1)        16        0B  8.0000KB         -           -  GeForce GTX 980         1         7  fwtBatch1Kernel(float*, float*, int) [1513]
+845.82ms  2.1114ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1519]
+847.94ms  2.1224ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1525]
+850.07ms  2.1151ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1531]
+852.19ms  2.1207ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1537]
+854.31ms  2.1028ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1543]
+856.42ms  2.1118ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1549]
+858.54ms  2.1383ms           (4096 1 1)       (512 1 1)        16        0B  8.0000KB         -           -  GeForce GTX 980         1         7  fwtBatch1Kernel(float*, float*, int) [1555]
+860.68ms  3.1566ms            (128 1 1)       (256 1 1)        12        0B        0B         -           -  GeForce GTX 980         1         7  modulateKernel(float*, float*, int) [1561]
+863.84ms  2.1067ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1566]
+865.95ms  2.1178ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1572]
+868.08ms  2.1118ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1578]
+870.19ms  2.1233ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1584]
+872.32ms  2.1017ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1590]
+874.43ms  2.1097ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1596]
+876.54ms  2.1398ms           (4096 1 1)       (512 1 1)        16        0B  8.0000KB         -           -  GeForce GTX 980         1         7  fwtBatch1Kernel(float*, float*, int) [1602]
+879.17ms  2.1098ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1613]
+881.29ms  2.1196ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1619]
+883.41ms  2.1088ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1625]
+885.52ms  2.1225ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1631]
+887.65ms  2.1047ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1637]
+889.76ms  2.1125ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1643]
+891.88ms  2.1351ms           (4096 1 1)       (512 1 1)        16        0B  8.0000KB         -           -  GeForce GTX 980         1         7  fwtBatch1Kernel(float*, float*, int) [1649]
+894.02ms  2.1112ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1655]
+896.13ms  2.1231ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1661]
+898.26ms  2.1016ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1667]
+900.53ms  2.1233ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1673]
+902.66ms  2.1026ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1679]
+904.77ms  2.1099ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1685]
+906.88ms  2.1395ms           (4096 1 1)       (512 1 1)        16        0B  8.0000KB         -           -  GeForce GTX 980         1         7  fwtBatch1Kernel(float*, float*, int) [1691]
+909.03ms  3.1569ms            (128 1 1)       (256 1 1)        12        0B        0B         -           -  GeForce GTX 980         1         7  modulateKernel(float*, float*, int) [1697]
+912.19ms  2.1066ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1702]
+914.30ms  2.1177ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1708]
+916.42ms  2.1086ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1714]
+918.54ms  2.1219ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1720]
+920.66ms  2.1028ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1726]
+922.77ms  2.1103ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1732]
+924.89ms  2.1359ms           (4096 1 1)       (512 1 1)        16        0B  8.0000KB         -           -  GeForce GTX 980         1         7  fwtBatch1Kernel(float*, float*, int) [1738]
+927.51ms  2.1101ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1749]
+929.62ms  2.1211ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1755]
+931.75ms  2.1073ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1761]
+933.86ms  2.1262ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1767]
+935.99ms  2.1054ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1773]
+938.10ms  2.1099ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1779]
+940.22ms  2.1400ms           (4096 1 1)       (512 1 1)        16        0B  8.0000KB         -           -  GeForce GTX 980         1         7  fwtBatch1Kernel(float*, float*, int) [1785]
+942.36ms  2.1146ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1791]
+944.48ms  2.1219ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1797]
+946.61ms  2.1096ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1803]
+948.72ms  2.1240ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1809]
+950.85ms  2.1044ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1815]
+952.96ms  2.1121ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1821]
+955.08ms  2.1367ms           (4096 1 1)       (512 1 1)        16        0B  8.0000KB         -           -  GeForce GTX 980         1         7  fwtBatch1Kernel(float*, float*, int) [1827]
+957.22ms  3.1507ms            (128 1 1)       (256 1 1)        12        0B        0B         -           -  GeForce GTX 980         1         7  modulateKernel(float*, float*, int) [1833]
+960.54ms  2.1066ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1838]
+962.65ms  2.1213ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1844]
+964.78ms  2.1125ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1850]
+966.89ms  2.1251ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1856]
+969.02ms  2.1022ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1862]
+971.13ms  2.1123ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1868]
+973.25ms  2.1346ms           (4096 1 1)       (512 1 1)        16        0B  8.0000KB         -           -  GeForce GTX 980         1         7  fwtBatch1Kernel(float*, float*, int) [1874]
+975.91ms  2.1129ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1885]
+978.03ms  2.1196ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1891]
+980.15ms  2.1095ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1897]
+982.26ms  2.1293ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1903]
+984.40ms  2.1035ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1909]
+986.51ms  2.1092ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1915]
+988.62ms  2.1371ms           (4096 1 1)       (512 1 1)        16        0B  8.0000KB         -           -  GeForce GTX 980         1         7  fwtBatch1Kernel(float*, float*, int) [1921]
+990.76ms  2.1135ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1927]
+993.02ms  2.1218ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1933]
+995.15ms  2.1098ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1939]
+997.26ms  2.1255ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1945]
+999.39ms  2.1036ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1951]
+1.00150s  2.1116ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1957]
+1.00362s  2.1354ms           (4096 1 1)       (512 1 1)        16        0B  8.0000KB         -           -  GeForce GTX 980         1         7  fwtBatch1Kernel(float*, float*, int) [1963]
+1.00576s  3.1584ms            (128 1 1)       (256 1 1)        12        0B        0B         -           -  GeForce GTX 980         1         7  modulateKernel(float*, float*, int) [1969]
+1.00892s  2.1033ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1974]
+1.01103s  2.1232ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1980]
+1.01316s  2.1076ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1986]
+1.01527s  2.1281ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1992]
+1.01740s  2.1002ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [1998]
+1.01951s  2.1097ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [2004]
+1.02162s  2.1384ms           (4096 1 1)       (512 1 1)        16        0B  8.0000KB         -           -  GeForce GTX 980         1         7  fwtBatch1Kernel(float*, float*, int) [2010]
+1.02424s  2.1100ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [2021]
+1.02635s  2.1198ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [2027]
+1.02848s  2.1037ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [2033]
+1.03058s  2.1252ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [2039]
+1.03271s  2.1013ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [2045]
+1.03482s  2.1126ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [2051]
+1.03694s  2.1418ms           (4096 1 1)       (512 1 1)        16        0B  8.0000KB         -           -  GeForce GTX 980         1         7  fwtBatch1Kernel(float*, float*, int) [2057]
+1.03908s  2.1114ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [2063]
+1.04120s  2.1214ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [2069]
+1.04333s  2.1085ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [2075]
+1.04544s  2.1247ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [2081]
+1.04757s  2.1035ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [2087]
+1.04968s  2.1096ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [2093]
+1.05179s  2.1391ms           (4096 1 1)       (512 1 1)        16        0B  8.0000KB         -           -  GeForce GTX 980         1         7  fwtBatch1Kernel(float*, float*, int) [2099]
+1.05410s  3.1480ms            (128 1 1)       (256 1 1)        12        0B        0B         -           -  GeForce GTX 980         1         7  modulateKernel(float*, float*, int) [2105]
+1.05725s  2.1026ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [2110]
+1.05936s  2.1223ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [2116]
+1.06148s  2.1067ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [2122]
+1.06360s  2.1228ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [2128]
+1.06572s  2.1040ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [2134]
+1.06783s  2.1072ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [2140]
+1.06994s  2.1394ms           (4096 1 1)       (512 1 1)        16        0B  8.0000KB         -           -  GeForce GTX 980         1         7  fwtBatch1Kernel(float*, float*, int) [2146]
+1.07257s  2.1078ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [2157]
+1.07468s  2.1239ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [2163]
+1.07681s  2.1096ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [2169]
+1.07892s  2.1244ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [2175]
+1.08105s  2.1093ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [2181]
+1.08317s  2.1106ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [2187]
+1.08528s  2.1427ms           (4096 1 1)       (512 1 1)        16        0B  8.0000KB         -           -  GeForce GTX 980         1         7  fwtBatch1Kernel(float*, float*, int) [2193]
+1.08743s  2.1154ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [2199]
+1.08955s  2.1190ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [2205]
+1.09167s  2.1104ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [2211]
+1.09379s  2.1253ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [2217]
+1.09592s  2.1005ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [2223]
+1.09802s  2.1121ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [2229]
+1.10014s  2.1415ms           (4096 1 1)       (512 1 1)        16        0B  8.0000KB         -           -  GeForce GTX 980         1         7  fwtBatch1Kernel(float*, float*, int) [2235]
+1.10229s  3.1523ms            (128 1 1)       (256 1 1)        12        0B        0B         -           -  GeForce GTX 980         1         7  modulateKernel(float*, float*, int) [2241]
+1.10545s  2.1045ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [2246]
+1.10755s  2.1195ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [2252]
+1.10968s  2.1105ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [2258]
+1.11179s  2.1241ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [2264]
+1.11392s  2.1038ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [2270]
+1.11603s  2.1118ms           (8192 1 1)       (256 1 1)        18        0B        0B         -           -  GeForce GTX 980         1         7  fwtBatch2Kernel(float*, float*, int) [2276]
+1.11831s  2.1380ms           (4096 1 1)       (512 1 1)        16        0B  8.0000KB         -           -  GeForce GTX 980         1         7  fwtBatch1Kernel(float*, float*, int) [2282]
+1.12065s  15.608ms                    -               -         -         -         -  32.000MB  2.0022GB/s  GeForce GTX 980         1         7  [CUDA memcpy DtoH]
+
+Regs: Number of registers used per CUDA thread. This number includes registers used internally by the CUDA driver and/or tools and can be more than what the compiler shows.
+SSMem: Static shared memory allocated per CUDA block.
+DSMem: Dynamic shared memory allocated per CUDA block.
 applications/fastWalshTransform Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Initializing data...
 ...allocating CPU memory
 ...allocating GPU memory
 ...generating data
 Data length: 8388608; kernel length: 128
 Running GPU dyadic convolution using Fast Walsh Transform...
-iterated 50, average time is 906.031456 msecs.
-GPU total   time: 45301.572815 ms
-GPU average time: 906.031456 ms; GOP/s: 0.319423
+iterated 15, average time is 197.119711 msecs.
+GPU total   time: 2956.795670 ms
+GPU average time: 197.119711 ms; GOP/s: 1.468179
 Reading back GPU results...
 Running straightforward CPU dyadic convolution...
 Comparing the results...
 Shutting down...
 L2 norm: 1.#QNAN0E+000
 Test failed!
-==74320== NVPROF is profiling process 74320, command: applications/fastWalshTransform -device=1 -iters=50
-==74320== Some kernel(s) will be replayed on device 1 in order to collect all events/metrics.
-==74320== Profiling application: applications/fastWalshTransform -device=1 -iters=50
-==74320== Profiling result:
-==74320== Metric result:
+==9476== NVPROF is profiling process 9476, command: applications/fastWalshTransform -device=0 -iters=15
+==9476== Profiling application: applications/fastWalshTransform -device=0 -iters=15
+==9476== Profiling result:
+==9476== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: fwtBatch1Kernel(float*, float*, int)
-        153                  eligible_warps_per_cycle           Eligible Warps Per Active Cycle    1.004497    1.014944    1.009665
-        153                    dram_read_transactions           Device Memory Read Transactions     1048608     1048688     1048618
-        153                      dram_read_throughput             Device Memory Read Throughput  14.598GB/s  14.652GB/s  14.619GB/s
+         48                        achieved_occupancy                        Achieved Occupancy    0.979606    0.983072    0.981435
+         48                             sm_efficiency                   Multiprocessor Activity      99.23%      99.58%      99.44%
+         48                 warp_execution_efficiency                 Warp Execution Efficiency     100.00%     100.00%     100.00%
     Kernel: fwtBatch2Kernel(float*, float*, int)
-        918                  eligible_warps_per_cycle           Eligible Warps Per Active Cycle    0.197173    0.206514    0.200841
-        918                    dram_read_transactions           Device Memory Read Transactions     1048592     1048768     1048611
-        918                      dram_read_throughput             Device Memory Read Throughput  14.702GB/s  14.896GB/s  14.801GB/s
+        288                        achieved_occupancy                        Achieved Occupancy    0.811760    0.826736    0.819990
+        288                             sm_efficiency                   Multiprocessor Activity      99.21%      99.70%      99.50%
+        288                 warp_execution_efficiency                 Warp Execution Efficiency     100.00%     100.00%     100.00%
     Kernel: modulateKernel(float*, float*, int)
-         51                  eligible_warps_per_cycle           Eligible Warps Per Active Cycle    0.138406    0.140216    0.139167
-         51                    dram_read_transactions           Device Memory Read Transactions     2097172     2097284     2097197
-         51                      dram_read_throughput             Device Memory Read Throughput  19.806GB/s  19.870GB/s  19.835GB/s
+         16                        achieved_occupancy                        Achieved Occupancy    0.993420    0.995175    0.994265
+         16                             sm_efficiency                   Multiprocessor Activity      99.02%      99.55%      99.28%
+         16                 warp_execution_efficiency                 Warp Execution Efficiency     100.00%     100.00%     100.00%
 applications/fastWalshTransform Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Initializing data...
 ...allocating CPU memory
 ...allocating GPU memory
 ...generating data
 Data length: 8388608; kernel length: 128
 Running GPU dyadic convolution using Fast Walsh Transform...
-iterated 50, average time is 845.461642 msecs.
-GPU total   time: 42273.082092 ms
-GPU average time: 845.461642 ms; GOP/s: 0.342306
+iterated 15, average time is 878.180514 msecs.
+GPU total   time: 13172.707703 ms
+GPU average time: 878.180514 ms; GOP/s: 0.329553
 Reading back GPU results...
 Running straightforward CPU dyadic convolution...
 Comparing the results...
 Shutting down...
 L2 norm: 1.#QNAN0E+000
 Test failed!
-==75092== NVPROF is profiling process 75092, command: applications/fastWalshTransform -device=1 -iters=50
-==75092== Some kernel(s) will be replayed on device 1 in order to collect all events/metrics.
-==75092== Profiling application: applications/fastWalshTransform -device=1 -iters=50
-==75092== Profiling result:
-==75092== Metric result:
+==10712== NVPROF is profiling process 10712, command: applications/fastWalshTransform -device=0 -iters=15
+==10712== Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+==10712== Profiling application: applications/fastWalshTransform -device=0 -iters=15
+==10712== Profiling result:
+==10712== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: fwtBatch1Kernel(float*, float*, int)
-        153                   dram_write_transactions          Device Memory Write Transactions     1040030     1046852     1043958
-        153                     dram_write_throughput            Device Memory Write Throughput  14.573GB/s  14.649GB/s  14.618GB/s
-        153                      l2_read_transactions                      L2 Read Transactions     1048647     1048972     1048765
+         48                  eligible_warps_per_cycle           Eligible Warps Per Active Cycle    1.005011    1.012514    1.008955
+         48                    dram_read_transactions           Device Memory Read Transactions     1048612     1048660     1048620
+         48                      dram_read_throughput             Device Memory Read Throughput  14.589GB/s  14.648GB/s  14.615GB/s
     Kernel: fwtBatch2Kernel(float*, float*, int)
-        918                   dram_write_transactions          Device Memory Write Transactions     1036079     1045468     1041265
-        918                     dram_write_throughput            Device Memory Write Throughput  14.622GB/s  14.866GB/s  14.759GB/s
-        918                      l2_read_transactions                      L2 Read Transactions     1048647     1048967     1048734
+        288                  eligible_warps_per_cycle           Eligible Warps Per Active Cycle    0.197125    0.206008    0.200618
+        288                    dram_read_transactions           Device Memory Read Transactions     1048588     1048718     1048617
+        288                      dram_read_throughput             Device Memory Read Throughput  14.700GB/s  14.874GB/s  14.794GB/s
     Kernel: modulateKernel(float*, float*, int)
-         51                   dram_write_transactions          Device Memory Write Transactions     1047684     1050264     1049572
-         51                     dram_write_throughput            Device Memory Write Throughput  9.9487GB/s  9.9838GB/s  9.9698GB/s
-         51                      l2_read_transactions                      L2 Read Transactions     2097255     2097495     2097324
+         16                  eligible_warps_per_cycle           Eligible Warps Per Active Cycle    0.138241    0.139887    0.139192
+         16                    dram_read_transactions           Device Memory Read Transactions     2097172     2097208     2097188
+         16                      dram_read_throughput             Device Memory Read Throughput  19.815GB/s  19.850GB/s  19.831GB/s
 applications/fastWalshTransform Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Initializing data...
 ...allocating CPU memory
 ...allocating GPU memory
 ...generating data
 Data length: 8388608; kernel length: 128
 Running GPU dyadic convolution using Fast Walsh Transform...
-iterated 50, average time is 945.761053 msecs.
-GPU total   time: 47288.052673 ms
-GPU average time: 945.761053 ms; GOP/s: 0.306004
+iterated 15, average time is 825.280933 msecs.
+GPU total   time: 12379.213989 ms
+GPU average time: 825.280933 ms; GOP/s: 0.350677
 Reading back GPU results...
 Running straightforward CPU dyadic convolution...
 Comparing the results...
 Shutting down...
 L2 norm: 1.#QNAN0E+000
 Test failed!
-==74888== NVPROF is profiling process 74888, command: applications/fastWalshTransform -device=1 -iters=50
-==74888== Some kernel(s) will be replayed on device 1 in order to collect all events/metrics.
-==74888== Profiling application: applications/fastWalshTransform -device=1 -iters=50
-==74888== Profiling result:
-==74888== Metric result:
+==10176== NVPROF is profiling process 10176, command: applications/fastWalshTransform -device=0 -iters=15
+==10176== Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+==10176== Profiling application: applications/fastWalshTransform -device=0 -iters=15
+==10176== Profiling result:
+==10176== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: fwtBatch1Kernel(float*, float*, int)
-        153                        l2_read_throughput                     L2 Throughput (Reads)  14.656GB/s  14.710GB/s  14.685GB/s
-        153                     l2_write_transactions                     L2 Write Transactions     1048582     1048610     1048582
-        153                       l2_write_throughput                    L2 Throughput (Writes)  14.655GB/s  14.709GB/s  14.682GB/s
+         48                   dram_write_transactions          Device Memory Write Transactions     1041335     1047393     1044117
+         48                     dram_write_throughput            Device Memory Write Throughput  14.583GB/s  14.645GB/s  14.618GB/s
+         48                      l2_read_transactions                      L2 Read Transactions     1048647     1048940     1048778
     Kernel: fwtBatch2Kernel(float*, float*, int)
-        918                        l2_read_throughput                     L2 Throughput (Reads)  14.735GB/s  14.963GB/s  14.864GB/s
-        918                     l2_write_transactions                     L2 Write Transactions     1048580     1048610     1048582
-        918                       l2_write_throughput                    L2 Throughput (Writes)  14.732GB/s  14.960GB/s  14.862GB/s
+        288                   dram_write_transactions          Device Memory Write Transactions     1036446     1044312     1041152
+        288                     dram_write_throughput            Device Memory Write Throughput  14.630GB/s  14.844GB/s  14.757GB/s
+        288                      l2_read_transactions                      L2 Read Transactions     1048647     1049031     1048752
     Kernel: modulateKernel(float*, float*, int)
-         51                        l2_read_throughput                     L2 Throughput (Reads)  19.891GB/s  19.955GB/s  19.927GB/s
-         51                     l2_write_transactions                     L2 Write Transactions     1048582     1048610     1048582
-         51                       l2_write_throughput                    L2 Throughput (Writes)  9.9449GB/s  9.9766GB/s  9.9624GB/s
+         16                   dram_write_transactions          Device Memory Write Transactions     1046472     1050334     1049398
+         16                     dram_write_throughput            Device Memory Write Throughput  9.9533GB/s  9.9790GB/s  9.9689GB/s
+         16                      l2_read_transactions                      L2 Read Transactions     2097255     2097392     2097324
 applications/fastWalshTransform Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Initializing data...
 ...allocating CPU memory
 ...allocating GPU memory
 ...generating data
 Data length: 8388608; kernel length: 128
 Running GPU dyadic convolution using Fast Walsh Transform...
-iterated 50, average time is 118.573106 msecs.
-GPU total   time: 5928.655312 ms
-GPU average time: 118.573106 ms; GOP/s: 2.440747
+iterated 15, average time is 909.549373 msecs.
+GPU total   time: 13643.240601 ms
+GPU average time: 909.549373 ms; GOP/s: 0.318187
 Reading back GPU results...
 Running straightforward CPU dyadic convolution...
 Comparing the results...
 Shutting down...
 L2 norm: 1.#QNAN0E+000
 Test failed!
-==74144== NVPROF is profiling process 74144, command: applications/fastWalshTransform -device=1 -iters=50
-==74144== Profiling application: applications/fastWalshTransform -device=1 -iters=50
-==74144== Profiling result:
-==74144== Metric result:
+==11248== NVPROF is profiling process 11248, command: applications/fastWalshTransform -device=0 -iters=15
+==11248== Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+==11248== Profiling application: applications/fastWalshTransform -device=0 -iters=15
+==11248== Profiling result:
+==11248== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: fwtBatch1Kernel(float*, float*, int)
-        153                  shared_load_transactions                  Shared Load Transactions     3407872     3407872     3407872
-        153                    shared_load_throughput             Shared Memory Load Throughput  189.03GB/s  190.44GB/s  189.77GB/s
-        153                 shared_store_transactions                 Shared Store Transactions     3407872     3407872     3407872
+         48                        l2_read_throughput                     L2 Throughput (Reads)  14.665GB/s  14.708GB/s  14.686GB/s
+         48                     l2_write_transactions                     L2 Write Transactions     1048582     1048582     1048582
+         48                       l2_write_throughput                    L2 Throughput (Writes)  14.664GB/s  14.707GB/s  14.683GB/s
     Kernel: fwtBatch2Kernel(float*, float*, int)
-        918                  shared_load_transactions                  Shared Load Transactions           0           0           0
-        918                    shared_load_throughput             Shared Memory Load Throughput  0.00000B/s  0.00000B/s  0.00000B/s
-        918                 shared_store_transactions                 Shared Store Transactions           0           0           0
+        288                        l2_read_throughput                     L2 Throughput (Reads)  14.738GB/s  14.956GB/s  14.864GB/s
+        288                     l2_write_transactions                     L2 Write Transactions     1048582     1048803     1048588
+        288                       l2_write_throughput                    L2 Throughput (Writes)  14.735GB/s  14.952GB/s  14.862GB/s
     Kernel: modulateKernel(float*, float*, int)
-         51                  shared_load_transactions                  Shared Load Transactions           0           0           0
-         51                    shared_load_throughput             Shared Memory Load Throughput  0.00000B/s  0.00000B/s  0.00000B/s
-         51                 shared_store_transactions                 Shared Store Transactions           0           0           0
+         16                        l2_read_throughput                     L2 Throughput (Reads)  19.896GB/s  19.953GB/s  19.926GB/s
+         16                     l2_write_transactions                     L2 Write Transactions     1048582     1048803     1048609
+         16                       l2_write_throughput                    L2 Throughput (Writes)  9.9468GB/s  9.9762GB/s  9.9614GB/s
 applications/fastWalshTransform Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Initializing data...
 ...allocating CPU memory
 ...allocating GPU memory
 ...generating data
 Data length: 8388608; kernel length: 128
 Running GPU dyadic convolution using Fast Walsh Transform...
-iterated 50, average time is 194.297903 msecs.
-GPU total   time: 9714.895142 ms
-GPU average time: 194.297903 ms; GOP/s: 1.489501
+iterated 15, average time is 108.321311 msecs.
+GPU total   time: 1624.819664 ms
+GPU average time: 108.321311 ms; GOP/s: 2.671746
 Reading back GPU results...
 Running straightforward CPU dyadic convolution...
 Comparing the results...
 Shutting down...
 L2 norm: 1.#QNAN0E+000
 Test failed!
-==75428== NVPROF is profiling process 75428, command: applications/fastWalshTransform -device=1 -iters=50
-==75428== Profiling application: applications/fastWalshTransform -device=1 -iters=50
-==75428== Profiling result:
-==75428== Metric result:
+==9160== NVPROF is profiling process 9160, command: applications/fastWalshTransform -device=0 -iters=15
+==9160== Profiling application: applications/fastWalshTransform -device=0 -iters=15
+==9160== Profiling result:
+==9160== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: fwtBatch1Kernel(float*, float*, int)
-        153                   shared_store_throughput            Shared Memory Store Throughput  189.08GB/s  190.52GB/s  189.77GB/s
-        153                         branch_efficiency                         Branch Efficiency     100.00%     100.00%     100.00%
-        153                               cf_executed        Executed Control-Flow Instructions     1638400     1638400     1638400
+         48                  shared_load_transactions                  Shared Load Transactions     3407872     3407872     3407872
+         48                    shared_load_throughput             Shared Memory Load Throughput  188.98GB/s  190.24GB/s  189.72GB/s
+         48                 shared_store_transactions                 Shared Store Transactions     3407872     3407872     3407872
     Kernel: fwtBatch2Kernel(float*, float*, int)
-        918                   shared_store_throughput            Shared Memory Store Throughput  0.00000B/s  0.00000B/s  0.00000B/s
-        918                         branch_efficiency                         Branch Efficiency     100.00%     100.00%     100.00%
-        918                               cf_executed        Executed Control-Flow Instructions       65536       65536       65536
+        288                  shared_load_transactions                  Shared Load Transactions           0           0           0
+        288                    shared_load_throughput             Shared Memory Load Throughput  0.00000B/s  0.00000B/s  0.00000B/s
+        288                 shared_store_transactions                 Shared Store Transactions           0           0           0
     Kernel: modulateKernel(float*, float*, int)
-         51                   shared_store_throughput            Shared Memory Store Throughput  0.00000B/s  0.00000B/s  0.00000B/s
-         51                         branch_efficiency                         Branch Efficiency     100.00%     100.00%     100.00%
-         51                               cf_executed        Executed Control-Flow Instructions      265216      265216      265216
+         16                  shared_load_transactions                  Shared Load Transactions           0           0           0
+         16                    shared_load_throughput             Shared Memory Load Throughput  0.00000B/s  0.00000B/s  0.00000B/s
+         16                 shared_store_transactions                 Shared Store Transactions           0           0           0
 applications/fastWalshTransform Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Initializing data...
 ...allocating CPU memory
 ...allocating GPU memory
 ...generating data
 Data length: 8388608; kernel length: 128
 Running GPU dyadic convolution using Fast Walsh Transform...
-iterated 50, average time is 1484.218926 msecs.
-GPU total   time: 74210.946289 ms
-GPU average time: 1484.218926 ms; GOP/s: 0.194989
+iterated 15, average time is 172.419582 msecs.
+GPU total   time: 2586.293732 ms
+GPU average time: 172.419582 ms; GOP/s: 1.678504
 Reading back GPU results...
 Running straightforward CPU dyadic convolution...
 Comparing the results...
 Shutting down...
 L2 norm: 1.#QNAN0E+000
 Test failed!
-==77532== NVPROF is profiling process 77532, command: applications/fastWalshTransform -device=1 -iters=50
-==77532== Some kernel(s) will be replayed on device 1 in order to collect all events/metrics.
-==77532== Profiling application: applications/fastWalshTransform -device=1 -iters=50
-==77532== Profiling result:
-==77532== Metric result:
+==9800== NVPROF is profiling process 9800, command: applications/fastWalshTransform -device=0 -iters=15
+==9800== Profiling application: applications/fastWalshTransform -device=0 -iters=15
+==9800== Profiling result:
+==9800== Metric result:
+Invocations                               Metric Name                        Metric Description         Min         Max         Avg
+Device "GeForce GTX 980 (0)"
+    Kernel: fwtBatch1Kernel(float*, float*, int)
+         48                   shared_store_throughput            Shared Memory Store Throughput  188.98GB/s  190.21GB/s  189.69GB/s
+         48                         branch_efficiency                         Branch Efficiency     100.00%     100.00%     100.00%
+         48                               cf_executed        Executed Control-Flow Instructions     1638400     1638400     1638400
+    Kernel: fwtBatch2Kernel(float*, float*, int)
+        288                   shared_store_throughput            Shared Memory Store Throughput  0.00000B/s  0.00000B/s  0.00000B/s
+        288                         branch_efficiency                         Branch Efficiency     100.00%     100.00%     100.00%
+        288                               cf_executed        Executed Control-Flow Instructions       65536       65536       65536
+    Kernel: modulateKernel(float*, float*, int)
+         16                   shared_store_throughput            Shared Memory Store Throughput  0.00000B/s  0.00000B/s  0.00000B/s
+         16                         branch_efficiency                         Branch Efficiency     100.00%     100.00%     100.00%
+         16                               cf_executed        Executed Control-Flow Instructions      265216      265216      265216
+applications/fastWalshTransform Starting...
+
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
+Initializing data...
+...allocating CPU memory
+...allocating GPU memory
+...generating data
+Data length: 8388608; kernel length: 128
+Running GPU dyadic convolution using Fast Walsh Transform...
+iterated 15, average time is 1464.364087 msecs.
+GPU total   time: 21965.461304 ms
+GPU average time: 1464.364087 ms; GOP/s: 0.197633
+Reading back GPU results...
+Running straightforward CPU dyadic convolution...
+Comparing the results...
+Shutting down...
+L2 norm: 1.#QNAN0E+000
+Test failed!
+==10808== NVPROF is profiling process 10808, command: applications/fastWalshTransform -device=0 -iters=15
+==10808== Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+==10808== Profiling application: applications/fastWalshTransform -device=0 -iters=15
+==10808== Profiling result:
+==10808== Metric result:
 Invocations                               Metric Name                            Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: fwtBatch1Kernel(float*, float*, int)
-        153                                 cf_issued              Issued Control-Flow Instructions     1638400     1638400     1638400
-        153                             flop_count_sp   Floating Point Operations(Single Precision)    92274688    92274688    92274688
-        153                        flop_sp_efficiency                  FLOP Efficiency(Peak Single)       1.33%       1.34%       1.34%
+         48                                 cf_issued              Issued Control-Flow Instructions     1638400     1638400     1638400
+         48                             flop_count_sp   Floating Point Operations(Single Precision)    92274688    92274688    92274688
+         48                        flop_sp_efficiency                  FLOP Efficiency(Peak Single)       1.33%       1.34%       1.34%
     Kernel: fwtBatch2Kernel(float*, float*, int)
-        918                                 cf_issued              Issued Control-Flow Instructions       65536       65536       65536
-        918                             flop_count_sp   Floating Point Operations(Single Precision)    16777216    16777216    16777216
-        918                        flop_sp_efficiency                  FLOP Efficiency(Peak Single)       0.24%       0.25%       0.25%
+        288                                 cf_issued              Issued Control-Flow Instructions       65536       65536       65536
+        288                             flop_count_sp   Floating Point Operations(Single Precision)    16777216    16777216    16777216
+        288                        flop_sp_efficiency                  FLOP Efficiency(Peak Single)       0.24%       0.25%       0.25%
     Kernel: modulateKernel(float*, float*, int)
-         51                                 cf_issued              Issued Control-Flow Instructions      265216      265216      265216
-         51                             flop_count_sp   Floating Point Operations(Single Precision)    16941056    16941056    16941056
-         51                        flop_sp_efficiency                  FLOP Efficiency(Peak Single)       0.17%       0.17%       0.17%
+         16                                 cf_issued              Issued Control-Flow Instructions      265216      265216      265216
+         16                             flop_count_sp   Floating Point Operations(Single Precision)    16941056    16941056    16941056
+         16                        flop_sp_efficiency                  FLOP Efficiency(Peak Single)       0.17%       0.17%       0.17%
 applications/fastWalshTransform Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Initializing data...
 ...allocating CPU memory
 ...allocating GPU memory
 ...generating data
 Data length: 8388608; kernel length: 128
 Running GPU dyadic convolution using Fast Walsh Transform...
-iterated 50, average time is 1305.256423 msecs.
-GPU total   time: 65262.821167 ms
-GPU average time: 1305.256423 ms; GOP/s: 0.221724
+iterated 15, average time is 1227.692456 msecs.
+GPU total   time: 18415.386841 ms
+GPU average time: 1227.692456 ms; GOP/s: 0.235732
 Reading back GPU results...
 Running straightforward CPU dyadic convolution...
 Comparing the results...
 Shutting down...
 L2 norm: 1.#QNAN0E+000
 Test failed!
-==77008== NVPROF is profiling process 77008, command: applications/fastWalshTransform -device=1 -iters=50
-==77008== Some kernel(s) will be replayed on device 1 in order to collect all events/metrics.
-==77008== Profiling application: applications/fastWalshTransform -device=1 -iters=50
-==77008== Profiling result:
-==77008== Metric result:
+==9444== NVPROF is profiling process 9444, command: applications/fastWalshTransform -device=0 -iters=15
+==9444== Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+==9444== Profiling application: applications/fastWalshTransform -device=0 -iters=15
+==9444== Profiling result:
+==9444== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: fwtBatch1Kernel(float*, float*, int)
-        153                            gld_throughput                    Global Load Throughput  14.599GB/s  14.645GB/s  14.618GB/s
-        153                          gld_transactions                  Global Load Transactions     2097152     2097152     2097152
-        153                            gst_throughput                   Global Store Throughput  14.599GB/s  14.645GB/s  14.618GB/s
+         48                            gld_throughput                    Global Load Throughput  14.593GB/s  14.631GB/s  14.611GB/s
+         48                          gld_transactions                  Global Load Transactions     2097152     2097152     2097152
+         48                            gst_throughput                   Global Store Throughput  14.593GB/s  14.631GB/s  14.611GB/s
     Kernel: fwtBatch2Kernel(float*, float*, int)
-        918                            gld_throughput                    Global Load Throughput  14.706GB/s  14.885GB/s  14.799GB/s
-        918                          gld_transactions                  Global Load Transactions     2097152     2097152     2097152
-        918                            gst_throughput                   Global Store Throughput  14.706GB/s  14.885GB/s  14.799GB/s
+        288                            gld_throughput                    Global Load Throughput  14.706GB/s  14.869GB/s  14.792GB/s
+        288                          gld_transactions                  Global Load Transactions     2097152     2097152     2097152
+        288                            gst_throughput                   Global Store Throughput  14.706GB/s  14.869GB/s  14.792GB/s
     Kernel: modulateKernel(float*, float*, int)
-         51                            gld_throughput                    Global Load Throughput  19.806GB/s  19.860GB/s  19.836GB/s
-         51                          gld_transactions                  Global Load Transactions     4194304     4194304     4194304
-         51                            gst_throughput                   Global Store Throughput  9.9030GB/s  9.9302GB/s  9.9177GB/s
+         16                            gld_throughput                    Global Load Throughput  19.802GB/s  19.849GB/s  19.832GB/s
+         16                          gld_transactions                  Global Load Transactions     4194304     4194304     4194304
+         16                            gst_throughput                   Global Store Throughput  9.9010GB/s  9.9245GB/s  9.9158GB/s
 applications/fastWalshTransform Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Initializing data...
 ...allocating CPU memory
 ...allocating GPU memory
 ...generating data
 Data length: 8388608; kernel length: 128
 Running GPU dyadic convolution using Fast Walsh Transform...
-iterated 50, average time is 205.055764 msecs.
-GPU total   time: 10252.788208 ms
-GPU average time: 205.055764 ms; GOP/s: 1.411357
+iterated 15, average time is 181.887196 msecs.
+GPU total   time: 2728.307938 ms
+GPU average time: 181.887196 ms; GOP/s: 1.591134
 Reading back GPU results...
 Running straightforward CPU dyadic convolution...
 Comparing the results...
 Shutting down...
 L2 norm: 1.#QNAN0E+000
 Test failed!
-==76152== NVPROF is profiling process 76152, command: applications/fastWalshTransform -device=1 -iters=50
-==76152== Profiling application: applications/fastWalshTransform -device=1 -iters=50
-==76152== Profiling result:
-==76152== Metric result:
+==10820== NVPROF is profiling process 10820, command: applications/fastWalshTransform -device=0 -iters=15
+==10820== Profiling application: applications/fastWalshTransform -device=0 -iters=15
+==10820== Profiling result:
+==10820== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: fwtBatch1Kernel(float*, float*, int)
-        153                          gst_transactions                 Global Store Transactions     1048576     1048576     1048576
-        153                               inst_issued                       Instructions Issued    20123790    20124321    20124009
-        153                             inst_per_warp                     Instructions per warp  307.000000  307.000000  307.000000
+         48                          gst_transactions                 Global Store Transactions     1048576     1048576     1048576
+         48                               inst_issued                       Instructions Issued    20123871    20124420    20124214
+         48                             inst_per_warp                     Instructions per warp  307.000000  307.000000  307.000000
     Kernel: fwtBatch2Kernel(float*, float*, int)
-        918                          gst_transactions                 Global Store Transactions     1048576     1048576     1048576
-        918                               inst_issued                       Instructions Issued     4262855     4263938     4263127
-        918                             inst_per_warp                     Instructions per warp   65.000000   65.000000   65.000000
+        288                          gst_transactions                 Global Store Transactions     1048576     1048576     1048576
+        288                               inst_issued                       Instructions Issued     4262810     4263948     4263204
+        288                             inst_per_warp                     Instructions per warp   65.000000   65.000000   65.000000
     Kernel: modulateKernel(float*, float*, int)
-         51                          gst_transactions                 Global Store Transactions     1048576     1048576     1048576
-         51                               inst_issued                       Instructions Issued     4743654     4744326     4743962
-         51                             inst_per_warp                     Instructions per warp  4.6270e+03  4.6270e+03  4.6270e+03
+         16                          gst_transactions                 Global Store Transactions     1048576     1048576     1048576
+         16                               inst_issued                       Instructions Issued     4744120     4744403     4744204
+         16                             inst_per_warp                     Instructions per warp  4.6270e+03  4.6270e+03  4.6270e+03
 applications/fastWalshTransform Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Initializing data...
 ...allocating CPU memory
 ...allocating GPU memory
 ...generating data
 Data length: 8388608; kernel length: 128
 Running GPU dyadic convolution using Fast Walsh Transform...
-iterated 50, average time is 134.258405 msecs.
-GPU total   time: 6712.920227 ms
-GPU average time: 134.258405 ms; GOP/s: 2.155597
+iterated 15, average time is 124.256539 msecs.
+GPU total   time: 1863.848091 ms
+GPU average time: 124.256539 ms; GOP/s: 2.329109
 Reading back GPU results...
 Running straightforward CPU dyadic convolution...
 Comparing the results...
 Shutting down...
 L2 norm: 1.#QNAN0E+000
 Test failed!
-==76284== NVPROF is profiling process 76284, command: applications/fastWalshTransform -device=1 -iters=50
-==76284== Profiling application: applications/fastWalshTransform -device=1 -iters=50
-==76284== Profiling result:
-==76284== Metric result:
+==3636== NVPROF is profiling process 3636, command: applications/fastWalshTransform -device=0 -iters=15
+==3636== Profiling application: applications/fastWalshTransform -device=0 -iters=15
+==3636== Profiling result:
+==3636== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: fwtBatch1Kernel(float*, float*, int)
-        153                                       ipc                              Executed IPC    0.746285    0.751114    0.748567
+         48                                       ipc                              Executed IPC    0.747240    0.751644    0.748978
     Kernel: fwtBatch2Kernel(float*, float*, int)
-        918                                       ipc                              Executed IPC    0.158618    0.160820    0.159742
+        288                                       ipc                              Executed IPC    0.158887    0.160978    0.159960
     Kernel: modulateKernel(float*, float*, int)
-         51                                       ipc                              Executed IPC    0.119169    0.120005    0.119509
+         16                                       ipc                              Executed IPC    0.119484    0.120003    0.119665

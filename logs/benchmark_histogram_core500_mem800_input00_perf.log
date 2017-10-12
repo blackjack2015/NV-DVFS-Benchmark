@@ -1,0 +1,60 @@
+[[histogram]] - Starting...
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
+CUDA device [GeForce GTX 980] has 16 Multi-Processors, Compute 5.2
+Initializing data...
+...allocating CPU memory.
+...generating input data
+...allocating GPU memory and copying input data
+
+Initializing 256-bin histogram...
+Running 256-bin GPU histogram for 67108864 bytes (5 runs)...
+
+iterated 5, average time is 4.656198 msec.
+histogram256() time (total) : 0.02328 sec, 14412.8016 MB/sec
+
+histogram256, Throughput = 14412.8016 MB/s, Time = 0.00466 s, Size = 67108864 Bytes, NumDevsUsed = 1, Workgroup = 192
+
+Validating GPU results...
+ ...reading back GPU results
+ ...histogram256CPU()
+ ...comparing the results
+ ...256-bin histograms match
+
+Shutting down 256-bin histogram...
+
+
+Shutting down...
+[histogram] - Test Summary
+Test passed
+==6536== NVPROF is profiling process 6536, command: applications/histogram -device=0 -iters=5
+==6536== Profiling application: applications/histogram -device=0 -iters=5
+==6536== Profiling result:
+Time(%)      Time     Calls       Avg       Min       Max  Name
+ 50.13%  26.787ms         6  4.4644ms  4.4499ms  4.4827ms  histogram256Kernel(unsigned int*, unsigned int*, unsigned int)
+ 49.67%  26.544ms         1  26.544ms  26.544ms  26.544ms  [CUDA memcpy HtoD]
+  0.19%  102.88us         6  17.146us  16.415us  17.888us  mergeHistogram256Kernel(unsigned int*, unsigned int*, unsigned int)
+  0.01%  5.2480us         1  5.2480us  5.2480us  5.2480us  [CUDA memcpy DtoH]
+
+==6536== API calls:
+Time(%)      Time     Calls       Avg       Min       Max  Name
+ 59.81%  151.46ms         3  50.486ms  559.63us  149.57ms  cudaMalloc
+ 17.77%  44.997ms         1  44.997ms  44.997ms  44.997ms  cudaDeviceReset
+ 10.89%  27.571ms         8  3.4464ms  7.5220us  4.7503ms  cudaDeviceSynchronize
+ 10.15%  25.714ms         2  12.857ms  94.476us  25.620ms  cudaMemcpy
+  0.38%  966.12us         3  322.04us  100.19us  707.97us  cudaFree
+  0.35%  888.19us         2  444.10us  431.46us  456.73us  cudaGetDeviceProperties
+  0.25%  640.27us         6  106.71us  55.361us  352.33us  cudaEventSynchronize
+  0.18%  448.01us        91  4.9230us       0ns  258.15us  cuDeviceGetAttribute
+  0.08%  203.09us        12  16.924us  12.035us  48.742us  cudaLaunch
+  0.04%  109.22us        12  9.1010us  5.4150us  13.239us  cudaEventRecord
+  0.04%  96.883us         6  16.147us  15.044us  17.752us  cudaEventElapsedTime
+  0.03%  78.830us         1  78.830us  78.830us  78.830us  cuDeviceGetName
+  0.01%  14.442us         2  7.2210us  1.5050us  12.937us  cudaEventCreate
+  0.00%  11.133us         1  11.133us  11.133us  11.133us  cudaSetDevice
+  0.00%  9.0270us        36     250ns       0ns  1.5040us  cudaSetupArgument
+  0.00%  7.2210us        12     601ns       0ns  3.9110us  cudaConfigureCall
+  0.00%  6.3190us         1  6.3190us  6.3190us  6.3190us  cuDeviceTotalMem
+  0.00%  3.0070us         3  1.0020us     300ns  2.1060us  cuDeviceGetCount
+  0.00%  2.4080us        12     200ns       0ns     301ns  cudaGetLastError
+  0.00%     903ns         3     301ns       0ns     602ns  cuDeviceGet
+  0.00%     903ns         1     903ns     903ns     903ns  cudaGetDeviceCount

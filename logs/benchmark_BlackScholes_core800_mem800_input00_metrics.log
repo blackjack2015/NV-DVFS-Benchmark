@@ -1,5 +1,5 @@
 [applications/BlackScholes] - Starting...
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Initializing data...
 ...allocating CPU memory for options.
 ...allocating GPU memory for options.
@@ -7,15 +7,15 @@ Initializing data...
 ...copying input data to GPU mem.
 Data init done.
 
-Executing Black-Scholes GPU kernel (50 iterations)...
-iterated 50, average time is 9.931302 msec.
+Executing Black-Scholes GPU kernel (15 iterations)...
+iterated 15, average time is 1.974270 msec.
 Options count             : 8388608     
-BlackScholesGPU() time    : 9.931302 msec
-BlackScholesGPU() total   : 496.565120 msec
-Effective memory bandwidth: 8.446634 GB/s
-Gigaoptions per second    : 0.844663     
+BlackScholesGPU() time    : 1.974270 msec
+BlackScholesGPU() total   : 29.614048 msec
+Effective memory bandwidth: 42.489672 GB/s
+Gigaoptions per second    : 4.248967     
 
-BlackScholes, Throughput = 0.8447 GOptions/s, Time = 0.00993 s, Size = 8388608 options, NumDevsUsed = 1, Workgroup = 128
+BlackScholes, Throughput = 4.2490 GOptions/s, Time = 0.00197 s, Size = 8388608 options, NumDevsUsed = 1, Workgroup = 128
 
 Reading back GPU results...
 Checking the results...
@@ -32,18 +32,56 @@ Shutdown done.
 
 [BlackScholes] - Test Summary
 Test passed
-==7824== NVPROF is profiling process 7824, command: applications/BlackScholes -device=1 -iters=50
-==7824== Profiling application: applications/BlackScholes -device=1 -iters=50
-==7824== Profiling result:
-==7824== Metric result:
-Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
-    Kernel: BlackScholesGPU(float*, float*, float*, float*, float*, float, float, int)
-         70                        achieved_occupancy                        Achieved Occupancy    0.896623    0.905882    0.901371
-         70                             sm_efficiency                   Multiprocessor Activity      99.41%      99.66%      99.59%
-         70                 warp_execution_efficiency                 Warp Execution Efficiency     100.00%     100.00%     100.00%
+==12088== NVPROF is profiling process 12088, command: applications/BlackScholes -device=0 -iters=15
+==12088== Profiling application: applications/BlackScholes -device=0 -iters=15
+==12088== Profiling result:
+   Start  Duration            Grid Size      Block Size     Regs*    SSMem*    DSMem*      Size  Throughput           Device   Context    Stream  Name
+396.46ms  6.5940ms                    -               -         -         -         -  16.000MB  2.3696GB/s  GeForce GTX 980         1         7  [CUDA memcpy HtoD]
+403.37ms  6.4604ms                    -               -         -         -         -  16.000MB  2.4186GB/s  GeForce GTX 980         1         7  [CUDA memcpy HtoD]
+410.15ms  6.3929ms                    -               -         -         -         -  16.000MB  2.4441GB/s  GeForce GTX 980         1         7  [CUDA memcpy HtoD]
+416.70ms  1.9117ms          (32768 1 1)       (128 1 1)        21        0B        0B         -           -  GeForce GTX 980         1         7  BlackScholesGPU(float*, float*, float*, float*, float*, float, float, int) [124]
+418.78ms  1.9057ms          (32768 1 1)       (128 1 1)        21        0B        0B         -           -  GeForce GTX 980         1         7  BlackScholesGPU(float*, float*, float*, float*, float*, float, float, int) [139]
+420.82ms  1.9061ms          (32768 1 1)       (128 1 1)        21        0B        0B         -           -  GeForce GTX 980         1         7  BlackScholesGPU(float*, float*, float*, float*, float*, float, float, int) [154]
+422.84ms  1.9041ms          (32768 1 1)       (128 1 1)        21        0B        0B         -           -  GeForce GTX 980         1         7  BlackScholesGPU(float*, float*, float*, float*, float*, float, float, int) [169]
+424.88ms  1.9007ms          (32768 1 1)       (128 1 1)        21        0B        0B         -           -  GeForce GTX 980         1         7  BlackScholesGPU(float*, float*, float*, float*, float*, float, float, int) [184]
+426.95ms  1.9017ms          (32768 1 1)       (128 1 1)        21        0B        0B         -           -  GeForce GTX 980         1         7  BlackScholesGPU(float*, float*, float*, float*, float*, float, float, int) [199]
+429.02ms  1.9048ms          (32768 1 1)       (128 1 1)        21        0B        0B         -           -  GeForce GTX 980         1         7  BlackScholesGPU(float*, float*, float*, float*, float*, float, float, int) [214]
+431.09ms  1.9038ms          (32768 1 1)       (128 1 1)        21        0B        0B         -           -  GeForce GTX 980         1         7  BlackScholesGPU(float*, float*, float*, float*, float*, float, float, int) [229]
+433.18ms  1.9070ms          (32768 1 1)       (128 1 1)        21        0B        0B         -           -  GeForce GTX 980         1         7  BlackScholesGPU(float*, float*, float*, float*, float*, float, float, int) [244]
+435.27ms  1.9052ms          (32768 1 1)       (128 1 1)        21        0B        0B         -           -  GeForce GTX 980         1         7  BlackScholesGPU(float*, float*, float*, float*, float*, float, float, int) [259]
+437.36ms  1.9009ms          (32768 1 1)       (128 1 1)        21        0B        0B         -           -  GeForce GTX 980         1         7  BlackScholesGPU(float*, float*, float*, float*, float*, float, float, int) [274]
+439.44ms  1.9021ms          (32768 1 1)       (128 1 1)        21        0B        0B         -           -  GeForce GTX 980         1         7  BlackScholesGPU(float*, float*, float*, float*, float*, float, float, int) [289]
+441.53ms  1.9059ms          (32768 1 1)       (128 1 1)        21        0B        0B         -           -  GeForce GTX 980         1         7  BlackScholesGPU(float*, float*, float*, float*, float*, float, float, int) [304]
+443.61ms  1.9035ms          (32768 1 1)       (128 1 1)        21        0B        0B         -           -  GeForce GTX 980         1         7  BlackScholesGPU(float*, float*, float*, float*, float*, float, float, int) [319]
+445.70ms  1.9082ms          (32768 1 1)       (128 1 1)        21        0B        0B         -           -  GeForce GTX 980         1         7  BlackScholesGPU(float*, float*, float*, float*, float*, float, float, int) [334]
+447.79ms  1.9004ms          (32768 1 1)       (128 1 1)        21        0B        0B         -           -  GeForce GTX 980         1         7  BlackScholesGPU(float*, float*, float*, float*, float*, float, float, int) [349]
+449.87ms  1.9064ms          (32768 1 1)       (128 1 1)        21        0B        0B         -           -  GeForce GTX 980         1         7  BlackScholesGPU(float*, float*, float*, float*, float*, float, float, int) [364]
+451.96ms  1.9067ms          (32768 1 1)       (128 1 1)        21        0B        0B         -           -  GeForce GTX 980         1         7  BlackScholesGPU(float*, float*, float*, float*, float*, float, float, int) [379]
+454.05ms  1.9039ms          (32768 1 1)       (128 1 1)        21        0B        0B         -           -  GeForce GTX 980         1         7  BlackScholesGPU(float*, float*, float*, float*, float*, float, float, int) [394]
+456.13ms  1.9032ms          (32768 1 1)       (128 1 1)        21        0B        0B         -           -  GeForce GTX 980         1         7  BlackScholesGPU(float*, float*, float*, float*, float*, float, float, int) [409]
+458.23ms  1.9043ms          (32768 1 1)       (128 1 1)        21        0B        0B         -           -  GeForce GTX 980         1         7  BlackScholesGPU(float*, float*, float*, float*, float*, float, float, int) [425]
+460.41ms  1.9056ms          (32768 1 1)       (128 1 1)        21        0B        0B         -           -  GeForce GTX 980         1         7  BlackScholesGPU(float*, float*, float*, float*, float*, float, float, int) [440]
+462.48ms  1.9048ms          (32768 1 1)       (128 1 1)        21        0B        0B         -           -  GeForce GTX 980         1         7  BlackScholesGPU(float*, float*, float*, float*, float*, float, float, int) [455]
+464.55ms  1.9026ms          (32768 1 1)       (128 1 1)        21        0B        0B         -           -  GeForce GTX 980         1         7  BlackScholesGPU(float*, float*, float*, float*, float*, float, float, int) [470]
+466.61ms  1.9055ms          (32768 1 1)       (128 1 1)        21        0B        0B         -           -  GeForce GTX 980         1         7  BlackScholesGPU(float*, float*, float*, float*, float*, float, float, int) [485]
+468.68ms  1.9132ms          (32768 1 1)       (128 1 1)        21        0B        0B         -           -  GeForce GTX 980         1         7  BlackScholesGPU(float*, float*, float*, float*, float*, float, float, int) [500]
+470.76ms  1.9063ms          (32768 1 1)       (128 1 1)        21        0B        0B         -           -  GeForce GTX 980         1         7  BlackScholesGPU(float*, float*, float*, float*, float*, float, float, int) [515]
+472.83ms  1.9070ms          (32768 1 1)       (128 1 1)        21        0B        0B         -           -  GeForce GTX 980         1         7  BlackScholesGPU(float*, float*, float*, float*, float*, float, float, int) [530]
+474.90ms  1.9042ms          (32768 1 1)       (128 1 1)        21        0B        0B         -           -  GeForce GTX 980         1         7  BlackScholesGPU(float*, float*, float*, float*, float*, float, float, int) [545]
+476.97ms  1.9030ms          (32768 1 1)       (128 1 1)        21        0B        0B         -           -  GeForce GTX 980         1         7  BlackScholesGPU(float*, float*, float*, float*, float*, float, float, int) [560]
+479.03ms  1.9056ms          (32768 1 1)       (128 1 1)        21        0B        0B         -           -  GeForce GTX 980         1         7  BlackScholesGPU(float*, float*, float*, float*, float*, float, float, int) [575]
+481.10ms  1.9017ms          (32768 1 1)       (128 1 1)        21        0B        0B         -           -  GeForce GTX 980         1         7  BlackScholesGPU(float*, float*, float*, float*, float*, float, float, int) [590]
+483.17ms  1.9048ms          (32768 1 1)       (128 1 1)        21        0B        0B         -           -  GeForce GTX 980         1         7  BlackScholesGPU(float*, float*, float*, float*, float*, float, float, int) [605]
+485.24ms  1.9054ms          (32768 1 1)       (128 1 1)        21        0B        0B         -           -  GeForce GTX 980         1         7  BlackScholesGPU(float*, float*, float*, float*, float*, float, float, int) [620]
+487.31ms  1.9031ms          (32768 1 1)       (128 1 1)        21        0B        0B         -           -  GeForce GTX 980         1         7  BlackScholesGPU(float*, float*, float*, float*, float*, float, float, int) [635]
+489.38ms  7.1425ms                    -               -         -         -         -  16.000MB  2.1876GB/s  GeForce GTX 980         1         7  [CUDA memcpy DtoH]
+496.81ms  7.3441ms                    -               -         -         -         -  16.000MB  2.1275GB/s  GeForce GTX 980         1         7  [CUDA memcpy DtoH]
+
+Regs: Number of registers used per CUDA thread. This number includes registers used internally by the CUDA driver and/or tools and can be more than what the compiler shows.
+SSMem: Static shared memory allocated per CUDA block.
+DSMem: Dynamic shared memory allocated per CUDA block.
 [applications/BlackScholes] - Starting...
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Initializing data...
 ...allocating CPU memory for options.
 ...allocating GPU memory for options.
@@ -51,15 +89,15 @@ Initializing data...
 ...copying input data to GPU mem.
 Data init done.
 
-Executing Black-Scholes GPU kernel (50 iterations)...
-iterated 50, average time is 42.697480 msec.
+Executing Black-Scholes GPU kernel (15 iterations)...
+iterated 15, average time is 8.549984 msec.
 Options count             : 8388608     
-BlackScholesGPU() time    : 42.697480 msec
-BlackScholesGPU() total   : 2134.874008 msec
-Effective memory bandwidth: 1.964661 GB/s
-Gigaoptions per second    : 0.196466     
+BlackScholesGPU() time    : 8.549984 msec
+BlackScholesGPU() total   : 128.249761 msec
+Effective memory bandwidth: 9.811256 GB/s
+Gigaoptions per second    : 0.981126     
 
-BlackScholes, Throughput = 0.1965 GOptions/s, Time = 0.04270 s, Size = 8388608 options, NumDevsUsed = 1, Workgroup = 128
+BlackScholes, Throughput = 0.9811 GOptions/s, Time = 0.00855 s, Size = 8388608 options, NumDevsUsed = 1, Workgroup = 128
 
 Reading back GPU results...
 Checking the results...
@@ -76,19 +114,18 @@ Shutdown done.
 
 [BlackScholes] - Test Summary
 Test passed
-==6416== NVPROF is profiling process 6416, command: applications/BlackScholes -device=1 -iters=50
-==6416== Some kernel(s) will be replayed on device 1 in order to collect all events/metrics.
-==6416== Profiling application: applications/BlackScholes -device=1 -iters=50
-==6416== Profiling result:
-==6416== Metric result:
+==12164== NVPROF is profiling process 12164, command: applications/BlackScholes -device=0 -iters=15
+==12164== Profiling application: applications/BlackScholes -device=0 -iters=15
+==12164== Profiling result:
+==12164== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: BlackScholesGPU(float*, float*, float*, float*, float*, float, float, int)
-         70                  eligible_warps_per_cycle           Eligible Warps Per Active Cycle    1.279949    1.305127    1.290410
-         70                    dram_read_transactions           Device Memory Read Transactions     1572915     1573171     1572943
-         70                      dram_read_throughput             Device Memory Read Throughput  24.549GB/s  24.622GB/s  24.583GB/s
+         35                        achieved_occupancy                        Achieved Occupancy    0.897168    0.906211    0.901057
+         35                             sm_efficiency                   Multiprocessor Activity      99.45%      99.65%      99.58%
+         35                 warp_execution_efficiency                 Warp Execution Efficiency     100.00%     100.00%     100.00%
 [applications/BlackScholes] - Starting...
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Initializing data...
 ...allocating CPU memory for options.
 ...allocating GPU memory for options.
@@ -96,15 +133,15 @@ Initializing data...
 ...copying input data to GPU mem.
 Data init done.
 
-Executing Black-Scholes GPU kernel (50 iterations)...
-iterated 50, average time is 39.919075 msec.
+Executing Black-Scholes GPU kernel (15 iterations)...
+iterated 15, average time is 41.153728 msec.
 Options count             : 8388608     
-BlackScholesGPU() time    : 39.919075 msec
-BlackScholesGPU() total   : 1995.953743 msec
-Effective memory bandwidth: 2.101403 GB/s
-Gigaoptions per second    : 0.210140     
+BlackScholesGPU() time    : 41.153728 msec
+BlackScholesGPU() total   : 617.305920 msec
+Effective memory bandwidth: 2.038359 GB/s
+Gigaoptions per second    : 0.203836     
 
-BlackScholes, Throughput = 0.2101 GOptions/s, Time = 0.03992 s, Size = 8388608 options, NumDevsUsed = 1, Workgroup = 128
+BlackScholes, Throughput = 0.2038 GOptions/s, Time = 0.04115 s, Size = 8388608 options, NumDevsUsed = 1, Workgroup = 128
 
 Reading back GPU results...
 Checking the results...
@@ -121,19 +158,19 @@ Shutdown done.
 
 [BlackScholes] - Test Summary
 Test passed
-==10504== NVPROF is profiling process 10504, command: applications/BlackScholes -device=1 -iters=50
-==10504== Some kernel(s) will be replayed on device 1 in order to collect all events/metrics.
-==10504== Profiling application: applications/BlackScholes -device=1 -iters=50
-==10504== Profiling result:
-==10504== Metric result:
+==12232== NVPROF is profiling process 12232, command: applications/BlackScholes -device=0 -iters=15
+==12232== Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+==12232== Profiling application: applications/BlackScholes -device=0 -iters=15
+==12232== Profiling result:
+==12232== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: BlackScholesGPU(float*, float*, float*, float*, float*, float, float, int)
-         70                   dram_write_transactions          Device Memory Write Transactions     1041152     1046668     1043998
-         70                     dram_write_throughput            Device Memory Write Throughput  16.383GB/s  16.476GB/s  16.443GB/s
-         70                      l2_read_transactions                      L2 Read Transactions     1572967     1573336     1573157
+         35                  eligible_warps_per_cycle           Eligible Warps Per Active Cycle    1.284254    1.309635    1.294570
+         35                    dram_read_transactions           Device Memory Read Transactions     1572907     1573155     1572956
+         35                      dram_read_throughput             Device Memory Read Throughput  24.555GB/s  24.615GB/s  24.581GB/s
 [applications/BlackScholes] - Starting...
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Initializing data...
 ...allocating CPU memory for options.
 ...allocating GPU memory for options.
@@ -141,15 +178,15 @@ Initializing data...
 ...copying input data to GPU mem.
 Data init done.
 
-Executing Black-Scholes GPU kernel (50 iterations)...
-iterated 50, average time is 44.019572 msec.
+Executing Black-Scholes GPU kernel (15 iterations)...
+iterated 15, average time is 38.736382 msec.
 Options count             : 8388608     
-BlackScholesGPU() time    : 44.019572 msec
-BlackScholesGPU() total   : 2200.978600 msec
-Effective memory bandwidth: 1.905654 GB/s
-Gigaoptions per second    : 0.190565     
+BlackScholesGPU() time    : 38.736382 msec
+BlackScholesGPU() total   : 581.045723 msec
+Effective memory bandwidth: 2.165563 GB/s
+Gigaoptions per second    : 0.216556     
 
-BlackScholes, Throughput = 0.1906 GOptions/s, Time = 0.04402 s, Size = 8388608 options, NumDevsUsed = 1, Workgroup = 128
+BlackScholes, Throughput = 0.2166 GOptions/s, Time = 0.03874 s, Size = 8388608 options, NumDevsUsed = 1, Workgroup = 128
 
 Reading back GPU results...
 Checking the results...
@@ -166,19 +203,19 @@ Shutdown done.
 
 [BlackScholes] - Test Summary
 Test passed
-==10856== NVPROF is profiling process 10856, command: applications/BlackScholes -device=1 -iters=50
-==10856== Some kernel(s) will be replayed on device 1 in order to collect all events/metrics.
-==10856== Profiling application: applications/BlackScholes -device=1 -iters=50
-==10856== Profiling result:
-==10856== Metric result:
+==10672== NVPROF is profiling process 10672, command: applications/BlackScholes -device=0 -iters=15
+==10672== Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+==10672== Profiling application: applications/BlackScholes -device=0 -iters=15
+==10672== Profiling result:
+==10672== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: BlackScholesGPU(float*, float*, float*, float*, float*, float, float, int)
-         70                        l2_read_throughput                     L2 Throughput (Reads)  24.746GB/s  24.805GB/s  24.779GB/s
-         70                     l2_write_transactions                     L2 Write Transactions     1048582     1048582     1048582
-         70                       l2_write_throughput                    L2 Throughput (Writes)  16.492GB/s  16.532GB/s  16.516GB/s
+         35                   dram_write_transactions          Device Memory Write Transactions     1041917     1047943     1044332
+         35                     dram_write_throughput            Device Memory Write Throughput  16.383GB/s  16.495GB/s  16.447GB/s
+         35                      l2_read_transactions                      L2 Read Transactions     1572967     1573328     1573152
 [applications/BlackScholes] - Starting...
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Initializing data...
 ...allocating CPU memory for options.
 ...allocating GPU memory for options.
@@ -186,15 +223,15 @@ Initializing data...
 ...copying input data to GPU mem.
 Data init done.
 
-Executing Black-Scholes GPU kernel (50 iterations)...
-iterated 50, average time is 5.089999 msec.
+Executing Black-Scholes GPU kernel (15 iterations)...
+iterated 15, average time is 42.991870 msec.
 Options count             : 8388608     
-BlackScholesGPU() time    : 5.089999 msec
-BlackScholesGPU() total   : 254.499968 msec
-Effective memory bandwidth: 16.480568 GB/s
-Gigaoptions per second    : 1.648057     
+BlackScholesGPU() time    : 42.991870 msec
+BlackScholesGPU() total   : 644.878044 msec
+Effective memory bandwidth: 1.951208 GB/s
+Gigaoptions per second    : 0.195121     
 
-BlackScholes, Throughput = 1.6481 GOptions/s, Time = 0.00509 s, Size = 8388608 options, NumDevsUsed = 1, Workgroup = 128
+BlackScholes, Throughput = 0.1951 GOptions/s, Time = 0.04299 s, Size = 8388608 options, NumDevsUsed = 1, Workgroup = 128
 
 Reading back GPU results...
 Checking the results...
@@ -211,18 +248,19 @@ Shutdown done.
 
 [BlackScholes] - Test Summary
 Test passed
-==11352== NVPROF is profiling process 11352, command: applications/BlackScholes -device=1 -iters=50
-==11352== Profiling application: applications/BlackScholes -device=1 -iters=50
-==11352== Profiling result:
-==11352== Metric result:
+==11324== NVPROF is profiling process 11324, command: applications/BlackScholes -device=0 -iters=15
+==11324== Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+==11324== Profiling application: applications/BlackScholes -device=0 -iters=15
+==11324== Profiling result:
+==11324== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: BlackScholesGPU(float*, float*, float*, float*, float*, float, float, int)
-         70                  shared_load_transactions                  Shared Load Transactions           0           0           0
-         70                    shared_load_throughput             Shared Memory Load Throughput  0.00000B/s  0.00000B/s  0.00000B/s
-         70                 shared_store_transactions                 Shared Store Transactions           0           0           0
+         35                        l2_read_throughput                     L2 Throughput (Reads)  24.763GB/s  24.807GB/s  24.784GB/s
+         35                     l2_write_transactions                     L2 Write Transactions     1048582     1048803     1048600
+         35                       l2_write_throughput                    L2 Throughput (Writes)  16.507GB/s  16.537GB/s  16.519GB/s
 [applications/BlackScholes] - Starting...
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Initializing data...
 ...allocating CPU memory for options.
 ...allocating GPU memory for options.
@@ -230,15 +268,15 @@ Initializing data...
 ...copying input data to GPU mem.
 Data init done.
 
-Executing Black-Scholes GPU kernel (50 iterations)...
-iterated 50, average time is 8.528504 msec.
+Executing Black-Scholes GPU kernel (15 iterations)...
+iterated 15, average time is 4.630281 msec.
 Options count             : 8388608     
-BlackScholesGPU() time    : 8.528504 msec
-BlackScholesGPU() total   : 426.425216 msec
-Effective memory bandwidth: 9.835966 GB/s
-Gigaoptions per second    : 0.983597     
+BlackScholesGPU() time    : 4.630281 msec
+BlackScholesGPU() total   : 69.454208 msec
+Effective memory bandwidth: 18.116846 GB/s
+Gigaoptions per second    : 1.811685     
 
-BlackScholes, Throughput = 0.9836 GOptions/s, Time = 0.00853 s, Size = 8388608 options, NumDevsUsed = 1, Workgroup = 128
+BlackScholes, Throughput = 1.8117 GOptions/s, Time = 0.00463 s, Size = 8388608 options, NumDevsUsed = 1, Workgroup = 128
 
 Reading back GPU results...
 Checking the results...
@@ -255,18 +293,18 @@ Shutdown done.
 
 [BlackScholes] - Test Summary
 Test passed
-==9656== NVPROF is profiling process 9656, command: applications/BlackScholes -device=1 -iters=50
-==9656== Profiling application: applications/BlackScholes -device=1 -iters=50
-==9656== Profiling result:
-==9656== Metric result:
+==11400== NVPROF is profiling process 11400, command: applications/BlackScholes -device=0 -iters=15
+==11400== Profiling application: applications/BlackScholes -device=0 -iters=15
+==11400== Profiling result:
+==11400== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: BlackScholesGPU(float*, float*, float*, float*, float*, float, float, int)
-         70                   shared_store_throughput            Shared Memory Store Throughput  0.00000B/s  0.00000B/s  0.00000B/s
-         70                         branch_efficiency                         Branch Efficiency     100.00%     100.00%     100.00%
-         70                               cf_executed        Executed Control-Flow Instructions     2228224     2228224     2228224
+         35                  shared_load_transactions                  Shared Load Transactions           0           0           0
+         35                    shared_load_throughput             Shared Memory Load Throughput  0.00000B/s  0.00000B/s  0.00000B/s
+         35                 shared_store_transactions                 Shared Store Transactions           0           0           0
 [applications/BlackScholes] - Starting...
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Initializing data...
 ...allocating CPU memory for options.
 ...allocating GPU memory for options.
@@ -274,15 +312,15 @@ Initializing data...
 ...copying input data to GPU mem.
 Data init done.
 
-Executing Black-Scholes GPU kernel (50 iterations)...
-iterated 50, average time is 131.750806 msec.
+Executing Black-Scholes GPU kernel (15 iterations)...
+iterated 15, average time is 7.501999 msec.
 Options count             : 8388608     
-BlackScholesGPU() time    : 131.750806 msec
-BlackScholesGPU() total   : 6587.540283 msec
-Effective memory bandwidth: 0.636703 GB/s
-Gigaoptions per second    : 0.063670     
+BlackScholesGPU() time    : 7.501999 msec
+BlackScholesGPU() total   : 112.529984 msec
+Effective memory bandwidth: 11.181830 GB/s
+Gigaoptions per second    : 1.118183     
 
-BlackScholes, Throughput = 0.0637 GOptions/s, Time = 0.13175 s, Size = 8388608 options, NumDevsUsed = 1, Workgroup = 128
+BlackScholes, Throughput = 1.1182 GOptions/s, Time = 0.00750 s, Size = 8388608 options, NumDevsUsed = 1, Workgroup = 128
 
 Reading back GPU results...
 Checking the results...
@@ -299,19 +337,63 @@ Shutdown done.
 
 [BlackScholes] - Test Summary
 Test passed
-==372== NVPROF is profiling process 372, command: applications/BlackScholes -device=1 -iters=50
-==372== Some kernel(s) will be replayed on device 1 in order to collect all events/metrics.
-==372== Profiling application: applications/BlackScholes -device=1 -iters=50
-==372== Profiling result:
-==372== Metric result:
+==11468== NVPROF is profiling process 11468, command: applications/BlackScholes -device=0 -iters=15
+==11468== Profiling application: applications/BlackScholes -device=0 -iters=15
+==11468== Profiling result:
+==11468== Metric result:
+Invocations                               Metric Name                        Metric Description         Min         Max         Avg
+Device "GeForce GTX 980 (0)"
+    Kernel: BlackScholesGPU(float*, float*, float*, float*, float*, float, float, int)
+         35                   shared_store_throughput            Shared Memory Store Throughput  0.00000B/s  0.00000B/s  0.00000B/s
+         35                         branch_efficiency                         Branch Efficiency     100.00%     100.00%     100.00%
+         35                               cf_executed        Executed Control-Flow Instructions     2228224     2228224     2228224
+[applications/BlackScholes] - Starting...
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
+Initializing data...
+...allocating CPU memory for options.
+...allocating GPU memory for options.
+...generating input data in CPU mem.
+...copying input data to GPU mem.
+Data init done.
+
+Executing Black-Scholes GPU kernel (15 iterations)...
+iterated 15, average time is 140.133482 msec.
+Options count             : 8388608     
+BlackScholesGPU() time    : 140.133482 msec
+BlackScholesGPU() total   : 2102.002228 msec
+Effective memory bandwidth: 0.598616 GB/s
+Gigaoptions per second    : 0.059862     
+
+BlackScholes, Throughput = 0.0599 GOptions/s, Time = 0.14013 s, Size = 8388608 options, NumDevsUsed = 1, Workgroup = 128
+
+Reading back GPU results...
+Checking the results...
+...running CPU calculations.
+
+Comparing the results...
+L1 norm: 1.652171E-007
+Max absolute error: 1.144409E-005
+
+Shutting down...
+...releasing GPU memory.
+...releasing CPU memory.
+Shutdown done.
+
+[BlackScholes] - Test Summary
+Test passed
+==11532== NVPROF is profiling process 11532, command: applications/BlackScholes -device=0 -iters=15
+==11532== Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+==11532== Profiling application: applications/BlackScholes -device=0 -iters=15
+==11532== Profiling result:
+==11532== Metric result:
 Invocations                               Metric Name                            Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: BlackScholesGPU(float*, float*, float*, float*, float*, float, float, int)
-         70                                 cf_issued              Issued Control-Flow Instructions     2228224     2228224     2228224
-         70                             flop_count_sp   Floating Point Operations(Single Precision)   425267618   425267618   425267618
-         70                        flop_sp_efficiency                  FLOP Efficiency(Peak Single)       6.88%       6.92%       6.90%
+         35                                 cf_issued              Issued Control-Flow Instructions     2228224     2228224     2228224
+         35                             flop_count_sp   Floating Point Operations(Single Precision)   425267618   425267618   425267618
+         35                        flop_sp_efficiency                  FLOP Efficiency(Peak Single)       6.89%       6.93%       6.91%
 [applications/BlackScholes] - Starting...
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Initializing data...
 ...allocating CPU memory for options.
 ...allocating GPU memory for options.
@@ -319,15 +401,15 @@ Initializing data...
 ...copying input data to GPU mem.
 Data init done.
 
-Executing Black-Scholes GPU kernel (50 iterations)...
-iterated 50, average time is 59.902471 msec.
+Executing Black-Scholes GPU kernel (15 iterations)...
+iterated 15, average time is 56.822157 msec.
 Options count             : 8388608     
-BlackScholesGPU() time    : 59.902471 msec
-BlackScholesGPU() total   : 2995.123547 msec
-Effective memory bandwidth: 1.400378 GB/s
-Gigaoptions per second    : 0.140038     
+BlackScholesGPU() time    : 56.822157 msec
+BlackScholesGPU() total   : 852.332348 msec
+Effective memory bandwidth: 1.476292 GB/s
+Gigaoptions per second    : 0.147629     
 
-BlackScholes, Throughput = 0.1400 GOptions/s, Time = 0.05990 s, Size = 8388608 options, NumDevsUsed = 1, Workgroup = 128
+BlackScholes, Throughput = 0.1476 GOptions/s, Time = 0.05682 s, Size = 8388608 options, NumDevsUsed = 1, Workgroup = 128
 
 Reading back GPU results...
 Checking the results...
@@ -344,19 +426,19 @@ Shutdown done.
 
 [BlackScholes] - Test Summary
 Test passed
-==11676== NVPROF is profiling process 11676, command: applications/BlackScholes -device=1 -iters=50
-==11676== Some kernel(s) will be replayed on device 1 in order to collect all events/metrics.
-==11676== Profiling application: applications/BlackScholes -device=1 -iters=50
-==11676== Profiling result:
-==11676== Metric result:
+==11588== NVPROF is profiling process 11588, command: applications/BlackScholes -device=0 -iters=15
+==11588== Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+==11588== Profiling application: applications/BlackScholes -device=0 -iters=15
+==11588== Profiling result:
+==11588== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: BlackScholesGPU(float*, float*, float*, float*, float*, float, float, int)
-         70                            gld_throughput                    Global Load Throughput  24.530GB/s  24.634GB/s  24.583GB/s
-         70                          gld_transactions                  Global Load Transactions     3145728     3145728     3145728
-         70                            gst_throughput                   Global Store Throughput  16.353GB/s  16.423GB/s  16.388GB/s
+         35                            gld_throughput                    Global Load Throughput  24.547GB/s  24.607GB/s  24.575GB/s
+         35                          gld_transactions                  Global Load Transactions     3145728     3145728     3145728
+         35                            gst_throughput                   Global Store Throughput  16.365GB/s  16.404GB/s  16.383GB/s
 [applications/BlackScholes] - Starting...
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Initializing data...
 ...allocating CPU memory for options.
 ...allocating GPU memory for options.
@@ -364,15 +446,15 @@ Initializing data...
 ...copying input data to GPU mem.
 Data init done.
 
-Executing Black-Scholes GPU kernel (50 iterations)...
-iterated 50, average time is 8.985070 msec.
+Executing Black-Scholes GPU kernel (15 iterations)...
+iterated 15, average time is 7.832864 msec.
 Options count             : 8388608     
-BlackScholesGPU() time    : 8.985070 msec
-BlackScholesGPU() total   : 449.253505 msec
-Effective memory bandwidth: 9.336163 GB/s
-Gigaoptions per second    : 0.933616     
+BlackScholesGPU() time    : 7.832864 msec
+BlackScholesGPU() total   : 117.492960 msec
+Effective memory bandwidth: 10.709503 GB/s
+Gigaoptions per second    : 1.070950     
 
-BlackScholes, Throughput = 0.9336 GOptions/s, Time = 0.00899 s, Size = 8388608 options, NumDevsUsed = 1, Workgroup = 128
+BlackScholes, Throughput = 1.0710 GOptions/s, Time = 0.00783 s, Size = 8388608 options, NumDevsUsed = 1, Workgroup = 128
 
 Reading back GPU results...
 Checking the results...
@@ -389,18 +471,18 @@ Shutdown done.
 
 [BlackScholes] - Test Summary
 Test passed
-==11340== NVPROF is profiling process 11340, command: applications/BlackScholes -device=1 -iters=50
-==11340== Profiling application: applications/BlackScholes -device=1 -iters=50
-==11340== Profiling result:
-==11340== Metric result:
+==11660== NVPROF is profiling process 11660, command: applications/BlackScholes -device=0 -iters=15
+==11660== Profiling application: applications/BlackScholes -device=0 -iters=15
+==11660== Profiling result:
+==11660== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: BlackScholesGPU(float*, float*, float*, float*, float*, float, float, int)
-         70                          gst_transactions                 Global Store Transactions     1048576     1048576     1048576
-         70                               inst_issued                       Instructions Issued    21366339    21368440    21366566
-         70                             inst_per_warp                     Instructions per warp  163.000000  163.000000  163.000000
+         35                          gst_transactions                 Global Store Transactions     1048576     1048576     1048576
+         35                               inst_issued                       Instructions Issued    21366339    21367667    21366791
+         35                             inst_per_warp                     Instructions per warp  163.000000  163.000000  163.000000
 [applications/BlackScholes] - Starting...
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Initializing data...
 ...allocating CPU memory for options.
 ...allocating GPU memory for options.
@@ -408,15 +490,15 @@ Initializing data...
 ...copying input data to GPU mem.
 Data init done.
 
-Executing Black-Scholes GPU kernel (50 iterations)...
-iterated 50, average time is 5.781485 msec.
+Executing Black-Scholes GPU kernel (15 iterations)...
+iterated 15, average time is 5.226615 msec.
 Options count             : 8388608     
-BlackScholesGPU() time    : 5.781485 msec
-BlackScholesGPU() total   : 289.074240 msec
-Effective memory bandwidth: 14.509435 GB/s
-Gigaoptions per second    : 1.450944     
+BlackScholesGPU() time    : 5.226615 msec
+BlackScholesGPU() total   : 78.399231 msec
+Effective memory bandwidth: 16.049790 GB/s
+Gigaoptions per second    : 1.604979     
 
-BlackScholes, Throughput = 1.4509 GOptions/s, Time = 0.00578 s, Size = 8388608 options, NumDevsUsed = 1, Workgroup = 128
+BlackScholes, Throughput = 1.6050 GOptions/s, Time = 0.00523 s, Size = 8388608 options, NumDevsUsed = 1, Workgroup = 128
 
 Reading back GPU results...
 Checking the results...
@@ -433,11 +515,11 @@ Shutdown done.
 
 [BlackScholes] - Test Summary
 Test passed
-==13628== NVPROF is profiling process 13628, command: applications/BlackScholes -device=1 -iters=50
-==13628== Profiling application: applications/BlackScholes -device=1 -iters=50
-==13628== Profiling result:
-==13628== Metric result:
+==11732== NVPROF is profiling process 11732, command: applications/BlackScholes -device=0 -iters=15
+==11732== Profiling application: applications/BlackScholes -device=0 -iters=15
+==11732== Profiling result:
+==11732== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: BlackScholesGPU(float*, float*, float*, float*, float*, float, float, int)
-         70                                       ipc                              Executed IPC    0.887456    0.892831    0.891016
+         35                                       ipc                              Executed IPC    0.889172    0.894506    0.892550

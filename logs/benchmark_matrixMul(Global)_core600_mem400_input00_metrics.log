@@ -1,233 +1,274 @@
 [Matrix Multiply Using CUDA] - Starting...
-GPU Device 1: "GeForce GTX 980" with compute capability 5.2
+GPU Device 0: "GeForce GTX 980" with compute capability 5.2
 
 MatrixA(1024,1024), MatrixB(1024,1024)
 Computing result using CUDA Kernel...
 done
-iterated 50, average time is 29.429458 msec.
-GPU total   time: 1471.472898 ms
-GPU average time: 29.429458 ms
-Performance= 72.97 GFlop/s, Time= 29.429 msec, Size= 2147483648 Ops, WorkgroupSize= 1024 threads/block
+iterated 15, average time is 21.275945 msec.
+GPU total   time: 319.139170 ms
+GPU average time: 21.275945 ms
+Performance= 100.93 GFlop/s, Time= 21.276 msec, Size= 2147483648 Ops, WorkgroupSize= 1024 threads/block
 Checking computed result for correctness: Result = PASS
 
 Note: For peak performance, please refer to the matrixMulCUBLAS example.
-==48708== NVPROF is profiling process 48708, command: applications/matrixMul(Global) -wA=1024 -hA=1024 -wB=1024 -hB=1024 -device=1 -iters=50
-==48708== Profiling application: applications/matrixMul(Global) -wA=1024 -hA=1024 -wB=1024 -hB=1024 -device=1 -iters=50
-==48708== Profiling result:
-==48708== Metric result:
-Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
-    Kernel: void matrixMulCUDA<int=32>(float*, float*, float*, int, int)
-         52                        achieved_occupancy                        Achieved Occupancy    0.974657    0.975355    0.974999
-         52                             sm_efficiency                   Multiprocessor Activity      99.60%      99.91%      99.82%
-         52                 warp_execution_efficiency                 Warp Execution Efficiency     100.00%     100.00%     100.00%
+==4872== NVPROF is profiling process 4872, command: applications/matrixMul(Global) -wA=1024 -hA=1024 -wB=1024 -hB=1024 -device=0 -iters=15
+==4872== Profiling application: applications/matrixMul(Global) -wA=1024 -hA=1024 -wB=1024 -hB=1024 -device=0 -iters=15
+==4872== Profiling result:
+   Start  Duration            Grid Size      Block Size     Regs*    SSMem*    DSMem*      Size  Throughput           Device   Context    Stream  Name
+210.79ms  1.4720ms                    -               -         -         -         -  4.0000MB  2.6538GB/s  GeForce GTX 980         1         7  [CUDA memcpy HtoD]
+212.61ms  1.5260ms                    -               -         -         -         -  4.0000MB  2.5598GB/s  GeForce GTX 980         1         7  [CUDA memcpy HtoD]
+214.15ms  21.211ms            (32 32 1)       (32 32 1)        25        0B        0B         -           -  GeForce GTX 980         1         7  void matrixMulCUDA<int=32>(float*, float*, float*, int, int) [114]
+235.48ms  21.212ms            (32 32 1)       (32 32 1)        25        0B        0B         -           -  GeForce GTX 980         1         7  void matrixMulCUDA<int=32>(float*, float*, float*, int, int) [125]
+256.89ms  21.214ms            (32 32 1)       (32 32 1)        25        0B        0B         -           -  GeForce GTX 980         1         7  void matrixMulCUDA<int=32>(float*, float*, float*, int, int) [138]
+278.23ms  21.210ms            (32 32 1)       (32 32 1)        25        0B        0B         -           -  GeForce GTX 980         1         7  void matrixMulCUDA<int=32>(float*, float*, float*, int, int) [150]
+299.62ms  21.178ms            (32 32 1)       (32 32 1)        25        0B        0B         -           -  GeForce GTX 980         1         7  void matrixMulCUDA<int=32>(float*, float*, float*, int, int) [162]
+320.99ms  21.238ms            (32 32 1)       (32 32 1)        25        0B        0B         -           -  GeForce GTX 980         1         7  void matrixMulCUDA<int=32>(float*, float*, float*, int, int) [174]
+342.41ms  21.201ms            (32 32 1)       (32 32 1)        25        0B        0B         -           -  GeForce GTX 980         1         7  void matrixMulCUDA<int=32>(float*, float*, float*, int, int) [186]
+363.81ms  21.197ms            (32 32 1)       (32 32 1)        25        0B        0B         -           -  GeForce GTX 980         1         7  void matrixMulCUDA<int=32>(float*, float*, float*, int, int) [198]
+385.20ms  21.203ms            (32 32 1)       (32 32 1)        25        0B        0B         -           -  GeForce GTX 980         1         7  void matrixMulCUDA<int=32>(float*, float*, float*, int, int) [210]
+406.59ms  21.231ms            (32 32 1)       (32 32 1)        25        0B        0B         -           -  GeForce GTX 980         1         7  void matrixMulCUDA<int=32>(float*, float*, float*, int, int) [222]
+428.00ms  21.205ms            (32 32 1)       (32 32 1)        25        0B        0B         -           -  GeForce GTX 980         1         7  void matrixMulCUDA<int=32>(float*, float*, float*, int, int) [234]
+449.39ms  21.160ms            (32 32 1)       (32 32 1)        25        0B        0B         -           -  GeForce GTX 980         1         7  void matrixMulCUDA<int=32>(float*, float*, float*, int, int) [246]
+470.74ms  21.201ms            (32 32 1)       (32 32 1)        25        0B        0B         -           -  GeForce GTX 980         1         7  void matrixMulCUDA<int=32>(float*, float*, float*, int, int) [258]
+492.13ms  21.190ms            (32 32 1)       (32 32 1)        25        0B        0B         -           -  GeForce GTX 980         1         7  void matrixMulCUDA<int=32>(float*, float*, float*, int, int) [270]
+513.51ms  21.183ms            (32 32 1)       (32 32 1)        25        0B        0B         -           -  GeForce GTX 980         1         7  void matrixMulCUDA<int=32>(float*, float*, float*, int, int) [282]
+534.87ms  21.191ms            (32 32 1)       (32 32 1)        25        0B        0B         -           -  GeForce GTX 980         1         7  void matrixMulCUDA<int=32>(float*, float*, float*, int, int) [294]
+556.25ms  21.207ms            (32 32 1)       (32 32 1)        25        0B        0B         -           -  GeForce GTX 980         1         7  void matrixMulCUDA<int=32>(float*, float*, float*, int, int) [306]
+577.66ms  1.6840ms                    -               -         -         -         -  4.0000MB  2.3196GB/s  GeForce GTX 980         1         7  [CUDA memcpy DtoH]
+
+Regs: Number of registers used per CUDA thread. This number includes registers used internally by the CUDA driver and/or tools and can be more than what the compiler shows.
+SSMem: Static shared memory allocated per CUDA block.
+DSMem: Dynamic shared memory allocated per CUDA block.
 [Matrix Multiply Using CUDA] - Starting...
-GPU Device 1: "GeForce GTX 980" with compute capability 5.2
+GPU Device 0: "GeForce GTX 980" with compute capability 5.2
 
 MatrixA(1024,1024), MatrixB(1024,1024)
 Computing result using CUDA Kernel...
 done
-iterated 50, average time is 79.129375 msec.
-GPU total   time: 3956.468735 ms
-GPU average time: 79.129375 ms
-Performance= 27.14 GFlop/s, Time= 79.129 msec, Size= 2147483648 Ops, WorkgroupSize= 1024 threads/block
+iterated 15, average time is 27.865555 msec.
+GPU total   time: 417.983328 ms
+GPU average time: 27.865555 ms
+Performance= 77.07 GFlop/s, Time= 27.866 msec, Size= 2147483648 Ops, WorkgroupSize= 1024 threads/block
 Checking computed result for correctness: Result = PASS
 
 Note: For peak performance, please refer to the matrixMulCUBLAS example.
-==51244== NVPROF is profiling process 51244, command: applications/matrixMul(Global) -wA=1024 -hA=1024 -wB=1024 -hB=1024 -device=1 -iters=50
-==51244== Some kernel(s) will be replayed on device 1 in order to collect all events/metrics.
-==51244== Profiling application: applications/matrixMul(Global) -wA=1024 -hA=1024 -wB=1024 -hB=1024 -device=1 -iters=50
-==51244== Profiling result:
-==51244== Metric result:
+==4852== NVPROF is profiling process 4852, command: applications/matrixMul(Global) -wA=1024 -hA=1024 -wB=1024 -hB=1024 -device=0 -iters=15
+==4852== Profiling application: applications/matrixMul(Global) -wA=1024 -hA=1024 -wB=1024 -hB=1024 -device=0 -iters=15
+==4852== Profiling result:
+==4852== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: void matrixMulCUDA<int=32>(float*, float*, float*, int, int)
-         52                  eligible_warps_per_cycle           Eligible Warps Per Active Cycle    4.898853    4.932637    4.917111
-         52                    dram_read_transactions           Device Memory Read Transactions     4325399     4325592     4325467
-         52                      dram_read_throughput             Device Memory Read Throughput  6.0578GB/s  6.0720GB/s  6.0657GB/s
+         17                        achieved_occupancy                        Achieved Occupancy    0.974578    0.975391    0.974972
+         17                             sm_efficiency                   Multiprocessor Activity      99.71%      99.87%      99.80%
+         17                 warp_execution_efficiency                 Warp Execution Efficiency     100.00%     100.00%     100.00%
 [Matrix Multiply Using CUDA] - Starting...
-GPU Device 1: "GeForce GTX 980" with compute capability 5.2
+GPU Device 0: "GeForce GTX 980" with compute capability 5.2
 
 MatrixA(1024,1024), MatrixB(1024,1024)
 Computing result using CUDA Kernel...
 done
-iterated 50, average time is 76.372926 msec.
-GPU total   time: 3818.646301 ms
-GPU average time: 76.372926 ms
-Performance= 28.12 GFlop/s, Time= 76.373 msec, Size= 2147483648 Ops, WorkgroupSize= 1024 threads/block
+iterated 15, average time is 78.092927 msec.
+GPU total   time: 1171.393906 ms
+GPU average time: 78.092927 ms
+Performance= 27.50 GFlop/s, Time= 78.093 msec, Size= 2147483648 Ops, WorkgroupSize= 1024 threads/block
 Checking computed result for correctness: Result = PASS
 
 Note: For peak performance, please refer to the matrixMulCUBLAS example.
-==51904== NVPROF is profiling process 51904, command: applications/matrixMul(Global) -wA=1024 -hA=1024 -wB=1024 -hB=1024 -device=1 -iters=50
-==51904== Some kernel(s) will be replayed on device 1 in order to collect all events/metrics.
-==51904== Profiling application: applications/matrixMul(Global) -wA=1024 -hA=1024 -wB=1024 -hB=1024 -device=1 -iters=50
-==51904== Profiling result:
-==51904== Metric result:
+==6876== NVPROF is profiling process 6876, command: applications/matrixMul(Global) -wA=1024 -hA=1024 -wB=1024 -hB=1024 -device=0 -iters=15
+==6876== Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+==6876== Profiling application: applications/matrixMul(Global) -wA=1024 -hA=1024 -wB=1024 -hB=1024 -device=0 -iters=15
+==6876== Profiling result:
+==6876== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: void matrixMulCUDA<int=32>(float*, float*, float*, int, int)
-         52                   dram_write_transactions          Device Memory Write Transactions      157052      159720      159404
-         52                     dram_write_throughput            Device Memory Write Throughput  225.47MB/s  229.54MB/s  227.93MB/s
-         52                      l2_read_transactions                      L2 Read Transactions   167772231   167772821   167772426
+         17                  eligible_warps_per_cycle           Eligible Warps Per Active Cycle    4.863214    4.888447    4.877075
+         17                    dram_read_transactions           Device Memory Read Transactions     4494216     4562025     4532934
+         17                      dram_read_throughput             Device Memory Read Throughput  6.3112GB/s  6.3981GB/s  6.3600GB/s
 [Matrix Multiply Using CUDA] - Starting...
-GPU Device 1: "GeForce GTX 980" with compute capability 5.2
+GPU Device 0: "GeForce GTX 980" with compute capability 5.2
 
 MatrixA(1024,1024), MatrixB(1024,1024)
 Computing result using CUDA Kernel...
 done
-iterated 50, average time is 80.793830 msec.
-GPU total   time: 4039.691490 ms
-GPU average time: 80.793830 ms
-Performance= 26.58 GFlop/s, Time= 80.794 msec, Size= 2147483648 Ops, WorkgroupSize= 1024 threads/block
+iterated 15, average time is 75.924738 msec.
+GPU total   time: 1138.871063 ms
+GPU average time: 75.924738 ms
+Performance= 28.28 GFlop/s, Time= 75.925 msec, Size= 2147483648 Ops, WorkgroupSize= 1024 threads/block
 Checking computed result for correctness: Result = PASS
 
 Note: For peak performance, please refer to the matrixMulCUBLAS example.
-==51304== NVPROF is profiling process 51304, command: applications/matrixMul(Global) -wA=1024 -hA=1024 -wB=1024 -hB=1024 -device=1 -iters=50
-==51304== Some kernel(s) will be replayed on device 1 in order to collect all events/metrics.
-==51304== Profiling application: applications/matrixMul(Global) -wA=1024 -hA=1024 -wB=1024 -hB=1024 -device=1 -iters=50
-==51304== Profiling result:
-==51304== Metric result:
+==6412== NVPROF is profiling process 6412, command: applications/matrixMul(Global) -wA=1024 -hA=1024 -wB=1024 -hB=1024 -device=0 -iters=15
+==6412== Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+==6412== Profiling application: applications/matrixMul(Global) -wA=1024 -hA=1024 -wB=1024 -hB=1024 -device=0 -iters=15
+==6412== Profiling result:
+==6412== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: void matrixMulCUDA<int=32>(float*, float*, float*, int, int)
-         52                        l2_read_throughput                     L2 Throughput (Reads)  235.01GB/s  235.50GB/s  235.28GB/s
-         52                     l2_write_transactions                     L2 Write Transactions      131078      131106      131078
-         52                       l2_write_throughput                    L2 Throughput (Writes)  188.02MB/s  188.41MB/s  187.87MB/s
+         17                   dram_write_transactions          Device Memory Write Transactions      155163      159940      157824
+         17                     dram_write_throughput            Device Memory Write Throughput  222.83MB/s  229.69MB/s  226.02MB/s
+         17                      l2_read_transactions                      L2 Read Transactions   167937084   168085583   167978802
 [Matrix Multiply Using CUDA] - Starting...
-GPU Device 1: "GeForce GTX 980" with compute capability 5.2
+GPU Device 0: "GeForce GTX 980" with compute capability 5.2
 
 MatrixA(1024,1024), MatrixB(1024,1024)
 Computing result using CUDA Kernel...
 done
-iterated 50, average time is 24.530819 msec.
-GPU total   time: 1226.540960 ms
-GPU average time: 24.530819 ms
-Performance= 87.54 GFlop/s, Time= 24.531 msec, Size= 2147483648 Ops, WorkgroupSize= 1024 threads/block
+iterated 15, average time is 79.064107 msec.
+GPU total   time: 1185.961601 ms
+GPU average time: 79.064107 ms
+Performance= 27.16 GFlop/s, Time= 79.064 msec, Size= 2147483648 Ops, WorkgroupSize= 1024 threads/block
 Checking computed result for correctness: Result = PASS
 
 Note: For peak performance, please refer to the matrixMulCUBLAS example.
-==49704== NVPROF is profiling process 49704, command: applications/matrixMul(Global) -wA=1024 -hA=1024 -wB=1024 -hB=1024 -device=1 -iters=50
-==49704== Profiling application: applications/matrixMul(Global) -wA=1024 -hA=1024 -wB=1024 -hB=1024 -device=1 -iters=50
-==49704== Profiling result:
-==49704== Metric result:
+==6500== NVPROF is profiling process 6500, command: applications/matrixMul(Global) -wA=1024 -hA=1024 -wB=1024 -hB=1024 -device=0 -iters=15
+==6500== Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+==6500== Profiling application: applications/matrixMul(Global) -wA=1024 -hA=1024 -wB=1024 -hB=1024 -device=0 -iters=15
+==6500== Profiling result:
+==6500== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: void matrixMulCUDA<int=32>(float*, float*, float*, int, int)
-         52                  shared_load_transactions                  Shared Load Transactions           0           0           0
-         52                    shared_load_throughput             Shared Memory Load Throughput  0.00000B/s  0.00000B/s  0.00000B/s
-         52                 shared_store_transactions                 Shared Store Transactions           0           0           0
+         17                        l2_read_throughput                     L2 Throughput (Reads)  235.49GB/s  235.97GB/s  235.74GB/s
+         17                     l2_write_transactions                     L2 Write Transactions      131079      131096      131081
+         17                       l2_write_throughput                    L2 Throughput (Writes)  188.22MB/s  188.52MB/s  187.87MB/s
 [Matrix Multiply Using CUDA] - Starting...
-GPU Device 1: "GeForce GTX 980" with compute capability 5.2
+GPU Device 0: "GeForce GTX 980" with compute capability 5.2
 
 MatrixA(1024,1024), MatrixB(1024,1024)
 Computing result using CUDA Kernel...
 done
-iterated 50, average time is 27.904917 msec.
-GPU total   time: 1395.245859 ms
-GPU average time: 27.904917 ms
-Performance= 76.96 GFlop/s, Time= 27.905 msec, Size= 2147483648 Ops, WorkgroupSize= 1024 threads/block
+iterated 15, average time is 23.947419 msec.
+GPU total   time: 359.211292 ms
+GPU average time: 23.947419 ms
+Performance= 89.67 GFlop/s, Time= 23.947 msec, Size= 2147483648 Ops, WorkgroupSize= 1024 threads/block
 Checking computed result for correctness: Result = PASS
 
 Note: For peak performance, please refer to the matrixMulCUBLAS example.
-==46172== NVPROF is profiling process 46172, command: applications/matrixMul(Global) -wA=1024 -hA=1024 -wB=1024 -hB=1024 -device=1 -iters=50
-==46172== Profiling application: applications/matrixMul(Global) -wA=1024 -hA=1024 -wB=1024 -hB=1024 -device=1 -iters=50
-==46172== Profiling result:
-==46172== Metric result:
+==6828== NVPROF is profiling process 6828, command: applications/matrixMul(Global) -wA=1024 -hA=1024 -wB=1024 -hB=1024 -device=0 -iters=15
+==6828== Profiling application: applications/matrixMul(Global) -wA=1024 -hA=1024 -wB=1024 -hB=1024 -device=0 -iters=15
+==6828== Profiling result:
+==6828== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: void matrixMulCUDA<int=32>(float*, float*, float*, int, int)
-         52                   shared_store_throughput            Shared Memory Store Throughput  0.00000B/s  0.00000B/s  0.00000B/s
-         52                         branch_efficiency                         Branch Efficiency     100.00%     100.00%     100.00%
-         52                               cf_executed        Executed Control-Flow Instructions     8552448     8552448     8552448
+         17                  shared_load_transactions                  Shared Load Transactions           0           0           0
+         17                    shared_load_throughput             Shared Memory Load Throughput  0.00000B/s  0.00000B/s  0.00000B/s
+         17                 shared_store_transactions                 Shared Store Transactions           0           0           0
 [Matrix Multiply Using CUDA] - Starting...
-GPU Device 1: "GeForce GTX 980" with compute capability 5.2
+GPU Device 0: "GeForce GTX 980" with compute capability 5.2
 
 MatrixA(1024,1024), MatrixB(1024,1024)
 Computing result using CUDA Kernel...
 done
-iterated 50, average time is 766.312306 msec.
-GPU total   time: 38315.615295 ms
-GPU average time: 766.312306 ms
-Performance= 2.80 GFlop/s, Time= 766.312 msec, Size= 2147483648 Ops, WorkgroupSize= 1024 threads/block
+iterated 15, average time is 26.736386 msec.
+GPU total   time: 401.045792 ms
+GPU average time: 26.736386 ms
+Performance= 80.32 GFlop/s, Time= 26.736 msec, Size= 2147483648 Ops, WorkgroupSize= 1024 threads/block
 Checking computed result for correctness: Result = PASS
 
 Note: For peak performance, please refer to the matrixMulCUBLAS example.
-==51184== NVPROF is profiling process 51184, command: applications/matrixMul(Global) -wA=1024 -hA=1024 -wB=1024 -hB=1024 -device=1 -iters=50
-==51184== Some kernel(s) will be replayed on device 1 in order to collect all events/metrics.
-==51184== Profiling application: applications/matrixMul(Global) -wA=1024 -hA=1024 -wB=1024 -hB=1024 -device=1 -iters=50
-==51184== Profiling result:
-==51184== Metric result:
+==6964== NVPROF is profiling process 6964, command: applications/matrixMul(Global) -wA=1024 -hA=1024 -wB=1024 -hB=1024 -device=0 -iters=15
+==6964== Profiling application: applications/matrixMul(Global) -wA=1024 -hA=1024 -wB=1024 -hB=1024 -device=0 -iters=15
+==6964== Profiling result:
+==6964== Metric result:
+Invocations                               Metric Name                        Metric Description         Min         Max         Avg
+Device "GeForce GTX 980 (0)"
+    Kernel: void matrixMulCUDA<int=32>(float*, float*, float*, int, int)
+         17                   shared_store_throughput            Shared Memory Store Throughput  0.00000B/s  0.00000B/s  0.00000B/s
+         17                         branch_efficiency                         Branch Efficiency     100.00%     100.00%     100.00%
+         17                               cf_executed        Executed Control-Flow Instructions     8552448     8552448     8552448
+[Matrix Multiply Using CUDA] - Starting...
+GPU Device 0: "GeForce GTX 980" with compute capability 5.2
+
+MatrixA(1024,1024), MatrixB(1024,1024)
+Computing result using CUDA Kernel...
+done
+iterated 15, average time is 855.993363 msec.
+GPU total   time: 12839.900452 ms
+GPU average time: 855.993363 ms
+Performance= 2.51 GFlop/s, Time= 855.993 msec, Size= 2147483648 Ops, WorkgroupSize= 1024 threads/block
+Checking computed result for correctness: Result = PASS
+
+Note: For peak performance, please refer to the matrixMulCUBLAS example.
+==2464== NVPROF is profiling process 2464, command: applications/matrixMul(Global) -wA=1024 -hA=1024 -wB=1024 -hB=1024 -device=0 -iters=15
+==2464== Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+==2464== Profiling application: applications/matrixMul(Global) -wA=1024 -hA=1024 -wB=1024 -hB=1024 -device=0 -iters=15
+==2464== Profiling result:
+==2464== Metric result:
 Invocations                               Metric Name                            Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: void matrixMulCUDA<int=32>(float*, float*, float*, int, int)
-         52                                 cf_issued              Issued Control-Flow Instructions     8552448     8552448     8552448
-         52                             flop_count_sp   Floating Point Operations(Single Precision)  2147483648  2147483648  2147483648
-         52                        flop_sp_efficiency                  FLOP Efficiency(Peak Single)       4.22%       4.23%       4.22%
+         17                                 cf_issued              Issued Control-Flow Instructions     8552448     8552448     8552448
+         17                             flop_count_sp   Floating Point Operations(Single Precision)  2147483648  2147483648  2147483648
+         17                        flop_sp_efficiency                  FLOP Efficiency(Peak Single)       4.18%       4.21%       4.20%
 [Matrix Multiply Using CUDA] - Starting...
-GPU Device 1: "GeForce GTX 980" with compute capability 5.2
+GPU Device 0: "GeForce GTX 980" with compute capability 5.2
 
 MatrixA(1024,1024), MatrixB(1024,1024)
 Computing result using CUDA Kernel...
 done
-iterated 50, average time is 111.861504 msec.
-GPU total   time: 5593.075188 ms
-GPU average time: 111.861504 ms
-Performance= 19.20 GFlop/s, Time= 111.862 msec, Size= 2147483648 Ops, WorkgroupSize= 1024 threads/block
+iterated 15, average time is 108.994654 msec.
+GPU total   time: 1634.919815 ms
+GPU average time: 108.994654 ms
+Performance= 19.70 GFlop/s, Time= 108.995 msec, Size= 2147483648 Ops, WorkgroupSize= 1024 threads/block
 Checking computed result for correctness: Result = PASS
 
 Note: For peak performance, please refer to the matrixMulCUBLAS example.
-==51516== NVPROF is profiling process 51516, command: applications/matrixMul(Global) -wA=1024 -hA=1024 -wB=1024 -hB=1024 -device=1 -iters=50
-==51516== Some kernel(s) will be replayed on device 1 in order to collect all events/metrics.
-==51516== Profiling application: applications/matrixMul(Global) -wA=1024 -hA=1024 -wB=1024 -hB=1024 -device=1 -iters=50
-==51516== Profiling result:
-==51516== Metric result:
+==2404== NVPROF is profiling process 2404, command: applications/matrixMul(Global) -wA=1024 -hA=1024 -wB=1024 -hB=1024 -device=0 -iters=15
+==2404== Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+==2404== Profiling application: applications/matrixMul(Global) -wA=1024 -hA=1024 -wB=1024 -hB=1024 -device=0 -iters=15
+==2404== Profiling result:
+==2404== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: void matrixMulCUDA<int=32>(float*, float*, float*, int, int)
-         52                            gld_throughput                    Global Load Throughput  235.07GB/s  235.42GB/s  235.26GB/s
-         52                          gld_transactions                  Global Load Transactions   402653184   402653184   402653184
-         52                            gst_throughput                   Global Store Throughput  188.05MB/s  188.34MB/s  187.87MB/s
+         17                            gld_throughput                    Global Load Throughput  235.16GB/s  235.63GB/s  235.43GB/s
+         17                          gld_transactions                  Global Load Transactions   402653184   402653184   402653184
+         17                            gst_throughput                   Global Store Throughput  188.13MB/s  188.50MB/s  187.87MB/s
 [Matrix Multiply Using CUDA] - Starting...
-GPU Device 1: "GeForce GTX 980" with compute capability 5.2
+GPU Device 0: "GeForce GTX 980" with compute capability 5.2
 
 MatrixA(1024,1024), MatrixB(1024,1024)
 Computing result using CUDA Kernel...
 done
-iterated 50, average time is 28.501098 msec.
-GPU total   time: 1425.054913 ms
-GPU average time: 28.501098 ms
-Performance= 75.35 GFlop/s, Time= 28.501 msec, Size= 2147483648 Ops, WorkgroupSize= 1024 threads/block
+iterated 15, average time is 27.164881 msec.
+GPU total   time: 407.473217 ms
+GPU average time: 27.164881 ms
+Performance= 79.05 GFlop/s, Time= 27.165 msec, Size= 2147483648 Ops, WorkgroupSize= 1024 threads/block
 Checking computed result for correctness: Result = PASS
 
 Note: For peak performance, please refer to the matrixMulCUBLAS example.
-==51508== NVPROF is profiling process 51508, command: applications/matrixMul(Global) -wA=1024 -hA=1024 -wB=1024 -hB=1024 -device=1 -iters=50
-==51508== Profiling application: applications/matrixMul(Global) -wA=1024 -hA=1024 -wB=1024 -hB=1024 -device=1 -iters=50
-==51508== Profiling result:
-==51508== Metric result:
+==4564== NVPROF is profiling process 4564, command: applications/matrixMul(Global) -wA=1024 -hA=1024 -wB=1024 -hB=1024 -device=0 -iters=15
+==4564== Profiling application: applications/matrixMul(Global) -wA=1024 -hA=1024 -wB=1024 -hB=1024 -device=0 -iters=15
+==4564== Profiling result:
+==4564== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: void matrixMulCUDA<int=32>(float*, float*, float*, int, int)
-         52                          gst_transactions                 Global Store Transactions      131072      131072      131072
-         52                               inst_issued                       Instructions Issued   579977628   579978682   579978090
-         52                             inst_per_warp                     Instructions per warp  1.7699e+04  1.7699e+04  1.7699e+04
+         17                          gst_transactions                 Global Store Transactions      131072      131072      131072
+         17                               inst_issued                       Instructions Issued   579977770   579978584   579978123
+         17                             inst_per_warp                     Instructions per warp  1.7699e+04  1.7699e+04  1.7699e+04
 [Matrix Multiply Using CUDA] - Starting...
-GPU Device 1: "GeForce GTX 980" with compute capability 5.2
+GPU Device 0: "GeForce GTX 980" with compute capability 5.2
 
 MatrixA(1024,1024), MatrixB(1024,1024)
 Computing result using CUDA Kernel...
 done
-iterated 50, average time is 25.327684 msec.
-GPU total   time: 1266.384188 ms
-GPU average time: 25.327684 ms
-Performance= 84.79 GFlop/s, Time= 25.328 msec, Size= 2147483648 Ops, WorkgroupSize= 1024 threads/block
+iterated 15, average time is 24.649125 msec.
+GPU total   time: 369.736868 ms
+GPU average time: 24.649125 ms
+Performance= 87.12 GFlop/s, Time= 24.649 msec, Size= 2147483648 Ops, WorkgroupSize= 1024 threads/block
 Checking computed result for correctness: Result = PASS
 
 Note: For peak performance, please refer to the matrixMulCUBLAS example.
-==52676== NVPROF is profiling process 52676, command: applications/matrixMul(Global) -wA=1024 -hA=1024 -wB=1024 -hB=1024 -device=1 -iters=50
-==52676== Profiling application: applications/matrixMul(Global) -wA=1024 -hA=1024 -wB=1024 -hB=1024 -device=1 -iters=50
-==52676== Profiling result:
-==52676== Metric result:
+==6860== NVPROF is profiling process 6860, command: applications/matrixMul(Global) -wA=1024 -hA=1024 -wB=1024 -hB=1024 -device=0 -iters=15
+==6860== Profiling application: applications/matrixMul(Global) -wA=1024 -hA=1024 -wB=1024 -hB=1024 -device=0 -iters=15
+==6860== Profiling result:
+==6860== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: void matrixMulCUDA<int=32>(float*, float*, float*, int, int)
-         52                                       ipc                              Executed IPC    2.922482    2.932060    2.926427
+         17                                       ipc                              Executed IPC    2.907210    2.917536    2.911104

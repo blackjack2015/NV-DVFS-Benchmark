@@ -1,14 +1,14 @@
 applications/quasirandomGenerator Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Allocating GPU memory...
 Allocating CPU memory...
 Initializing QRNG tables...
 
 Testing QRNG...
 
-quasirandomGenerator, Total Time = 0.40667 s
-quasirandomGenerator, Throughput = 0.3868 GNumbers/s, Time = 0.00813 s, Size = 3145728 Numbers, NumDevsUsed = 1, Workgroup = 384
+quasirandomGenerator, Total Time = 0.00520 s
+quasirandomGenerator, Throughput = 9.0796 GNumbers/s, Time = 0.00035 s, Size = 3145728 Numbers, NumDevsUsed = 1, Workgroup = 384
 
 Reading GPU results...
 Comparing to the CPU results...
@@ -17,39 +17,98 @@ L1 norm: 7.275964E-012
 
 Testing inverseCNDgpu()...
 
-quasirandomGenerator-inverse, Total Time = 0.01640 s
-quasirandomGenerator-inverse, Throughput = 0.3836 GNumbers/s, Time = 0.00820 s, Size = 3145728 Numbers, NumDevsUsed = 1, Workgroup = 128
+quasirandomGenerator-inverse, Total Time = 0.00067 s
+quasirandomGenerator-inverse, Throughput = 9.4489 GNumbers/s, Time = 0.00033 s, Size = 3145728 Numbers, NumDevsUsed = 1, Workgroup = 128
 Reading GPU results...
 
 Comparing to the CPU results...
 L1 norm: 9.439909E-008
 
 Shutting down...
-==27312== NVPROF is profiling process 27312, command: applications/quasirandomGenerator -device=1 -iters=50
-==27312== Profiling application: applications/quasirandomGenerator -device=1 -iters=50
-==27312== Profiling result:
-==27312== Metric result:
+==14468== NVPROF is profiling process 14468, command: applications/quasirandomGenerator -device=0 -iters=15
+==14468== Profiling application: applications/quasirandomGenerator -device=0 -iters=15
+==14468== Profiling result:
+   Start  Duration            Grid Size      Block Size     Regs*    SSMem*    DSMem*      Size  Throughput           Device   Context    Stream  Name
+204.17ms  2.6240us                    -               -         -         -         -      372B  135.20MB/s  GeForce GTX 980         1         7  [CUDA memcpy HtoD]
+204.18ms  1.0550us                    -               -         -         -         -  12.000MB   1e+04GB/s  GeForce GTX 980         1         7  [CUDA memset]
+204.46ms  273.43us            (128 1 1)       (128 3 1)        40        0B        0B         -           -  GeForce GTX 980         1         7  quasirandomGeneratorKernel(float*, unsigned int, unsigned int) [114]
+204.93ms  273.34us            (128 1 1)       (128 3 1)        40        0B        0B         -           -  GeForce GTX 980         1         7  quasirandomGeneratorKernel(float*, unsigned int, unsigned int) [126]
+205.47ms  274.81us            (128 1 1)       (128 3 1)        40        0B        0B         -           -  GeForce GTX 980         1         7  quasirandomGeneratorKernel(float*, unsigned int, unsigned int) [137]
+205.93ms  270.97us            (128 1 1)       (128 3 1)        40        0B        0B         -           -  GeForce GTX 980         1         7  quasirandomGeneratorKernel(float*, unsigned int, unsigned int) [148]
+206.38ms  273.37us            (128 1 1)       (128 3 1)        40        0B        0B         -           -  GeForce GTX 980         1         7  quasirandomGeneratorKernel(float*, unsigned int, unsigned int) [159]
+206.84ms  272.89us            (128 1 1)       (128 3 1)        40        0B        0B         -           -  GeForce GTX 980         1         7  quasirandomGeneratorKernel(float*, unsigned int, unsigned int) [170]
+207.30ms  272.99us            (128 1 1)       (128 3 1)        40        0B        0B         -           -  GeForce GTX 980         1         7  quasirandomGeneratorKernel(float*, unsigned int, unsigned int) [181]
+207.74ms  272.70us            (128 1 1)       (128 3 1)        40        0B        0B         -           -  GeForce GTX 980         1         7  quasirandomGeneratorKernel(float*, unsigned int, unsigned int) [192]
+208.17ms  272.54us            (128 1 1)       (128 3 1)        40        0B        0B         -           -  GeForce GTX 980         1         7  quasirandomGeneratorKernel(float*, unsigned int, unsigned int) [203]
+208.61ms  273.34us            (128 1 1)       (128 3 1)        40        0B        0B         -           -  GeForce GTX 980         1         7  quasirandomGeneratorKernel(float*, unsigned int, unsigned int) [214]
+209.04ms  274.14us            (128 1 1)       (128 3 1)        40        0B        0B         -           -  GeForce GTX 980         1         7  quasirandomGeneratorKernel(float*, unsigned int, unsigned int) [225]
+209.48ms  274.27us            (128 1 1)       (128 3 1)        40        0B        0B         -           -  GeForce GTX 980         1         7  quasirandomGeneratorKernel(float*, unsigned int, unsigned int) [236]
+209.91ms  272.60us            (128 1 1)       (128 3 1)        40        0B        0B         -           -  GeForce GTX 980         1         7  quasirandomGeneratorKernel(float*, unsigned int, unsigned int) [247]
+210.35ms  273.43us            (128 1 1)       (128 3 1)        40        0B        0B         -           -  GeForce GTX 980         1         7  quasirandomGeneratorKernel(float*, unsigned int, unsigned int) [258]
+210.78ms  272.70us            (128 1 1)       (128 3 1)        40        0B        0B         -           -  GeForce GTX 980         1         7  quasirandomGeneratorKernel(float*, unsigned int, unsigned int) [269]
+211.21ms  273.21us            (128 1 1)       (128 3 1)        40        0B        0B         -           -  GeForce GTX 980         1         7  quasirandomGeneratorKernel(float*, unsigned int, unsigned int) [280]
+211.65ms  7.9496ms                    -               -         -         -         -  12.000MB  1.4741GB/s  GeForce GTX 980         1         7  [CUDA memcpy DtoH]
+460.01ms  1.0560us                    -               -         -         -         -  12.000MB   1e+04GB/s  GeForce GTX 980         1         7  [CUDA memset]
+460.28ms  275.29us            (128 1 1)       (128 1 1)        15        0B        0B         -           -  GeForce GTX 980         1         7  inverseCNDKernel(float*, unsigned int*, unsigned int) [293]
+460.67ms  271.64us            (128 1 1)       (128 1 1)        15        0B        0B         -           -  GeForce GTX 980         1         7  inverseCNDKernel(float*, unsigned int*, unsigned int) [300]
+460.95ms  271.39us            (128 1 1)       (128 1 1)        15        0B        0B         -           -  GeForce GTX 980         1         7  inverseCNDKernel(float*, unsigned int*, unsigned int) [306]
+461.32ms  4.7170ms                    -               -         -         -         -  12.000MB  2.4843GB/s  GeForce GTX 980         1         7  [CUDA memcpy DtoH]
+
+Regs: Number of registers used per CUDA thread. This number includes registers used internally by the CUDA driver and/or tools and can be more than what the compiler shows.
+SSMem: Static shared memory allocated per CUDA block.
+DSMem: Dynamic shared memory allocated per CUDA block.
+applications/quasirandomGenerator Starting...
+
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
+Allocating GPU memory...
+Allocating CPU memory...
+Initializing QRNG tables...
+
+Testing QRNG...
+
+quasirandomGenerator, Total Time = 0.10317 s
+quasirandomGenerator, Throughput = 0.4574 GNumbers/s, Time = 0.00688 s, Size = 3145728 Numbers, NumDevsUsed = 1, Workgroup = 384
+
+Reading GPU results...
+Comparing to the CPU results...
+
+L1 norm: 7.275964E-012
+
+Testing inverseCNDgpu()...
+
+quasirandomGenerator-inverse, Total Time = 0.01384 s
+quasirandomGenerator-inverse, Throughput = 0.4547 GNumbers/s, Time = 0.00692 s, Size = 3145728 Numbers, NumDevsUsed = 1, Workgroup = 128
+Reading GPU results...
+
+Comparing to the CPU results...
+L1 norm: 9.439909E-008
+
+Shutting down...
+==14660== NVPROF is profiling process 14660, command: applications/quasirandomGenerator -device=0 -iters=15
+==14660== Profiling application: applications/quasirandomGenerator -device=0 -iters=15
+==14660== Profiling result:
+==14660== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: inverseCNDKernel(float*, unsigned int*, unsigned int)
-          3                        achieved_occupancy                        Achieved Occupancy    0.490847    0.491525    0.491276
-          3                             sm_efficiency                   Multiprocessor Activity      95.84%      96.55%      96.11%
+          3                        achieved_occupancy                        Achieved Occupancy    0.490925    0.491688    0.491219
+          3                             sm_efficiency                   Multiprocessor Activity      95.90%      96.74%      96.18%
           3                 warp_execution_efficiency                 Warp Execution Efficiency     100.00%     100.00%     100.00%
     Kernel: quasirandomGeneratorKernel(float*, unsigned int, unsigned int)
-         51                        achieved_occupancy                        Achieved Occupancy    0.674797    0.704595    0.690400
-         51                             sm_efficiency                   Multiprocessor Activity      94.49%      96.79%      95.96%
-         51                 warp_execution_efficiency                 Warp Execution Efficiency     100.00%     100.00%     100.00%
+         16                        achieved_occupancy                        Achieved Occupancy    0.673379    0.699042    0.686352
+         16                             sm_efficiency                   Multiprocessor Activity      95.13%      96.81%      95.99%
+         16                 warp_execution_efficiency                 Warp Execution Efficiency     100.00%     100.00%     100.00%
 applications/quasirandomGenerator Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Allocating GPU memory...
 Allocating CPU memory...
 Initializing QRNG tables...
 
 Testing QRNG...
 
-quasirandomGenerator, Total Time = 0.69083 s
-quasirandomGenerator, Throughput = 0.2277 GNumbers/s, Time = 0.01382 s, Size = 3145728 Numbers, NumDevsUsed = 1, Workgroup = 384
+quasirandomGenerator, Total Time = 0.19042 s
+quasirandomGenerator, Throughput = 0.2478 GNumbers/s, Time = 0.01269 s, Size = 3145728 Numbers, NumDevsUsed = 1, Workgroup = 384
 
 Reading GPU results...
 Comparing to the CPU results...
@@ -58,40 +117,40 @@ L1 norm: 7.275964E-012
 
 Testing inverseCNDgpu()...
 
-quasirandomGenerator-inverse, Total Time = 0.02820 s
-quasirandomGenerator-inverse, Throughput = 0.2231 GNumbers/s, Time = 0.01410 s, Size = 3145728 Numbers, NumDevsUsed = 1, Workgroup = 128
+quasirandomGenerator-inverse, Total Time = 0.02518 s
+quasirandomGenerator-inverse, Throughput = 0.2499 GNumbers/s, Time = 0.01259 s, Size = 3145728 Numbers, NumDevsUsed = 1, Workgroup = 128
 Reading GPU results...
 
 Comparing to the CPU results...
 L1 norm: 9.439909E-008
 
 Shutting down...
-==21472== NVPROF is profiling process 21472, command: applications/quasirandomGenerator -device=1 -iters=50
-==21472== Some kernel(s) will be replayed on device 1 in order to collect all events/metrics.
-==21472== Profiling application: applications/quasirandomGenerator -device=1 -iters=50
-==21472== Profiling result:
-==21472== Metric result:
+==14892== NVPROF is profiling process 14892, command: applications/quasirandomGenerator -device=0 -iters=15
+==14892== Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+==14892== Profiling application: applications/quasirandomGenerator -device=0 -iters=15
+==14892== Profiling result:
+==14892== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: inverseCNDKernel(float*, unsigned int*, unsigned int)
-          3                  eligible_warps_per_cycle           Eligible Warps Per Active Cycle    1.404109    1.447552    1.431814
-          3                    dram_read_transactions           Device Memory Read Transactions          52          76          62
-          3                      dram_read_throughput             Device Memory Read Throughput  5.8096MB/s  8.5159MB/s  5.7220MB/s
+          3                  eligible_warps_per_cycle           Eligible Warps Per Active Cycle    1.418733    1.452320    1.431285
+          3                    dram_read_transactions           Device Memory Read Transactions          44          76          57
+          3                      dram_read_throughput             Device Memory Read Throughput  4.8859MB/s  8.4917MB/s  5.7220MB/s
     Kernel: quasirandomGeneratorKernel(float*, unsigned int, unsigned int)
-         51                  eligible_warps_per_cycle           Eligible Warps Per Active Cycle    3.294719    3.624305    3.457097
-         51                    dram_read_transactions           Device Memory Read Transactions          45          78          51
-         51                      dram_read_throughput             Device Memory Read Throughput  5.0037MB/s  8.6975MB/s  4.7684MB/s
+         16                  eligible_warps_per_cycle           Eligible Warps Per Active Cycle    3.311462    3.621345    3.477078
+         16                    dram_read_transactions           Device Memory Read Transactions          48         113          56
+         16                      dram_read_throughput             Device Memory Read Throughput  5.3352MB/s  12.551MB/s  5.7220MB/s
 applications/quasirandomGenerator Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Allocating GPU memory...
 Allocating CPU memory...
 Initializing QRNG tables...
 
 Testing QRNG...
 
-quasirandomGenerator, Total Time = 0.54600 s
-quasirandomGenerator, Throughput = 0.2881 GNumbers/s, Time = 0.01092 s, Size = 3145728 Numbers, NumDevsUsed = 1, Workgroup = 384
+quasirandomGenerator, Total Time = 0.15663 s
+quasirandomGenerator, Throughput = 0.3013 GNumbers/s, Time = 0.01044 s, Size = 3145728 Numbers, NumDevsUsed = 1, Workgroup = 384
 
 Reading GPU results...
 Comparing to the CPU results...
@@ -100,40 +159,40 @@ L1 norm: 7.275964E-012
 
 Testing inverseCNDgpu()...
 
-quasirandomGenerator-inverse, Total Time = 0.02311 s
-quasirandomGenerator-inverse, Throughput = 0.2722 GNumbers/s, Time = 0.01155 s, Size = 3145728 Numbers, NumDevsUsed = 1, Workgroup = 128
+quasirandomGenerator-inverse, Total Time = 0.02100 s
+quasirandomGenerator-inverse, Throughput = 0.2996 GNumbers/s, Time = 0.01050 s, Size = 3145728 Numbers, NumDevsUsed = 1, Workgroup = 128
 Reading GPU results...
 
 Comparing to the CPU results...
 L1 norm: 9.439909E-008
 
 Shutting down...
-==24672== NVPROF is profiling process 24672, command: applications/quasirandomGenerator -device=1 -iters=50
-==24672== Some kernel(s) will be replayed on device 1 in order to collect all events/metrics.
-==24672== Profiling application: applications/quasirandomGenerator -device=1 -iters=50
-==24672== Profiling result:
-==24672== Metric result:
+==15112== NVPROF is profiling process 15112, command: applications/quasirandomGenerator -device=0 -iters=15
+==15112== Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+==15112== Profiling application: applications/quasirandomGenerator -device=0 -iters=15
+==15112== Profiling result:
+==15112== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: inverseCNDKernel(float*, unsigned int*, unsigned int)
-          3                   dram_write_transactions          Device Memory Write Transactions      389013      389753      389293
-          3                     dram_write_throughput            Device Memory Write Throughput  42.370GB/s  42.526GB/s  42.437GB/s
-          3                      l2_read_transactions                      L2 Read Transactions         103         111         105
+          3                   dram_write_transactions          Device Memory Write Transactions      389622      390268      389865
+          3                     dram_write_throughput            Device Memory Write Throughput  42.468GB/s  42.551GB/s  42.502GB/s
+          3                      l2_read_transactions                      L2 Read Transactions         103         431         212
     Kernel: quasirandomGeneratorKernel(float*, unsigned int, unsigned int)
-         51                   dram_write_transactions          Device Memory Write Transactions      385661      389681      389100
-         51                     dram_write_throughput            Device Memory Write Throughput  42.271GB/s  42.663GB/s  42.505GB/s
-         51                      l2_read_transactions                      L2 Read Transactions         135         400         234
+         16                   dram_write_transactions          Device Memory Write Transactions      386883      390189      389224
+         16                     dram_write_throughput            Device Memory Write Throughput  42.185GB/s  42.599GB/s  42.485GB/s
+         16                      l2_read_transactions                      L2 Read Transactions         135         513         356
 applications/quasirandomGenerator Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Allocating GPU memory...
 Allocating CPU memory...
 Initializing QRNG tables...
 
 Testing QRNG...
 
-quasirandomGenerator, Total Time = 0.78551 s
-quasirandomGenerator, Throughput = 0.2002 GNumbers/s, Time = 0.01571 s, Size = 3145728 Numbers, NumDevsUsed = 1, Workgroup = 384
+quasirandomGenerator, Total Time = 0.21182 s
+quasirandomGenerator, Throughput = 0.2228 GNumbers/s, Time = 0.01412 s, Size = 3145728 Numbers, NumDevsUsed = 1, Workgroup = 384
 
 Reading GPU results...
 Comparing to the CPU results...
@@ -142,40 +201,40 @@ L1 norm: 7.275964E-012
 
 Testing inverseCNDgpu()...
 
-quasirandomGenerator-inverse, Total Time = 0.03519 s
-quasirandomGenerator-inverse, Throughput = 0.1788 GNumbers/s, Time = 0.01759 s, Size = 3145728 Numbers, NumDevsUsed = 1, Workgroup = 128
+quasirandomGenerator-inverse, Total Time = 0.02874 s
+quasirandomGenerator-inverse, Throughput = 0.2189 GNumbers/s, Time = 0.01437 s, Size = 3145728 Numbers, NumDevsUsed = 1, Workgroup = 128
 Reading GPU results...
 
 Comparing to the CPU results...
 L1 norm: 9.439909E-008
 
 Shutting down...
-==25692== NVPROF is profiling process 25692, command: applications/quasirandomGenerator -device=1 -iters=50
-==25692== Some kernel(s) will be replayed on device 1 in order to collect all events/metrics.
-==25692== Profiling application: applications/quasirandomGenerator -device=1 -iters=50
-==25692== Profiling result:
-==25692== Metric result:
+==14436== NVPROF is profiling process 14436, command: applications/quasirandomGenerator -device=0 -iters=15
+==14436== Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+==14436== Profiling application: applications/quasirandomGenerator -device=0 -iters=15
+==14436== Profiling result:
+==14436== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: inverseCNDKernel(float*, unsigned int*, unsigned int)
-          3                        l2_read_throughput                     L2 Throughput (Reads)  48.993MB/s  49.254MB/s  48.637MB/s
+          3                        l2_read_throughput                     L2 Throughput (Reads)  12.412MB/s  48.099MB/s  23.842MB/s
           3                     l2_write_transactions                     L2 Write Transactions      393222      393222      393222
-          3                       l2_write_throughput                    L2 Throughput (Writes)  42.856GB/s  43.084GB/s  42.934GB/s
+          3                       l2_write_throughput                    L2 Throughput (Writes)  42.706GB/s  42.938GB/s  42.832GB/s
     Kernel: quasirandomGeneratorKernel(float*, unsigned int, unsigned int)
-         51                        l2_read_throughput                     L2 Throughput (Reads)  15.031MB/s  55.396MB/s  27.657MB/s
-         51                     l2_write_transactions                     L2 Write Transactions      393222      393222      393222
-         51                       l2_write_throughput                    L2 Throughput (Writes)  42.756GB/s  43.100GB/s  42.948GB/s
+         16                        l2_read_throughput                     L2 Throughput (Reads)  15.046MB/s  44.564MB/s  26.703MB/s
+         16                     l2_write_transactions                     L2 Write Transactions      393222      393443      393235
+         16                       l2_write_throughput                    L2 Throughput (Writes)  42.707GB/s  43.052GB/s  42.847GB/s
 applications/quasirandomGenerator Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Allocating GPU memory...
 Allocating CPU memory...
 Initializing QRNG tables...
 
 Testing QRNG...
 
-quasirandomGenerator, Total Time = 0.17217 s
-quasirandomGenerator, Throughput = 0.9135 GNumbers/s, Time = 0.00344 s, Size = 3145728 Numbers, NumDevsUsed = 1, Workgroup = 384
+quasirandomGenerator, Total Time = 0.04474 s
+quasirandomGenerator, Throughput = 1.0547 GNumbers/s, Time = 0.00298 s, Size = 3145728 Numbers, NumDevsUsed = 1, Workgroup = 384
 
 Reading GPU results...
 Comparing to the CPU results...
@@ -184,39 +243,39 @@ L1 norm: 7.275964E-012
 
 Testing inverseCNDgpu()...
 
-quasirandomGenerator-inverse, Total Time = 0.00702 s
-quasirandomGenerator-inverse, Throughput = 0.8967 GNumbers/s, Time = 0.00351 s, Size = 3145728 Numbers, NumDevsUsed = 1, Workgroup = 128
+quasirandomGenerator-inverse, Total Time = 0.00600 s
+quasirandomGenerator-inverse, Throughput = 1.0490 GNumbers/s, Time = 0.00300 s, Size = 3145728 Numbers, NumDevsUsed = 1, Workgroup = 128
 Reading GPU results...
 
 Comparing to the CPU results...
 L1 norm: 9.439909E-008
 
 Shutting down...
-==24916== NVPROF is profiling process 24916, command: applications/quasirandomGenerator -device=1 -iters=50
-==24916== Profiling application: applications/quasirandomGenerator -device=1 -iters=50
-==24916== Profiling result:
-==24916== Metric result:
+==14532== NVPROF is profiling process 14532, command: applications/quasirandomGenerator -device=0 -iters=15
+==14532== Profiling application: applications/quasirandomGenerator -device=0 -iters=15
+==14532== Profiling result:
+==14532== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: inverseCNDKernel(float*, unsigned int*, unsigned int)
           3                  shared_load_transactions                  Shared Load Transactions           0           0           0
           3                    shared_load_throughput             Shared Memory Load Throughput  0.00000B/s  0.00000B/s  0.00000B/s
           3                 shared_store_transactions                 Shared Store Transactions           0           0           0
     Kernel: quasirandomGeneratorKernel(float*, unsigned int, unsigned int)
-         51                  shared_load_transactions                  Shared Load Transactions           0           0           0
-         51                    shared_load_throughput             Shared Memory Load Throughput  0.00000B/s  0.00000B/s  0.00000B/s
-         51                 shared_store_transactions                 Shared Store Transactions           0           0           0
+         16                  shared_load_transactions                  Shared Load Transactions           0           0           0
+         16                    shared_load_throughput             Shared Memory Load Throughput  0.00000B/s  0.00000B/s  0.00000B/s
+         16                 shared_store_transactions                 Shared Store Transactions           0           0           0
 applications/quasirandomGenerator Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Allocating GPU memory...
 Allocating CPU memory...
 Initializing QRNG tables...
 
 Testing QRNG...
 
-quasirandomGenerator, Total Time = 0.33553 s
-quasirandomGenerator, Throughput = 0.4688 GNumbers/s, Time = 0.00671 s, Size = 3145728 Numbers, NumDevsUsed = 1, Workgroup = 384
+quasirandomGenerator, Total Time = 0.09457 s
+quasirandomGenerator, Throughput = 0.4989 GNumbers/s, Time = 0.00630 s, Size = 3145728 Numbers, NumDevsUsed = 1, Workgroup = 384
 
 Reading GPU results...
 Comparing to the CPU results...
@@ -225,39 +284,39 @@ L1 norm: 7.275964E-012
 
 Testing inverseCNDgpu()...
 
-quasirandomGenerator-inverse, Total Time = 0.01381 s
-quasirandomGenerator-inverse, Throughput = 0.4555 GNumbers/s, Time = 0.00691 s, Size = 3145728 Numbers, NumDevsUsed = 1, Workgroup = 128
+quasirandomGenerator-inverse, Total Time = 0.01205 s
+quasirandomGenerator-inverse, Throughput = 0.5221 GNumbers/s, Time = 0.00602 s, Size = 3145728 Numbers, NumDevsUsed = 1, Workgroup = 128
 Reading GPU results...
 
 Comparing to the CPU results...
 L1 norm: 9.439909E-008
 
 Shutting down...
-==25780== NVPROF is profiling process 25780, command: applications/quasirandomGenerator -device=1 -iters=50
-==25780== Profiling application: applications/quasirandomGenerator -device=1 -iters=50
-==25780== Profiling result:
-==25780== Metric result:
+==14500== NVPROF is profiling process 14500, command: applications/quasirandomGenerator -device=0 -iters=15
+==14500== Profiling application: applications/quasirandomGenerator -device=0 -iters=15
+==14500== Profiling result:
+==14500== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: inverseCNDKernel(float*, unsigned int*, unsigned int)
           3                   shared_store_throughput            Shared Memory Store Throughput  0.00000B/s  0.00000B/s  0.00000B/s
           3                         branch_efficiency                         Branch Efficiency     100.00%     100.00%     100.00%
           3                               cf_executed        Executed Control-Flow Instructions      642542      642542      642542
     Kernel: quasirandomGeneratorKernel(float*, unsigned int, unsigned int)
-         51                   shared_store_throughput            Shared Memory Store Throughput  0.00000B/s  0.00000B/s  0.00000B/s
-         51                         branch_efficiency                         Branch Efficiency     100.00%     100.00%     100.00%
-         51                               cf_executed        Executed Control-Flow Instructions      148992      148992      148992
+         16                   shared_store_throughput            Shared Memory Store Throughput  0.00000B/s  0.00000B/s  0.00000B/s
+         16                         branch_efficiency                         Branch Efficiency     100.00%     100.00%     100.00%
+         16                               cf_executed        Executed Control-Flow Instructions      148992      148992      148992
 applications/quasirandomGenerator Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Allocating GPU memory...
 Allocating CPU memory...
 Initializing QRNG tables...
 
 Testing QRNG...
 
-quasirandomGenerator, Total Time = 1.19916 s
-quasirandomGenerator, Throughput = 0.1312 GNumbers/s, Time = 0.02398 s, Size = 3145728 Numbers, NumDevsUsed = 1, Workgroup = 384
+quasirandomGenerator, Total Time = 0.35524 s
+quasirandomGenerator, Throughput = 0.1328 GNumbers/s, Time = 0.02368 s, Size = 3145728 Numbers, NumDevsUsed = 1, Workgroup = 384
 
 Reading GPU results...
 Comparing to the CPU results...
@@ -266,40 +325,40 @@ L1 norm: 7.275964E-012
 
 Testing inverseCNDgpu()...
 
-quasirandomGenerator-inverse, Total Time = 0.06474 s
-quasirandomGenerator-inverse, Throughput = 0.0972 GNumbers/s, Time = 0.03237 s, Size = 3145728 Numbers, NumDevsUsed = 1, Workgroup = 128
+quasirandomGenerator-inverse, Total Time = 0.06611 s
+quasirandomGenerator-inverse, Throughput = 0.0952 GNumbers/s, Time = 0.03306 s, Size = 3145728 Numbers, NumDevsUsed = 1, Workgroup = 128
 Reading GPU results...
 
 Comparing to the CPU results...
 L1 norm: 9.439909E-008
 
 Shutting down...
-==27592== NVPROF is profiling process 27592, command: applications/quasirandomGenerator -device=1 -iters=50
-==27592== Some kernel(s) will be replayed on device 1 in order to collect all events/metrics.
-==27592== Profiling application: applications/quasirandomGenerator -device=1 -iters=50
-==27592== Profiling result:
-==27592== Metric result:
+==14352== NVPROF is profiling process 14352, command: applications/quasirandomGenerator -device=0 -iters=15
+==14352== Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+==14352== Profiling application: applications/quasirandomGenerator -device=0 -iters=15
+==14352== Profiling result:
+==14352== Metric result:
 Invocations                               Metric Name                            Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: inverseCNDKernel(float*, unsigned int*, unsigned int)
           3                                 cf_issued              Issued Control-Flow Instructions      642542      642542      642542
           3                             flop_count_sp   Floating Point Operations(Single Precision)   104571099   104571099   104571099
-          3                        flop_sp_efficiency                  FLOP Efficiency(Peak Single)       9.23%       9.36%       9.30%
+          3                        flop_sp_efficiency                  FLOP Efficiency(Peak Single)       9.30%       9.40%       9.35%
     Kernel: quasirandomGeneratorKernel(float*, unsigned int, unsigned int)
-         51                                 cf_issued              Issued Control-Flow Instructions      148992      148992      148992
-         51                             flop_count_sp   Floating Point Operations(Single Precision)     3145728     3145728     3145728
-         51                        flop_sp_efficiency                  FLOP Efficiency(Peak Single)       0.28%       0.29%       0.28%
+         16                                 cf_issued              Issued Control-Flow Instructions      148992      148992      148992
+         16                             flop_count_sp   Floating Point Operations(Single Precision)     3145728     3145728     3145728
+         16                        flop_sp_efficiency                  FLOP Efficiency(Peak Single)       0.28%       0.28%       0.28%
 applications/quasirandomGenerator Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Allocating GPU memory...
 Allocating CPU memory...
 Initializing QRNG tables...
 
 Testing QRNG...
 
-quasirandomGenerator, Total Time = 1.31474 s
-quasirandomGenerator, Throughput = 0.1196 GNumbers/s, Time = 0.02629 s, Size = 3145728 Numbers, NumDevsUsed = 1, Workgroup = 384
+quasirandomGenerator, Total Time = 0.33581 s
+quasirandomGenerator, Throughput = 0.1405 GNumbers/s, Time = 0.02239 s, Size = 3145728 Numbers, NumDevsUsed = 1, Workgroup = 384
 
 Reading GPU results...
 Comparing to the CPU results...
@@ -308,40 +367,40 @@ L1 norm: 7.275964E-012
 
 Testing inverseCNDgpu()...
 
-quasirandomGenerator-inverse, Total Time = 0.05303 s
-quasirandomGenerator-inverse, Throughput = 0.1186 GNumbers/s, Time = 0.02651 s, Size = 3145728 Numbers, NumDevsUsed = 1, Workgroup = 128
+quasirandomGenerator-inverse, Total Time = 0.04379 s
+quasirandomGenerator-inverse, Throughput = 0.1437 GNumbers/s, Time = 0.02190 s, Size = 3145728 Numbers, NumDevsUsed = 1, Workgroup = 128
 Reading GPU results...
 
 Comparing to the CPU results...
 L1 norm: 9.439909E-008
 
 Shutting down...
-==24420== NVPROF is profiling process 24420, command: applications/quasirandomGenerator -device=1 -iters=50
-==24420== Some kernel(s) will be replayed on device 1 in order to collect all events/metrics.
-==24420== Profiling application: applications/quasirandomGenerator -device=1 -iters=50
-==24420== Profiling result:
-==24420== Metric result:
+==11948== NVPROF is profiling process 11948, command: applications/quasirandomGenerator -device=0 -iters=15
+==11948== Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+==11948== Profiling application: applications/quasirandomGenerator -device=0 -iters=15
+==11948== Profiling result:
+==11948== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: inverseCNDKernel(float*, unsigned int*, unsigned int)
           3                            gld_throughput                    Global Load Throughput  0.00000B/s  0.00000B/s  0.00000B/s
           3                          gld_transactions                  Global Load Transactions           0           0           0
-          3                            gst_throughput                   Global Store Throughput  42.813GB/s  43.042GB/s  42.929GB/s
+          3                            gst_throughput                   Global Store Throughput  42.882GB/s  42.981GB/s  42.929GB/s
     Kernel: quasirandomGeneratorKernel(float*, unsigned int, unsigned int)
-         51                            gld_throughput                    Global Load Throughput  0.00000B/s  0.00000B/s  0.00000B/s
-         51                          gld_transactions                  Global Load Transactions           0           0           0
-         51                            gst_throughput                   Global Store Throughput  42.679GB/s  43.085GB/s  42.893GB/s
+         16                            gld_throughput                    Global Load Throughput  0.00000B/s  0.00000B/s  0.00000B/s
+         16                          gld_transactions                  Global Load Transactions           0           0           0
+         16                            gst_throughput                   Global Store Throughput  42.558GB/s  43.009GB/s  42.820GB/s
 applications/quasirandomGenerator Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Allocating GPU memory...
 Allocating CPU memory...
 Initializing QRNG tables...
 
 Testing QRNG...
 
-quasirandomGenerator, Total Time = 0.36825 s
-quasirandomGenerator, Throughput = 0.4271 GNumbers/s, Time = 0.00736 s, Size = 3145728 Numbers, NumDevsUsed = 1, Workgroup = 384
+quasirandomGenerator, Total Time = 0.09332 s
+quasirandomGenerator, Throughput = 0.5056 GNumbers/s, Time = 0.00622 s, Size = 3145728 Numbers, NumDevsUsed = 1, Workgroup = 384
 
 Reading GPU results...
 Comparing to the CPU results...
@@ -350,39 +409,39 @@ L1 norm: 7.275964E-012
 
 Testing inverseCNDgpu()...
 
-quasirandomGenerator-inverse, Total Time = 0.01486 s
-quasirandomGenerator-inverse, Throughput = 0.4235 GNumbers/s, Time = 0.00743 s, Size = 3145728 Numbers, NumDevsUsed = 1, Workgroup = 128
+quasirandomGenerator-inverse, Total Time = 0.01230 s
+quasirandomGenerator-inverse, Throughput = 0.5113 GNumbers/s, Time = 0.00615 s, Size = 3145728 Numbers, NumDevsUsed = 1, Workgroup = 128
 Reading GPU results...
 
 Comparing to the CPU results...
 L1 norm: 9.439909E-008
 
 Shutting down...
-==27460== NVPROF is profiling process 27460, command: applications/quasirandomGenerator -device=1 -iters=50
-==27460== Profiling application: applications/quasirandomGenerator -device=1 -iters=50
-==27460== Profiling result:
-==27460== Metric result:
+==15356== NVPROF is profiling process 15356, command: applications/quasirandomGenerator -device=0 -iters=15
+==15356== Profiling application: applications/quasirandomGenerator -device=0 -iters=15
+==15356== Profiling result:
+==15356== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: inverseCNDKernel(float*, unsigned int*, unsigned int)
           3                          gst_transactions                 Global Store Transactions      393216      393216      393216
-          3                               inst_issued                       Instructions Issued     4882468     4882893     4882619
+          3                               inst_issued                       Instructions Issued     4882562     4882866     4882676
           3                             inst_per_warp                     Instructions per warp  9.5314e+03  9.5314e+03  9.5314e+03
     Kernel: quasirandomGeneratorKernel(float*, unsigned int, unsigned int)
-         51                          gst_transactions                 Global Store Transactions      393216      393216      393216
-         51                               inst_issued                       Instructions Issued     7264996     7265366     7265064
-         51                             inst_per_warp                     Instructions per warp  4.7290e+03  4.7290e+03  4.7290e+03
+         16                          gst_transactions                 Global Store Transactions      393216      393216      393216
+         16                               inst_issued                       Instructions Issued     7265010     7265333     7265103
+         16                             inst_per_warp                     Instructions per warp  4.7290e+03  4.7290e+03  4.7290e+03
 applications/quasirandomGenerator Starting...
 
-gpuDeviceInit() CUDA Device [1]: "GeForce GTX 980
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
 Allocating GPU memory...
 Allocating CPU memory...
 Initializing QRNG tables...
 
 Testing QRNG...
 
-quasirandomGenerator, Total Time = 0.21256 s
-quasirandomGenerator, Throughput = 0.7400 GNumbers/s, Time = 0.00425 s, Size = 3145728 Numbers, NumDevsUsed = 1, Workgroup = 384
+quasirandomGenerator, Total Time = 0.05458 s
+quasirandomGenerator, Throughput = 0.8645 GNumbers/s, Time = 0.00364 s, Size = 3145728 Numbers, NumDevsUsed = 1, Workgroup = 384
 
 Reading GPU results...
 Comparing to the CPU results...
@@ -391,21 +450,21 @@ L1 norm: 7.275964E-012
 
 Testing inverseCNDgpu()...
 
-quasirandomGenerator-inverse, Total Time = 0.00834 s
-quasirandomGenerator-inverse, Throughput = 0.7542 GNumbers/s, Time = 0.00417 s, Size = 3145728 Numbers, NumDevsUsed = 1, Workgroup = 128
+quasirandomGenerator-inverse, Total Time = 0.00732 s
+quasirandomGenerator-inverse, Throughput = 0.8590 GNumbers/s, Time = 0.00366 s, Size = 3145728 Numbers, NumDevsUsed = 1, Workgroup = 128
 Reading GPU results...
 
 Comparing to the CPU results...
 L1 norm: 9.439909E-008
 
 Shutting down...
-==27908== NVPROF is profiling process 27908, command: applications/quasirandomGenerator -device=1 -iters=50
-==27908== Profiling application: applications/quasirandomGenerator -device=1 -iters=50
-==27908== Profiling result:
-==27908== Metric result:
+==12700== NVPROF is profiling process 12700, command: applications/quasirandomGenerator -device=0 -iters=15
+==12700== Profiling application: applications/quasirandomGenerator -device=0 -iters=15
+==12700== Profiling result:
+==12700== Metric result:
 Invocations                               Metric Name                        Metric Description         Min         Max         Avg
-Device "GeForce GTX 980 (1)"
+Device "GeForce GTX 980 (0)"
     Kernel: inverseCNDKernel(float*, unsigned int*, unsigned int)
-          3                                       ipc                              Executed IPC    1.147361    1.162277    1.154982
+          3                                       ipc                              Executed IPC    1.149685    1.160125    1.156301
     Kernel: quasirandomGeneratorKernel(float*, unsigned int, unsigned int)
-         51                                       ipc                              Executed IPC    1.712627    1.737909    1.724388
+         16                                       ipc                              Executed IPC    1.711713    1.736028    1.726571

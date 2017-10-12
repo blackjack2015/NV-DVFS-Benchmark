@@ -1,0 +1,64 @@
+[applications/BlackScholes] - Starting...
+gpuDeviceInit() CUDA Device [0]: "GeForce GTX 980
+Initializing data...
+...allocating CPU memory for options.
+...allocating GPU memory for options.
+...generating input data in CPU mem.
+...copying input data to GPU mem.
+Data init done.
+
+Executing Black-Scholes GPU kernel (5 iterations)...
+iterated 5, average time is 4.259622 msec.
+Options count             : 8388608     
+BlackScholesGPU() time    : 4.259622 msec
+BlackScholesGPU() total   : 21.298112 msec
+Effective memory bandwidth: 19.693313 GB/s
+Gigaoptions per second    : 1.969331     
+
+BlackScholes, Throughput = 1.9693 GOptions/s, Time = 0.00426 s, Size = 8388608 options, NumDevsUsed = 1, Workgroup = 128
+
+Reading back GPU results...
+Checking the results...
+...running CPU calculations.
+
+Comparing the results...
+L1 norm: 1.652171E-007
+Max absolute error: 1.144409E-005
+
+Shutting down...
+...releasing GPU memory.
+...releasing CPU memory.
+Shutdown done.
+
+[BlackScholes] - Test Summary
+Test passed
+==7436== NVPROF is profiling process 7436, command: applications/BlackScholes -device=0 -iters=5
+==7436== Profiling application: applications/BlackScholes -device=0 -iters=5
+==7436== Profiling result:
+Time(%)      Time     Calls       Avg       Min       Max  Name
+ 74.51%  104.59ms        25  4.1835ms  4.1662ms  4.1968ms  BlackScholesGPU(float*, float*, float*, float*, float*, float, float, int)
+ 13.61%  19.101ms         3  6.3669ms  6.3573ms  6.3744ms  [CUDA memcpy HtoD]
+ 11.88%  16.682ms         2  8.3410ms  8.1242ms  8.5578ms  [CUDA memcpy DtoH]
+
+==7436== API calls:
+Time(%)      Time     Calls       Avg       Min       Max  Name
+ 41.78%  144.55ms         5  28.910ms  3.2546ms  131.29ms  cudaMalloc
+ 30.95%  107.08ms        28  3.8244ms  7.2210us  4.2875ms  cudaDeviceSynchronize
+ 14.99%  51.864ms         1  51.864ms  51.864ms  51.864ms  cudaDeviceReset
+ 10.78%  37.289ms         5  7.4577ms  6.1710ms  9.1425ms  cudaMemcpy
+  0.43%  1.4990ms         5  299.79us  223.55us  339.09us  cudaFree
+  0.38%  1.3010ms        25  52.039us  31.592us  73.414us  cudaEventSynchronize
+  0.17%  574.38us        91  6.3110us       0ns  281.92us  cuDeviceGetAttribute
+  0.12%  426.64us         1  426.64us  426.64us  426.64us  cudaGetDeviceProperties
+  0.12%  421.23us        25  16.849us  13.539us  53.858us  cudaLaunch
+  0.12%  413.71us        50  8.2740us  4.8140us  20.760us  cudaEventRecord
+  0.11%  386.02us        25  15.440us  7.5220us  17.451us  cudaEventElapsedTime
+  0.03%  93.874us         1  93.874us  93.874us  93.874us  cuDeviceGetName
+  0.01%  37.611us       200     188ns       0ns  1.5050us  cudaSetupArgument
+  0.00%  14.443us         2  7.2210us  1.8060us  12.637us  cudaEventCreate
+  0.00%  14.142us         1  14.142us  14.142us  14.142us  cudaSetDevice
+  0.00%  11.732us        25     469ns     300ns  3.6100us  cudaConfigureCall
+  0.00%  7.5220us         1  7.5220us  7.5220us  7.5220us  cuDeviceTotalMem
+  0.00%  3.3100us         3  1.1030us     301ns  2.1060us  cuDeviceGetCount
+  0.00%  1.5040us         3     501ns     301ns     902ns  cuDeviceGet
+  0.00%     903ns         1     903ns     903ns     903ns  cudaGetDeviceCount
