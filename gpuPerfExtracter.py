@@ -73,10 +73,10 @@ for fp in perf_filelist:
                     for m in [regex.search(value)] if m]
     if len(message) != 0:
         message = message[0]
-        regex = re.compile(r'\(\d+ \d+ \d+\)')
-        message = regex.match(message)
-        print message
-        rec.append(" ")
+        # print message
+        grid_block = re.findall(r'\(\d+ \d+ \d+\)', message)
+        # print grid_block
+        rec.append(" ".join(grid_block))
     else:
         rec.append(" ")
 
