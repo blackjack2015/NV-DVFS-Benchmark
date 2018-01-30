@@ -1,4 +1,4 @@
-import os
+import os,sys
 import subprocess
 import time
 import re
@@ -32,22 +32,22 @@ print metrics
 print core_frequencies
 print memory_frequencies
 
-# time.sleep(100)
-# open GPU monitor
-# os.system('start nvidiaInspector.exe -showMonitoring')
-
-# reset GPU first
-command = 'nvidiaInspector.exe -forcepstate:%s,16' % nvIns_dev_id
-print command
-os.system(command)
-time.sleep(rest_int)
+if 'linux' in sys.platform:
+    pw_sampling_cmd = 'nohup ./nvml_samples -device=%d -si=%d -output=%s/%s 1>null 2>&1 &'
+    app_exec_cmd = './%s/%s %s -device=%d -secs=%d >> %s/%s'
+    dvfs_cmd = 'gpu=%d fcore=%s fmem=%s ./adjustClock.sh' % (nvIns_dev_id, '%s', '%s')
+    kill_pw_cmd = 'killall nvml_samples'
+elif 'window' in sys.platform:
+    pw_sampling_cmd = 'start /B nvml_samples.exe -device=%d -output=%s/%s > nul'
+    app_exec_cmd = '%s\\%s %s -device=%d -secs=%d >> %s/%s'
+    dvfs_cmd = 'nvidiaInspector.exe -forcepstate:%s,%s -setMemoryClock:%s,1,%s -setGpuClock:%s,1,%s'
+    kill_pw_cmd = 'tasklist|findstr "nvml_samples.exe" && taskkill /F /IM nvml_samples.exe'
 
 for core_f in core_frequencies:
     for mem_f in memory_frequencies:
 
         # set specific frequency
-        command = 'nvidiaInspector.exe -forcepstate:%s,5 -setMemoryClock:%s,1,%s -setGpuClock:%s,1,%s' \
-                        % (nvIns_dev_id, nvIns_dev_id, mem_f, nvIns_dev_id, core_f)
+        command = dvfs_cmd % (core_f, mem_f)
         
         print command
         os.system(command)
@@ -67,26 +67,24 @@ for core_f in core_frequencies:
                 metricslog = 'benchmark_%s_core%d_mem%d_input%02d_metrics.log' % (app, core_f, mem_f, argNo)
 
 
-                # # start record power data
-                # os.system("echo \"arg:%s\" >> %s/%s" % (arg, LOG_ROOT, powerlog))
-                # command = 'start /B nvml_samples.exe -device=%d -output=%s/%s > nul' % (nvIns_dev_id, LOG_ROOT, powerlog)
-                # print command
-                # os.system(command)
-                # time.sleep(rest_int)
+                # start record power data
+                os.system("echo \"arg:%s\" >> %s/%s" % (arg, LOG_ROOT, powerlog))
+                command = pw_sampling_cmd % (nvIns_dev_id, pw_sample_int, LOG_ROOT, powerlog)
+                print command
+                os.system(command)
+                time.sleep(rest_int)
 
-                # # execute program to collect power data
-                # os.system("echo \"arg:%s\" >> %s/%s" % (arg, LOG_ROOT, perflog))
-                # command = '%s\\%s %s -device=%d -secs=%d >> %s/%s' % (APP_ROOT, app, arg, cuda_dev_id, running_time, LOG_ROOT, perflog)
-                # print command
-                # os.system(command)
-                # time.sleep(rest_int)
+                # execute program to collect power data
+                os.system("echo \"arg:%s\" >> %s/%s" % (arg, LOG_ROOT, perflog))
+                command = app_exec_cmd % (APP_ROOT, app, arg, cuda_dev_id, running_time, LOG_ROOT, perflog)
+                print command
+                os.system(command)
+                time.sleep(rest_int)
 
-                # # stop record power data
-                # os.system('tasklist|findstr "nvml_samples.exe" && taskkill /F /IM nvml_samples.exe')
-
+                # stop record power data
+                os.system(kill_pw_cmd)
 
                 # execute program to collect time data
-                # arg, number = re.subn('-iters=[0-9]*', '-iters=10', arg)
                 command = 'nvprof --profile-child-processes %s/%s %s -device=%d -iters=5 >> %s/%s 2>&1' % (APP_ROOT, app, arg, cuda_dev_id, LOG_ROOT, perflog)
                 print command
                 os.system(command)
@@ -114,9 +112,4 @@ for core_f in core_frequencies:
                     time.sleep(rest_int)
                     metCount += 3
 
-# reset GPU first
-command = 'nvidiaInspector.exe -forcepstate:%s,16' % nvIns_dev_id
-print command
-os.system(command)
 time.sleep(rest_int)
-os.system('pause')
