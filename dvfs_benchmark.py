@@ -85,13 +85,13 @@ for core_f in core_frequencies:
                 os.system(kill_pw_cmd)
 
                 # execute program to collect time data
-                command = 'nvprof --profile-child-processes %s/%s %s -device=%d -iters=5 >> %s/%s 2>&1' % (APP_ROOT, app, arg, cuda_dev_id, LOG_ROOT, perflog)
+                command = 'nvprof --profile-child-processes %s/%s %s -device=%d -iters=50 >> %s/%s 2>&1' % (APP_ROOT, app, arg, cuda_dev_id, LOG_ROOT, perflog)
                 print command
                 os.system(command)
                 time.sleep(rest_int)
 
                 # collect grid and block settings
-                command = 'nvprof --print-gpu-trace --profile-child-processes %s/%s %s -device=%d -iters=15 >> %s/%s 2>&1' % (APP_ROOT, app, arg, cuda_dev_id, LOG_ROOT, metricslog)
+                command = 'nvprof --print-gpu-trace --profile-child-processes %s/%s %s -device=%d -iters=50 >> %s/%s 2>&1' % (APP_ROOT, app, arg, cuda_dev_id, LOG_ROOT, metricslog)
                 print command
                 os.system(command)
                 time.sleep(rest_int)
@@ -106,7 +106,7 @@ for core_f in core_frequencies:
                         metStr = ','.join(metrics[metCount:])
                     else:
                         metStr = ','.join(metrics[metCount:metCount + 3])
-                    command = 'nvprof --devices %s --metrics %s %s/%s %s -device=%d -iters=15 >> %s/%s 2>&1' % (cuda_dev_id, metStr, APP_ROOT, app, arg, cuda_dev_id, LOG_ROOT, metricslog)
+                    command = 'nvprof --devices %s --metrics %s %s/%s %s -device=%d -iters=50 >> %s/%s 2>&1' % (cuda_dev_id, metStr, APP_ROOT, app, arg, cuda_dev_id, LOG_ROOT, metricslog)
                     print command
                     os.system(command)
                     time.sleep(rest_int)
