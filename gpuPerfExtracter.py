@@ -37,13 +37,16 @@ csvWriter = csv.writer(csvfile, dialect='excel')
 # write table head
 csvWriter.writerow(head)
 
+coreBase = 1800
+memBase = 4500
+
 for fp in perf_filelist:
     # print fp
 
     baseInfo = fp.split('_')
     appName = baseInfo[1]
-    coreF = baseInfo[2][4:]
-    memF = baseInfo[3][3:]
+    coreF = str(int(baseInfo[2][4:]) + coreBase)
+    memF = str(int(baseInfo[3][3:]) + memBase)
     argNo = baseInfo[4]
 
     kernel = json.loads(cf_ks.get(appName, 'kernels'))[0]
@@ -53,12 +56,23 @@ for fp in perf_filelist:
     f = open(fp, 'r')
     content = f.readlines()
     f.close()
-    regex = re.compile(r'.*\%.*' + kernel)
-    time = filter(regex.search, content)[0].split()[3].strip()
-    if 'us' in time:
-        time = float(time[:-2]) / 1000
-    else:
-        time = float(time[:-2])
+
+    isLog = True
+    if isLog:
+        print fp
+        regex = re.compile(r'(iterated \d+, average time is)|(Average Kernel Time)|(Average Time)')
+        timeRaw = filter(regex.search, content)
+        if len(timeRaw) == 0:
+            continue
+        time = float(timeRaw[0].split()[-2].strip())
+        print time
+    else:  
+        regex = re.compile(r'.*\%.*' + kernel)
+        time = filter(regex.search, content)[0].split()[3].strip()
+        if 'us' in time:
+            time = float(time[:-2]) / 1000
+        else:
+            time = float(time[:-2])
     rec.append(time)
 
     # extract grid and block settings
