@@ -27,7 +27,7 @@ cf_ks = ConfigParser.SafeConfigParser()
 cf_ks.read("configs/kernels_settings.cfg")
 benchmark_programs = cf_ks.sections()
 
-head = ["appName", "coreF", "memF", "argNo", "kernel", "time/ms", "blocks"] + metrics
+head = ["appName", "coreF", "memF", "argNo", "kernel", "time/ms", "blocks", "warps"] + metrics
 print head
 
 # prepare csv file
@@ -89,9 +89,14 @@ for fp in perf_filelist:
         message = message[0]
         # print message
         grid_block = re.findall(r'\(\d+ \d+ \d+\)', message)
-        # print grid_block
-        rec.append(" ".join(grid_block))
+        grid_block = " ".join(grid_block)
+        warps_info = [int(item) for item in grid_block.translate(None, '()').split()]
+        warps = np.prod(np.array(warps_info))
+        print grid_block, warps
+        rec.append(grid_block)
+        rec.append(warps)
     else:
+        rec.append(" ")
         rec.append(" ")
 
     # extract metrics information
