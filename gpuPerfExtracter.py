@@ -9,6 +9,7 @@ import ConfigParser
 import json
 import pandas as pd
 
+gpucard = 'p100'
 logRoot = 'logs'
 
 perf_filelist = glob.glob(r'%s/*perf.log' % logRoot)
@@ -31,14 +32,14 @@ head = ["appName", "coreF", "memF", "argNo", "kernel", "time/ms", "blocks", "war
 print head
 
 # prepare csv file
-csvfile = open('DVFS-Performance.csv', 'wb')
+csvfile = open('%s-DVFS-Performance.csv' % gpucard, 'wb')
 csvWriter = csv.writer(csvfile, dialect='excel')
 
 # write table head
 csvWriter.writerow(head)
 
-coreBase = 1800
-memBase = 4500
+coreBase = 0
+memBase = 0
 
 for fp in perf_filelist:
     # print fp
@@ -66,7 +67,6 @@ for fp in perf_filelist:
 
     isLog = True
     if isLog:
-        print fp
         regex = re.compile(r'(iterated \d+, average time is)|(Average Kernel Time)|(Average Time)')
         timeRaw = filter(regex.search, content)
         if len(timeRaw) == 0:
