@@ -5,6 +5,7 @@ GPUID="${gpu:-0}"
 FCORE="${fcore:-1328}"
 FMEM="${fmem:-715}"
 
+sudo nvidia-smi -i 0 -pl 250   # power limit
 sudo nvidia-smi -i ${GPUID} -pm ENABLED   # Persistence mode ensures that the driver stays loaded even when no CUDA or X applications are running on the GPU
 sudo nvidia-smi -i ${GPUID} -acp 0    # allow clock adjusting permission
 sudo nvidia-smi -i ${GPUID} -ac ${FMEM},${FCORE}

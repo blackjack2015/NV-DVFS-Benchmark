@@ -68,14 +68,14 @@ for core_f in core_frequencies:
 
 
                 # start record power data
-                os.system("echo \"arg:%s\" >> %s/%s" % (arg, LOG_ROOT, powerlog))
+                os.system("echo \"arg:%s\" > %s/%s" % (arg, LOG_ROOT, powerlog))
                 command = pw_sampling_cmd % (nvIns_dev_id, pw_sample_int, LOG_ROOT, powerlog)
                 print command
                 os.system(command)
                 time.sleep(rest_int)
 
                 # execute program to collect power data
-                os.system("echo \"arg:%s\" >> %s/%s" % (arg, LOG_ROOT, perflog))
+                os.system("echo \"arg:%s\" > %s/%s" % (arg, LOG_ROOT, perflog))
                 command = app_exec_cmd % (APP_ROOT, app, arg, cuda_dev_id, running_time, LOG_ROOT, perflog)
                 print command
                 os.system(command)
@@ -85,13 +85,13 @@ for core_f in core_frequencies:
                 os.system(kill_pw_cmd)
 
                 # execute program to collect time data
-                command = 'nvprof --profile-child-processes %s/%s %s -device=%d -iters=50 >> %s/%s 2>&1' % (APP_ROOT, app, arg, cuda_dev_id, LOG_ROOT, perflog)
+                command = 'nvprof --profile-child-processes %s/%s %s -device=%d -secs=5 >> %s/%s 2>&1' % (APP_ROOT, app, arg, cuda_dev_id, LOG_ROOT, perflog)
                 print command
                 os.system(command)
                 time.sleep(rest_int)
 
                 # collect grid and block settings
-                command = 'nvprof --print-gpu-trace --profile-child-processes %s/%s %s -device=%d -iters=50 >> %s/%s 2>&1' % (APP_ROOT, app, arg, cuda_dev_id, LOG_ROOT, metricslog)
+                command = 'nvprof --print-gpu-trace --profile-child-processes %s/%s %s -device=%d -iters=50 > %s/%s 2>&1' % (APP_ROOT, app, arg, cuda_dev_id, LOG_ROOT, metricslog)
                 print command
                 os.system(command)
                 time.sleep(rest_int)

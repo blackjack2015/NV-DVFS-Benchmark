@@ -53,6 +53,7 @@ for fp in perf_filelist:
     f = open(fp, 'r')
     content = f.readlines()
     f.close()
+    print fp
     regex = re.compile(r'.*\%.*' + kernel)
     time = filter(regex.search, content)[0].split()[3].strip()
     if 'us' in time:

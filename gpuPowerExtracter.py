@@ -9,19 +9,19 @@ import ConfigParser
 import json
 import pandas as pd
 
-logRoot = 'ipdps 2018 power logs'
+logRoot = 'logs'
 
 power_filelist = glob.glob(r'%s/*power.log' % logRoot)
 power_filelist.sort()
 
 # Reading metrics list
 cf_bs = ConfigParser.SafeConfigParser()
-cf_bs.read("benchmark_settings.cfg")
+cf_bs.read("configs/benchmark_settings.cfg")
 metrics = json.loads(cf_bs.get("profile_control", "metrics"))
 
 # Read GPU application settings
 cf_ks = ConfigParser.SafeConfigParser()
-cf_ks.read("kernels_settings.cfg")
+cf_ks.read("configs/kernels_settings.cfg")
 benchmark_programs = cf_ks.sections()
 
 head = ["appName", "coreF", "memF", "argNo", "kernel", "power/W"]
@@ -50,7 +50,8 @@ for fp in power_filelist:
     f = open(fp, 'r')
     content = f.readlines()[2:]
     f.close()
-    powerList = [float(line.split()[3].strip()) / 1000.0 for line in content if line.split()[0] == '5']
+    # powerList = [float(line.split()[3].strip()) / 1000.0 for line in content if line.split()[0] == '5']
+    powerList = [float(line.split()[5].strip()) / 1000.0 for line in content if line.split()[3] == coreF]
     powerList = powerList[len(powerList) / 3:len(powerList) * 2 / 3]   # filter out those power data of cooling down GPU
     rec.append(np.mean(powerList))
 
