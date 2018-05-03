@@ -10,7 +10,7 @@ import json
 import pandas as pd
 
 gpucard = 'p100'
-logRoot = 'logs'
+logRoot = 'logs-%s' % gpucard
 
 perf_filelist = glob.glob(r'%s/*perf.log' % logRoot)
 metrics_filelist = glob.glob(r'%s/*metrics.log' % logRoot)
@@ -65,7 +65,7 @@ for fp in perf_filelist:
     else:
         time = float(time[:-2])
 
-    isLog = True
+    isLog = False
     if isLog:
         regex = re.compile(r'(iterated \d+, average time is)|(Average Kernel Time)|(Average Time)')
         timeRaw = filter(regex.search, content)
@@ -80,6 +80,7 @@ for fp in perf_filelist:
             time = float(time[:-2]) / 1000
         else:
             time = float(time[:-2])
+        print time
     rec.append(time)
 
     # extract grid and block settings
@@ -98,7 +99,7 @@ for fp in perf_filelist:
         grid_block = re.findall(r'\(\d+ \d+ \d+\)', message)
         grid_block = " ".join(grid_block)
         warps_info = [int(item) for item in grid_block.translate(None, '()').split()]
-        warps = np.prod(np.array(warps_info))
+        warps = float(np.prod(np.array(warps_info))) / 32.0
         print grid_block, warps
         rec.append(grid_block)
         rec.append(warps)
