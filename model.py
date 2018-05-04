@@ -64,6 +64,7 @@ pointer = ['backprop', 'matrixMul', 'nn']
 
 errors = []
 for i in range(len(cycles['modelled_cycle'])):
+	# if df['appName'][i] not in pointer and df['coreF'][i] >= 500 and df['memF'][i] >= 500:
 	# if df['appName'][i] in pointer and df['coreF'][i] >= 500 and df['memF'][i] >= 500:
 	if df['coreF'][i] >= 500 and df['memF'][i] >= 500:
 		print i
