@@ -8,33 +8,34 @@ gpucard = 'gtx980'
 csv_perf = "csvs/%s-DVFS-Performance-cut.csv" % gpucard
 df = pd.read_csv(csv_perf, header = 0)
 
+df['n_shm_ld'] = df['shared_load_transactions'] / df['warps']
+df['n_shm_st'] = df['shared_store_transactions'] / df['warps']
+
 df['n_gld'] = df['l2_read_transactions'] / df['warps']
 df['n_gst'] = df['l2_write_transactions'] / df['warps']
+#df['n_gld'] = (df['l2_read_transactions'] + df['shared_load_transactions']) / df['warps']
+#df['n_gst'] = (df['l2_write_transactions'] + df['shared_store_transactions']) / df['warps']
 
 # df['l2_miss'] = df['dram_read_transactions'] / df['l2_read_transactions']
 # df['l2_miss'] = df['dram_write_transactions'] / df['l2_write_transactions']
 df['l2_miss'] = (df['dram_read_transactions'] + df['dram_write_transactions']) / (df['l2_read_transactions'] + df['l2_write_transactions'])
-df.loc[df['l2_miss'] > 1, 'l2_miss'] = 1
+# df['l2_miss'] = (df['dram_read_transactions'] + df['dram_write_transactions']) / ((df['n_gst'] + df['n_gld']) * df['warps'])
 
+df.loc[df['l2_miss'] > 1, 'l2_miss'] = 1
 df['l2_hit'] = 1 - df['l2_miss']
-df['n_shm_ld'] = df['shared_load_transactions'] / df['warps']
-df['n_shm_st'] = df['shared_store_transactions'] / df['warps']
 df['mem_insts'] = df['n_gld'] + df['n_gst'] + df['n_shm_ld'] + df['n_shm_st']
 df['insts'] = df['inst_per_warp'] - df['mem_insts']
 df['act_util'] = df['achieved_occupancy']
 df['L_DM'] = a_L_DM * df['coreF'] / df['memF'] + b_L_DM
 df['D_DM'] = (a_D_DM / df['memF'] + b_D_DM) * df['coreF'] / df['memF']
 
-
 cycles = pd.DataFrame(columns=['cold_miss', 'mem_op', 'sm_op', 'modelled_cycle', 'real_cycle']) # real_cycle per round
 cycles['cold_miss'] = df['L_DM']
-cycles['mem_op'] = (df['n_gld'] + df['n_gst']) * \
-				   (df['D_DM'] * (1 - df['l2_hit']) + D_L2 * df['l2_hit']) \
-				   * WARPS_MAX * df['act_util']
-cycles['lat_op'] = (df['n_gld'] + df['n_gst']) * \
-				   ((df['L_DM'] + df['D_DM']) * (1 - df['l2_hit']) + L_L2 * df['l2_hit'])
-cycles['sm_op'] = (df['n_shm_ld'] + df['n_shm_st']) * L_sh \
-					+ df['insts'] * L_INST
+cycles['mem_op'] = (df['n_gld'] + df['n_gst']) * (df['D_DM'] * (1 - df['l2_hit']) + D_L2 * df['l2_hit']) * WARPS_MAX * df['act_util']
+cycles['lat_op'] = (df['n_gld'] + df['n_gst']) * ((df['L_DM'] + df['D_DM']) * (1 - df['l2_hit']) + L_L2 * df['l2_hit'])
+
+cycles['sm_op'] = (df['n_shm_ld'] + df['n_shm_st']) * L_sh + df['insts'] * L_INST
+#cycles['sm_op'] = df['insts'] * L_INST
 
 # add type for offset
 cycles['offset'] = None
@@ -61,13 +62,15 @@ cycles['real_cycle'] = df['time/ms'] * df['coreF'] * 1000 / (df['warps'] / (WARP
 cycles['abe'] = abs(cycles['modelled_cycle'] - cycles['real_cycle']) / cycles['real_cycle']
 
 pointer = ['backprop', 'matrixMul', 'nn']
+# pointer = ['transpose']
 
 errors = []
 for i in range(len(cycles['modelled_cycle'])):
 	# if df['appName'][i] not in pointer and df['coreF'][i] >= 500 and df['memF'][i] >= 500:
+	if df['appName'][i] not in pointer:
 	# if df['appName'][i] in pointer and df['coreF'][i] >= 500 and df['memF'][i] >= 500:
-	if df['coreF'][i] >= 500 and df['memF'][i] >= 500:
-		print i
+	# if df['coreF'][i] >= 500 and df['memF'][i] >= 500:
+		print i, df['appName'][i]
 		print 'n_gld', df['n_gld'][i]
 		print 'n_gst', df['n_gst'][i]
 		print 'l2_hit', df['l2_hit'][i]
