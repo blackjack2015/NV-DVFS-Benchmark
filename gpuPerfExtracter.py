@@ -9,8 +9,8 @@ import ConfigParser
 import json
 import pandas as pd
 
-gpucard = 'p100'
-logRoot = 'logs-%s' % gpucard
+gpucard = 'titanx'
+logRoot = 'logs/%s' % gpucard
 
 perf_filelist = glob.glob(r'%s/*perf.log' % logRoot)
 metrics_filelist = glob.glob(r'%s/*metrics.log' % logRoot)
@@ -32,14 +32,14 @@ head = ["appName", "coreF", "memF", "argNo", "kernel", "time/ms", "blocks", "war
 print head
 
 # prepare csv file
-csvfile = open('%s-DVFS-Performance.csv' % gpucard, 'wb')
+csvfile = open('csvs/%s-DVFS-Performance.csv' % gpucard, 'wb')
 csvWriter = csv.writer(csvfile, dialect='excel')
 
 # write table head
 csvWriter.writerow(head)
 
-coreBase = 0
-memBase = 0
+coreBase = 1809
+memBase = 4500
 
 for fp in perf_filelist:
     # print fp
