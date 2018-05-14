@@ -3,9 +3,6 @@ import numpy as np
 import sys
 from settings import *
 
-gpucard = 'gtx980'
-
-csv_perf = "csvs/%s-DVFS-Performance-cut.csv" % gpucard
 df = pd.read_csv(csv_perf, header = 0)
 
 df['n_shm_ld'] = df['shared_load_transactions'] / df['warps']
@@ -54,7 +51,7 @@ for idx, item in df.iterrows():
 	elif eqType[cur_name] == MIX:
 		cycles.loc[idx, 'offset'] = 0
 	else:
-		print "Invalid modeling type..."
+		print "Invalid modeling type of %s..." % cur_name
 		sys.exit(-1)	
 
 cycles['modelled_cycle'] = cycles['cold_miss'] + cycles['mem_op'] + cycles['sm_op'] + cycles['offset']

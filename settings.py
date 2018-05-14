@@ -1,3 +1,6 @@
+# gpu card and data file
+gpucard = 'p100'
+csv_perf = "csvs/%s-DVFS-Performance.csv" % gpucard
 
 # Equation Type
 DM_HID = 0	# cold miss latency is hidden
@@ -32,7 +35,9 @@ eqType['fastWalshTransform'] = COMP_HID
 eqType['histogram'] = MEM_LAT_BOUND			# 0.076, to be witnessed
 eqType['hotspot'] = MEM_LAT_BOUND
 eqType['matrixMul'] = NO_HID    			# 0.15, consider how to deal with shared memory
+eqType['matrixMulShared'] = NO_HID    			# 0.15, consider how to deal with shared memory
 eqType['matrixMul(Global)'] = DM_COMP_HID
+eqType['matrixMulGlobal'] = DM_COMP_HID
 eqType['mergeSort'] = DM_COMP_HID 
 eqType['nn'] = NO_HID   				# 0.174, too few workload
 eqType['quasirandomGenerator'] = DM_COMP_HID
