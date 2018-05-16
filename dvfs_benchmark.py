@@ -7,10 +7,12 @@ import json
 
 APP_ROOT = 'applications'
 LOG_ROOT = 'logs'
+BS_SETTING = 'titanx-benchmark_settings.cfg'
+KS_SETTING = 'memoryBench-kernels_settings.cfg'
 
 # Reading benchmark settings
 cf_bs = ConfigParser.SafeConfigParser()
-cf_bs.read("configs/benchmark_settings.cfg")
+cf_bs.read("configs/%s" % BS_SETTING)
 
 running_iters = cf_bs.getint("profile_control", "iters")
 running_time = cf_bs.getint("profile_control", "secs")
@@ -24,7 +26,7 @@ memory_frequencies = json.loads(cf_bs.get("dvfs_control", "memF"))
 
 # Read GPU application settings
 cf_ks = ConfigParser.SafeConfigParser()
-cf_ks.read("configs/kernels_settings.cfg")
+cf_ks.read("configs/%s" % KS_SETTING)
 benchmark_programs = cf_ks.sections()
 
 print benchmark_programs
