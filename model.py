@@ -59,12 +59,14 @@ cycles['real_cycle'] = df['time/ms'] * df['coreF'] * 1000 / (df['warps'] / (WARP
 cycles['abe'] = abs(cycles['modelled_cycle'] - cycles['real_cycle']) / cycles['real_cycle']
 
 pointer = ['backprop', 'matrixMul', 'nn']
+kernels = df['appName']
+pointer = [kernels[16]]
 # pointer = ['transpose']
 
 errors = []
 for i in range(len(cycles['modelled_cycle'])):
 	# if df['appName'][i] not in pointer and df['coreF'][i] >= 500 and df['memF'][i] >= 500:
-	if df['appName'][i] not in pointer:
+	if df['appName'][i] in pointer:
 	# if df['appName'][i] in pointer and df['coreF'][i] >= 500 and df['memF'][i] >= 500:
 	# if df['coreF'][i] >= 500 and df['memF'][i] >= 500:
 		print i, df['appName'][i]
