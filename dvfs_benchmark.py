@@ -7,10 +7,12 @@ import json
 
 APP_ROOT = 'applications'
 LOG_ROOT = 'logs'
+BS_SETTING = 'titanx-benchmark_settings.cfg'
+KS_SETTING = 'memoryBench-kernels_settings.cfg'
 
 # Reading benchmark settings
 cf_bs = ConfigParser.SafeConfigParser()
-cf_bs.read("configs/benchmark_settings.cfg")
+cf_bs.read("configs/%s" % BS_SETTING)
 
 running_iters = cf_bs.getint("profile_control", "iters")
 running_time = cf_bs.getint("profile_control", "secs")
@@ -21,10 +23,15 @@ rest_int = cf_bs.getint("profile_control", "rest_time")
 metrics = json.loads(cf_bs.get("profile_control", "metrics"))
 core_frequencies = json.loads(cf_bs.get("dvfs_control", "coreF"))
 memory_frequencies = json.loads(cf_bs.get("dvfs_control", "memF"))
+powerState = cf_bs.getint("dvfs_control", "powerState")
+if powerState == 5:
+    freqState = 1
+else:
+    freqState = powerState
 
 # Read GPU application settings
 cf_ks = ConfigParser.SafeConfigParser()
-cf_ks.read("configs/kernels_settings.cfg")
+cf_ks.read("configs/%s" % KS_SETTING)
 benchmark_programs = cf_ks.sections()
 
 print benchmark_programs
@@ -37,10 +44,15 @@ if 'linux' in sys.platform:
     app_exec_cmd = './%s/%s %s -device=%d -secs=%d >> %s/%s'
     dvfs_cmd = 'gpu=%d fcore=%s fmem=%s ./adjustClock.sh' % (nvIns_dev_id, '%s', '%s')
     kill_pw_cmd = 'killall nvml_samples'
-elif 'window' in sys.platform:
-    pw_sampling_cmd = 'start /B nvml_samples.exe -device=%d -output=%s/%s > nul'
+elif 'win' in sys.platform:
+    pw_sampling_cmd = 'start /B nvml_samples.exe -device=%d -si=%d -output=%s/%s > nul'
     app_exec_cmd = '%s\\%s %s -device=%d -secs=%d >> %s/%s'
-    dvfs_cmd = 'nvidiaInspector.exe -forcepstate:%s,%s -setMemoryClock:%s,1,%s -setGpuClock:%s,1,%s'
+    if powerState !=0:
+        dvfs_cmd = 'nvidiaInspector.exe -forcepstate:%s,%d -setGpuClock:%s,%d,%s -setMemoryClock:%s,%d,%s' \
+                        % (nvIns_dev_id, powerState, nvIns_dev_id, freqState, '%s', nvIns_dev_id, freqState, '%s')
+    else:
+        dvfs_cmd = 'nvidiaInspector.exe -setBaseClockOffset:%s,%d,%s -setMemoryClockOffset:%s,%d,%s' \
+                        % (nvIns_dev_id, freqState, '%s', nvIns_dev_id, freqState, '%s')
     kill_pw_cmd = 'tasklist|findstr "nvml_samples.exe" && taskkill /F /IM nvml_samples.exe'
 
 for core_f in core_frequencies:
