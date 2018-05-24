@@ -1,5 +1,5 @@
 # gpu card and data file
-gpucard = 'titanx'
+gpucard = 'gtx980'
 csv_perf = "csvs/%s-DVFS-Performance.csv" % gpucard
 
 # Equation Type
@@ -16,13 +16,13 @@ b_L_DM = 277.32   # a * f_core / f_mem + b, a = 222.78, b = 277.32 for gtx980
 L_L2 = 222   # 222 for gtx980
 L_INST = 4   # 4 for gtx980
 a_D_DM = 805.03    # a / f_mem + b, a = 805.03, b = 8.1762 for gtx980
-b_D_DM = 8.1762 / 0.85   # a / f_mem + b, a = 805.03, b = 8.1762 for gtx980
-a_D_DM = 17    # a / f_mem + b, a = 805.03, b = 8.1762 for gtx980
-b_D_DM = 22.8   # a / f_mem + b, a = 805.03, b = 8.1762 for gtx980
+b_D_DM = 8.1762    # a / f_mem + b, a = 805.03, b = 8.1762 for gtx980
+#a_D_DM = 17    # a / f_mem + b, a = 805.03, b = 8.1762 for titanx
+#b_D_DM = 22.8   # a / f_mem + b, a = 805.03, b = 8.1762 for titanx
 D_L2 = 1     # 1 for l2 cache
 L_sh = 28    # 28 for gtx980
 WARPS_MAX = 64 # 64 for gtx980
-SM_COUNT = 28 # 56 for p100, 16 for gtx980, 28 for titanx
+SM_COUNT = 16 # 56 for p100, 16 for gtx980, 28 for titanx
 CORES_SM = 128 # 64 for p100, 128 for gtx980 and titanx
 WIDTH_MEM = 256 # 4096 for p100, 256 for gtx980, 384 for titanx
 
@@ -49,4 +49,4 @@ eqType['scan'] = DM_COMP_HID
 eqType['SobolQRNG'] = DM_COMP_HID
 eqType['sortingNetworks'] = DM_COMP_HID
 eqType['transpose'] = DM_HID
-eqType['vectorAdd'] = NO_HID
+eqType['vectorAdd'] = DM_HID
