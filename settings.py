@@ -1,5 +1,5 @@
 # gpu card and data file
-gpucard = 'gtx980'
+gpucard = 'titanx'
 csv_perf = "csvs/%s-DVFS-Performance.csv" % gpucard
 
 # Equation Type
