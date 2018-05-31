@@ -11,7 +11,6 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import fbeta_score, make_scorer
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor
-
 import matplotlib.pyplot as plt
 
 def mean_absolute_error(ground_truth, predictions):
@@ -27,99 +26,137 @@ def rt_fitting(X, y):
 def svr_fitting(X, y, kernel, gamma=0.1, C=1e3, epsilon=0.2):
 
     # make score function
-    loss = make_scorer(mean_absolute_error, greater_is_better=True)
+    loss = make_scorer(mean_absolute_error, greater_is_better=False)
+
+    tuned_parameters = [{'kernel': ['rbf'], 'gamma': [0.1, 0.5], 'C': [1, 10, 100, 1000], 'epsilon': [0.1, 0.2, 0.4]},
+                        {'kernel': ['poly'], 'gamma': [0.1, 0.5], 'C': [1, 10, 100, 1000], 'epsilon': [0.1, 0.2, 0.4], 'degree': [1, 2, 3]}]
 
     # initial svr model
-    svr_model = GridSearchCV(SVR(kernel='rbf', verbose=True, max_iter=-1), cv=10, scoring=loss,
-                           param_grid={"C": [1e3],  
-                           "gamma": [0.1],
-                           "epsilon": [0.2]})  
-    #svr_model = SVR(kernel='rbf', gamma=gamma, C=C, epsilon=epsilon, verbose=True, max_iter=50000)
+    svr_model = GridSearchCV(SVR(verbose=True, max_iter=1e6), cv=5, scoring=loss, param_grid=tuned_parameters[1])
+    #svr_model = SVR(kernel='rbf', gamma=gamma, C=C, epsilon=epsilon, verbose=True, max_iter=-1)
 
     # Fit regression model
     svr_model.fit(X, y)
-    print svr_model.cv_results_
-    print svr_model.best_params_
+
+    #print svr_model.grid_scores_
+    #print svr_model.best_params_
+    #print svr_model.best_score_
 
     return svr_model
 
-df = pd.read_csv(csv_perf, header = 0)
 
-#params = pd.DataFrame(columns=['n_shm_ld', 'n_shm_st', 'n_gld', 'n_gst', 'n_dm_ld', 'n_dm_st', 'n_flop_sp', 'mem_insts', 'insts']) 
-params = pd.DataFrame(columns=['n_shm_ld', 'n_shm_st', 'n_gld', 'n_gst', 'n_dm_ld', 'n_dm_st', 'n_flop_sp']) 
+def data_prepare(gpucard, csv_perf):
 
-# shared memory information
-params['n_shm_ld'] = df['shared_load_transactions'] / df['warps']
-params['n_shm_st'] = df['shared_store_transactions'] / df['warps']
+    if gpucard == 'gtx980':
+        GPUCONF = GTX980()
+    elif gpucard == 'p100':
+        GPUCONF = P100()
+    elif gpucard == 'titanx':
+        GPUCONF = TITANX()
 
-# global memory information
-params['n_gld'] = df['l2_read_transactions'] / df['warps']
-params['n_gst'] = df['l2_write_transactions'] / df['warps']
+    df = pd.read_csv(csv_perf, header = 0)
+    
+    #params = pd.DataFrame(columns=['n_shm_ld', 'n_shm_st', 'n_gld', 'n_gst', 'n_dm_ld', 'n_dm_st', 'n_flop_sp', 'mem_insts', 'insts']) 
+    params = pd.DataFrame(columns=['n_shm_ld', 'n_shm_st', 'n_gld', 'n_gst', 'n_dm_ld', 'n_dm_st', 'n_flop_sp']) 
+    
+    # hardware parameters
+    df['c_to_m'] = df['coreF'] * 1.0 / df['memF']
+    
+    # shared memory information
+    params['n_shm_ld'] = df['shared_load_transactions'] / df['warps'] 
+    params['n_shm_st'] = df['shared_store_transactions'] / df['warps'] 
+    
+    # compute insts
+    params['n_flop_sp'] = df['flop_count_sp'] / df['warps'] / GPUCONF.CORES_SM
+    
+    # global memory information
+    params['n_gld'] = df['l2_read_transactions'] / df['warps']
+    params['n_gst'] = df['l2_write_transactions'] / df['warps']
+    
+    # dram memory information
+    params['n_dm_ld'] = df['dram_read_transactions'] / df['warps'] # / (GPUCONF.WIDTH_MEM / 256)
+    params['n_dm_st'] = df['dram_write_transactions'] / df['warps'] # / (GPUCONF.WIDTH_MEM / 256)
+    
+    # other parameters
+    df['mem_insts'] = params['n_gld'] + params['n_gst'] + params['n_shm_ld'] + params['n_shm_st']
+    params['other_insts'] = (df['inst_per_warp'] - df['mem_insts'] - params['n_flop_sp']) / GPUCONF.CORES_SM
+    params.loc[params['other_insts'] < 0, 'other_insts'] = 0
+    # print params['other_insts']
+    
+    # grouth truth cycle per SM per round
+    #params['real_cycle'] = df['time/ms'] * df['coreF'] * 1000 / (df['warps'] / (GPUCONF.WARPS_MAX * GPUCONF.SM_COUNT * df['achieved_occupancy']))
+    params['real_cycle'] = df['time/ms'] * df['coreF'] * 1000 / (df['warps'] / (GPUCONF.WARPS_MAX * GPUCONF.SM_COUNT))
+    #print params['real_cycle']
+    #params['real_cycle'] = df['time/ms'] * df['coreF'] * 1000 / df['warps'] * 100
+    
+    # normalize
+    params = params.div(params.loc[:, params.columns != 'real_cycle'].sum(axis=1), axis=0)
+    
+    # grouth truth IPC
+    #params['real_cycle'] = df['inst_per_warp'] * df['warps'] / (df['time/ms'] * df['coreF'] * 1000) / GPUCONF.SM_COUNT
+    #print params['real_cycle']
+    
+    # frequency ratio, core/mem
+    params['c_to_m'] = df['coreF'] * 1.0 / df['memF']
+    
+    # sm utilization
+    params['act_util'] = df['achieved_occupancy']
+    
+    print params.head(5)
+    
+    X = params.loc[:, params.columns != 'real_cycle']
+    y = params['real_cycle']
+    
+    print "Total number of samples:", len(X)
+    return X, y, df
 
-# dram memory information
-params['n_dm_ld'] = df['dram_read_transactions'] / df['warps']
-params['n_dm_st'] = df['dram_write_transactions'] / df['warps']
+# gpu card and data file
+gpu1 = 'gtx980'
+gpu2 = 'titanx'
+csv_temp = "csvs/%s-DVFS-Performance.csv"
 
-# compute insts
-params['n_flop_sp'] = df['flop_count_sp'] / df['warps']
+# training data and test data are from different GPU cards
+train_X, train_y, train_df = data_prepare(gpu1, csv_temp % gpu1)
+test_X, test_y, test_df = data_prepare(gpu2, csv_temp % gpu2)
 
-# other parameters
-df['mem_insts'] = params['n_gld'] + params['n_gst'] + params['n_shm_ld'] + params['n_shm_st']
-params['other_insts'] = df['inst_per_warp'] - df['mem_insts'] - params['n_flop_sp']
-# params.loc[params['other_insts'] < 0, 'other_insts'] = 0
-# print params['other_insts']
+# modeling accuracy, that just indicates the correlations between input features and target
+#train_X, train_y, train_df = data_prepare(gpu1, csv_temp % gpu1)
+#test_X, test_y, test_df = data_prepare(gpu1, csv_temp % gpu1)
 
-# grouth truth cycle per SM per round
-#params['real_cycle'] = df['time/ms'] * df['coreF'] * 1000 / (df['warps'] / (WARPS_MAX * SM_COUNT * df['achieved_occupancy']))
-params['real_cycle'] = df['time/ms'] * df['coreF'] * 1000 / (df['warps'] / (WARPS_MAX * SM_COUNT))
-#params['real_cycle'] = df['time/ms'] * df['coreF'] * 1000 / df['warps']
+# training data and test data are from the same GPU card
+#train_X, test_X, train_y, test_y = train_test_split(X, y ,test_size=0.1)
+#split_point = len(X) / 20 * 17
+#train_X = X[:split_point]
+#test_X = X[split_point:]
+#train_y = y[:split_point]
+#test_y = y[split_point:]
 
-# normalize
-params = params.div(params.loc[:, params.columns != 'real_cycle'].sum(axis=1), axis=0)
-
-## grouth truth IPC
-#params['real_cycle'] = df['inst_per_warp'] * df['warps'] / (df['time/ms'] * df['coreF'] * 1000)
-
-# frequency ratio, core/mem
-params['c_to_m'] = df['coreF'] * 1.0 / df['memF']
-
-# sm utilization
-params['act_util'] = df['achieved_occupancy']
-
-print params.head(10)
-
-X = params.loc[:, params.columns != 'real_cycle']
-y = params['real_cycle']
-
-# split train/test dataset
-#train_X, test_X, train_y, test_y = cross_validation.train_test_split(X, y ,test_size=0.2)
-train_X, test_X, train_y, test_y = train_test_split(X, y ,test_size=0.1)
-
-#train_num = len(X) * 9 / 10
-#test_num = len(X) - train_num
-#
-#train_X = X[:train_num]
-#train_y = y[:train_num]
-#test_X = X[train_num:]
-#test_y = y[train_num:]
-
+# fit train data and test on test data
 fit_model = svr_fitting(train_X, train_y, 'rbf')
 #fit_model = rt_fitting(train_X, train_y)
-pred_y = fit_model.predict(test_X)
+train_y_pred = fit_model.predict(train_X)
+test_y_pred = fit_model.predict(test_X)
+train_mae = mean_absolute_error(train_y, train_y_pred)
+test_mae = mean_absolute_error(test_y, test_y_pred)
 
-mae = mean_absolute_error(test_y, pred_y)
+## fit all data/modeling
+#fit_model = svr_fitting(X, y, 'rbf')
+##fit_model = rt_fitting(X, y)
+#pred_y = fit_model.predict(X)
+#mae = mean_absolute_error(y, pred_y)
 
-print "Mean absolute error:", mae
+print "Train Mean absolute error:", train_mae
+print "Test Mean absolute error:", test_mae
 
-#for i in range(len(y)):
-#    print i, y[i], y_rbf[i]
+#for i in range(len(test_y)):
+#    print i, test_y[i], pred_y[i]
 
-#kernels = df['appName'].drop_duplicates()
-#for kernel in kernels:
-#    tmp_y = y[df['appName'] == kernel]
-#    tmp_pred_y = pred_y[df['appName'] == kernel]
-#    
-#    tmp_ape = np.mean(abs(tmp_y - tmp_pred_y) / tmp_y)
-#    # if tmp_ape > 0.15:
-#    print "%s:%f." % (kernel, tmp_ape)
+kernels = test_df['appName'].drop_duplicates()
+for kernel in kernels:
+    tmp_y = test_y[test_df['appName'] == kernel]
+    tmp_pred_y = test_y_pred[test_df['appName'] == kernel]
+    
+    tmp_ape = np.mean(abs(tmp_y - tmp_pred_y) / tmp_y)
+    # if tmp_ape > 0.15:
+    print "%s:%f." % (kernel, tmp_ape)
 
