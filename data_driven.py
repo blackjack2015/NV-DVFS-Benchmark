@@ -18,29 +18,35 @@ def mean_absolute_error(ground_truth, predictions):
 
 def rt_fitting(X, y):
 
-    # regr = DecisionTreeRegressor(max_depth=5)
-    regr = RandomForestRegressor(max_depth=5, random_state=0)
-    regr.fit(X, y)
-    return regr
+    # make score function
+    loss = make_scorer(mean_absolute_error, greater_is_better=False)
 
-def svr_fitting(X, y, kernel, gamma=0.1, C=1e3, epsilon=0.2):
+    tuned_parameters = {'max_depth': [3, 4, 5, 6]}
+    regr = RandomForestRegressor(random_state=0, verbose=True)
+    # regr = DecisionTreeRegressor(max_depth=5)
+
+    regr_model = GridSearchCV(regr, cv=5, scoring=loss, param_grid=tuned_parameters)
+    regr_model.fit(X, y)
+    return regr_model
+
+def svr_fitting(X, y, kernel, gamma=1, C=1e4, epsilon=0.1):
 
     # make score function
     loss = make_scorer(mean_absolute_error, greater_is_better=False)
 
-    tuned_parameters = [{'kernel': ['rbf'], 'gamma': [0.1, 0.5], 'C': [1, 10, 100, 1000], 'epsilon': [0.1, 0.2, 0.4]},
-                        {'kernel': ['poly'], 'gamma': [0.1, 0.5], 'C': [1, 10, 100, 1000], 'epsilon': [0.1, 0.2, 0.4], 'degree': [1, 2, 3]}]
+    tuned_parameters = [{'kernel': ['rbf'], 'gamma': [0.1, 0.5, 1], 'C': [1, 100, 10000], 'epsilon': [0.1, 0.2, 0.4]},
+                        {'kernel': ['poly'], 'gamma': [0.1, 0.5, 1], 'C': [1, 10, 100, 1000], 'epsilon': [0.1, 0.2, 0.4], 'degree': [1, 2, 3]}]
 
     # initial svr model
-    svr_model = GridSearchCV(SVR(verbose=True, max_iter=1e6), cv=5, scoring=loss, param_grid=tuned_parameters[1])
+    svr_model = GridSearchCV(SVR(verbose=True, max_iter=1e6), cv=10, scoring=loss, param_grid=tuned_parameters[1])
     #svr_model = SVR(kernel='rbf', gamma=gamma, C=C, epsilon=epsilon, verbose=True, max_iter=-1)
 
     # Fit regression model
     svr_model.fit(X, y)
 
-    #print svr_model.grid_scores_
-    #print svr_model.best_params_
-    #print svr_model.best_score_
+    print svr_model.grid_scores_
+    print svr_model.best_params_
+    print svr_model.best_score_
 
     return svr_model
 
@@ -74,26 +80,26 @@ def data_prepare(gpucard, csv_perf):
     params['n_gst'] = df['l2_write_transactions'] / df['warps']
     
     # dram memory information
-    params['n_dm_ld'] = df['dram_read_transactions'] / df['warps'] # / (GPUCONF.WIDTH_MEM / 256)
-    params['n_dm_st'] = df['dram_write_transactions'] / df['warps'] # / (GPUCONF.WIDTH_MEM / 256)
+    params['n_dm_ld'] = df['dram_read_transactions'] / df['warps'] #/ (GPUCONF.WIDTH_MEM / 256)
+    params['n_dm_st'] = df['dram_write_transactions'] / df['warps'] #/ (GPUCONF.WIDTH_MEM / 256)
     
     # other parameters
     df['mem_insts'] = params['n_gld'] + params['n_gst'] + params['n_shm_ld'] + params['n_shm_st']
-    params['other_insts'] = (df['inst_per_warp'] - df['mem_insts'] - params['n_flop_sp']) / GPUCONF.CORES_SM
-    params.loc[params['other_insts'] < 0, 'other_insts'] = 0
+    # params['other_insts'] = (df['inst_per_warp'] - df['mem_insts'] - params['n_flop_sp']) #/ GPUCONF.CORES_SM
+    # params.loc[params['other_insts'] < 0, 'other_insts'] = 0
     # print params['other_insts']
     
     # grouth truth cycle per SM per round
     #params['real_cycle'] = df['time/ms'] * df['coreF'] * 1000 / (df['warps'] / (GPUCONF.WARPS_MAX * GPUCONF.SM_COUNT * df['achieved_occupancy']))
-    params['real_cycle'] = df['time/ms'] * df['coreF'] * 1000 / (df['warps'] / (GPUCONF.WARPS_MAX * GPUCONF.SM_COUNT))
+    #params['real_cycle'] = df['time/ms'] * df['coreF'] * 1000 / (df['warps'] / (GPUCONF.WARPS_MAX * GPUCONF.SM_COUNT))
     #print params['real_cycle']
-    #params['real_cycle'] = df['time/ms'] * df['coreF'] * 1000 / df['warps'] * 100
+    #params['real_cycle'] = df['time/ms'] * df['coreF'] * 1000 / df['warps']
     
     # normalize
     params = params.div(params.loc[:, params.columns != 'real_cycle'].sum(axis=1), axis=0)
     
     # grouth truth IPC
-    #params['real_cycle'] = df['inst_per_warp'] * df['warps'] / (df['time/ms'] * df['coreF'] * 1000) / GPUCONF.SM_COUNT
+    params['real_cycle'] = df['inst_per_warp'] * df['warps'] / (df['time/ms'] * df['coreF'] * 1000) / GPUCONF.SM_COUNT
     #print params['real_cycle']
     
     # frequency ratio, core/mem
@@ -108,16 +114,29 @@ def data_prepare(gpucard, csv_perf):
     y = params['real_cycle']
     
     print "Total number of samples:", len(X)
+
+    params['appName'] = df['appName']
+    params.to_csv("csvs/%s_features.csv" % gpucard)
+
     return X, y, df
+
+def compare(train_X, train_y, test_X, test_y):
+    print train_X.head(5)
+    print test_X.head(5)
+    print train_y[:5]
+    print test_y[:5]
 
 # gpu card and data file
 gpu1 = 'gtx980'
-gpu2 = 'titanx'
+gpu2 = 'p100'
 csv_temp = "csvs/%s-DVFS-Performance.csv"
 
 # training data and test data are from different GPU cards
 train_X, train_y, train_df = data_prepare(gpu1, csv_temp % gpu1)
 test_X, test_y, test_df = data_prepare(gpu2, csv_temp % gpu2)
+
+#compare(train_X, train_y, test_X, test_y)
+#sys.exit(0)
 
 # modeling accuracy, that just indicates the correlations between input features and target
 #train_X, train_y, train_df = data_prepare(gpu1, csv_temp % gpu1)
@@ -132,8 +151,8 @@ test_X, test_y, test_df = data_prepare(gpu2, csv_temp % gpu2)
 #test_y = y[split_point:]
 
 # fit train data and test on test data
-fit_model = svr_fitting(train_X, train_y, 'rbf')
-#fit_model = rt_fitting(train_X, train_y)
+# fit_model = svr_fitting(train_X, train_y, 'rbf')
+fit_model = rt_fitting(train_X, train_y)
 train_y_pred = fit_model.predict(train_X)
 test_y_pred = fit_model.predict(test_X)
 train_mae = mean_absolute_error(train_y, train_y_pred)
