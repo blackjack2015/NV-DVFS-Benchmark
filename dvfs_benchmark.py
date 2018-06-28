@@ -78,13 +78,12 @@ for core_f in core_frequencies:
                 perflog = 'benchmark_%s_core%d_mem%d_input%02d_perf.log' % (app, core_f, mem_f, argNo)
                 metricslog = 'benchmark_%s_core%d_mem%d_input%02d_metrics.log' % (app, core_f, mem_f, argNo)
 
-
-                # start record power data
-                os.system("echo \"arg:%s\" > %s/%s" % (arg, LOG_ROOT, powerlog))
-                command = pw_sampling_cmd % (nvIns_dev_id, pw_sample_int, LOG_ROOT, powerlog)
-                print command
-                os.system(command)
-                time.sleep(rest_int)
+                # # start record power data
+                # os.system("echo \"arg:%s\" > %s/%s" % (arg, LOG_ROOT, powerlog))
+                # command = pw_sampling_cmd % (nvIns_dev_id, pw_sample_int, LOG_ROOT, powerlog)
+                # print command
+                # os.system(command)
+                # time.sleep(rest_int)
 
                 # execute program to collect power data
                 os.system("echo \"arg:%s\" > %s/%s" % (arg, LOG_ROOT, perflog))
@@ -93,35 +92,35 @@ for core_f in core_frequencies:
                 os.system(command)
                 time.sleep(rest_int)
 
-                # stop record power data
-                os.system(kill_pw_cmd)
+                # # stop record power data
+                # os.system(kill_pw_cmd)
 
-                # execute program to collect time data
-                command = 'nvprof --profile-child-processes %s/%s %s -device=%d -secs=5 >> %s/%s 2>&1' % (APP_ROOT, app, arg, cuda_dev_id, LOG_ROOT, perflog)
-                print command
-                os.system(command)
-                time.sleep(rest_int)
+                # # execute program to collect time data
+                # command = 'nvprof --profile-child-processes %s/%s %s -device=%d -secs=5 >> %s/%s 2>&1' % (APP_ROOT, app, arg, cuda_dev_id, LOG_ROOT, perflog)
+                # print command
+                # os.system(command)
+                # time.sleep(rest_int)
 
-                # collect grid and block settings
-                command = 'nvprof --print-gpu-trace --profile-child-processes %s/%s %s -device=%d -iters=50 > %s/%s 2>&1' % (APP_ROOT, app, arg, cuda_dev_id, LOG_ROOT, metricslog)
-                print command
-                os.system(command)
-                time.sleep(rest_int)
+                # # collect grid and block settings
+                # command = 'nvprof --print-gpu-trace --profile-child-processes %s/%s %s -device=%d -iters=50 > %s/%s 2>&1' % (APP_ROOT, app, arg, cuda_dev_id, LOG_ROOT, metricslog)
+                # print command
+                # os.system(command)
+                # time.sleep(rest_int)
 
-                # execute program to collect metrics data
-                metCount = 0
+                # # execute program to collect metrics data
+                # metCount = 0
 
-                # to be fixed, the stride should be a multiplier of the metric number
-                while metCount < len(metrics):
+                # # to be fixed, the stride should be a multiplier of the metric number
+                # while metCount < len(metrics):
 
-                    if metCount + 3 > len(metrics):
-                        metStr = ','.join(metrics[metCount:])
-                    else:
-                        metStr = ','.join(metrics[metCount:metCount + 3])
-                    command = 'nvprof --devices %s --metrics %s %s/%s %s -device=%d -iters=50 >> %s/%s 2>&1' % (cuda_dev_id, metStr, APP_ROOT, app, arg, cuda_dev_id, LOG_ROOT, metricslog)
-                    print command
-                    os.system(command)
-                    time.sleep(rest_int)
-                    metCount += 3
+                #     if metCount + 3 > len(metrics):
+                #         metStr = ','.join(metrics[metCount:])
+                #     else:
+                #         metStr = ','.join(metrics[metCount:metCount + 3])
+                #     command = 'nvprof --devices %s --metrics %s %s/%s %s -device=%d -iters=50 >> %s/%s 2>&1' % (cuda_dev_id, metStr, APP_ROOT, app, arg, cuda_dev_id, LOG_ROOT, metricslog)
+                #     print command
+                #     os.system(command)
+                #     time.sleep(rest_int)
+                #     metCount += 3
 
 time.sleep(rest_int)
