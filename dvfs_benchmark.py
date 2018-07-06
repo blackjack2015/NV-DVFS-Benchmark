@@ -67,8 +67,8 @@ for core_f in core_frequencies:
 
         for i, app in enumerate(benchmark_programs):
 
-            if i <= 5:
-                continue
+            #if i <= 18:
+            #    continue
             args = json.loads(cf_ks.get(app, 'args'))
 
             argNo = 0

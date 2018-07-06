@@ -20,12 +20,12 @@ metrics_filelist.sort()
 
 # Reading metrics list
 cf_bs = ConfigParser.SafeConfigParser()
-cf_bs.read("configs/benchmark_settings.cfg")
+cf_bs.read("configs/benchmarks/titanx-test.cfg")
 metrics = json.loads(cf_bs.get("profile_control", "metrics"))
 
 # Read GPU application settings
 cf_ks = ConfigParser.SafeConfigParser()
-cf_ks.read("configs/kernels_settings.cfg")
+cf_ks.read("configs/kernels/perf_model.cfg")
 benchmark_programs = cf_ks.sections()
 
 head = ["appName", "coreF", "memF", "argNo", "kernel", "time/ms", "blocks", "warps"] + metrics
