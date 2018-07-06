@@ -7,12 +7,12 @@ import json
 
 APP_ROOT = 'applications'
 LOG_ROOT = 'logs'
-BS_SETTING = 'titanx-benchmark_settings.cfg'
-KS_SETTING = 'memoryBench-kernels_settings.cfg'
+BS_SETTING = 'titanx-test.cfg'
+KS_SETTING = 'perf_model.cfg'
 
 # Reading benchmark settings
 cf_bs = ConfigParser.SafeConfigParser()
-cf_bs.read("configs/%s" % BS_SETTING)
+cf_bs.read("configs/benchmarks/%s" % BS_SETTING)
 
 running_iters = cf_bs.getint("profile_control", "iters")
 running_time = cf_bs.getint("profile_control", "secs")
@@ -31,7 +31,7 @@ else:
 
 # Read GPU application settings
 cf_ks = ConfigParser.SafeConfigParser()
-cf_ks.read("configs/%s" % KS_SETTING)
+cf_ks.read("configs/kernels/%s" % KS_SETTING)
 benchmark_programs = cf_ks.sections()
 
 print benchmark_programs
@@ -65,8 +65,10 @@ for core_f in core_frequencies:
         os.system(command)
         time.sleep(rest_int)
 
-        for app in benchmark_programs:
+        for i, app in enumerate(benchmark_programs):
 
+            #if i <= 18:
+            #    continue
             args = json.loads(cf_ks.get(app, 'args'))
 
             argNo = 0
@@ -77,7 +79,6 @@ for core_f in core_frequencies:
                 powerlog = 'benchmark_%s_core%d_mem%d_input%02d_power.log' % (app, core_f, mem_f, argNo)
                 perflog = 'benchmark_%s_core%d_mem%d_input%02d_perf.log' % (app, core_f, mem_f, argNo)
                 metricslog = 'benchmark_%s_core%d_mem%d_input%02d_metrics.log' % (app, core_f, mem_f, argNo)
-
 
                 # start record power data
                 os.system("echo \"arg:%s\" > %s/%s" % (arg, LOG_ROOT, powerlog))
@@ -103,7 +104,7 @@ for core_f in core_frequencies:
                 time.sleep(rest_int)
 
                 # collect grid and block settings
-                command = 'nvprof --print-gpu-trace --profile-child-processes %s/%s %s -device=%d -iters=50 > %s/%s 2>&1' % (APP_ROOT, app, arg, cuda_dev_id, LOG_ROOT, metricslog)
+                command = 'nvprof --print-gpu-trace --profile-child-processes %s/%s %s -device=%d -iters=10 > %s/%s 2>&1' % (APP_ROOT, app, arg, cuda_dev_id, LOG_ROOT, metricslog)
                 print command
                 os.system(command)
                 time.sleep(rest_int)
@@ -118,10 +119,12 @@ for core_f in core_frequencies:
                         metStr = ','.join(metrics[metCount:])
                     else:
                         metStr = ','.join(metrics[metCount:metCount + 3])
-                    command = 'nvprof --devices %s --metrics %s %s/%s %s -device=%d -iters=50 >> %s/%s 2>&1' % (cuda_dev_id, metStr, APP_ROOT, app, arg, cuda_dev_id, LOG_ROOT, metricslog)
+                    command = 'nvprof --devices %s --metrics %s %s/%s %s -device=%d -iters=10 >> %s/%s 2>&1' % (cuda_dev_id, metStr, APP_ROOT, app, arg, cuda_dev_id, LOG_ROOT, metricslog)
                     print command
                     os.system(command)
                     time.sleep(rest_int)
                     metCount += 3
+
+                argNo += 1
 
 time.sleep(rest_int)
