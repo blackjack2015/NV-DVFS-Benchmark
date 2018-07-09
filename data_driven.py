@@ -8,7 +8,7 @@ from sklearn.svm import SVR
 from sklearn.model_selection import GridSearchCV, StratifiedKFold, KFold
 from sklearn.model_selection import learning_curve
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import fbeta_score, make_scorer, mean_squared_error
+from sklearn.metrics import fbeta_score, make_scorer, mean_squared_error, r2_score
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor
 import matplotlib.pyplot as plt
@@ -19,21 +19,31 @@ rng = np.random.RandomState(31337)
 
 def mean_absolute_error(ground_truth, predictions):
     return np.mean(abs(ground_truth - predictions) / ground_truth)
+    #return mean_squared_error(ground_truth, predictions)
 
 def xg_fitting(X, y):
 
-    #split_point = 882
+    #split_point = 885
     #xgb_model = xgb.XGBRegressor().fit(X[:split_point], y[:split_point])
     #predictions = xgb_model.predict(X[split_point:])
     #actuals = y[split_point:]
-    ##print mean_squared_error(actuals, predictions)
+    #print mean_squared_error(actuals, predictions)
     #print mean_absolute_error(actuals, predictions)
 
-    kf = KFold(n_splits=10, shuffle=True, random_state=rng)
-    for train_index, test_index in kf.split(X):
-        xgb_model = xgb.XGBRegressor().fit(X.loc[train_index], y[train_index])
-        predictions = xgb_model.predict(X.loc[test_index])
-        actuals = y[test_index]
+    #kf = KFold(n_splits=10, shuffle=True, random_state=rng)
+    #for train_index, test_index in kf.split(X):
+    #    xgb_model = xgb.XGBRegressor().fit(X.loc[train_index], y[train_index])
+    #    predictions = xgb_model.predict(X.loc[test_index])
+    #    actuals = y[test_index]
+    #    #print mean_squared_error(actuals, predictions)
+    #    print mean_absolute_error(actuals, predictions)
+
+    # random select test
+    for i in range(10):
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+        xgb_model = xgb.XGBRegressor().fit(X_train, y_train)
+        predictions = xgb_model.predict(X_test)
+        actuals = y_test
         #print mean_squared_error(actuals, predictions)
         print mean_absolute_error(actuals, predictions)
 
@@ -42,20 +52,22 @@ def xg_fitting(X, y):
 
     n_estimators = [50, 100, 150, 200]
     max_depth = [2, 4, 6, 8]
-    param_grid = dict(max_depth=max_depth, n_estimators=n_estimators)
+    learning_rate = [0.1, 0.01, 0.001]
+    min_child_weight = [1, 2, 3, 4, 5]
+    param_grid = dict(max_depth=max_depth, n_estimators=n_estimators, learning_rate=learning_rate, min_child_weight=min_child_weight)
     
-    # kfold = StratifiedKFold(n_splits=10, shuffle=True, random_state=7)
-    #xg_model = GridSearchCV(XGBRegressor(verbose=True), cv=10, param_grid=param_grid, scoring=loss, n_jobs=-1, verbose=True)
+    #xg_model = GridSearchCV(XGBRegressor(verbose=True), cv=10, param_grid=param_grid, scoring='neg_mean_squared_error', n_jobs=-1, verbose=True)
+    #xg_model.fit(X, y)
     #print xg_model.grid_scores_
     #print xg_model.best_params_
     #print xg_model.best_score_
 
-    xg_model = xgb.XGBRegressor(max_depth=4, n_estimators=50, verbose=True)
+    xg_model = xgb.XGBRegressor(max_depth=4, n_estimators=200, min_child_weight=1, learning_rate=0.1, verbose=True)
     xg_model.fit(X, y)
 
     print xg_model.feature_importances_
-    plot_importance(xg_model)
-    plt.show()
+    #plot_importance(xg_model)
+    #plt.show()
 
     return xg_model
 
@@ -68,7 +80,7 @@ def rt_fitting(X, y):
     regr = RandomForestRegressor(random_state=0, verbose=True)
     # regr = DecisionTreeRegressor(max_depth=5)
 
-    regr_model = GridSearchCV(regr, cv=10, scoring=loss, n_jobs=-1, param_grid=tuned_parameters)
+    regr_model = GridSearchCV(regr, cv=10, scoring='neg_mean_squared_error', n_jobs=-1, param_grid=tuned_parameters)
     regr_model.fit(X, y)
 
     print regr_model.grid_scores_
@@ -86,7 +98,7 @@ def svr_fitting(X, y, kernel, gamma=1, C=1e4, epsilon=0.1):
                         {'kernel': ['poly'], 'gamma': [0.1, 0.5, 1], 'C': [1, 10, 100, 1000], 'epsilon': [0.1, 0.2, 0.4], 'degree': [1, 2, 3]}]
 
     # initial svr model
-    svr_model = GridSearchCV(SVR(verbose=True, max_iter=1e6), cv=10, scoring=loss, param_grid=tuned_parameters[0])
+    svr_model = GridSearchCV(SVR(verbose=True, max_iter=1e6), cv=10, scoring='neg_mean_squared_error', param_grid=tuned_parameters[0])
     #svr_model = SVR(kernel='rbf', gamma=gamma, C=C, epsilon=epsilon, verbose=True, max_iter=-1)
 
     # Fit regression model
@@ -175,20 +187,46 @@ def compare(train_X, train_y, test_X, test_y):
     print test_y[:5]
 
 # gpu card and data file
-gpu1 = 'titanx'
-gpu2 = 'gtx980'
+gpu1 = 'gtx980'
+gpu2 = 'titanx'
+gpu3 = 'p100'
 csv_temp = "csvs/%s-DVFS-Performance.csv"
 
-# training data and test data are from different GPU cards
-train_X, train_y, train_df = data_prepare(gpu1, csv_temp % gpu1)
-test_X, test_y, test_df = data_prepare(gpu2, csv_temp % gpu2)
+# pre-load 3 gpu data
+gpu1_X, gpu1_y, gpu1_df = data_prepare(gpu1, csv_temp % gpu1)
+gpu2_X, gpu2_y, gpu2_df = data_prepare(gpu2, csv_temp % gpu2)
+gpu3_X, gpu3_y, gpu3_df = data_prepare(gpu3, csv_temp % gpu3)
+
+## training data and test data are from different GPU cards
+#train_X, train_y, train_df = gpu1_X, gpu1_y, gpu1_df
+#test_X, test_y, test_df = gpu2_X, gpu2_y, gpu2_df
+#
+#train_X = train_X.append(test_X, ignore_index=True)
+#train_y = train_y.append(test_y, ignore_index=True)
+
+split_1 = 931
+split_2 = 304
+split_3 = 95
+
+#train_X = gpu1_X[:split_1].append(gpu2_X[:split_2]).append(gpu3_X[:split_3])
+#train_y = gpu1_y[:split_1].append(gpu2_y[:split_2]).append(gpu3_y[:split_3])
+#train_df = gpu1_df[:split_1].append(gpu2_df[:split_2]).append(gpu3_df[:split_3])
+#test_X = gpu1_X[split_1:].append(gpu2_X[split_2:]).append(gpu3_X[split_3:])
+#test_y = gpu1_y[split_1:].append(gpu2_y[split_2:]).append(gpu3_y[split_3:])
+#test_df = gpu1_df[split_1:].append(gpu2_df[split_2:]).append(gpu3_df[split_3:])
+
+train_X = gpu1_X[:split_1].append(gpu2_X[:split_2])
+train_y = gpu1_y[:split_1].append(gpu2_y[:split_2])
+train_df = gpu1_df[:split_1].append(gpu2_df[:split_2])
+test_X = gpu1_X[split_1:].append(gpu2_X[split_2:])
+test_y = gpu1_y[split_1:].append(gpu2_y[split_2:])
+test_df = gpu1_df[split_1:].append(gpu2_df[split_2:])
+
+print "len of train:", len(train_X), train_X.tail(3)
+print "len of test:", len(test_X), test_X.tail(3)
 
 #compare(train_X, train_y, test_X, test_y)
 #sys.exit(0)
-
-# modeling accuracy, that just indicates the correlations between input features and target
-#train_X, train_y, train_df = data_prepare(gpu1, csv_temp % gpu1)
-#test_X, test_y, test_df = data_prepare(gpu1, csv_temp % gpu1)
 
 # training data and test data are from the same GPU card
 #train_X, test_X, train_y, test_y = train_test_split(X, y ,test_size=0.1)

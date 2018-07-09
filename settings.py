@@ -5,7 +5,8 @@ COMP_HID = 1    # compute/shared cycle is hidden
 DM_COMP_HID = 2 # compute/shared cycle/cold miss is hidden
 MEM_LAT_BOUND = 3 # memory latency cannot be hidden 
 NO_HID = 4  # no hidden
-MIX = 5     # depend on frequency scaling
+MEM_HID = 5    # mem delay cycle is hidden
+MIX = 6     # depend on frequency scaling
 
 class GTX980:
     def __init__(self):
@@ -56,7 +57,7 @@ class TITANX:
         self.L_L2 = 222   # 222 for gtx980
         self.L_INST = 4   # 4 for gtx980
         self.a_D_DM = 805.03    # a / f_mem + b, a = 805.03, b = 8.1762 for gtx980
-        self.b_D_DM = 8.1762    # a / f_mem + b, a = 805.03, b = 8.1762 for gtx980
+        self.b_D_DM = 11.539    # a / f_mem + b, a = 805.03, b = 8.1762 for gtx980
         self.D_L2 = 1     # 1 for l2 cache
         self.L_sh = 28    # 28 for gtx980
         self.WARPS_MAX = 64 # 64 for gtx980
@@ -66,27 +67,27 @@ class TITANX:
         
         # kernel equation type
         self.eqType = {}
-        self.eqType['backprop'] = DM_HID    				# 0.111, too few workload
-        self.eqType['BlackScholes'] = NO_HID
+        self.eqType['backprop'] = MEM_LAT_BOUND   				# 0.111, too few workload
+        self.eqType['BlackScholes'] = DM_COMP_HID
         self.eqType['conjugateGradient'] = DM_HID
-        self.eqType['convolutionSeparable'] = COMP_HID
-        self.eqType['convolutionTexture'] = NO_HID   
-        self.eqType['fastWalshTransform'] = COMP_HID
+        self.eqType['convolutionSeparable'] = DM_HID
+        self.eqType['convolutionTexture'] = MEM_LAT_BOUND   
+        self.eqType['fastWalshTransform'] = DM_HID
         self.eqType['histogram'] = MEM_LAT_BOUND			# 0.076, to be witnessed
         self.eqType['hotspot'] = MEM_LAT_BOUND
-        self.eqType['matrixMul'] = NO_HID    			# 0.15, consider how to deal with shared memory
-        self.eqType['matrixMulShared'] = NO_HID    			# 0.15, consider how to deal with shared memory
-        self.eqType['matrixMul(Global)'] = DM_COMP_HID
+        self.eqType['matrixMul'] = MEM_LAT_BOUND    			# 0.15, consider how to deal with shared memory
+        self.eqType['matrixMulShared'] = MEM_LAT_BOUND    			# 0.15, consider how to deal with shared memory
+        self.eqType['matrixMul(Global)'] = NO_HID
         self.eqType['matrixMulGlobal'] = DM_COMP_HID
-        self.eqType['mergeSort'] = DM_COMP_HID 
+        self.eqType['mergeSort'] = NO_HID 
         self.eqType['nn'] = NO_HID   				# 0.174, too few workload
-        self.eqType['quasirandomGenerator'] = DM_COMP_HID
+        self.eqType['quasirandomGenerator'] = NO_HID
         self.eqType['reduction'] = MEM_LAT_BOUND
         self.eqType['scalarProd'] = DM_COMP_HID
         self.eqType['scan'] = DM_COMP_HID
-        self.eqType['SobolQRNG'] = DM_COMP_HID
+        self.eqType['SobolQRNG'] = NO_HID
         self.eqType['sortingNetworks'] = DM_COMP_HID
-        self.eqType['transpose'] = DM_HID
+        self.eqType['transpose'] = NO_HID
         self.eqType['vectorAdd'] = DM_HID
 
 class P100:
@@ -95,11 +96,11 @@ class P100:
         self.a_L_DM = 222.78   # a * f_core / f_mem + b, a = 222.78, b = 277.32 for gtx980
         self.b_L_DM = 277.32   # a * f_core / f_mem + b, a = 222.78, b = 277.32 for gtx980
         self.L_L2 = 222   # 222 for gtx980
-        self.L_INST = 4   # 4 for gtx980
-        self.a_D_DM = 805.03    # a / f_mem + b, a = 805.03, b = 8.1762 for gtx980
-        self.b_D_DM = 8.1762    # a / f_mem + b, a = 805.03, b = 8.1762 for gtx980
+        self.L_INST = 8   # 4 for gtx980
+        self.a_D_DM = 201.325    # a / f_mem + b, a = 805.03, b = 8.1762 for gtx980
+        self.b_D_DM = 1.5    # a / f_mem + b, a = 805.03, b = 8.1762 for gtx980
         self.D_L2 = 1     # 1 for l2 cache
-        self.L_sh = 28    # 28 for gtx980
+        self.L_sh = 56    # 28 for gtx980
         self.WARPS_MAX = 64 # 64 for gtx980
         self.SM_COUNT = 56 # 56 for p100, 16 for gtx980, 28 for titanx
         self.CORES_SM = 64 # 64 for p100, 128 for gtx980 and titanx
@@ -107,11 +108,11 @@ class P100:
         
         # kernel equation type
         self.eqType = {}
-        self.eqType['backprop'] = DM_HID    				# 0.111, too few workload
+        self.eqType['backprop'] = MEM_LAT_BOUND    				# 0.111, too few workload
         self.eqType['BlackScholes'] = NO_HID
-        self.eqType['conjugateGradient'] = DM_HID
-        self.eqType['convolutionSeparable'] = COMP_HID
-        self.eqType['convolutionTexture'] = NO_HID   
+        self.eqType['conjugateGradient'] = NO_HID
+        self.eqType['convolutionSeparable'] = MEM_HID
+        self.eqType['convolutionTexture'] = MEM_LAT_BOUND  
         self.eqType['fastWalshTransform'] = COMP_HID
         self.eqType['histogram'] = MEM_LAT_BOUND			# 0.076, to be witnessed
         self.eqType['hotspot'] = MEM_LAT_BOUND
@@ -119,14 +120,14 @@ class P100:
         self.eqType['matrixMulShared'] = NO_HID    			# 0.15, consider how to deal with shared memory
         self.eqType['matrixMul(Global)'] = DM_COMP_HID
         self.eqType['matrixMulGlobal'] = DM_COMP_HID
-        self.eqType['mergeSort'] = DM_COMP_HID 
+        self.eqType['mergeSort'] = NO_HID 
         self.eqType['nn'] = NO_HID   				# 0.174, too few workload
         self.eqType['quasirandomGenerator'] = DM_COMP_HID
         self.eqType['reduction'] = MEM_LAT_BOUND
         self.eqType['scalarProd'] = DM_COMP_HID
         self.eqType['scan'] = DM_COMP_HID
-        self.eqType['SobolQRNG'] = DM_COMP_HID
-        self.eqType['sortingNetworks'] = DM_COMP_HID
+        self.eqType['SobolQRNG'] = NO_HID
+        self.eqType['sortingNetworks'] = NO_HID
         self.eqType['transpose'] = DM_HID
-        self.eqType['vectorAdd'] = DM_HID
+        self.eqType['vectorAdd'] = NO_HID
 

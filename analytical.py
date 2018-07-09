@@ -3,7 +3,9 @@ import numpy as np
 import sys
 from settings import *
 
+csv_perf = "csvs/titanx-DVFS-Performance.csv"
 df = pd.read_csv(csv_perf, header = 0)
+GPUCONF = TITANX()
 
 # shared memory information
 df['n_shm_ld'] = df['shared_load_transactions'] / df['warps']
@@ -27,63 +29,68 @@ df['l2_hit'] = 1 - df['l2_miss']
 df['mem_insts'] = df['n_gld'] + df['n_gst'] + df['n_shm_ld'] + df['n_shm_st']
 df['insts'] = df['inst_per_warp'] - df['mem_insts']
 df['act_util'] = df['achieved_occupancy']
-df['L_DM'] = a_L_DM * df['coreF'] / df['memF'] + b_L_DM
-df['D_DM'] = (a_D_DM / df['memF'] + b_D_DM) * df['coreF'] / df['memF']
+df['L_DM'] = GPUCONF.a_L_DM * df['coreF'] / df['memF'] + GPUCONF.b_L_DM
+df['D_DM'] = (GPUCONF.a_D_DM / df['memF'] + GPUCONF.b_D_DM) * df['coreF'] / df['memF']
 
 # analytical model
 cycles = pd.DataFrame(columns=['cold_miss', 'mem_op', 'sm_op', 'modelled_cycle', 'real_cycle']) # real_cycle per round
 cycles['cold_miss'] = df['L_DM']
-cycles['mem_op'] = (df['n_gld'] + df['n_gst']) * (df['D_DM'] * (1 - df['l2_hit']) + D_L2 * df['l2_hit']) * WARPS_MAX * df['act_util']
-cycles['lat_op'] = (df['n_gld'] + df['n_gst']) * ((df['L_DM'] + df['D_DM']) * (1 - df['l2_hit']) + L_L2 * df['l2_hit'])
-cycles['sm_op'] = (df['n_shm_ld'] + df['n_shm_st']) * L_sh + df['insts'] * L_INST
+cycles['mem_op'] = (df['n_gld'] + df['n_gst']) * (df['D_DM'] * (1 - df['l2_hit']) + GPUCONF.D_L2 * df['l2_hit']) * GPUCONF.WARPS_MAX * df['act_util']
+cycles['lat_op'] = (df['n_gld'] + df['n_gst']) * ((df['L_DM'] + df['D_DM']) * (1 - df['l2_hit']) + GPUCONF.L_L2 * df['l2_hit'])
+cycles['sm_op'] = (df['n_shm_ld'] + df['n_shm_st']) * GPUCONF.L_sh + df['insts'] * GPUCONF.L_INST
 #cycles['sm_op'] = df['insts'] * L_INST
 
 # add type for offset
 cycles['offset'] = None
 for idx, item in df.iterrows():
 	cur_name = df['appName'][idx]
-	if eqType[cur_name] == DM_HID:
+	if GPUCONF.eqType[cur_name] == DM_HID:
 		cycles.loc[idx, 'offset'] = -cycles.loc[idx, 'cold_miss']
-	elif eqType[cur_name] == COMP_HID:
+	elif GPUCONF.eqType[cur_name] == COMP_HID:
 		cycles.loc[idx, 'offset'] = -cycles.loc[idx, 'sm_op']
-	elif eqType[cur_name] == DM_COMP_HID:
+	elif GPUCONF.eqType[cur_name] == MEM_HID:
+		cycles.loc[idx, 'offset'] = -cycles.loc[idx, 'mem_op']
+	elif GPUCONF.eqType[cur_name] == DM_COMP_HID:
 		cycles.loc[idx, 'offset'] = -cycles.loc[idx, 'cold_miss'] -cycles.loc[idx, 'sm_op']
-	elif eqType[cur_name] == MEM_LAT_BOUND:
+	elif GPUCONF.eqType[cur_name] == MEM_LAT_BOUND:
 		cycles.loc[idx, 'offset'] = -cycles.loc[idx, 'mem_op'] +cycles.loc[idx, 'lat_op']
-	elif eqType[cur_name] == NO_HID:
+	elif GPUCONF.eqType[cur_name] == NO_HID:
 		cycles.loc[idx, 'offset'] = 0
-	elif eqType[cur_name] == MIX:
+	elif GPUCONF.eqType[cur_name] == MIX:
 		cycles.loc[idx, 'offset'] = 0
 	else:
 		print "Invalid modeling type of %s..." % cur_name
 		sys.exit(-1)	
 
 cycles['modelled_cycle'] = cycles['cold_miss'] + cycles['mem_op'] + cycles['sm_op'] + cycles['offset']
-cycles['real_cycle'] = df['time/ms'] * df['coreF'] * 1000 / (df['warps'] / (WARPS_MAX * SM_COUNT * df['act_util']))
+cycles['real_cycle'] = df['time/ms'] * df['coreF'] * 1000 / (df['warps'] / (GPUCONF.WARPS_MAX * GPUCONF.SM_COUNT * df['act_util']))
 cycles['abe'] = abs(cycles['modelled_cycle'] - cycles['real_cycle']) / cycles['real_cycle']
 
-pointer = ['backprop', 'matrixMul', 'nn']
+# pointer = ['backprop', 'matrixMul', 'nn']
+pointer = ['BlackScholes']
 #kernels = df['appName']
 #pointer = [kernels[16]]
 # pointer = ['transpose']
 kernels = df['appName'].drop_duplicates()
 
-for kernel in kernels:
-	tmp_cycles = cycles[df['appName'] == kernel]
-	tmp_ape = np.mean(tmp_cycles['abe'])
-
-	if kernel in pointer:
-		print "big bias: %s:%f." % (kernel, tmp_ape)
-		continue
-	print "%s:%f." % (kernel, tmp_ape)
+#for kernel in kernels:
+#	tmp_cycles = cycles[df['appName'] == kernel]
+#	tmp_ape = np.mean(tmp_cycles['abe'])
+#
+#	if kernel in pointer:
+#		print "big bias: %s:%f." % (kernel, tmp_ape)
+#		continue
+#	print "%s:%f." % (kernel, tmp_ape)
 
 
 errors = []
 for i in range(len(cycles['modelled_cycle'])):
 	# if df['appName'][i] not in pointer and df['coreF'][i] >= 500 and df['memF'][i] >= 500:
-	if df['appName'][i] not in pointer:
-	# if df['appName'][i] in pointer and df['coreF'][i] >= 500 and df['memF'][i] >= 500:
-	# if df['coreF'][i] >= 500 and df['memF'][i] >= 500:
+	# if df['appName'][i] not in pointer:
+        # if df['appName'][i] in pointer and df['coreF'][i] >= 500 and df['memF'][i] >= 500:
+	if df['coreF'][i] >= 500 and df['memF'][i] >= 500:
+		if cycles['abe'][i] > 0.15:
+		    print i, df['appName'][i], 'relative error', cycles['abe'][i]
 		#print i, df['appName'][i]
 		#print 'n_gld', df['n_gld'][i]
 		#print 'n_gst', df['n_gst'][i]
@@ -104,5 +111,6 @@ for i in range(len(cycles['modelled_cycle'])):
 		#print 'relative error', cycles['abe'][i]
 		#print '\n'
 		errors.append(cycles['abe'][i])
+           
 
 print "MAPE of %d samples: %f" % (len(errors), np.mean(errors))
