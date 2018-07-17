@@ -7,8 +7,9 @@ import ConfigParser
 import json
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--benchmark_setting', type=str, help='gpu benchmark setting', default='p100')
-parser.add_argument('--kernel_setting', type=str, help='kernels of benchmark', default='synthetic')
+parser.add_argument('--benchmark-setting', type=str, help='gpu benchmark setting', default='p100')
+parser.add_argument('--kernel-setting', type=str, help='kernels of benchmark', default='synthetic')
+parser.add_argument('--app-root', type=str, help='folder of applications', default='applications/linux')
 
 opt = parser.parse_args()
 print opt
@@ -16,8 +17,8 @@ print opt
 BS_SETTING = '%s.cfg' % opt.benchmark_setting
 KS_SETTING = '%s.cfg' % opt.kernel_setting
 
-APP_ROOT = 'applications'
-LOG_ROOT = 'logs/%s-%s' % (BS_SETTING, KS_SETTING)
+APP_ROOT = opt.app_root
+LOG_ROOT = 'logs/%s-%s' % (opt.benchmark_setting, opt.kernel_setting)
 
 try:
     os.makedirs(LOG_ROOT)
