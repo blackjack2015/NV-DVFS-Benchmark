@@ -9,8 +9,9 @@ import ConfigParser
 import json
 import pandas as pd
 
-gpucard = 'titanx'
-logRoot = 'logs/%s' % gpucard
+gpucard = 'p100'
+version = 'synthetic'
+logRoot = 'logs/%s-%s' %( gpucard, version)
 
 perf_filelist = glob.glob(r'%s/*perf.log' % logRoot)
 metrics_filelist = glob.glob(r'%s/*metrics.log' % logRoot)
@@ -20,19 +21,19 @@ metrics_filelist.sort()
 
 # Reading metrics list
 cf_bs = ConfigParser.SafeConfigParser()
-cf_bs.read("configs/benchmarks/titanx-test.cfg")
+cf_bs.read("configs/benchmarks/p100.cfg")
 metrics = json.loads(cf_bs.get("profile_control", "metrics"))
 
 # Read GPU application settings
 cf_ks = ConfigParser.SafeConfigParser()
-cf_ks.read("configs/kernels/perf_model.cfg")
+cf_ks.read("configs/kernels/synthetic.cfg")
 benchmark_programs = cf_ks.sections()
 
 head = ["appName", "coreF", "memF", "argNo", "kernel", "time/ms", "blocks", "warps"] + metrics
 print head
 
 # prepare csv file
-csvfile = open('csvs/%s-DVFS-Performance.csv' % gpucard, 'wb')
+csvfile = open('csvs/%s-%s-Performance.csv' % (gpucard, version), 'wb')
 csvWriter = csv.writer(csvfile, dialect='excel')
 
 # write table head

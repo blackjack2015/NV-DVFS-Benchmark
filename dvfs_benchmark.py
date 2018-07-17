@@ -7,8 +7,8 @@ import json
 
 APP_ROOT = 'applications'
 LOG_ROOT = 'logs'
-BS_SETTING = 'titanx-test.cfg'
-KS_SETTING = 'perf_model.cfg'
+BS_SETTING = 'p100.cfg'
+KS_SETTING = 'synthetic.cfg'
 
 # Reading benchmark settings
 cf_bs = ConfigParser.SafeConfigParser()
