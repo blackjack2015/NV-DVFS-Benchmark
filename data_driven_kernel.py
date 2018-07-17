@@ -147,8 +147,8 @@ def data_prepare(gpucard, csv_perf):
     # global memory information
     params['n_gld'] = df['gld_transactions'] / df['warps'] 
     params['n_gst'] = df['gst_transactions'] / df['warps']
-    params['gld_trans_per_req'] = df['gld_transactions_per_request'] 
-    params['gst_trans_per_req'] = df['gst_transactions_per_request']
+    # params['gld_trans_per_req'] = df['gld_transactions_per_request'] 
+    # params['gst_trans_per_req'] = df['gst_transactions_per_request']
     params['n_gm'] = params['n_gld'] + params['n_gst']
     # params['gm_req'] = params['n_gld'] / params['gld_trans_per_req'] + params['n_gst'] / params['gst_trans_per_req']
     
@@ -165,8 +165,8 @@ def data_prepare(gpucard, csv_perf):
     # shared memory information
     params['n_shm_ld'] = df['shared_load_transactions'] / df['warps'] 
     params['n_shm_st'] = df['shared_store_transactions'] / df['warps'] 
-    params['shld_trans_per_req'] = df['shared_load_transactions_per_request']
-    params['shst_trans_per_req'] = df['shared_store_transactions_per_request'] 
+    # params['shld_trans_per_req'] = df['shared_load_transactions_per_request']
+    # params['shst_trans_per_req'] = df['shared_store_transactions_per_request'] 
     params['n_shm'] = params['n_shm_ld'] + params['n_shm_st'] 
     # params['shm_req'] = params['n_shm_ld'] / params['shld_trans_per_req'] + params['n_shm_st'] / params['shst_trans_per_req']
     
@@ -174,12 +174,12 @@ def data_prepare(gpucard, csv_perf):
     params['tex_hit_rate'] = df['tex_cache_hit_rate']
     params['tex_trans'] = df['tex_cache_transactions'] / df['warps']
 
-    # compute insts
-    params['n_flop_sp'] = df['flop_count_sp'] * 1.0 / (df['warps'] * 32) # / GPUCONF.CORES_SM
-    params['n_flop_sp_fma'] = df['flop_count_sp_fma'] * 1.0 / (df['warps'] * 32) # / GPUCONF.CORES_SM
-    params['n_flop_sp_spec'] = df['flop_count_sp_special'] * 1.0 / (df['warps'] * 32) # / GPUCONF.CORES_SM
-    params['n_flop_dp'] = df['flop_count_dp'] * 1.0 / (df['warps'] * 32) # / GPUCONF.CORES_SM
-    params['n_flop_dp_fma'] = df['flop_count_dp_fma'] * 1.0 / (df['warps'] * 32) # / GPUCONF.CORES_SM
+    # # compute insts
+    # params['n_flop_sp'] = df['flop_count_sp'] * 1.0 / (df['warps'] * 32) # / GPUCONF.CORES_SM
+    # params['n_flop_sp_fma'] = df['flop_count_sp_fma'] * 1.0 / (df['warps'] * 32) # / GPUCONF.CORES_SM
+    # params['n_flop_sp_spec'] = df['flop_count_sp_special'] * 1.0 / (df['warps'] * 32) # / GPUCONF.CORES_SM
+    # params['n_flop_dp'] = df['flop_count_dp'] * 1.0 / (df['warps'] * 32) # / GPUCONF.CORES_SM
+    # params['n_flop_dp_fma'] = df['flop_count_dp_fma'] * 1.0 / (df['warps'] * 32) # / GPUCONF.CORES_SM
 
     # instruction statistic
     params['inst_per_warp'] = df['inst_per_warp']
@@ -210,11 +210,12 @@ def data_prepare(gpucard, csv_perf):
     params['act_util'] = df['achieved_occupancy']
     
     # X = params.loc[:, params.columns != 'real_cycle']
-    X = params.loc[:, ['n_gm', 'n_l2', 'n_shm', 'tex_hit_rate', 'tex_trans', 'n_flop_sp', 'n_flop_dp', 'act_util']]
+    X = params.loc[:, ['n_gm', 'n_l2', 'n_shm', 'tex_hit_rate', 'tex_trans', 'act_util']]
     y = params['real_cycle']
     
     print "Total number of samples:", len(X)
-    print params.head(10)
+    X = X.astype(np.float64)
+    print X.dtypes
 
     params['appName'] = df['appName']
     params.to_csv("csvs/%s_features.csv" % gpucard)
@@ -227,43 +228,20 @@ def compare(train_X, train_y, test_X, test_y):
     print train_y[:5]
     print test_y[:5]
 
-# gpu card and data file
-# gpu1 = 'gtx980'
-gpu = 'titanx'
-version = 'single-workload'
-csv_file = "csvs/%s-%s-DVFS-Performance.csv" % (gpu, version)
+def train(train_X, train_y, train_df):
 
-gpu_X, gpu_y, gpu_df = data_prepare(gpu, csv_file)
-
-def train(gpu_X, gpu_y, gpu_df):
-
-    kernel_idx = range(0, len(gpu_X))
-    random.shuffle(kernel_idx)
-    train_len = len(gpu_X) * 28 / 30
-    test_len = len(gpu_X) - train_len
-    train_idx = kernel_idx[:train_len]
-    test_idx = kernel_idx[train_len:]
-    
-    print train_idx, test_idx
-    
-    train_X = gpu_X.loc[train_idx, :]
-    train_y = gpu_y[train_idx]
-    train_df = gpu_df.loc[train_idx, :]
-    test_X = gpu_X.loc[test_idx, :]
-    test_y = gpu_y[test_idx]
-    test_df = gpu_df.loc[test_idx, :]
-    
     print "len of train:", len(train_X), len(train_y), len(train_df)
-    print "len of test:", len(test_X), len(test_y), len(test_df)
     
     # fit train data and test on test data
     #fit_model = svr_fitting(gpu_X, gpu_y, 'rbf')
     #fit_model = rt_fitting(train_X, train_y)
-    #fit_model = xg_fitting(train_X, train_y)
-    fit_model = nn_fitting(train_X, train_y)
-    train_y_pred = fit_model.predict(train_X)
-    test_y_pred = fit_model.predict(test_X) 
-    train_mae = mean_absolute_error(train_y, train_y_pred)
+    fit_model = xg_fitting(train_X, train_y)
+    #fit_model = nn_fitting(train_X, train_y)
+
+    return fit_model
+
+def test(model, test_X, test_y, test_df):
+    test_y_pred = model.predict(test_X) 
     test_mae = mean_absolute_error(test_y, test_y_pred)
     
     ## fit all data/modeling
@@ -272,7 +250,6 @@ def train(gpu_X, gpu_y, gpu_df):
     #pred_y = fit_model.predict(X)
     #mae = mean_absolute_error(y, pred_y)
     
-    print "Train Mean absolute error:", train_mae
     print "Test Mean absolute error:", test_mae
     
     #for i in range(len(test_y)):
@@ -287,4 +264,31 @@ def train(gpu_X, gpu_y, gpu_df):
         # if tmp_ape > 0.15:
         print "%s:%f." % (kernel, tmp_ape)
 
-train(gpu_X, gpu_y, gpu_df)
+
+# gpu card and data file
+# gpu1 = 'gtx980'
+gpu = 'p100'
+version = 'synthetic'
+csv_file = "csvs/%s-%s-Performance.csv" % (gpu, version)
+
+gpu_X, gpu_y, gpu_df = data_prepare(gpu, csv_file)
+test_X, test_y, test_df = data_prepare(gpu, './csvs/p100-DVFS-Performance.csv')
+
+# kernel_idx = range(0, len(gpu_X))
+# random.shuffle(kernel_idx)
+# train_len = len(gpu_X) * 9 / 10
+# test_len = len(gpu_X) - train_len
+# train_idx = kernel_idx[:train_len]
+# test_idx = kernel_idx[train_len:]
+# 
+# print train_idx, test_idx
+# 
+# train_X = gpu_X.loc[train_idx, :]
+# train_y = gpu_y[train_idx]
+# train_df = gpu_df.loc[train_idx, :]
+# test_X = gpu_X.loc[test_idx, :]
+# test_y = gpu_y[test_idx]
+# test_df = gpu_df.loc[test_idx, :]
+
+model = train(gpu_X, gpu_y, gpu_df)
+test(model, test_X, test_y, test_df)
