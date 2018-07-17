@@ -40,7 +40,7 @@ def xg_fitting(X, y):
 
     # random select test
     for i in range(10):
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.05)
         xgb_model = xgb.XGBRegressor().fit(X_train, y_train)
         predictions = xgb_model.predict(X_test)
         actuals = y_test
@@ -62,7 +62,7 @@ def xg_fitting(X, y):
     #print xg_model.best_params_
     #print xg_model.best_score_
 
-    xg_model = xgb.XGBRegressor(max_depth=4, n_estimators=200, min_child_weight=1, learning_rate=0.1, verbose=True)
+    xg_model = xgb.XGBRegressor(max_depth=4, n_estimators=100, min_child_weight=5, learning_rate=0.1, verbose=True)
     xg_model.fit(X, y)
 
     print xg_model.feature_importances_
@@ -150,7 +150,7 @@ def data_prepare(gpucard, csv_perf):
     # print params['other_insts']
     
     # grouth truth cycle per SM per round
-    #params['real_cycle'] = df['time/ms'] * df['coreF'] * 1000 / (df['warps'] / (GPUCONF.WARPS_MAX * GPUCONF.SM_COUNT * df['achieved_occupancy']))
+    params['real_cycle'] = df['time/ms'] * df['coreF'] * 1000 / (df['warps'] / (GPUCONF.WARPS_MAX * GPUCONF.SM_COUNT * df['achieved_occupancy']))
     #params['real_cycle'] = df['time/ms'] * df['coreF'] * 1000 / (df['warps'] / (GPUCONF.WARPS_MAX * GPUCONF.SM_COUNT))
     #print params['real_cycle']
     #params['real_cycle'] = df['time/ms'] * df['coreF'] * 1000 / df['warps']
@@ -159,7 +159,7 @@ def data_prepare(gpucard, csv_perf):
     params = params.div(params.loc[:, params.columns != 'real_cycle'].sum(axis=1), axis=0)
     
     # grouth truth IPC
-    params['real_cycle'] = df['ipc']
+    #params['real_cycle'] = df['ipc']
     #print params['real_cycle']
     
     # frequency ratio, core/mem
@@ -187,61 +187,28 @@ def compare(train_X, train_y, test_X, test_y):
     print test_y[:5]
 
 # gpu card and data file
-# gpu1 = 'gtx980'
-gpu2 = 'titanx'
-gpu3 = 'p100'
-csv_temp = "csvs/%s-DVFS-Performance.csv"
+gpu = 'titanx'
+version = 'single-workload'
+csv_file = "csvs/%s-%s-DVFS-Performance.csv" % (gpu, version)
 
-# pre-load 3 gpu data
-# gpu1_X, gpu1_y, gpu1_df = data_prepare(gpu1, csv_temp % gpu1)
-gpu2_X, gpu2_y, gpu2_df = data_prepare(gpu2, csv_temp % gpu2)
-gpu3_X, gpu3_y, gpu3_df = data_prepare(gpu3, csv_temp % gpu3)
+# pre-load gpu data
+gpu_X, gpu_y, gpu_df = data_prepare(gpu, csv_file)
+c_to_m_set = list(gpu_df['c_to_m'].drop_duplicates())
+print c_to_m_set
 
-## training data and test data are from different GPU cards
-#train_X, train_y, train_df = gpu1_X, gpu1_y, gpu1_df
-#test_X, test_y, test_df = gpu2_X, gpu2_y, gpu2_df
-#
-#train_X = train_X.append(test_X, ignore_index=True)
-#train_y = train_y.append(test_y, ignore_index=True)
+random.shuffle(c_to_m_set)
+train_c_to_m = c_to_m_set[:len(c_to_m_set) * 10 / 16]
+print train_c_to_m
 
-split_1 = 931
-split_2 = 288
-split_3 = 95
-
-train_X = gpu2_X[:split_2]
-train_y = gpu2_y[:split_2]
-train_df = gpu2_df[:split_2]
-test_X = gpu2_X[split_2:]
-test_y = gpu2_y[split_2:]
-test_df = gpu2_df[split_2:]
-
-#train_X = gpu1_X[:split_1].append(gpu2_X[:split_2]).append(gpu3_X[:split_3])
-#train_y = gpu1_y[:split_1].append(gpu2_y[:split_2]).append(gpu3_y[:split_3])
-#train_df = gpu1_df[:split_1].append(gpu2_df[:split_2]).append(gpu3_df[:split_3])
-#test_X = gpu1_X[split_1:].append(gpu2_X[split_2:]).append(gpu3_X[split_3:])
-#test_y = gpu1_y[split_1:].append(gpu2_y[split_2:]).append(gpu3_y[split_3:])
-#test_df = gpu1_df[split_1:].append(gpu2_df[split_2:]).append(gpu3_df[split_3:])
-
-#train_X = gpu1_X[:split_1].append(gpu2_X[:split_2])
-#train_y = gpu1_y[:split_1].append(gpu2_y[:split_2])
-#train_df = gpu1_df[:split_1].append(gpu2_df[:split_2])
-#test_X = gpu1_X[split_1:].append(gpu2_X[split_2:])
-#test_y = gpu1_y[split_1:].append(gpu2_y[split_2:])
-#test_df = gpu1_df[split_1:].append(gpu2_df[split_2:])
+train_X = gpu_X[gpu_X['c_to_m'].isin(train_c_to_m)]
+train_y = gpu_y[gpu_X['c_to_m'].isin(train_c_to_m)]
+train_df = gpu_df[gpu_X['c_to_m'].isin(train_c_to_m)]
+test_X = gpu_X[~gpu_X['c_to_m'].isin(train_c_to_m)]
+test_y = gpu_y[~gpu_X['c_to_m'].isin(train_c_to_m)]
+test_df = gpu_df[~gpu_X['c_to_m'].isin(train_c_to_m)]
 
 print "len of train:", len(train_X), train_X.tail(3)
 print "len of test:", len(test_X), test_X.tail(3)
-
-#compare(train_X, train_y, test_X, test_y)
-#sys.exit(0)
-
-# training data and test data are from the same GPU card
-#train_X, test_X, train_y, test_y = train_test_split(X, y ,test_size=0.1)
-#split_point = len(X) / 20 * 17
-#train_X = X[:split_point]
-#test_X = X[split_point:]
-#train_y = y[:split_point]
-#test_y = y[split_point:]
 
 # fit train data and test on test data
 #fit_model = svr_fitting(train_X, train_y, 'rbf')

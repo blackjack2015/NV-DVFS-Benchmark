@@ -9,8 +9,9 @@ import ConfigParser
 import json
 import pandas as pd
 
-gpucard = 'titanx'
-logRoot = 'logs/%s' % gpucard
+gpucard = 'p100'
+version = 'synthetic'
+logRoot = 'logs/%s-%s' %( gpucard, version)
 
 perf_filelist = glob.glob(r'%s/*perf.log' % logRoot)
 metrics_filelist = glob.glob(r'%s/*metrics.log' % logRoot)
@@ -18,29 +19,41 @@ metrics_filelist = glob.glob(r'%s/*metrics.log' % logRoot)
 perf_filelist.sort()
 metrics_filelist.sort()
 
-# Reading metrics list
-cf_bs = ConfigParser.SafeConfigParser()
-cf_bs.read("configs/benchmarks/titanx-test.cfg")
-metrics = json.loads(cf_bs.get("profile_control", "metrics"))
+# <<<<<<< HEAD
+# # Reading metrics list
+# cf_bs = ConfigParser.SafeConfigParser()
+# cf_bs.read("configs/benchmarks/p100.cfg")
+# metrics = json.loads(cf_bs.get("profile_control", "metrics"))
+# =======
+# ## Reading metrics list
+# #cf_bs = ConfigParser.SafeConfigParser()
+# #cf_bs.read("configs/benchmarks/titanx-test.cfg")
+# #metrics = json.loads(cf_bs.get("profile_control", "metrics"))
+# >>>>>>> 3ba57a025825511c94eb223050cfd9da21235106
 
 # Read GPU application settings
 cf_ks = ConfigParser.SafeConfigParser()
-cf_ks.read("configs/kernels/perf_model.cfg")
+cf_ks.read("configs/kernels/synthetic.cfg")
 benchmark_programs = cf_ks.sections()
 
-head = ["appName", "coreF", "memF", "argNo", "kernel", "time/ms", "blocks", "warps"] + metrics
-print head
-
-# prepare csv file
-csvfile = open('csvs/%s-DVFS-Performance.csv' % gpucard, 'wb')
-csvWriter = csv.writer(csvfile, dialect='excel')
-
-# write table head
-csvWriter.writerow(head)
-
+# <<<<<<< HEAD
+# head = ["appName", "coreF", "memF", "argNo", "kernel", "time/ms", "blocks", "warps"] + metrics
+# print head
+# 
+# # prepare csv file
+# csvfile = open('csvs/%s-%s-Performance.csv' % (gpucard, version), 'wb')
+# csvWriter = csv.writer(csvfile, dialect='excel')
+# 
+# # write table head
+# csvWriter.writerow(head)
+# 
+# =======
+# >>>>>>> 3ba57a025825511c94eb223050cfd9da21235106
 coreBase = 1809
 memBase = 4500
 
+metrics = []
+recs = []
 for fp in perf_filelist:
     # print fp
 
@@ -120,6 +133,12 @@ for fp in perf_filelist:
                 for line in content[s+1:min(maxLen,s+4)]]
 
     for line in message:
+        metric = line.split()[1]
+
+        # initialize metrics list
+        if len(metrics) < len(message):
+            metrics.append(metric)
+
         value = line.split()[-1]
 
         if '%' in value:
@@ -138,8 +157,22 @@ for fp in perf_filelist:
         rec.append(value)
 
     # print rec
-    csvWriter.writerow(rec[:len(head)])
+    recs.append(rec)
+    # csvWriter.writerow(rec[:len(head)])
 
+head = ["appName", "coreF", "memF", "argNo", "kernel", "time/ms", "blocks", "warps"] + metrics
+print head
+
+# prepare csv file
+csvfile = open('csvs/%s-%s-Performance.csv' % (gpucard, version), 'wb')
+csvWriter = csv.writer(csvfile, dialect='excel')
+
+# write table head
+csvWriter.writerow(head)
+
+# write records
+for rec in recs:
+    csvWriter.writerow(rec[:len(head)])
 
 # tempf = open('perfData.bin', 'wb')
 # pickle.dump(record, tempf, 0)

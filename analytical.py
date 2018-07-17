@@ -53,7 +53,7 @@ for idx, item in df.iterrows():
 	elif GPUCONF.eqType[cur_name] == DM_COMP_HID:
 		cycles.loc[idx, 'offset'] = -cycles.loc[idx, 'cold_miss'] -cycles.loc[idx, 'sm_op']
 	elif GPUCONF.eqType[cur_name] == MEM_LAT_BOUND:
-		cycles.loc[idx, 'offset'] = -cycles.loc[idx, 'mem_op'] +cycles.loc[idx, 'lat_op']
+		cycles.loc[idx, 'offset'] = -cycles.loc[idx, 'mem_op'] -cycles.loc[idx, 'cold_miss'] +cycles.loc[idx, 'lat_op']
 	elif GPUCONF.eqType[cur_name] == NO_HID:
 		cycles.loc[idx, 'offset'] = 0
 	elif GPUCONF.eqType[cur_name] == MIX:
@@ -91,25 +91,25 @@ for i in range(len(cycles['modelled_cycle'])):
 	if df['coreF'][i] >= 500 and df['memF'][i] >= 500:
 		if cycles['abe'][i] > 0.15:
 		    print i, df['appName'][i], 'relative error', cycles['abe'][i]
-		#print i, df['appName'][i]
-		#print 'n_gld', df['n_gld'][i]
-		#print 'n_gst', df['n_gst'][i]
-		#print 'l2_hit', df['l2_hit'][i]
-		#print 'n_shm_ld', df['n_shm_ld'][i]
-		#print 'n_shm_st', df['n_shm_st'][i]
-		#print 'insts', df['insts'][i]
-		#print 'act_util', df['act_util'][i]
-		#print 'dram delay', df['D_DM'][i]
-		#print 'dram latency', df['L_DM'][i]
-		#print 'coreF', df['coreF'][i]
-		#print 'memF', df['memF'][i]
-		#print 'mem_op', cycles['mem_op'][i]
-		#print 'sm_op', cycles['sm_op'][i]
-		#print 'lat_op', cycles['lat_op'][i]
-		#print 'modelled', cycles['modelled_cycle'][i]
-		#print 'real', cycles['real_cycle'][i], df['time/ms'][i], "ms"
-		#print 'relative error', cycles['abe'][i]
-		#print '\n'
+		    # print i, df['appName'][i]
+		    print 'n_gld', df['n_gld'][i]
+		    print 'n_gst', df['n_gst'][i]
+		    print 'l2_hit', df['l2_hit'][i]
+		    print 'n_shm_ld', df['n_shm_ld'][i]
+		    print 'n_shm_st', df['n_shm_st'][i]
+		    print 'insts', df['insts'][i]
+		    print 'act_util', df['act_util'][i]
+		    print 'dram delay', df['D_DM'][i]
+		    print 'dram latency', df['L_DM'][i]
+		    print 'coreF', df['coreF'][i]
+		    print 'memF', df['memF'][i]
+		    print 'mem_op', cycles['mem_op'][i]
+		    print 'sm_op', cycles['sm_op'][i]
+		    print 'lat_op', cycles['lat_op'][i]
+		    print 'modelled', cycles['modelled_cycle'][i]
+		    print 'real', cycles['real_cycle'][i], df['time/ms'][i], "ms"
+		    print 'relative error', cycles['abe'][i]
+		    print '\n'
 		errors.append(cycles['abe'][i])
            
 
