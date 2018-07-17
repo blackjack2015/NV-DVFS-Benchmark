@@ -6,13 +6,15 @@ import ConfigParser
 import json
 
 APP_ROOT = 'applications'
-LOG_ROOT = 'logs'
+LOG_ROOT = 'logs/titanx-test'
 BS_SETTING = 'titanx-test.cfg'
 KS_SETTING = 'perf_model.cfg'
 
 # Reading benchmark settings
 cf_bs = ConfigParser.SafeConfigParser()
 cf_bs.read("configs/benchmarks/%s" % BS_SETTING)
+cf_ks = ConfigParser.SafeConfigParser()
+cf_ks.read("configs/kernels/%s" % KS_SETTING)
 
 running_iters = cf_bs.getint("profile_control", "iters")
 running_time = cf_bs.getint("profile_control", "secs")
@@ -30,8 +32,6 @@ else:
     freqState = powerState
 
 # Read GPU application settings
-cf_ks = ConfigParser.SafeConfigParser()
-cf_ks.read("configs/kernels/%s" % KS_SETTING)
 benchmark_programs = cf_ks.sections()
 
 print benchmark_programs
