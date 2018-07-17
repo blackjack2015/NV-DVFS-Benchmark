@@ -1,14 +1,28 @@
 import os,sys
+import argparse
 import subprocess
 import time
 import re
 import ConfigParser
 import json
 
+parser = argparse.ArgumentParser()
+parser.add_argument('--benchmark_setting', type=str, help='gpu benchmark setting', default='p100')
+parser.add_argument('--kernel_setting', type=str, help='kernels of benchmark', default='synthetic')
+
+opt = parser.parse_args()
+print opt
+
+BS_SETTING = '%s.cfg' % opt.benchmark_setting
+KS_SETTING = '%s.cfg' % opt.kernel_setting
+
 APP_ROOT = 'applications'
-LOG_ROOT = 'logs/p100-synthetic'
-BS_SETTING = 'p100.cfg'
-KS_SETTING = 'synthetic.cfg'
+LOG_ROOT = 'logs/%s-%s' % (BS_SETTING, KS_SETTING)
+
+try:
+    os.makedirs(LOG_ROOT)
+except OSError:
+    pass
 
 # Reading benchmark settings
 cf_bs = ConfigParser.SafeConfigParser()
@@ -71,9 +85,7 @@ for core_f in core_frequencies:
             #    continue
             args = json.loads(cf_ks.get(app, 'args'))
 
-            argNo = 0
-
-            for arg in args:
+            for argNo, arg in enumerate(args):
 
                 # arg, number = re.subn('-device=[0-9]*', '-device=%d' % cuda_dev_id, arg)
                 powerlog = 'benchmark_%s_core%d_mem%d_input%02d_power.log' % (app, core_f, mem_f, argNo)
@@ -125,6 +137,5 @@ for core_f in core_frequencies:
                     time.sleep(rest_int)
                     metCount += 3
 
-                argNo += 1
 
 time.sleep(rest_int)
