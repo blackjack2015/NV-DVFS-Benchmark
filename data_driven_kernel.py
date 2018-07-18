@@ -18,7 +18,7 @@ from xgboost import XGBClassifier, XGBRegressor, plot_importance
 
 # gpu card and data file
 # gpu1 = 'gtx980'
-gpu = 'titanx'
+gpu = 'p100'
 version = 'synthetic'
 csv_file = "csvs/%s-%s-Performance.csv" % (gpu, version)
 
@@ -207,8 +207,11 @@ def data_prepare(gpucard, version, csv_perf):
     params = params.div(params['inst_per_warp'], axis=0)
     
     # grouth truth IPC
-    # params['real_cycle'] = df['ipc']
-    params['real_cycle'] = df['executed_ipc']
+    try:
+        params['real_cycle'] = df['ipc']
+    except Exception as e:
+        params['real_cycle'] = df['executed_ipc']
+
     #params['real_cycle'] = df['time/ms'] * df['coreF'] * 1000 / (df['warps'] / (GPUCONF.WARPS_MAX * GPUCONF.SM_COUNT * df['achieved_occupancy'])) / params['inst_per_warp']
     #print params['real_cycle']
     
@@ -279,7 +282,7 @@ def test(model, test_X, test_y, test_df):
 
 
 gpu_X, gpu_y, gpu_df = data_prepare(gpu, version, csv_file)
-test_X, test_y, test_df = data_prepare(gpu, 'real', './csvs/titanx-real-Performance.csv')
+test_X, test_y, test_df = data_prepare(gpu, 'real', './csvs/%s-real-Performance.csv' % gpu) 
 
 # kernel_idx = range(0, len(gpu_X))
 # random.shuffle(kernel_idx)
