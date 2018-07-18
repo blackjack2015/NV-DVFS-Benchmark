@@ -135,7 +135,7 @@ for core_f in core_frequencies:
                     command = 'nvprof --devices %s --metrics %s %s/%s %s -device=%d -iters=10 >> %s/%s 2>&1' % (cuda_dev_id, metStr, APP_ROOT, app, arg, cuda_dev_id, LOG_ROOT, metricslog)
                     print command
                     os.system(command)
-                    time.sleep(rest_int)
+                    time.sleep(2)
                     metCount += 3
 
 
