@@ -16,6 +16,12 @@ import matplotlib.pyplot as plt
 import xgboost as xgb
 from xgboost import XGBClassifier, XGBRegressor, plot_importance
 
+# gpu card and data file
+# gpu1 = 'gtx980'
+gpu = 'p100'
+version = 'synthetic'
+csv_file = "csvs/%s-%s-Performance.csv" % (gpu, version)
+
 rng = np.random.RandomState(31337)
 
 def mean_absolute_error(ground_truth, predictions):
@@ -121,7 +127,7 @@ def svr_fitting(X, y, kernel, gamma=1, C=1e4, epsilon=0.1):
     return svr_model
 
 
-def data_prepare(gpucard, csv_perf):
+def data_prepare(gpucard, version, csv_perf):
 
     if 'gtx980' in gpucard:
         GPUCONF = GTX980()
@@ -201,7 +207,7 @@ def data_prepare(gpucard, csv_perf):
     params = params.div(params['inst_per_warp'], axis=0)
     
     # grouth truth IPC
-    params['real_cycle'] = df['executed_ipc']
+    params['real_cycle'] = df['ipc']
     #params['real_cycle'] = df['time/ms'] * df['coreF'] * 1000 / (df['warps'] / (GPUCONF.WARPS_MAX * GPUCONF.SM_COUNT * df['achieved_occupancy'])) / params['inst_per_warp']
     #print params['real_cycle']
     
@@ -219,7 +225,7 @@ def data_prepare(gpucard, csv_perf):
     print X.head(5)
 
     params['appName'] = df['appName']
-    params.to_csv("csvs/%s_features.csv" % gpucard)
+    params.to_csv("csvs/%s-%s-features.csv" % (gpucard, version))
 
     return X, y, df
 
@@ -271,14 +277,8 @@ def test(model, test_X, test_y, test_df):
         print "%s:%f." % (kernel, tmp_ape)
 
 
-# gpu card and data file
-# gpu1 = 'gtx980'
-gpu = 'titanx'
-version = 'synthetic'
-csv_file = "csvs/%s-%s-Performance.csv" % (gpu, version)
-
-gpu_X, gpu_y, gpu_df = data_prepare(gpu, csv_file)
-test_X, test_y, test_df = data_prepare(gpu, './csvs/titanx-real-Performance.csv')
+gpu_X, gpu_y, gpu_df = data_prepare(gpu, version, csv_file)
+test_X, test_y, test_df = data_prepare(gpu, 'real', './csvs/p100-real-Performance.csv')
 
 # kernel_idx = range(0, len(gpu_X))
 # random.shuffle(kernel_idx)
