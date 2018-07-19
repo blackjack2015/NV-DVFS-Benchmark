@@ -17,8 +17,8 @@ import xgboost as xgb
 from xgboost import XGBClassifier, XGBRegressor, plot_importance
 
 # gpu card and data file
-# gpu1 = 'gtx980'
-gpu = 'p100'
+#gpu = 'p100'
+gpu = 'titanx'
 version = 'synthetic'
 csv_file = "csvs/%s-%s-Performance.csv" % (gpu, version)
 
@@ -30,8 +30,8 @@ def mean_absolute_error(ground_truth, predictions):
 
 def nn_fitting(X, y):
 
-    nn_model = MLPRegressor(solver='adam', alpha=1e-3, activation='relu',
-                    hidden_layer_sizes=(30, 20, 30), random_state=1, max_iter=1000)
+    nn_model = MLPRegressor(solver='adam', alpha=1e-4, activation='relu',
+                    hidden_layer_sizes=(50, 20, 50), random_state=1, max_iter=1000)
 
     nn_model.fit(X, y)
 
@@ -68,11 +68,12 @@ def xg_fitting(X, y):
 
     n_estimators = [50, 100, 150, 200]
     max_depth = [2, 4, 6, 8]
-    learning_rate = [0.1, 0.01, 0.001]
+    learning_rate = [0.1, 0.01, 0.001, 0.0001]
     min_child_weight = [1, 2, 3, 4, 5]
     param_grid = dict(max_depth=max_depth, n_estimators=n_estimators, learning_rate=learning_rate, min_child_weight=min_child_weight)
     
-    xg_model = GridSearchCV(XGBRegressor(verbose=True), cv=10, param_grid=param_grid, scoring='neg_mean_squared_error', n_jobs=-1, verbose=True)
+    # xg_model = GridSearchCV(XGBRegressor(verbose=True), cv=10, param_grid=param_grid, scoring='neg_mean_squared_error', n_jobs=-1, verbose=True)
+    xg_model = GridSearchCV(XGBRegressor(verbose=True), cv=10, param_grid=param_grid, scoring=loss, n_jobs=-1, verbose=True)
     xg_model.fit(X, y)
     # print xg_model.grid_scores_
     print xg_model.best_params_
@@ -114,7 +115,7 @@ def svr_fitting(X, y, kernel, gamma=1, C=1e4, epsilon=0.1):
                         {'kernel': ['poly'], 'gamma': [0.1, 0.5, 1], 'C': [1, 10, 100, 1000], 'epsilon': [0.1, 0.2, 0.4], 'degree': [1, 2, 3]}]
 
     # initial svr model
-    svr_model = GridSearchCV(SVR(verbose=True, max_iter=1e6), cv=10, scoring='neg_mean_squared_error', param_grid=tuned_parameters[0])
+    svr_model = GridSearchCV(SVR(verbose=True, max_iter=1e6), cv=10, scoring='neg_mean_squared_error', param_grid=tuned_parameters)
     #svr_model = SVR(kernel='rbf', gamma=gamma, C=C, epsilon=epsilon, verbose=True, max_iter=-1)
 
     # Fit regression model
@@ -220,16 +221,19 @@ def data_prepare(gpucard, version, csv_perf):
     params['act_util'] = df['achieved_occupancy']
     
     # X = params.loc[:, params.columns != 'real_cycle']
-    X = params.loc[:, ['n_gm', 'n_l2', 'n_shm', 'tex_hit_rate', 'tex_trans', 'n_flop_sp', 'n_flop_dp', 'act_util']]
+    X = params.loc[:, ['n_dm', 'n_l2', 'n_shm', 'tex_hit_rate', 'tex_trans', 'n_flop_sp', 'n_flop_dp', 'act_util']]
     y = params['real_cycle']
     
+    # X = X.div(X.loc[:, :].sum(axis=1), axis=0)
+
     print "Total number of samples:", len(X)
     X = X.astype(np.float64)
     print X.dtypes
     print X.head(5)
 
     params['appName'] = df['appName']
-    params.to_csv("csvs/%s-%s-features.csv" % (gpucard, version))
+    features = params.loc[:, ['appName', 'c_to_m', 'n_gm', 'n_dm', 'n_l2', 'n_shm', 'tex_hit_rate', 'tex_trans', 'n_flop_sp', 'n_flop_dp', 'act_util', 'real_cycle']]
+    features.to_csv("csvs/%s-%s-features.csv" % (gpucard, version))
 
     return X, y, df
 
