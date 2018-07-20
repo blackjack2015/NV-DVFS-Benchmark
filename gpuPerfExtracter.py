@@ -11,8 +11,8 @@ import pandas as pd
 
 #gpucard = 'p100'
 gpucard = 'titanx'
-#version = 'synthetic'
-version = 'real'
+version = 'synthetic'
+#version = 'real'
 logRoot = 'logs/%s-%s' %( gpucard, version)
 
 perf_filelist = glob.glob(r'%s/*perf.log' % logRoot)
@@ -26,8 +26,8 @@ cf_ks = ConfigParser.SafeConfigParser()
 cf_ks.read("configs/kernels/%s.cfg" % version)
 benchmark_programs = cf_ks.sections()
 
-coreBase = 0
-memBase = 0
+coreBase = 1809
+memBase = 4513
 
 metrics = []
 recs = []
