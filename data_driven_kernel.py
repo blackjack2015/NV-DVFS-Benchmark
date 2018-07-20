@@ -17,8 +17,8 @@ import xgboost as xgb
 from xgboost import XGBClassifier, XGBRegressor, plot_importance
 
 # gpu card and data file
-#gpu = 'p100'
-gpu = 'titanx'
+gpu = 'p100'
+#gpu = 'titanx'
 version = 'synthetic'
 csv_file = "csvs/%s-%s-Performance.csv" % (gpu, version)
 
@@ -187,6 +187,7 @@ def data_prepare(gpucard, version, csv_perf):
     params['n_flop_sp_spec'] = df['flop_count_sp_special'] * 1.0 / (df['warps'] * 32) # / GPUCONF.CORES_SM
     params['n_flop_dp'] = df['flop_count_dp'] * 1.0 / (df['warps'] * 32) # / GPUCONF.CORES_SM
     params['n_flop_dp_fma'] = df['flop_count_dp_fma'] * 1.0 / (df['warps'] * 32) # / GPUCONF.CORES_SM
+    params['n_int'] = df['inst_integer'] * 1.0 / (df['warps'] * 32) # / GPUCONF.CORES_SM
 
     # instruction statistic
     params['inst_per_warp'] = df['inst_per_warp']
@@ -250,8 +251,8 @@ def train(train_X, train_y, train_df):
     # fit train data and test on test data
     #fit_model = svr_fitting(gpu_X, gpu_y, 'rbf')
     #fit_model = rt_fitting(train_X, train_y)
-    #fit_model = xg_fitting(train_X, train_y)
-    fit_model = nn_fitting(train_X, train_y)
+    fit_model = xg_fitting(train_X, train_y)
+    #fit_model = nn_fitting(train_X, train_y)
 
     train_y_pred = fit_model.predict(train_X)
     train_mae = mean_absolute_error(train_y, train_y_pred)
