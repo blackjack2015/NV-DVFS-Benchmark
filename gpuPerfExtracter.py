@@ -10,6 +10,7 @@ import json
 import pandas as pd
 
 gpucard = 'p100'
+#gpucard = 'titanx'
 #version = 'synthetic'
 version = 'real'
 logRoot = 'logs/%s-%s' %( gpucard, version)
