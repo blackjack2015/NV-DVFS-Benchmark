@@ -30,7 +30,7 @@ def mean_absolute_error(ground_truth, predictions):
 
 def nn_fitting(X, y):
 
-    nn_model = MLPRegressor(solver='adam', alpha=1e-4, activation='relu',
+    nn_model = MLPRegressor(solver='adam', alpha=1e-6, activation='relu',
                     hidden_layer_sizes=(50, 20, 50), random_state=1, max_iter=1000)
 
     nn_model.fit(X, y)
@@ -138,6 +138,7 @@ def data_prepare(gpucard, version, csv_perf):
         GPUCONF = TITANX()
 
     df = pd.read_csv(csv_perf, header = 0)
+    print df.head(5)
     
     #params = pd.DataFrame(columns=['n_shm_ld', 'n_shm_st', 'n_gld', 'n_gst', 'n_dm_ld', 'n_dm_st', 'n_flop_sp', 'mem_insts', 'insts']) 
     params = pd.DataFrame(columns=['n_gld', 'n_gst', 'gld_trans_per_req', 'gst_trans_per_req', \
@@ -145,7 +146,7 @@ def data_prepare(gpucard, version, csv_perf):
 				   'n_l2_ld', 'n_l2_st', \
 				   'n_shm_ld', 'n_shm_st', 'shld_trans_per_req', 'shst_trans_per_req', \
 				   'tex_hit_rate', 'tex_trans', \
-				   'n_flop_sp', 'n_flop_sp_fma', 'n_flop_sp_spec', 'n_flop_dp', 'n_flop_dp_fma', \
+				   'n_flop_sp', 'n_flop_sp_fma', 'n_flop_sp_spec', 'n_flop_dp', 'n_flop_dp_fma', 'n_int', \
 				   ]) 
     
     # hardware parameters
@@ -199,20 +200,20 @@ def data_prepare(gpucard, version, csv_perf):
     ## print params['other_insts']
     
     # grouth truth cycle per SM per round
-    #params['real_cycle'] = df['time/ms'] * df['coreF'] * 1000 / (df['warps'] / (GPUCONF.WARPS_MAX * GPUCONF.SM_COUNT * df['achieved_occupancy']))
+    params['real_cycle'] = df['time/ms'] * df['coreF'] * 1000.0 / (df['warps'] / (GPUCONF.WARPS_MAX * GPUCONF.SM_COUNT * df['achieved_occupancy']))
     #params['real_cycle'] = df['time/ms'] * df['coreF'] * 1000 / (df['warps'] / (GPUCONF.WARPS_MAX * GPUCONF.SM_COUNT))
     #print params['real_cycle']
     #params['real_cycle'] = df['time/ms'] * df['coreF'] * 1000 / df['warps']
     
     # normalize
     #params = params.div(params.loc[:, params.columns != 'real_cycle'].sum(axis=1), axis=0)
-    params = params.div(params['inst_per_warp'], axis=0)
+    #params = params.div(params['inst_per_warp'], axis=0)
     
     # grouth truth IPC
-    try:
-        params['real_cycle'] = df['ipc']
-    except Exception as e:
-        params['real_cycle'] = df['executed_ipc']
+    #try:
+    #    params['real_cycle'] = df['ipc']
+    #except Exception as e:
+    #    params['real_cycle'] = df['executed_ipc']
 
     #params['real_cycle'] = df['time/ms'] * df['coreF'] * 1000 / (df['warps'] / (GPUCONF.WARPS_MAX * GPUCONF.SM_COUNT * df['achieved_occupancy'])) / params['inst_per_warp']
     #print params['real_cycle']
@@ -221,9 +222,14 @@ def data_prepare(gpucard, version, csv_perf):
     params['c_to_m'] = df['coreF'] * 1.0 / df['memF']
     params['act_util'] = df['achieved_occupancy']
     
-    # X = params.loc[:, params.columns != 'real_cycle']
-    X = params.loc[:, ['n_dm', 'n_l2', 'n_shm', 'tex_hit_rate', 'tex_trans', 'n_flop_sp', 'n_flop_dp', 'n_int', 'act_util']]
-    y = params['real_cycle']
+    # select features for training
+    inst_features = ['n_dm', 'n_l2', 'n_shm', 'tex_trans', 'n_flop_sp', 'n_flop_dp', 'n_int']
+    X = params.loc[:, inst_features]
+    y = params['real_cycle'].div(X.loc[:, :].sum(axis=1), axis=0)
+    X = X.div(X.loc[:, :].sum(axis=1), axis=0)
+    util_features = ['tex_hit_rate', 'act_util']
+    for uf in util_features:
+        X[uf] = params[uf]
     
     # X = X.div(X.loc[:, :].sum(axis=1), axis=0)
 
@@ -231,9 +237,12 @@ def data_prepare(gpucard, version, csv_perf):
     X = X.astype(np.float64)
     print X.dtypes
     print X.head(5)
+    print y.head(5)
 
     params['appName'] = df['appName']
-    features = params.loc[:, ['appName', 'c_to_m', 'n_gm', 'n_dm', 'n_l2', 'n_shm', 'tex_hit_rate', 'tex_trans', 'n_flop_sp', 'n_flop_dp', 'act_util', 'real_cycle']]
+    features = params.loc[:, ['appName', 'real_cycle', 'inst_per_warp']]
+    for f in X.keys():
+        features[f] = X[f]
     features.to_csv("csvs/%s-%s-features.csv" % (gpucard, version))
 
     return X, y, df
@@ -249,9 +258,9 @@ def train(train_X, train_y, train_df):
     print "len of train:", len(train_X), len(train_y), len(train_df)
     
     # fit train data and test on test data
-    #fit_model = svr_fitting(gpu_X, gpu_y, 'rbf')
+    fit_model = svr_fitting(gpu_X, gpu_y, 'rbf')
     #fit_model = rt_fitting(train_X, train_y)
-    fit_model = xg_fitting(train_X, train_y)
+    #fit_model = xg_fitting(train_X, train_y)
     #fit_model = nn_fitting(train_X, train_y)
 
     train_y_pred = fit_model.predict(train_X)
