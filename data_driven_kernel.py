@@ -222,7 +222,7 @@ def data_prepare(gpucard, version, csv_perf):
     params['act_util'] = df['achieved_occupancy']
     
     # X = params.loc[:, params.columns != 'real_cycle']
-    X = params.loc[:, ['n_dm', 'n_l2', 'n_shm', 'tex_hit_rate', 'tex_trans', 'n_flop_sp', 'n_flop_dp', 'act_util']]
+    X = params.loc[:, ['n_dm', 'n_l2', 'n_shm', 'tex_hit_rate', 'tex_trans', 'n_flop_sp', 'n_flop_dp', 'n_int', 'act_util']]
     y = params['real_cycle']
     
     # X = X.div(X.loc[:, :].sum(axis=1), axis=0)
