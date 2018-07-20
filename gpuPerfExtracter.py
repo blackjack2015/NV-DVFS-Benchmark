@@ -9,9 +9,10 @@ import ConfigParser
 import json
 import pandas as pd
 
-gpucard = 'p100'
-version = 'synthetic'
-#version = 'real'
+#gpucard = 'p100'
+gpucard = 'titanx'
+#version = 'synthetic'
+version = 'real'
 logRoot = 'logs/%s-%s' %( gpucard, version)
 
 perf_filelist = glob.glob(r'%s/*perf.log' % logRoot)
