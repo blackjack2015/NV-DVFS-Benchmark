@@ -5,6 +5,7 @@ import random
 from settings import *
 from sklearn.svm import SVR
 # from sklearn import cross_validation
+from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from sklearn.model_selection import GridSearchCV, StratifiedKFold, KFold
 from sklearn.model_selection import learning_curve
 from sklearn.model_selection import train_test_split
@@ -26,15 +27,27 @@ rng = np.random.RandomState(31337)
 
 def mean_absolute_error(ground_truth, predictions):
     return np.mean(abs(ground_truth - predictions) / ground_truth)
-    #return mean_squared_error(ground_truth, predictions)
+    # return mean_squared_error(ground_truth, predictions)
 
 def nn_fitting(X, y):
 
-    nn_model = MLPRegressor(solver='adam', alpha=1e-6, activation='relu',
-                    hidden_layer_sizes=(50, 20, 50), random_state=1, max_iter=1000)
+    # make score function
+    loss = make_scorer(mean_absolute_error, greater_is_better=False)
 
+    hidden_layer_sizes = [(10, 15, 10)]
+    alpha = [1e-5]
+    activation = ['relu']
+    param_grid = dict(hidden_layer_sizes = hidden_layer_sizes, alpha = alpha, activation = activation)
+
+    nn_model = MLPRegressor(solver='adam', random_state=1, max_iter=60000, warm_start=True)
+
+    nn_model = GridSearchCV(nn_model, cv=10, param_grid = param_grid, scoring='neg_mean_squared_error', n_jobs=8, verbose=True)
     nn_model.fit(X, y)
 
+    print nn_model.best_params_
+
+    #nn_model = MLPRegressor(solver='adam', hidden_layer_sizes = (10, 15, 10), alpha = 1e-5, random_state=1, max_iter=30000, warm_start=True)
+    #nn_model.fit(X, y)
     return nn_model
 
 def xg_fitting(X, y):
@@ -66,14 +79,14 @@ def xg_fitting(X, y):
     # make score function
     loss = make_scorer(mean_absolute_error, greater_is_better=False)
 
-    n_estimators = [50, 100, 150, 200]
-    max_depth = [2, 4, 6, 8]
-    learning_rate = [0.1, 0.01, 0.001, 0.0001]
-    min_child_weight = [1, 2, 3, 4, 5]
+    n_estimators = [300, 400, 500, 1000]
+    max_depth = [3, 4, 5, 6]
+    learning_rate = [0.3, 0.2, 0,1, 0.05]
+    min_child_weight = [0.1, 0.5, 1, 2]
     param_grid = dict(max_depth=max_depth, n_estimators=n_estimators, learning_rate=learning_rate, min_child_weight=min_child_weight)
     
-    # xg_model = GridSearchCV(XGBRegressor(verbose=True), cv=10, param_grid=param_grid, scoring='neg_mean_squared_error', n_jobs=-1, verbose=True)
-    xg_model = GridSearchCV(XGBRegressor(verbose=True), cv=10, param_grid=param_grid, scoring=loss, n_jobs=-1, verbose=True)
+    xg_model = GridSearchCV(XGBRegressor(verbose=True), cv=10, param_grid=param_grid, scoring='neg_mean_squared_error', n_jobs=-1, verbose=True)
+    #xg_model = GridSearchCV(XGBRegressor(verbose=True, early_stopping_rounds=5), cv=10, param_grid=param_grid, scoring='neg_mean_squared_error', n_jobs=-1, verbose=True)
     xg_model.fit(X, y)
     # print xg_model.grid_scores_
     print xg_model.best_params_
@@ -111,11 +124,11 @@ def svr_fitting(X, y, kernel, gamma=1, C=1e4, epsilon=0.1):
     # make score function
     loss = make_scorer(mean_absolute_error, greater_is_better=False)
 
-    tuned_parameters = [{'kernel': ['rbf'], 'gamma': [0.1, 0.5, 1], 'C': [1, 100, 10000], 'epsilon': [0.1, 0.2, 0.4]},
-                        {'kernel': ['poly'], 'gamma': [0.1, 0.5, 1], 'C': [1, 10, 100, 1000], 'epsilon': [0.1, 0.2, 0.4], 'degree': [1, 2, 3]}]
+    tuned_parameters = [{'kernel': ['rbf'], 'gamma': [0.8, 1, 1.2], 'C': [10, 100, 1000], 'epsilon': [0.4, 0.8, 1.2]},
+                        {'kernel': ['poly'], 'gamma': [0.5, 1, 2], 'C': [10, 100, 1000], 'epsilon': [0.5, 1, 2, 4], 'degree': [1, 2, 3]}]
 
     # initial svr model
-    svr_model = GridSearchCV(SVR(verbose=True, max_iter=1e6), cv=10, scoring='neg_mean_squared_error', param_grid=tuned_parameters)
+    svr_model = GridSearchCV(SVR(verbose=False, max_iter=1e6), cv=3, scoring='neg_mean_squared_error', param_grid=tuned_parameters)
     #svr_model = SVR(kernel='rbf', gamma=gamma, C=C, epsilon=epsilon, verbose=True, max_iter=-1)
 
     # Fit regression model
@@ -138,7 +151,6 @@ def data_prepare(gpucard, version, csv_perf):
         GPUCONF = TITANX()
 
     df = pd.read_csv(csv_perf, header = 0)
-    print df.head(5)
     
     #params = pd.DataFrame(columns=['n_shm_ld', 'n_shm_st', 'n_gld', 'n_gst', 'n_dm_ld', 'n_dm_st', 'n_flop_sp', 'mem_insts', 'insts']) 
     params = pd.DataFrame(columns=['n_gld', 'n_gst', 'gld_trans_per_req', 'gst_trans_per_req', \
@@ -190,6 +202,9 @@ def data_prepare(gpucard, version, csv_perf):
     params['n_flop_dp_fma'] = df['flop_count_dp_fma'] * 1.0 / (df['warps'] * 32) # / GPUCONF.CORES_SM
     params['n_int'] = df['inst_integer'] * 1.0 / (df['warps'] * 32) # / GPUCONF.CORES_SM
 
+    # branch
+    params['branch'] = df['cf_executed'] * 1.0 / (df['warps'])
+
     # instruction statistic
     params['inst_per_warp'] = df['inst_per_warp']
 
@@ -199,17 +214,14 @@ def data_prepare(gpucard, version, csv_perf):
     #params.loc[params['other_insts'] < 0, 'other_insts'] = 0
     ## print params['other_insts']
     
-    # grouth truth cycle per SM per round
+    # grouth truth cycle per SM per round / ground truth IPC
     params['real_cycle'] = df['time/ms'] * df['coreF'] * 1000.0 / (df['warps'] / (GPUCONF.WARPS_MAX * GPUCONF.SM_COUNT * df['achieved_occupancy']))
+    #params['real_cycle'] = df['time/ms'] * df['coreF'] * 1000.0 / df['warps'] * 300
     #params['real_cycle'] = df['time/ms'] * df['coreF'] * 1000 / (df['warps'] / (GPUCONF.WARPS_MAX * GPUCONF.SM_COUNT))
-    #print params['real_cycle']
     #params['real_cycle'] = df['time/ms'] * df['coreF'] * 1000 / df['warps']
+    #params['real_cycle'] = df['inst_executed'] * 1.0 / (df['time/ms'] * df['coreF'] * 1000.0 * GPUCONF.SM_COUNT)
     
-    # normalize
-    #params = params.div(params.loc[:, params.columns != 'real_cycle'].sum(axis=1), axis=0)
-    #params = params.div(params['inst_per_warp'], axis=0)
-    
-    # grouth truth IPC
+    ## grouth truth IPC
     #try:
     #    params['real_cycle'] = df['ipc']
     #except Exception as e:
@@ -223,26 +235,29 @@ def data_prepare(gpucard, version, csv_perf):
     params['act_util'] = df['achieved_occupancy']
     
     # select features for training
+    #inst_features = ['n_dm', 'n_l2', 'n_shm', 'tex_trans', 'n_flop_sp', 'n_flop_dp', 'n_int', 'branch']
     inst_features = ['n_dm', 'n_l2', 'n_shm', 'tex_trans', 'n_flop_sp', 'n_flop_dp', 'n_int']
     X = params.loc[:, inst_features]
-    y = params['real_cycle'].div(X.loc[:, :].sum(axis=1), axis=0)
-    X = X.div(X.loc[:, :].sum(axis=1), axis=0)
-    util_features = ['tex_hit_rate', 'act_util']
+    X = X.div(params['inst_per_warp'], axis=0)
+    y = params['real_cycle'] / params['inst_per_warp']
+    #y = params['real_cycle'].div(X.loc[:, :].sum(axis=1), axis=0) # for real cycle
+    #y = params['real_cycle'] # for ipc
+    #X = X.div(X.loc[:, :].sum(axis=1), axis=0)
+    util_features = ['act_util']
     for uf in util_features:
         X[uf] = params[uf]
     
-    # X = X.div(X.loc[:, :].sum(axis=1), axis=0)
-
     print "Total number of samples:", len(X)
     X = X.astype(np.float64)
-    print X.dtypes
-    print X.head(5)
-    print y.head(5)
+    #print X.head(5)
+    #print y.head(5)
 
-    params['appName'] = df['appName']
-    features = params.loc[:, ['appName', 'real_cycle', 'inst_per_warp']]
+    features = pd.DataFrame([])
+    features['appName'] = df['appName']
     for f in X.keys():
         features[f] = X[f]
+    features['inst_per_warp'] = params['inst_per_warp']
+    features['real_cycle'] = y
     features.to_csv("csvs/%s-%s-features.csv" % (gpucard, version))
 
     return X, y, df
@@ -286,33 +301,67 @@ def test(model, test_X, test_y, test_df):
     #    print i, test_y[i], pred_y[i]
     
     kernels = test_df['appName'].drop_duplicates()
+
+    bias_level = [[], [], [], []]
     for kernel in kernels:
         tmp_y = test_y[test_df['appName'] == kernel]
         tmp_pred_y = test_y_pred[test_df['appName'] == kernel]
         
         tmp_ape = np.mean(abs(tmp_y - tmp_pred_y) / tmp_y)
-        # if tmp_ape > 0.15:
-        print "%s:%f." % (kernel, tmp_ape)
+        if tmp_ape < 0.10:
+            bias_level[0].append(tmp_ape)
+        elif tmp_ape < 0.15:
+            bias_level[1].append(tmp_ape)
+        elif tmp_ape < 0.2:
+            bias_level[2].append(tmp_ape)
+        else:
+            bias_level[3].append(tmp_ape)
+            print "%s: %f" % (kernel, tmp_ape)
+
+    if len(bias_level[0]) != 0:
+        print "Average error of    < 10% :", len(bias_level[0]), np.mean(bias_level[0])
+    if len(bias_level[1]) != 0:
+        print "Average error of 10 ~ 15% :", len(bias_level[1]), np.mean(bias_level[1])
+    if len(bias_level[2]) != 0:
+        print "Average error of 15 ~ 20% :", len(bias_level[2]), np.mean(bias_level[2])
+    if len(bias_level[3]) != 0:
+        print "Average error of    > 20% :", len(bias_level[3]), np.mean(bias_level[3])
 
 
-gpu_X, gpu_y, gpu_df = data_prepare(gpu, version, csv_file)
-test_X, test_y, test_df = data_prepare(gpu, 'real', './csvs/%s-real-Performance.csv' % gpu) 
+#gpu_X, gpu_y, gpu_df = data_prepare(gpu, version, csv_file)
+#test_X, test_y, test_df = data_prepare(gpu, 'real', './csvs/%s-real-Performance.csv' % gpu) 
+#
+## kernel_idx = range(0, len(gpu_X))
+## random.shuffle(kernel_idx)
+## train_len = len(gpu_X) * 9 / 10
+## test_len = len(gpu_X) - train_len
+## train_idx = kernel_idx[:train_len]
+## test_idx = kernel_idx[train_len:]
+## 
+## print train_idx, test_idx
+## 
+## train_X = gpu_X.loc[train_idx, :]
+## train_y = gpu_y[train_idx]
+## train_df = gpu_df.loc[train_idx, :]
+## test_X = gpu_X.loc[test_idx, :]
+## test_y = gpu_y[test_idx]
+## test_df = gpu_df.loc[test_idx, :]
+#
+#model = train(gpu_X, gpu_y, gpu_df)
+#test(model, test_X, test_y, test_df)
 
-# kernel_idx = range(0, len(gpu_X))
-# random.shuffle(kernel_idx)
-# train_len = len(gpu_X) * 9 / 10
-# test_len = len(gpu_X) - train_len
-# train_idx = kernel_idx[:train_len]
-# test_idx = kernel_idx[train_len:]
-# 
-# print train_idx, test_idx
-# 
-# train_X = gpu_X.loc[train_idx, :]
-# train_y = gpu_y[train_idx]
-# train_df = gpu_df.loc[train_idx, :]
-# test_X = gpu_X.loc[test_idx, :]
-# test_y = gpu_y[test_idx]
-# test_df = gpu_df.loc[test_idx, :]
+gpu_1 = 'p100'
+gpu_2 = 'titanx'
 
+csv_file = "csvs/%s-%s-Performance.csv" % (gpu_1, version)
+gpu_X, gpu_y, gpu_df = data_prepare(gpu_1, version, csv_file)
+test_X, test_y, test_df = data_prepare(gpu_1, 'real', './csvs/%s-real-Performance.csv' % gpu_1) 
 model = train(gpu_X, gpu_y, gpu_df)
 test(model, test_X, test_y, test_df)
+
+csv_file = "csvs/%s-%s-Performance.csv" % (gpu_2, version)
+gpu_X, gpu_y, gpu_df = data_prepare(gpu_2, version, csv_file)
+test_X, test_y, test_df = data_prepare(gpu_2, 'real', './csvs/%s-real-Performance.csv' % gpu_2) 
+model = train(gpu_X, gpu_y, gpu_df)
+test(model, test_X, test_y, test_df)
+
