@@ -152,6 +152,10 @@ def data_prepare(gpucard, version, csv_perf):
 
     df = pd.read_csv(csv_perf, header = 0)
     
+    out_kernels = ['binomialOptions', 'eigenvalues', 'scanUniformUpdate', 'stereoDisparity', 'reduction', 'matrixMulGlobal', 'cfd', 'hotspot', 'dxtc', 'backpropBackward']
+    df = df[~df.appName.isin(out_kernels)]
+    df = df.reset_index(drop=True)
+
     #params = pd.DataFrame(columns=['n_shm_ld', 'n_shm_st', 'n_gld', 'n_gst', 'n_dm_ld', 'n_dm_st', 'n_flop_sp', 'mem_insts', 'insts']) 
     params = pd.DataFrame(columns=['n_gld', 'n_gst', 'gld_trans_per_req', 'gst_trans_per_req', \
 				   'n_dm_ld', 'n_dm_st', \
@@ -169,8 +173,12 @@ def data_prepare(gpucard, version, csv_perf):
     params['n_gst'] = df['gst_transactions'] / df['warps']
     params['gld_trans_per_req'] = df['gld_transactions_per_request'] 
     params['gst_trans_per_req'] = df['gst_transactions_per_request']
+    params['gld_req'] = 0
+    params.loc[params['gld_trans_per_req'] > 0, 'gld_req'] = params.loc[params['gld_trans_per_req'] > 0, 'n_gld'] / params.loc[params['gld_trans_per_req'] > 0, 'gld_trans_per_req']
+    params['gst_req'] = 0
+    params.loc[params['gst_trans_per_req'] > 0, 'gst_req'] = params.loc[params['gst_trans_per_req'] > 0, 'n_gst'] / params.loc[params['gst_trans_per_req'] > 0, 'gst_trans_per_req']
     params['n_gm'] = params['n_gld'] + params['n_gst']
-    params['gm_req'] = params['n_gld'] / params['gld_trans_per_req'] + params['n_gst'] / params['gst_trans_per_req']
+    params['gm_req'] = params['gld_req'] + params['gst_req']
     
     # dram memory information
     params['n_dm_ld'] = df['dram_read_transactions'] / df['warps']
@@ -187,8 +195,12 @@ def data_prepare(gpucard, version, csv_perf):
     params['n_shm_st'] = df['shared_store_transactions'] / df['warps'] 
     params['shld_trans_per_req'] = df['shared_load_transactions_per_request']
     params['shst_trans_per_req'] = df['shared_store_transactions_per_request'] 
+    params['shld_req'] = 0
+    params.loc[params['shld_trans_per_req'] > 0, 'shld_req'] = params.loc[params['shld_trans_per_req'] > 0, 'n_shm_ld'] / params.loc[params['shld_trans_per_req'] > 0, 'shld_trans_per_req']
+    params['shst_req'] = 0
+    params.loc[params['shst_trans_per_req'] > 0, 'shst_req'] = params.loc[params['shst_trans_per_req'] > 0, 'n_shm_st'] / params.loc[params['shst_trans_per_req'] > 0, 'shst_trans_per_req']
     params['n_shm'] = params['n_shm_ld'] + params['n_shm_st'] 
-    params['shm_req'] = params['n_shm_ld'] / params['shld_trans_per_req'] + params['n_shm_st'] / params['shst_trans_per_req']
+    params['shm_req'] = params['shst_req'] + params['shld_req']
     
     # texture memory information
     params['tex_hit_rate'] = df['tex_cache_hit_rate']
@@ -216,12 +228,8 @@ def data_prepare(gpucard, version, csv_perf):
     
     # grouth truth cycle per SM per round / ground truth IPC
     params['real_cycle'] = df['time/ms'] * df['coreF'] * 1000.0 / (df['warps'] / (GPUCONF.WARPS_MAX * GPUCONF.SM_COUNT * df['achieved_occupancy']))
-    #params['real_cycle'] = df['time/ms'] * df['coreF'] * 1000.0 / df['warps'] * 300
-    #params['real_cycle'] = df['time/ms'] * df['coreF'] * 1000 / (df['warps'] / (GPUCONF.WARPS_MAX * GPUCONF.SM_COUNT))
-    #params['real_cycle'] = df['time/ms'] * df['coreF'] * 1000 / df['warps']
-    #params['real_cycle'] = df['inst_executed'] * 1.0 / (df['time/ms'] * df['coreF'] * 1000.0 * GPUCONF.SM_COUNT)
-    
-    ## grouth truth IPC
+    #params['real_cycle'] = df['time/ms'] * df['coreF'] * 1000.0 / (df['warps'] / (GPUCONF.WARPS_MAX * GPUCONF.SM_COUNT))
+    #params['real_cycle'] = df['time/ms'] * df['coreF'] * 1000.0 / df['warps']
     #try:
     #    params['real_cycle'] = df['ipc']
     #except Exception as e:
@@ -237,12 +245,22 @@ def data_prepare(gpucard, version, csv_perf):
     # select features for training
     #inst_features = ['n_dm', 'n_l2', 'n_shm', 'tex_trans', 'n_flop_sp', 'n_flop_dp', 'n_int', 'branch']
     inst_features = ['n_dm', 'n_l2', 'n_shm', 'tex_trans', 'n_flop_sp', 'n_flop_dp', 'n_int']
+
+    # normalized with inst_per_warp, predict cycle per round
     X = params.loc[:, inst_features]
     X = X.div(params['inst_per_warp'], axis=0)
     y = params['real_cycle'] / params['inst_per_warp']
+
+    ## normalized with total amount of insts, predict cycle per round
+    #X = params.loc[:, inst_features]
     #y = params['real_cycle'].div(X.loc[:, :].sum(axis=1), axis=0) # for real cycle
-    #y = params['real_cycle'] # for ipc
     #X = X.div(X.loc[:, :].sum(axis=1), axis=0)
+
+    ## normalized with total amount of insts, predict ipc
+    #X = params.loc[:, inst_features]
+    #X = X.div(X.loc[:, :].sum(axis=1), axis=0)
+    #y = params['real_cycle']
+
     util_features = ['act_util']
     for uf in util_features:
         X[uf] = params[uf]
@@ -273,10 +291,10 @@ def train(train_X, train_y, train_df):
     print "len of train:", len(train_X), len(train_y), len(train_df)
     
     # fit train data and test on test data
-    fit_model = svr_fitting(gpu_X, gpu_y, 'rbf')
+    #fit_model = svr_fitting(gpu_X, gpu_y, 'rbf')
     #fit_model = rt_fitting(train_X, train_y)
     #fit_model = xg_fitting(train_X, train_y)
-    #fit_model = nn_fitting(train_X, train_y)
+    fit_model = nn_fitting(train_X, train_y)
 
     train_y_pred = fit_model.predict(train_X)
     train_mae = mean_absolute_error(train_y, train_y_pred)

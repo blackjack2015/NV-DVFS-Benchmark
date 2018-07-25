@@ -188,24 +188,45 @@ def compare(train_X, train_y, test_X, test_y):
 
 # gpu card and data file
 gpu = 'titanx'
-version = 'single-workload'
-csv_file = "csvs/%s-%s-DVFS-Performance.csv" % (gpu, version)
+version = ''
+csv_file = "csvs/v0/%s-DVFS-Performance.csv" % (gpu)
 
 # pre-load gpu data
 gpu_X, gpu_y, gpu_df = data_prepare(gpu, csv_file)
+
+# construct frequency set
 c_to_m_set = list(gpu_df['c_to_m'].drop_duplicates())
-print c_to_m_set
-
 random.shuffle(c_to_m_set)
-train_c_to_m = c_to_m_set[:len(c_to_m_set) * 10 / 16]
-print train_c_to_m
+train_c_to_m = c_to_m_set[:len(c_to_m_set) * 1 / 16]
+test_c_to_m = c_to_m_set[len(c_to_m_set) * 1 / 16:]
 
-train_X = gpu_X[gpu_X['c_to_m'].isin(train_c_to_m)]
-train_y = gpu_y[gpu_X['c_to_m'].isin(train_c_to_m)]
-train_df = gpu_df[gpu_X['c_to_m'].isin(train_c_to_m)]
-test_X = gpu_X[~gpu_X['c_to_m'].isin(train_c_to_m)]
-test_y = gpu_y[~gpu_X['c_to_m'].isin(train_c_to_m)]
-test_df = gpu_df[~gpu_X['c_to_m'].isin(train_c_to_m)]
+# construct kernel set
+kernel_set = list(gpu_df['appName'].drop_duplicates())
+random.shuffle(kernel_set)
+train_kernel = kernel_set[:len(kernel_set) * 15 / 20]
+test_kernel = kernel_set[len(kernel_set) * 15 / 20:]
+
+train_idx = gpu_df['appName'].isin(train_kernel) | (gpu_df['appName'].isin(test_kernel) & gpu_X['c_to_m'].isin(train_c_to_m))
+train_X = gpu_X[train_idx]
+train_y = gpu_y[train_idx]
+train_df = gpu_df[train_idx]
+test_X = gpu_X[~train_idx]
+test_y = gpu_y[~train_idx]
+test_df = gpu_df[~train_idx]
+
+#train_X = gpu_X[gpu_X['c_to_m'].isin(train_c_to_m)]
+#train_y = gpu_y[gpu_X['c_to_m'].isin(train_c_to_m)]
+#train_df = gpu_df[gpu_X['c_to_m'].isin(train_c_to_m)]
+#test_X = gpu_X[~gpu_X['c_to_m'].isin(train_c_to_m)]
+#test_y = gpu_y[~gpu_X['c_to_m'].isin(train_c_to_m)]
+#test_df = gpu_df[~gpu_X['c_to_m'].isin(train_c_to_m)]
+
+#train_X = gpu_X[gpu_df['appName'].isin(train_kernel)]
+#train_y = gpu_y[gpu_df['appName'].isin(train_kernel)]
+#train_df = gpu_df[gpu_df['appName'].isin(train_kernel)]
+#test_X = gpu_X[~gpu_df['appName'].isin(train_kernel)]
+#test_y = gpu_y[~gpu_df['appName'].isin(train_kernel)]
+#test_df = gpu_df[~gpu_df['appName'].isin(train_kernel)]
 
 print "len of train:", len(train_X), train_X.tail(3)
 print "len of test:", len(test_X), test_X.tail(3)
