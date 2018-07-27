@@ -105,6 +105,7 @@ for fp in perf_filelist:
         rec.append(" ")
 
     # extract metrics information
+    stride = 2
     fm, number = re.subn('perf', 'metrics', fp)
     f = open(fm, 'r')
     content = f.readlines()
@@ -114,7 +115,11 @@ for fp in perf_filelist:
     message = [line.strip() \
                 for s, value in enumerate(content) \
                     for m in [regex.search(value)] if m \
-                for line in content[s+1:min(maxLen,s+4)]]
+                for line in content[s+1:min(maxLen,s+1+stride)]]
+
+    print len(message)
+    if len(message) == 46:
+        message = message[:-1]
 
     for line in message:
         metric = line.split()[1]
