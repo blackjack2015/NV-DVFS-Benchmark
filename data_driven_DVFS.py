@@ -350,7 +350,7 @@ def compare(train_X, train_y, test_X, test_y):
     print test_y[:5]
 
 # gpu card and data file
-gpu = 'p100-dvfs'
+gpu = 'titanx-dvfs'
 version = 'real'
 csv_file = "csvs/%s-%s-Performance.csv" % (gpu, version)
 

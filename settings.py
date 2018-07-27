@@ -105,6 +105,9 @@ class P100:
         self.SM_COUNT = 56 # 56 for p100, 16 for gtx980, 28 for titanx
         self.CORES_SM = 64 # 64 for p100, 128 for gtx980 and titanx
         self.WIDTH_MEM = 4096 # 4096 for p100, 256 for gtx980, 384 for titanx
+
+        self.DEFAULT_CORE_CLOCK = 1328
+        self.DEFAULT_MEM_CLOCK = 715
         
         # kernel equation type
         self.eqType = {}
