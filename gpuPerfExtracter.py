@@ -1,4 +1,4 @@
-﻿import time
+﻿import time, argparse
 import datetime
 import sys,urllib,urllib2
 import csv
@@ -9,16 +9,19 @@ import ConfigParser
 import json
 import pandas as pd
 
-gpucard = 'p100'
-coreBase = 0
-memBase = 0
+parser = argparse.ArgumentParser()
+parser.add_argument('--benchmark-setting', type=str, help='gpu benchmark setting', default='p100')
+parser.add_argument('--kernel-setting', type=str, help='kernels of benchmark', default='synthetic')
+parser.add_argument('--core-base', type=int, help='base core frequency', default=0)
+parser.add_argument('--mem-base', type=int, help='base memory frequency', default=0)
 
-#gpucard = 'titanx'
-#coreBase = 1809
-#memBase = 4513
+opt = parser.parse_args()
+print opt
 
-version = 'synthetic'
-#version = 'real'
+gpucard = opt.benchmark_setting
+version = opt.kernel_setting
+coreBase = opt.core_base
+memBase = opt.mem_base
 
 logRoot = 'logs/%s-%s' %( gpucard, version)
 
