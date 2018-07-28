@@ -17,11 +17,11 @@ import matplotlib.pyplot as plt
 import xgboost as xgb
 from xgboost import XGBClassifier, XGBRegressor, plot_importance
 
-# gpu card and data file
-gpu = 'p100'
-#gpu = 'titanx'
-version = 'synthetic'
-csv_file = "csvs/%s-%s-Performance.csv" % (gpu, version)
+## gpu card and data file
+#gpu = 'gtx980'
+##gpu = 'titanx'
+#version = 'synthetic'
+#csv_file = "csvs/%s-%s-Performance.csv" % (gpu, version)
 
 rng = np.random.RandomState(31337)
 
@@ -370,16 +370,23 @@ def test(model, test_X, test_y, test_df):
 
 gpu_1 = 'p100'
 gpu_2 = 'titanx'
+gpu_3 = 'gtx980'
 
-csv_file = "csvs/%s-%s-Performance.csv" % (gpu_1, version)
-gpu_X, gpu_y, gpu_df = data_prepare(gpu_1, version, csv_file)
+csv_file = "csvs/%s-%s-Performance.csv" % (gpu_1, 'synthetic')
+gpu_X, gpu_y, gpu_df = data_prepare(gpu_1, 'synthetic', csv_file)
 test_X, test_y, test_df = data_prepare(gpu_1, 'real', './csvs/%s-real-Performance.csv' % gpu_1) 
 model = train(gpu_X, gpu_y, gpu_df)
 test(model, test_X, test_y, test_df)
 
-csv_file = "csvs/%s-%s-Performance.csv" % (gpu_2, version)
-gpu_X, gpu_y, gpu_df = data_prepare(gpu_2, version, csv_file)
+csv_file = "csvs/%s-%s-Performance.csv" % (gpu_2, 'synthetic')
+gpu_X, gpu_y, gpu_df = data_prepare(gpu_2, 'synthetic', csv_file)
 test_X, test_y, test_df = data_prepare(gpu_2, 'real', './csvs/%s-real-Performance.csv' % gpu_2) 
+model = train(gpu_X, gpu_y, gpu_df)
+test(model, test_X, test_y, test_df)
+
+csv_file = "csvs/%s-%s-Performance.csv" % (gpu_3, 'synthetic')
+gpu_X, gpu_y, gpu_df = data_prepare(gpu_3, 'synthetic', csv_file)
+test_X, test_y, test_df = data_prepare(gpu_3, 'real', './csvs/%s-real-Performance.csv' % gpu_3) 
 model = train(gpu_X, gpu_y, gpu_df)
 test(model, test_X, test_y, test_df)
 

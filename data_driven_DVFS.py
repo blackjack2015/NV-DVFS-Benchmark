@@ -350,8 +350,8 @@ def compare(train_X, train_y, test_X, test_y):
     print test_y[:5]
 
 # gpu card and data file
-gpu = 'titanx-dvfs'
-version = 'real'
+gpu = 'gtx980-dvfs'
+version = 'real-small-workload'
 csv_file = "csvs/%s-%s-Performance.csv" % (gpu, version)
 
 # pre-load gpu data
@@ -359,6 +359,7 @@ gpu_X, gpu_y, gpu_df = data_prepare(gpu, version, csv_file)
 
 # construct frequency set
 c_to_m_set = list(gpu_df['c_to_m'].drop_duplicates())
+print c_to_m_set
 random.shuffle(c_to_m_set)
 train_c_to_m = c_to_m_set[:len(c_to_m_set) * 1 / 5]
 test_c_to_m = c_to_m_set[len(c_to_m_set) * 1 / 5:]
@@ -366,8 +367,8 @@ test_c_to_m = c_to_m_set[len(c_to_m_set) * 1 / 5:]
 # construct kernel set
 kernel_set = list(gpu_df['appName'].drop_duplicates())
 random.shuffle(kernel_set)
-train_kernel = kernel_set[:len(kernel_set) * 18 / 20]
-test_kernel = kernel_set[len(kernel_set) * 18 / 20:]
+train_kernel = kernel_set[:len(kernel_set) * 19 / 20]
+test_kernel = kernel_set[len(kernel_set) * 19 / 20:]
 
 #train_idx = gpu_df['appName'].isin(train_kernel) | (gpu_df['appName'].isin(test_kernel) & gpu_X['c_to_m'].isin(train_c_to_m))
 train_idx = gpu_df['appName'].isin(train_kernel)
@@ -382,10 +383,10 @@ print "len of train:", len(train_X), train_X.tail(3)
 print "len of test:", len(test_X), test_X.tail(3)
 
 # fit train data and test on test data
-#fit_model = svr_fitting(train_X, train_y, 'rbf')
+fit_model = svr_fitting(train_X, train_y, 'rbf')
 #fit_model = rt_fitting(train_X, train_y)
 #fit_model = xg_fitting(train_X, train_y)
-fit_model = nn_fitting(train_X, train_y)
+#fit_model = nn_fitting(train_X, train_y)
 train_y_pred = fit_model.predict(train_X)
 test_y_pred = fit_model.predict(test_X) 
 train_mae = mean_absolute_error(train_y, train_y_pred)
@@ -425,10 +426,10 @@ print "len of train:", len(train_X), train_X.tail(3)
 print "len of test:", len(test_X), test_X.tail(3)
 
 # fit train data and test on test data
-#fit_model = svr_fitting(train_X, train_y, 'rbf')
+fit_model = svr_fitting(train_X, train_y, 'rbf')
 #fit_model = rt_fitting(train_X, train_y)
 #fit_model = xg_fitting(train_X, train_y)
-fit_model = nn_fitting(train_X, train_y)
+#fit_model = nn_fitting(train_X, train_y)
 train_y_pred = fit_model.predict(train_X)
 test_y_pred = fit_model.predict(test_X) 
 train_mae = mean_absolute_error(train_y, train_y_pred)
