@@ -14,10 +14,10 @@ COLORS = ['#2F4F4F', '#808080', '#A9A9A9', '#778899', '#DCDCDC', '#556677', '#1D
 in_kernels = ['BlackScholes', 'matrixMulShared', 'backpropForward', 'convolutionSeparable']
 out_kernels = ['binomialOptions', 'eigenvalues', 'scanUniformUpdate', 'stereoDisparity', 'reduction', 'matrixMulGlobal', 'cfd', 'hotspot', 'dxtc', 'backpropBackward']
 
-# gpu card and data file
-gpu = 'titanx-dvfs'
-version = 'real'
-csv_file = "csvs/%s-%s-Performance.csv" % (gpu, version)
+highest_core = 1500
+lowest_core = 700
+highest_mem = 3900
+lowest_mem = 2100
 
 def inst_extract_and_normalize(df):
 
@@ -95,7 +95,7 @@ def plot_inst_distribution(gpucard, csv_perf):
     #margin = ax.get_ylim()[1]/4
     #ax.set_ylim(top=ax.get_ylim()[1]+margin)
     ax.set_xticks(x_axis + bar_width / 2)
-    ax.set_xticklabels(in_kernels, size='medium', rotation=0)
+    ax.set_xticklabels(map(get_abbr, in_kernels), size='medium', rotation=0)
 
     ax.legend(fontsize='medium', loc='upper center', bbox_to_anchor=(0.5, 1.15), ncol = min(4, len(norm_insts.keys())))
     fig.subplots_adjust(top=0.88)
@@ -132,11 +132,6 @@ def plot_dvfs_scaling(gpucard, csv_perf):
 
     df = df[df.appName.isin(in_kernels)]
     df = df.reset_index(drop=True)
-
-    highest_core = 2009
-    lowest_core = 1609
-    highest_mem = 5013
-    lowest_mem = 3513
 
     # fix core as lowest, scaling memory
     selected_df = df[df.coreF == lowest_core]
@@ -200,5 +195,13 @@ def plot_dvfs_scaling(gpucard, csv_perf):
 
 if __name__ == '__main__':
 
+    # gpu card and data file
+    gpu = 'gtx980'
+    version = 'real-small-workload'
+
+    csv_file = "csvs/%s-dvfs-%s-Performance.csv" % (gpu, version)
     plot_dvfs_scaling(gpu, csv_file)
-    #plot_inst_distribution(gpu, csv_file)
+
+    # gpu card and data file
+    csv_file = "csvs/%s-%s-Performance.csv" % (gpu, version)
+    plot_inst_distribution(gpu, csv_file)
