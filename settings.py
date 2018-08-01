@@ -8,6 +8,40 @@ NO_HID = 4  # no hidden
 MEM_HID = 5    # mem delay cycle is hidden
 MIX = 6     # depend on frequency scaling
 
+ABBRS = {"backpropForward": "BPFW", \
+	 "backpropBackward": "BPBW", \
+	 "binomialOptions": "BO", \
+	 "BlackScholes": "BS", \
+	 "cfd": "CFD", \
+	 "conjugateGradient": "CG", \
+	 "convolutionSeparable": "convS", \
+	 "convolutionTexture": "convT", \
+	 "dxtc": "DT", \
+	 "eigenvalues": "EV", \
+	 "fastWalshTransform": "FW", \
+	 "gaussian": "GS", \
+	 "histogram": "HIST", \
+	 "hotspot": "HSP", \
+	 "matrixMulShared": "MMS", \
+	 "matrixMulGlobal": "MMG", \
+	 "mergeSort": "MS", \
+	 "nn": "NN", \
+	 "quasirandomGenerator": "quasiG", \
+	 "reduction": "RD", \
+	 "scalarProd": "SP", \
+	 "scanScanExclusiveShared": "SCEX", \
+	 "scanUniformUpdate": "SCUU", \
+	 "SobolQRNG": "SOR", \
+	 "sortingNetworks": "SN", \
+	 "transpose": "TR", \
+	 "vectorAdd": "VA", \
+	 "srad": "SRAD", \
+	 "stereoDisparity": "SD", \
+	 "pathfinder": "PF"}
+
+def get_abbr(kernel):
+    return ABBRS[kernel]
+
 class GTX980:
     def __init__(self):
         # Hardware Configuration

@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-import sys,os
+import sys
 import random
 from settings import *
 # from sklearn import cross_validation
@@ -18,8 +18,6 @@ highest_core = 1500
 lowest_core = 700
 highest_mem = 3900
 lowest_mem = 2100
-
-OUTPUT_PATH = 'figures'
 
 def inst_extract_and_normalize(df):
 
@@ -49,9 +47,9 @@ def inst_extract_and_normalize(df):
     params['tex_trans'] = df['tex_cache_transactions'] / df['warps']
     
     # compute insts
-    params['n_flop_sp'] = df['flop_count_sp'] * 1.0 / (df['warps'] * 32) 
-    params['n_flop_dp'] = df['flop_count_dp'] * 1.0 / (df['warps'] * 32)
-    params['n_int'] = df['inst_integer'] * 1.0 / (df['warps'] * 32) / 4.0 # for vision effect
+    params['n_flop_sp'] = df['flop_count_sp'] * 1.0 / (df['warps'] * 32) # / GPUCONF.CORES_SM
+    params['n_flop_dp'] = df['flop_count_dp'] * 1.0 / (df['warps'] * 32) # / GPUCONF.CORES_SM
+    params['n_int'] = df['inst_integer'] * 1.0 / (df['warps'] * 32) # / GPUCONF.CORES_SM
     
     # instruction statistic
     params['inst_per_warp'] = df['inst_per_warp']
@@ -71,21 +69,16 @@ def inst_extract_and_normalize(df):
 
     return X
 
-def plot_inst_distribution(gpucard, csv_perf, save_filename = None):
+def plot_inst_distribution(gpucard, csv_perf):
 
     df = pd.read_csv(csv_perf, header = 0)
 
-    in_kernels.sort()
     df = df[df.appName.isin(in_kernels)]
     df = df.reset_index(drop=True)
-    df = df.sort_values(by = 'appName')
-    
-    print in_kernels
-    print df
 
     norm_insts = inst_extract_and_normalize(df)
 
-    fig, ax = plt.subplots(figsize = (8, 4))
+    fig, ax = plt.subplots(figsize = (8, 6))
     # ax.title("Instruction Distribution")
 
     bar_width = 0.5
@@ -98,25 +91,18 @@ def plot_inst_distribution(gpucard, csv_perf, save_filename = None):
         lastInst += tmp_data
 
     ax.set_ylabel('Percentage', size='x-large')
-    ax.yaxis.set_tick_params(labelsize=16)
     ax.set_xlabel('')
     #margin = ax.get_ylim()[1]/4
     #ax.set_ylim(top=ax.get_ylim()[1]+margin)
     ax.set_xticks(x_axis + bar_width / 2)
-    ax.set_xticklabels(map(get_abbr, in_kernels), size='large', rotation=0)
+    ax.set_xticklabels(map(get_abbr, in_kernels), size='medium', rotation=0)
 
-    ax.legend(fontsize='large', loc='upper center', bbox_to_anchor=(0.5, 1.35), ncol = min(4, len(norm_insts.keys())))
-    fig.subplots_adjust(top=0.7)
+    ax.legend(fontsize='medium', loc='upper center', bbox_to_anchor=(0.5, 1.15), ncol = min(4, len(norm_insts.keys())))
+    fig.subplots_adjust(top=0.88)
     ax.grid(linestyle=':')
+    plt.show()
 
-    if not save_filename: # or True:
-        plt.show()
-	return
-    else:
-        plt.savefig(os.path.join(OUTPUT_PATH, '%s.pdf'%save_filename), bbox_inches='tight')
-        plt.savefig(os.path.join(OUTPUT_PATH, '%s.png'%save_filename), bbox_inches='tight')
-
-def plot_line(selected_df, sorted_key='coreF', save_filename=None):
+def plot_line(selected_df, sorted_key='coreF'):
 
     fig, ax = plt.subplots(figsize = (8, 6))
     x_axis = list(selected_df[sorted_key].drop_duplicates())
@@ -127,28 +113,13 @@ def plot_line(selected_df, sorted_key='coreF', save_filename=None):
         tmp_data = list(tmp_data.sort_values(by = [sorted_key])['time/ms'])
         tmp_data = [tmp_data[0] / item for item in tmp_data]
         print tmp_data
-        kl_abbr = get_abbr(kernel)
-        lines.append(ax.plot(x_axis, tmp_data, linewidth = 1.5, color = COLORS[idx], marker = MARKERS[idx], markersize = 10, label = kernel+"(%s)" % kl_abbr))
+        lines.append(ax.plot(x_axis, tmp_data, linewidth = 1.5, color = COLORS[idx], marker = MARKERS[idx], markersize = 10, label = kernel))
 
-    ax.set_ylabel("Speed Up", size = 'x-large')
-    ymax = ax.get_ylim()[1] * 1.1
-    ymin = ax.get_ylim()[0] * 0.95
-    ax.set_ylim(top = ymax, bottom = ymin)
-    ax.yaxis.set_tick_params(labelsize=16)
-
-    ax.set_xlim(min(x_axis) - 100, max(x_axis) + 100)
-    ax.xaxis.set_tick_params(labelsize=16)
-
+    ax.set_ylabel("Speed Up", size = 'large')
+    
     ax.grid()
-    ax.legend(fontsize='large', loc='upper left')
-
-    if not save_filename: # or True:
-        plt.show()
-	return
-    else:
-        plt.savefig(os.path.join(OUTPUT_PATH, '%s.pdf'%save_filename), bbox_inches='tight')
-        plt.savefig(os.path.join(OUTPUT_PATH, '%s.png'%save_filename), bbox_inches='tight')
-
+    ax.legend(fontsize='medium', loc='upper left')
+    plt.show()
 
 def plot_dvfs_scaling(gpucard, csv_perf):
 
@@ -166,16 +137,16 @@ def plot_dvfs_scaling(gpucard, csv_perf):
 
     # fix core as lowest, scaling memory
     selected_df = df[df.coreF == lowest_core]
-    plot_line(selected_df, 'memF', '%s_core_%d_mem_scaling' % (gpucard, lowest_core))
+    plot_line(selected_df, 'memF')
 
     selected_df = df[df.coreF == highest_core]
-    plot_line(selected_df, 'memF', '%s_core_%d_mem_scaling' % (gpucard, highest_core))
-
-    selected_df = df[df.memF == lowest_mem]
-    plot_line(selected_df, 'coreF', '%s_mem_%d_core_scaling' % (gpucard, lowest_mem))
+    plot_line(selected_df, 'memF')
 
     selected_df = df[df.memF == highest_mem]
-    plot_line(selected_df, 'coreF', '%s_mem_%d_core_scaling' % (gpucard, highest_mem))
+    plot_line(selected_df, 'coreF')
+
+    selected_df = df[df.memF == lowest_mem]
+    plot_line(selected_df, 'coreF')
 
     ## fix core as highest, scaling memory 
     #selected_df = df[df.coreF == highest_core]
@@ -235,4 +206,4 @@ if __name__ == '__main__':
 
     # gpu card and data file
     csv_file = "csvs/%s-%s-Performance.csv" % (gpu, version)
-    plot_inst_distribution(gpu, csv_file, 'gtx980_sample_inst_dist')
+    plot_inst_distribution(gpu, csv_file)
