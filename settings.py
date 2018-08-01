@@ -23,6 +23,14 @@ class GTX980:
         self.SM_COUNT = 16 # 56 for p100, 16 for gtx980, 28 for titanx
         self.CORES_SM = 128 # 64 for p100, 128 for gtx980 and titanx
         self.WIDTH_MEM = 256 # 4096 for p100, 256 for gtx980, 384 for titanx
+
+        self.DP_UNITS = 4
+        self.SP_UNITS = 128
+        self.SPEC_UNITS = 32
+        self.LS_UNITS = 32
+
+        self.CORE_FREQ = 1100
+        self.MEM_FREQ = 3600
         
         # kernel equation type
         self.eqType = {}
@@ -65,6 +73,14 @@ class TITANX:
         self.CORES_SM = 128 # 64 for p100, 128 for gtx980 and titanx
         self.WIDTH_MEM = 384 # 4096 for p100, 256 for gtx980, 384 for titanx
         
+        self.DP_UNITS = 4
+        self.SP_UNITS = 128
+        self.SPEC_UNITS = 32
+        self.LS_UNITS = 32
+        
+        self.CORE_FREQ = 1800
+        self.MEM_FREQ = 4500
+
         # kernel equation type
         self.eqType = {}
         self.eqType['backprop'] = MEM_LAT_BOUND   				# 0.111, too few workload
@@ -106,9 +122,14 @@ class P100:
         self.CORES_SM = 64 # 64 for p100, 128 for gtx980 and titanx
         self.WIDTH_MEM = 4096 # 4096 for p100, 256 for gtx980, 384 for titanx
 
-        self.DEFAULT_CORE_CLOCK = 1328
-        self.DEFAULT_MEM_CLOCK = 715
-        
+        self.DP_UNITS = 32
+        self.SP_UNITS = 64
+        self.SPEC_UNITS = 16
+        self.LS_UNITS = 16
+
+        self.CORE_FREQ = 1328
+        self.MEM_FREQ = 715
+
         # kernel equation type
         self.eqType = {}
         self.eqType['backprop'] = MEM_LAT_BOUND    				# 0.111, too few workload
