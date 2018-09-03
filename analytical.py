@@ -33,8 +33,8 @@ features['n_gst'] = df['gst_transactions'] / df['warps']
 # l2 information
 #features['l2_miss'] = df['dram_read_transactions'] / df['l2_read_transactions']
 #features['l2_miss'] = df['dram_write_transactions'] / df['l2_write_transactions']
-features['l2_miss'] = (df['dram_read_transactions'] + df['dram_write_transactions']) / (df['l2_read_transactions'] + df['l2_write_transactions'])
-# df['l2_miss'] = (df['dram_read_transactions'] + df['dram_write_transactions']) / ((df['n_gst'] + df['n_gld']) * df['warps'])
+#features['l2_miss'] = (df['dram_read_transactions'] + df['dram_write_transactions']) / (df['l2_read_transactions'] + df['l2_write_transactions'])
+features['l2_miss'] = (df['dram_read_transactions'] + df['dram_write_transactions']) / ((features['n_gst'] + features['n_gld']) * df['warps'])
 features.loc[features['l2_miss'] > 1, 'l2_miss'] = 1
 features['l2_hit'] = 1 - features['l2_miss']
 
@@ -63,10 +63,12 @@ def qiang2018(df):
     cycles['mem_op'] = (df['n_gld'] + df['n_gst']) * (df['D_DM'] * (1 - df['l2_hit']) + GPUCONF.D_L2 * df['l2_hit']) * GPUCONF.WARPS_MAX * df['act_util']
     cycles['lat_op'] = (df['n_gld'] + df['n_gst']) * ((df['L_DM'] + df['D_DM']) * (1 - df['l2_hit']) + GPUCONF.L_L2 * df['l2_hit'])
     cycles['shm_op'] = (df['n_shm_ld'] + df['n_shm_st']) * GPUCONF.L_sh
+    cycles['shm_del'] = (df['n_shm_ld'] + df['n_shm_st']) * df['act_util'] * GPUCONF.WARPS_MAX + GPUCONF.L_sh
     cycles['compute_lat'] = df['insts'] * GPUCONF.L_INST
     cycles['sm_op'] = cycles['shm_op'] + cycles['compute_lat']
-    cycles['compute'] = df['insts'] * df['act_util'] * GPUCONF.WARPS_MAX + GPUCONF.L_INST
+    cycles['compute_del'] = df['insts'] * df['act_util'] * GPUCONF.WARPS_MAX + GPUCONF.L_INST
     #cycles['sm_op'] = df['insts'] * L_INST
+    cycles['insts'] = df['insts']
     
     # add type for offset
     cycles['offset'] = None
@@ -86,6 +88,10 @@ def qiang2018(df):
     		cycles.loc[idx, 'offset'] = 0
     	elif GPUCONF.eqType[cur_name] == MIX:
     		cycles.loc[idx, 'offset'] = 0
+    	elif GPUCONF.eqType[cur_name] == COMP_BOUND:
+    		cycles.loc[idx, 'offset'] = -cycles.loc[idx, 'sm_op'] - cycles.loc[idx, 'mem_op'] + cycles.loc[idx, 'compute_del']
+    	elif GPUCONF.eqType[cur_name] == SHM_BOUND:
+    		cycles.loc[idx, 'offset'] = -cycles.loc[idx, 'sm_op'] - cycles.loc[idx, 'mem_op'] + cycles.loc[idx, 'shm_del']
     	else:
     		print "Invalid modeling type of %s..." % cur_name
     		sys.exit(-1)	

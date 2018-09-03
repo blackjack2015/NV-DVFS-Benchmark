@@ -7,6 +7,8 @@ MEM_LAT_BOUND = 3 # memory latency cannot be hidden
 NO_HID = 4  # no hidden
 MEM_HID = 5    # mem delay cycle is hidden
 MIX = 6     # depend on frequency scaling
+COMP_BOUND = 7 # compute bound, compute delay
+SHM_BOUND = 8 # shared memory delay
 
 ABBRS = {"backpropForward": "BPFW", \
 	 "backpropBackward": "BPBW", \
@@ -168,24 +170,24 @@ class P100:
         self.eqType = {}
         self.eqType['backprop'] = MEM_LAT_BOUND    				# 0.111, too few workload
         self.eqType['BlackScholes'] = NO_HID
-        self.eqType['conjugateGradient'] = NO_HID
+        self.eqType['conjugateGradient'] = COMP_BOUND
         self.eqType['convolutionSeparable'] = MEM_HID
-        self.eqType['convolutionTexture'] = MEM_LAT_BOUND  
+        self.eqType['convolutionTexture'] = COMP_BOUND
         self.eqType['fastWalshTransform'] = NO_HID
-        self.eqType['histogram'] = NO_HID			# 0.076, to be witnessed
-        self.eqType['hotspot'] = NO_HID
-        self.eqType['matrixMul'] = NO_HID    			# 0.15, consider how to deal with shared memory
+        self.eqType['histogram'] = SHM_BOUND			# 0.076, to be witnessed
+        self.eqType['hotspot'] = COMP_BOUND
+        self.eqType['matrixMul'] = COMP_BOUND  			# 0.15, consider how to deal with shared memory
         self.eqType['matrixMulShared'] = NO_HID    			# 0.15, consider how to deal with shared memory
         self.eqType['matrixMul(Global)'] = COMP_HID
         self.eqType['matrixMulGlobal'] = COMP_HID
-        self.eqType['mergeSort'] = NO_HID 
+        self.eqType['mergeSort'] = COMP_BOUND 
         self.eqType['nn'] = NO_HID   				# 0.174, too few workload
-        self.eqType['quasirandomGenerator'] = MEM_LAT_BOUND
+        self.eqType['quasirandomGenerator'] = COMP_BOUND
         self.eqType['reduction'] = MEM_HID
         self.eqType['scalarProd'] = NO_HID
         self.eqType['scan'] = DM_HID
         self.eqType['SobolQRNG'] = DM_HID
         self.eqType['sortingNetworks'] = COMP_HID
-        self.eqType['transpose'] = DM_COMP_HID
+        self.eqType['transpose'] = COMP_HID
         self.eqType['vectorAdd'] = DM_COMP_HID
 
