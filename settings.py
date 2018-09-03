@@ -76,8 +76,8 @@ class GTX980:
         self.eqType['fastWalshTransform'] = COMP_HID
         self.eqType['histogram'] = MEM_LAT_BOUND			# 0.076, to be witnessed
         self.eqType['hotspot'] = MEM_LAT_BOUND
-        self.eqType['matrixMul'] = NO_HID    			# 0.15, consider how to deal with shared memory
-        self.eqType['matrixMulShared'] = NO_HID    			# 0.15, consider how to deal with shared memory
+        self.eqType['matrixMul'] = MEM_LAT_BOUND    			# 0.15, consider how to deal with shared memory
+        self.eqType['matrixMulShared'] = MEM_LAT_BOUND    			# 0.15, consider how to deal with shared memory
         self.eqType['matrixMul(Global)'] = DM_COMP_HID
         self.eqType['matrixMulGlobal'] = DM_COMP_HID
         self.eqType['mergeSort'] = DM_COMP_HID 
@@ -143,11 +143,11 @@ class TITANX:
 class P100:
     def __init__(self):
         # Hardware Configuration
-        self.a_L_DM = 222.78   # a * f_core / f_mem + b, a = 222.78, b = 277.32 for gtx980
-        self.b_L_DM = 400   # a * f_core / f_mem + b, a = 222.78, b = 277.32 for gtx980
+        self.a_L_DM = 222.78 / 8   # a * f_core / f_mem + b, a = 222.78, b = 277.32 for gtx980
+        self.b_L_DM = 277.32   # a * f_core / f_mem + b, a = 222.78, b = 277.32 for gtx980
         self.L_L2 = 263   # 222 for gtx980
         self.L_INST = 8   # 4 for gtx980
-        self.a_D_DM = 201.325    # a / f_mem + b, a = 805.03, b = 8.1762 for gtx980
+        self.a_D_DM = 805.03 / 4    # a / f_mem + b, a = 805.03, b = 8.1762 for gtx980
         self.b_D_DM = 1.5    # a / f_mem + b, a = 805.03, b = 8.1762 for gtx980
         self.D_L2 = 1     # 1 for l2 cache
         self.L_sh = 56    # 28 for gtx980
@@ -171,21 +171,21 @@ class P100:
         self.eqType['conjugateGradient'] = NO_HID
         self.eqType['convolutionSeparable'] = MEM_HID
         self.eqType['convolutionTexture'] = MEM_LAT_BOUND  
-        self.eqType['fastWalshTransform'] = COMP_HID
-        self.eqType['histogram'] = MEM_LAT_BOUND			# 0.076, to be witnessed
-        self.eqType['hotspot'] = MEM_LAT_BOUND
+        self.eqType['fastWalshTransform'] = NO_HID
+        self.eqType['histogram'] = NO_HID			# 0.076, to be witnessed
+        self.eqType['hotspot'] = NO_HID
         self.eqType['matrixMul'] = NO_HID    			# 0.15, consider how to deal with shared memory
         self.eqType['matrixMulShared'] = NO_HID    			# 0.15, consider how to deal with shared memory
-        self.eqType['matrixMul(Global)'] = DM_COMP_HID
-        self.eqType['matrixMulGlobal'] = DM_COMP_HID
+        self.eqType['matrixMul(Global)'] = COMP_HID
+        self.eqType['matrixMulGlobal'] = COMP_HID
         self.eqType['mergeSort'] = NO_HID 
         self.eqType['nn'] = NO_HID   				# 0.174, too few workload
-        self.eqType['quasirandomGenerator'] = DM_COMP_HID
-        self.eqType['reduction'] = MEM_LAT_BOUND
-        self.eqType['scalarProd'] = DM_COMP_HID
-        self.eqType['scan'] = DM_COMP_HID
-        self.eqType['SobolQRNG'] = NO_HID
-        self.eqType['sortingNetworks'] = NO_HID
-        self.eqType['transpose'] = DM_HID
-        self.eqType['vectorAdd'] = NO_HID
+        self.eqType['quasirandomGenerator'] = MEM_LAT_BOUND
+        self.eqType['reduction'] = MEM_HID
+        self.eqType['scalarProd'] = NO_HID
+        self.eqType['scan'] = DM_HID
+        self.eqType['SobolQRNG'] = DM_HID
+        self.eqType['sortingNetworks'] = COMP_HID
+        self.eqType['transpose'] = DM_COMP_HID
+        self.eqType['vectorAdd'] = DM_COMP_HID
 
