@@ -3,7 +3,7 @@ import numpy as np
 import sys
 from settings import *
 
-gpucard = 'p100'
+gpucard = 'gtx980'
 csv_perf = "csvs/v0/%s-DVFS-Performance.csv" % gpucard
 df = pd.read_csv(csv_perf, header = 0)
 
@@ -23,10 +23,13 @@ features['n_shm_ld'] = df['shared_load_transactions'] / df['warps']
 features['n_shm_st'] = df['shared_store_transactions'] / df['warps']
 
 # global memory information
-#features['n_gld'] = df['l2_read_transactions'] / df['warps']
-#features['n_gst'] = df['l2_write_transactions'] / df['warps']
-features['n_gld'] = df['gld_transactions'] / df['warps']
-features['n_gst'] = df['gst_transactions'] / df['warps']
+try:
+    features['n_gld'] = df['gld_transactions'] / df['warps']
+    features['n_gst'] = df['gst_transactions'] / df['warps']
+except Exception as e:
+    features['n_gld'] = df['l2_read_transactions'] / df['warps']
+    features['n_gst'] = df['l2_write_transactions'] / df['warps']
+
 #features['n_gld'] = (df['l2_read_transactions'] + df['shared_load_transactions']) / df['warps']
 #features['n_gst'] = (df['l2_write_transactions'] + df['shared_store_transactions']) / df['warps']
 
@@ -55,48 +58,60 @@ def song2013(df):
 def qiang2018(df):
 
     # analytical model
-    cycles = pd.DataFrame(columns=['appName', 'coreF', 'memF', 'cold_miss', 'mem_op', 'sm_op', 'modelled_cycle', 'real_cycle']) # real_cycle per round
+    cycles = pd.DataFrame(columns=['appName', 'coreF', 'memF', 'cold_miss', 'c_to_m', 'modelled_cycle', 'real_cycle']) # real_cycle per round
     cycles['appName'] = df['appName']
     cycles['coreF'] = df['coreF']
     cycles['memF'] = df['memF']
+    cycles['c_to_m'] = df['coreF'] * 1.0 / df['memF']
     cycles['cold_miss'] = df['L_DM']
-    cycles['mem_op'] = (df['n_gld'] + df['n_gst']) * (df['D_DM'] * (1 - df['l2_hit']) + GPUCONF.D_L2 * df['l2_hit']) * GPUCONF.WARPS_MAX * df['act_util']
-    cycles['lat_op'] = (df['n_gld'] + df['n_gst']) * ((df['L_DM'] + df['D_DM']) * (1 - df['l2_hit']) + GPUCONF.L_L2 * df['l2_hit'])
-    cycles['shm_op'] = (df['n_shm_ld'] + df['n_shm_st']) * GPUCONF.L_sh
-    cycles['shm_del'] = (df['n_shm_ld'] + df['n_shm_st']) * df['act_util'] * GPUCONF.WARPS_MAX + GPUCONF.L_sh
-    cycles['compute_lat'] = df['insts'] * GPUCONF.L_INST
-    cycles['sm_op'] = cycles['shm_op'] + cycles['compute_lat']
-    cycles['compute_del'] = df['insts'] * df['act_util'] * GPUCONF.WARPS_MAX + GPUCONF.L_INST
+    cycles['mem_del'] = (df['n_gld'] + df['n_gst']) * (df['D_DM'] * (1 - df['l2_hit']) + GPUCONF.D_L2 * df['l2_hit']) * GPUCONF.WARPS_MAX * df['act_util'] # memory queue delay for all warps per round
+    cycles['mem_lat'] = (df['n_gld'] + df['n_gst']) * ((df['L_DM'] + df['D_DM']) * (1 - df['l2_hit']) + GPUCONF.L_L2 * df['l2_hit']) # memory latency for one warp per round
+    cycles['shm_del'] = (df['n_shm_ld'] + df['n_shm_st']) * df['act_util'] * GPUCONF.WARPS_MAX + GPUCONF.L_sh # shared queue delay for all warps per round
+    cycles['shm_lat'] = (df['n_shm_ld'] + df['n_shm_st']) * GPUCONF.L_sh # shared latency for one warp per round
+    cycles['compute_del'] = df['insts'] * df['act_util'] * 32.0 * GPUCONF.WARPS_MAX / GPUCONF.CORES_SM + GPUCONF.L_INST # compute delay for all warps per round
+    cycles['compute_lat'] = df['insts'] * GPUCONF.L_INST # compute latency for one warp per round
+    cycles['sm_del'] = cycles['compute_del'] + cycles['shm_del']
+    cycles['sm_lat'] = cycles['compute_lat'] + cycles['shm_lat']
     #cycles['sm_op'] = df['insts'] * L_INST
     cycles['insts'] = df['insts']
     
     # add type for offset
-    cycles['offset'] = None
-    for idx, item in df.iterrows():
-    	cur_name = df['appName'][idx]
-    	if GPUCONF.eqType[cur_name] == DM_HID:
-    		cycles.loc[idx, 'offset'] = -cycles.loc[idx, 'cold_miss']
-    	elif GPUCONF.eqType[cur_name] == COMP_HID:
-    		cycles.loc[idx, 'offset'] = -cycles.loc[idx, 'sm_op']
-    	elif GPUCONF.eqType[cur_name] == MEM_HID:
-    		cycles.loc[idx, 'offset'] = -cycles.loc[idx, 'mem_op']
-    	elif GPUCONF.eqType[cur_name] == DM_COMP_HID:
-    		cycles.loc[idx, 'offset'] = -cycles.loc[idx, 'cold_miss'] -cycles.loc[idx, 'sm_op']
-    	elif GPUCONF.eqType[cur_name] == MEM_LAT_BOUND:
-    		cycles.loc[idx, 'offset'] = -cycles.loc[idx, 'mem_op'] -cycles.loc[idx, 'cold_miss'] +cycles.loc[idx, 'lat_op']
-    	elif GPUCONF.eqType[cur_name] == NO_HID:
-    		cycles.loc[idx, 'offset'] = 0
-    	elif GPUCONF.eqType[cur_name] == MIX:
-    		cycles.loc[idx, 'offset'] = 0
-    	elif GPUCONF.eqType[cur_name] == COMP_BOUND:
-    		cycles.loc[idx, 'offset'] = -cycles.loc[idx, 'sm_op'] - cycles.loc[idx, 'mem_op'] + cycles.loc[idx, 'compute_del']
-    	elif GPUCONF.eqType[cur_name] == SHM_BOUND:
-    		cycles.loc[idx, 'offset'] = -cycles.loc[idx, 'sm_op'] - cycles.loc[idx, 'mem_op'] + cycles.loc[idx, 'shm_del']
-    	else:
-    		print "Invalid modeling type of %s..." % cur_name
-    		sys.exit(-1)	
+    #cycles['offset'] = None
+
+    for idx, item in cycles.iterrows():
+        if cycles.loc[idx, 'sm_del'] > cycles.loc[idx, 'mem_del']:
+            cycles.loc[idx, 'modelled_cycle'] = cycles.loc[idx, 'sm_del']
+        else:
+	    cycles.loc[idx, 'modelled_cycle'] = cycles.loc[idx, 'mem_del']
+
+    cycles['modelled_cycle'] += cycles['cold_miss']
+    cycles = cycles.sort_values(by=['appName', 'c_to_m'])
+    #for idx, item in df.iterrows():
+    	#cur_name = df['appName'][idx]
+    	#if GPUCONF.eqType[cur_name] == DM_HID:
+    	#	cycles.loc[idx, 'offset'] = -cycles.loc[idx, 'cold_miss']
+    	#elif GPUCONF.eqType[cur_name] == COMP_HID:
+    	#	cycles.loc[idx, 'offset'] = -cycles.loc[idx, 'sm_op']
+    	#elif GPUCONF.eqType[cur_name] == MEM_HID:
+    	#	cycles.loc[idx, 'offset'] = -cycles.loc[idx, 'mem_op']
+    	#elif GPUCONF.eqType[cur_name] == DM_COMP_HID:
+    	#	cycles.loc[idx, 'offset'] = -cycles.loc[idx, 'cold_miss'] -cycles.loc[idx, 'sm_op']
+    	#elif GPUCONF.eqType[cur_name] == MEM_LAT_BOUND:
+    	#	cycles.loc[idx, 'offset'] = -cycles.loc[idx, 'mem_op'] -cycles.loc[idx, 'cold_miss'] +cycles.loc[idx, 'lat_op']
+    	#elif GPUCONF.eqType[cur_name] == NO_HID:
+    	#	cycles.loc[idx, 'offset'] = 0
+    	#elif GPUCONF.eqType[cur_name] == MIX:
+    	#	cycles.loc[idx, 'offset'] = 0
+    	#elif GPUCONF.eqType[cur_name] == COMP_BOUND:
+    	#	cycles.loc[idx, 'offset'] = -cycles.loc[idx, 'sm_op'] - cycles.loc[idx, 'mem_op'] + cycles.loc[idx, 'compute_del']
+    	#elif GPUCONF.eqType[cur_name] == SHM_BOUND:
+    	#	cycles.loc[idx, 'offset'] = -cycles.loc[idx, 'sm_op'] - cycles.loc[idx, 'mem_op'] + cycles.loc[idx, 'shm_del']
+    	#else:
+    	#	print "Invalid modeling type of %s..." % cur_name
+    	#	sys.exit(-1)	
     
-    cycles['modelled_cycle'] = cycles['cold_miss'] + cycles['mem_op'] + cycles['sm_op'] + cycles['offset']
+    #cycles['modelled_cycle'] = cycles['cold_miss'] + cycles['mem_op'] + cycles['sm_op'] + cycles['offset']
+
     return cycles
 
 
@@ -148,9 +163,8 @@ for i in range(len(cycles['modelled_cycle'])):
 		    print 'dram latency', features['L_DM'][i]
 		    print 'coreF', features['coreF'][i]
 		    print 'memF', features['memF'][i]
-		    print 'mem_op', cycles['mem_op'][i]
-		    print 'sm_op', cycles['sm_op'][i]
-		    print 'lat_op', cycles['lat_op'][i]
+		    print 'mem_del', cycles['mem_del'][i]
+		    print 'sm_del', cycles['sm_del'][i]
 		    print 'modelled', cycles['modelled_cycle'][i]
 		    print 'real', cycles['real_cycle'][i], df['time/ms'][i], "ms"
 		    print 'relative error', cycles['abe'][i]
