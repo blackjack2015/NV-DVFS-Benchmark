@@ -126,17 +126,18 @@ for core_f in core_frequencies:
                 metCount = 0
 
                 # to be fixed, the stride should be a multiplier of the metric number
+                stride = 2
                 while metCount < len(metrics):
 
-                    if metCount + 3 > len(metrics):
+                    if metCount + stride > len(metrics):
                         metStr = ','.join(metrics[metCount:])
                     else:
-                        metStr = ','.join(metrics[metCount:metCount + 3])
+                        metStr = ','.join(metrics[metCount:metCount + stride])
                     command = 'nvprof --devices %s --metrics %s %s/%s %s -device=%d -iters=10 >> %s/%s 2>&1' % (cuda_dev_id, metStr, APP_ROOT, app, arg, cuda_dev_id, LOG_ROOT, metricslog)
                     print command
                     os.system(command)
                     time.sleep(1)
-                    metCount += 3
+                    metCount += stride
 
 
 time.sleep(rest_int)
