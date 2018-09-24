@@ -54,6 +54,7 @@ class GTX980:
         self.a_D_DM = 805.03    # a / f_mem + b, a = 805.03, b = 8.1762 for gtx980
         self.b_D_DM = 8.1762    # a / f_mem + b, a = 805.03, b = 8.1762 for gtx980
         self.D_L2 = 1     # 1 for l2 cache
+        self.D_INST = 1.2     # 1.2 for compute throughput
         self.L_sh = 28    # 28 for gtx980
         self.WARPS_MAX = 64 # 64 for gtx980
         self.SM_COUNT = 16 # 56 for p100, 16 for gtx980, 28 for titanx
@@ -100,9 +101,10 @@ class TITANX:
         self.b_L_DM = 500   # a * f_core / f_mem + b, a = 222.78, b = 277.32 for gtx980
         self.L_L2 = 222   # 222 for gtx980
         self.L_INST = 4   # 4 for gtx980
-        self.a_D_DM = 1300    # a / f_mem + b, a = 805.03, b = 8.1762 for gtx980
-        self.b_D_DM = 11.539    # a / f_mem + b, a = 805.03, b = 8.1762 for gtx980
-        self.D_L2 = 1.2     # 1 for l2 cache
+        self.a_D_DM = 40425    # a / f_mem + b, a = 805.03, b = 8.1762 for gtx980
+        self.b_D_DM = -1.2509    # a / f_mem + b, a = 805.03, b = 8.1762 for gtx980
+        self.D_L2 = 1     # 1 for l2 cache
+        self.D_INST = 1.2     # 1.2 for compute throughput
         self.L_sh = 28    # 28 for gtx980
         self.WARPS_MAX = 64 # 64 for gtx980
         self.SM_COUNT = 28 # 56 for p100, 16 for gtx980, 28 for titanx
@@ -150,8 +152,9 @@ class P100:
         self.L_L2 = 263   # 222 for gtx980
         self.L_INST = 8   # 4 for gtx980
         self.a_D_DM = 805.03 / 4    # a / f_mem + b, a = 805.03, b = 8.1762 for gtx980
-        self.b_D_DM = 1.5    # a / f_mem + b, a = 805.03, b = 8.1762 for gtx980
+        self.b_D_DM = 2.1    # a / f_mem + b, a = 805.03, b = 8.1762 for gtx980
         self.D_L2 = 1     # 1 for l2 cache
+        self.D_INST = 1.2     # 1.2 for compute throughput
         self.L_sh = 56    # 28 for gtx980
         self.WARPS_MAX = 64 # 64 for gtx980
         self.SM_COUNT = 56 # 56 for p100, 16 for gtx980, 28 for titanx
