@@ -224,6 +224,40 @@ def plot_dvfs_scaling(gpucard, csv_perf):
 
     #plt.show()
 
+def plot_perf_acc_analytical(gpu, save_filename = None):
+
+    csv_file = "csvs/analytical/%s-dvfs.csv" % gpu
+    df = pd.read_csv(csv_file, header = 0)
+    print df.tail(3)
+
+    kernels = list(df['kernel'])
+
+    fig, ax = plt.subplots(figsize = (24, 4))
+    # ax.title("Instruction Distribution")
+
+    bar_width = 0.8
+    x_axis = np.arange(len(m1_df)) * bar_width * 4 + bar_width / 2
+
+    fsize = 28
+    ax.bar(x_axis, df['m1_error'] * 100, bar_width, label='mode 1', color=COLORS[2], hatch=HATCHES[1])
+
+    ax.set_ylabel('Absolute Relative Error (%)', fontsize=fsize)
+    ax.yaxis.set_tick_params(labelsize=fsize)
+    ax.set_xlabel('')
+    ax.set_ylim(top=100)
+    ax.set_xticks(x_axis + bar_width * 1.5)
+    ax.set_xticklabels(map(get_abbr, kernels), fontsize=fsize, rotation=90)
+
+    ax.legend(fontsize=fsize, loc='upper center', ncol = 3, bbox_to_anchor=(0.5, 1.3))
+    ax.grid(linestyle=':')
+
+    if not save_filename: # or True:
+        plt.show()
+	return
+    else:
+        plt.savefig(os.path.join(OUTPUT_PATH, '%s.pdf'%save_filename), bbox_inches='tight')
+        plt.savefig(os.path.join(OUTPUT_PATH, '%s.png'%save_filename), bbox_inches='tight')
+
 def plot_perf_acc_kernel(gpu, ml_algo, save_filename = None):
 
     csv_file = "csvs/ml/%s_%s_kernel_mode1.csv" % (gpu, ml_algo)
@@ -326,13 +360,16 @@ if __name__ == '__main__':
     #csv_file = "csvs/%s-%s-Performance.csv" % (gpu, version)
     #plot_inst_distribution(gpu, csv_file, 'gtx980_sample_inst_dist')
 
-    ml_algo = 'xgboost'
+    #ml_algo = 'xgboost'
+    #gpu = 'gtx980'
+    ## plot_perf_acc_kernel(gpu, ml_algo, '%s_%s_kernel' % (gpu, ml_algo))
+    #plot_perf_acc_dvfs(gpu, ml_algo, '%s_%s_dvfs' % (gpu, ml_algo))
+    #gpu = 'titanx'
+    ## plot_perf_acc_kernel(gpu, ml_algo, '%s_%s_kernel' % (gpu, ml_algo))
+    #plot_perf_acc_dvfs(gpu, ml_algo, '%s_%s_dvfs' % (gpu, ml_algo))
+    #gpu = 'p100'
+    ## plot_perf_acc_kernel(gpu, ml_algo, '%s_%s_kernel' % (gpu, ml_algo))
+    #plot_perf_acc_dvfs(gpu, ml_algo, '%s_%s_dvfs' % (gpu, ml_algo))
+
     gpu = 'gtx980'
-    # plot_perf_acc_kernel(gpu, ml_algo, '%s_%s_kernel' % (gpu, ml_algo))
-    plot_perf_acc_dvfs(gpu, ml_algo, '%s_%s_dvfs' % (gpu, ml_algo))
-    gpu = 'titanx'
-    # plot_perf_acc_kernel(gpu, ml_algo, '%s_%s_kernel' % (gpu, ml_algo))
-    plot_perf_acc_dvfs(gpu, ml_algo, '%s_%s_dvfs' % (gpu, ml_algo))
-    gpu = 'p100'
-    # plot_perf_acc_kernel(gpu, ml_algo, '%s_%s_kernel' % (gpu, ml_algo))
-    plot_perf_acc_dvfs(gpu, ml_algo, '%s_%s_dvfs' % (gpu, ml_algo))
+    plot_perf_acc_analytical(gpu, '%s_analytical' % gpu)

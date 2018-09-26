@@ -67,8 +67,8 @@ features['L_DM'] = GPUCONF.a_L_DM * df['coreF'] / df['memF'] + GPUCONF.b_L_DM
 features['D_DM'] = (GPUCONF.a_D_DM / df['memF'] + GPUCONF.b_D_DM) * df['coreF'] / df['memF']
 
 # save featuress to csv/xlsx
-features.to_csv("%s-features.csv" % gpucard)
-writer = pd.ExcelWriter("%s-features.xlsx" % gpucard)
+features.to_csv("csvs/features/%s-features.csv" % gpucard)
+writer = pd.ExcelWriter("csvs/features/%s-features.xlsx" % gpucard)
 features.to_excel(writer, 'Sheet1')
 writer.save()
 
@@ -156,8 +156,8 @@ cycles['real_cycle'] = df['time/ms'] * df['coreF'] * 1000.0 / cycles['exec_round
 cycles['abe'] = abs(cycles['modelled_cycle'] - cycles['real_cycle']) / cycles['real_cycle']
 
 # save results to csv/xlsx
-cycles.to_csv("%s-cycles.csv" % gpucard)
-writer = pd.ExcelWriter("%s-cycles.xlsx" % gpucard)
+cycles.to_csv("csvs/cycles/%s-cycles.csv" % gpucard)
+writer = pd.ExcelWriter("csvs/cycles/%s-cycles.xlsx" % gpucard)
 cycles.to_excel(writer, 'Sheet1')
 writer.save()
 
@@ -170,6 +170,19 @@ monitors = ['quasirandomGenerator', 'transpose']
 # pointer = ['transpose']
 kernels = features['appName'].drop_duplicates()
 kernels.sort()
+
+f = open("csvs/analytical/%s-dvfs.csv" % gpucard, "w")
+f.write("kernel,coreF,memF,real,predict\n")
+for idx, item in cycles.iterrows():
+	kernel = item['appName']
+        coreF = item['coreF']
+        memF = item['memF']
+        real = item['real_cycle']
+        predict = item['modelled_cycle']
+
+        f.write("%s,%d,%d,%f,%f\n" % (kernel, coreF, memF, real, predict))
+f.close()
+
 
 for kernel in kernels:
 	tmp_cycles = cycles[df['appName'] == kernel]
