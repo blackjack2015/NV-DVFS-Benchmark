@@ -56,6 +56,7 @@ class GTX980:
         self.D_L2 = 1     # 1 for l2 cache
         self.D_INST = 1.2     # 1.2 for compute throughput
         self.L_sh = 28    # 28 for gtx980
+        self.D_sh = 1
         self.WARPS_MAX = 64 # 64 for gtx980
         self.SM_COUNT = 16 # 56 for p100, 16 for gtx980, 28 for titanx
         self.CORES_SM = 128 # 64 for p100, 128 for gtx980 and titanx
@@ -92,6 +93,57 @@ class GTX980:
         self.eqType['SobolQRNG'] = DM_COMP_HID
         self.eqType['sortingNetworks'] = DM_COMP_HID
         self.eqType['transpose'] = DM_HID
+        self.eqType['vectorAdd'] = DM_HID
+
+class GTX1080TI:
+    def __init__(self):
+        # Hardware Configuration
+        self.a_L_DM = 222.78   # a * f_core / f_mem + b, a = 222.78, b = 277.32 for gtx980
+        self.b_L_DM = 500   # a * f_core / f_mem + b, a = 222.78, b = 277.32 for gtx980
+        self.a_D_DM = 7308.57    # a / f_mem + b, a = 805.03, b = 8.1762 for gtx980
+        self.b_D_DM = 10.0305    # a / f_mem + b, a = 805.03, b = 8.1762 for gtx980
+        self.L_L2 = 222   # 222 for gtx980
+        self.D_L2 = 1.2     # 1 for l2 cache
+        self.L_INST = 4   # 4 for gtx980
+        self.D_INST = 1.1    # 1.2 for compute throughput
+        self.L_sh = 28    # 28 for gtx980
+        self.D_sh = 0.9    # 28 for gtx980
+        self.WARPS_MAX = 64 # 64 for gtx980
+        self.SM_COUNT = 28 # 56 for p100, 16 for gtx980, 28 for titanx
+        self.CORES_SM = 128 # 64 for p100, 128 for gtx980 and titanx
+        self.WIDTH_MEM = 384 # 4096 for p100, 256 for gtx980, 384 for titanx
+        
+        self.DP_UNITS = 4
+        self.SP_UNITS = 128
+        self.SPEC_UNITS = 32
+        self.LS_UNITS = 32
+        
+        self.CORE_FREQ = 1825
+        self.MEM_FREQ = 5000
+
+        # kernel equation type
+        self.eqType = {}
+        self.eqType['backprop'] = MEM_LAT_BOUND   				# 0.111, too few workload
+        self.eqType['BlackScholes'] = DM_COMP_HID
+        self.eqType['conjugateGradient'] = DM_HID
+        self.eqType['convolutionSeparable'] = DM_HID
+        self.eqType['convolutionTexture'] = MEM_LAT_BOUND   
+        self.eqType['fastWalshTransform'] = DM_HID
+        self.eqType['histogram'] = MEM_LAT_BOUND			# 0.076, to be witnessed
+        self.eqType['hotspot'] = MEM_LAT_BOUND
+        self.eqType['matrixMul'] = MEM_LAT_BOUND    			# 0.15, consider how to deal with shared memory
+        self.eqType['matrixMulShared'] = MEM_LAT_BOUND    			# 0.15, consider how to deal with shared memory
+        self.eqType['matrixMul(Global)'] = NO_HID
+        self.eqType['matrixMulGlobal'] = DM_COMP_HID
+        self.eqType['mergeSort'] = NO_HID 
+        self.eqType['nn'] = MEM_LAT_BOUND   		# 0.174, too few workload
+        self.eqType['quasirandomGenerator'] = NO_HID
+        self.eqType['reduction'] = MEM_LAT_BOUND
+        self.eqType['scalarProd'] = DM_COMP_HID
+        self.eqType['scan'] = DM_COMP_HID
+        self.eqType['SobolQRNG'] = NO_HID
+        self.eqType['sortingNetworks'] = DM_COMP_HID
+        self.eqType['transpose'] = NO_HID
         self.eqType['vectorAdd'] = DM_HID
 
 class TITANX:
@@ -156,6 +208,7 @@ class P100:
         self.D_L2 = 1     # 1 for l2 cache
         self.D_INST = 1.2     # 1.2 for compute throughput
         self.L_sh = 56    # 28 for gtx980
+        self.D_sh = 1
         self.WARPS_MAX = 64 # 64 for gtx980
         self.SM_COUNT = 56 # 56 for p100, 16 for gtx980, 28 for titanx
         self.CORES_SM = 64 # 64 for p100, 128 for gtx980 and titanx

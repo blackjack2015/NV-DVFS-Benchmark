@@ -16,6 +16,8 @@ df = pd.read_csv(csv_perf, header = 0)
 
 if gpucard == 'gtx980':
     GPUCONF = GTX980()
+if gpucard == 'gtx1080ti':
+    GPUCONF = GTX1080TI()
 elif gpucard == 'titanx':
     GPUCONF = TITANX()
 elif gpucard == 'p100':
@@ -88,7 +90,7 @@ def qiang2018(df):
     cycles['cold_miss'] = df['L_DM']
     cycles['mem_del'] = (df['n_gld'] + df['n_gst']) * (df['D_DM'] * (1 - df['l2_hit']) + GPUCONF.D_L2 * df['l2_hit']) * GPUCONF.WARPS_MAX * df['act_util'] # memory queue delay for all warps per round
     cycles['mem_lat'] = (df['n_gld'] + df['n_gst']) * ((df['L_DM'] + df['D_DM']) * (1 - df['l2_hit']) + GPUCONF.L_L2 * df['l2_hit']) / 4.0 # memory latency for one warp per round
-    cycles['shm_del'] = (df['n_shm_ld'] + df['n_shm_st']) * df['act_util'] * GPUCONF.WARPS_MAX + GPUCONF.L_sh # shared queue delay for all warps per round
+    cycles['shm_del'] = GPUCONF.D_sh * (df['n_shm_ld'] + df['n_shm_st']) * df['act_util'] * GPUCONF.WARPS_MAX + GPUCONF.L_sh # shared queue delay for all warps per round
     cycles['shm_offset'] = ((df['n_shm_ld'] + df['n_shm_st']) * 1.0 / (df['n_gld'] + df['n_gst'])) * GPUCONF.L_sh
     cycles['shm_lat'] = (df['n_shm_ld'] + df['n_shm_st']) * GPUCONF.L_sh # shared latency for one warp per round
     cycles['compute_del'] = GPUCONF.D_INST * df['insts'] * df['act_util'] * 32.0 * GPUCONF.WARPS_MAX / GPUCONF.CORES_SM + GPUCONF.L_INST # compute delay for all warps per round
@@ -161,6 +163,8 @@ writer.save()
 
 # pointer = ['backprop', 'matrixMul', 'nn']
 pointer = ['convolutionTexture', 'nn', 'SobolQRNG', 'reduction', 'hotspot'] #, 'backprop', 'conjugateGradient', 'mergeSort', 'quasirandomGenerator', 'scalarProd']
+extras = ['backpropBackward', 'binomialOptions', 'cfd', 'eigenvalues', 'gaussian', 'srad', 'dxtc', 'pathfinder', 'scanUniformUpdate', 'stereoDisparity'] 
+monitors = ['quasirandomGenerator', 'transpose'] 
 #kernels = df['appName']
 #pointer = [kernels[16]]
 # pointer = ['transpose']
@@ -172,7 +176,7 @@ for kernel in kernels:
 	tmp_ape = np.mean(tmp_cycles['abe'])
 	tmp_err_std = np.std(tmp_cycles['abe'])
 
-	if kernel in pointer:
+	if kernel in pointer or kernel in extras:
 	    continue
 	print "%s:%f, %f" % (kernel, tmp_ape, tmp_err_std)
 
@@ -181,7 +185,7 @@ errors = []
 for i in range(len(cycles['modelled_cycle'])):
 	# if df['appName'][i] not in pointer and df['coreF'][i] >= 500 and df['memF'][i] >= 500:
 	# if df['appName'][i] not in pointer:
-        if cycles['appName'][i] not in pointer and cycles['coreF'][i] >= 500 and cycles['memF'][i] >= 500:
+        if not(cycles['appName'][i] in pointer or cycles['appName'][i] in extras) and cycles['coreF'][i] >= 500 and cycles['memF'][i] >= 500:
 	#if cycles['coreF'][i] >= 500 and cycles['memF'][i] >= 500:
 		#if True or cycles['abe'][i] > 0.20:
 		#    print cycles['appName'][i], cycles['coreF'][i], cycles['memF'][i]
