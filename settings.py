@@ -12,6 +12,7 @@ SHM_BOUND = 8 # shared memory delay
 
 ABBRS = {"backpropForward": "BPFW", \
 	 "backpropBackward": "BPBW", \
+         "backprop": "BP", \
 	 "binomialOptions": "BO", \
 	 "BlackScholes": "BS", \
 	 "cfd": "CFD", \
@@ -24,13 +25,16 @@ ABBRS = {"backpropForward": "BPFW", \
 	 "gaussian": "GS", \
 	 "histogram": "HIST", \
 	 "hotspot": "HSP", \
+         "matrixMul": "MMS", \
 	 "matrixMulShared": "MMS", \
+	 "matrixMul(Global)": "MMG", \
 	 "matrixMulGlobal": "MMG", \
 	 "mergeSort": "MS", \
 	 "nn": "NN", \
 	 "quasirandomGenerator": "quasiG", \
 	 "reduction": "RD", \
 	 "scalarProd": "SP", \
+         "scan": "SC", \
 	 "scanScanExclusiveShared": "SCEX", \
 	 "scanUniformUpdate": "SCUU", \
 	 "SobolQRNG": "SOR", \
