@@ -7,14 +7,17 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument('--gpucard', type=str, help='gpu card', default='gtx980')
 parser.add_argument('--kernel', type=str, help='kernel list name', default='real')
+parser.add_argument('--method', type=str, help='analytical modeling method', default='qiang2018')
 
 opt = parser.parse_args()
 print opt
 
 gpucard = opt.gpucard
 kernel_setting = opt.kernel
+method = opt.method
 csv_perf = "csvs/%s-%s-Performance.csv" % (gpucard, kernel_setting)
 #csv_perf = "csvs/v0/%s-%s-Performance.csv" % (gpucard, kernel)
+csv_perf = "csvs/v0/%s-DVFS-Performance.csv" % gpucard
 df = pd.read_csv(csv_perf, header = 0)
 
 if gpucard == 'gtx980':
@@ -70,17 +73,70 @@ features['L_DM'] = GPUCONF.a_L_DM * df['coreF'] / df['memF'] + GPUCONF.b_L_DM
 features['D_DM'] = (GPUCONF.a_D_DM / df['memF'] + GPUCONF.b_D_DM) * df['coreF'] / df['memF']
 
 # save featuress to csv/xlsx
-features.to_csv("csvs/features/%s-features.csv" % gpucard)
-writer = pd.ExcelWriter("csvs/features/%s-features.xlsx" % gpucard)
+features.to_csv("csvs/analytical/features/%s-features.csv" % gpucard)
+writer = pd.ExcelWriter("csvs/analytical/features/%s-features.xlsx" % gpucard)
 features.to_excel(writer, 'Sheet1')
 writer.save()
 
 # other methodology
 def hong2009(df):
-    pass
+
+    # analytical model
+    cycles = pd.DataFrame(columns=['appName', 'coreF', 'memF', 'cold_miss', 'c_to_m', 'modelled_cycle', 'real_cycle']) # real_cycle per round
+    cycles['appName'] = df['appName']
+    cycles['coreF'] = df['coreF']
+    cycles['memF'] = df['memF']
+    cycles['c_to_m'] = df['coreF'] * 1.0 / df['memF']
+    cycles['cold_miss'] = df['L_DM']
+
+    cycles['depart_delay'] = df['D_DM']
+    cycles['mem_l'] = df['L_DM']
+    cycles['MWP'] = cycles['mem_l'] / cycles['depart_delay']
+    cycles['mem_cycles'] = (df['n_gld'] + df['n_gst']) * cycles['mem_l'] * (GPUCONF.WARPS_MAX * df['act_util'] /cycles['MWP'])
+    cycles['compute_cycles'] = df['insts'] * GPUCONF.D_INST
+
+
+    for idx, item in cycles.iterrows():
+
+        compute_bound = cycles.loc[idx, 'compute_cycles'] * GPUCONF.WARPS_MAX * df.loc[idx, 'act_util'] + cycles.loc[idx, 'mem_l']
+        memory_bound = cycles.loc[idx, 'mem_cycles'] + cycles.loc[idx, 'compute_cycles']
+        if compute_bound > memory_bound:
+            cycles.loc[idx, 'modelled_cycle'] = compute_bound
+        else:
+	    cycles.loc[idx, 'modelled_cycle'] = memory_bound
+
+        if df.loc[idx, 'act_util'] <= 0.38:
+            cycles.loc[idx, 'modelled_cycle'] = cycles.loc[idx, 'mem_cycles'] + cycles.loc[idx, 'compute_cycles'] 
+
+    cycles = cycles.sort_values(by=['appName', 'c_to_m'])
+    return cycles
+
 
 def song2013(df):
-    pass
+
+    # analytical model
+    cycles = pd.DataFrame(columns=['appName', 'coreF', 'memF', 'cold_miss', 'c_to_m', 'modelled_cycle', 'real_cycle']) # real_cycle per round
+    cycles['appName'] = df['appName']
+    cycles['coreF'] = df['coreF']
+    cycles['memF'] = df['memF']
+    cycles['c_to_m'] = df['coreF'] * 1.0 / df['memF']
+
+    # global load and store
+    cycles['g_load'] = df['L_DM'] + (df['n_gld'] - 1) * df['D_DM']
+    cycles['g_store'] = df['L_DM'] + (df['n_gst'] - 1) * df['D_DM']
+
+    # sync
+    cycles['sync'] = (df['act_util'] * GPUCONF.WARPS_MAX - 1) * df['D_DM']
+
+    # compute
+    cycles['compute'] = GPUCONF.D_INST * 32.0 / GPUCONF.CORES_SM * df['insts']
+
+    # shared memory
+    cycles['shared'] = GPUCONF.D_sh * (df['n_shm_ld'] + df['n_shm_st']) * df['act_util'] * GPUCONF.WARPS_MAX 
+
+    cycles['modelled_cycle'] = cycles['compute'] + cycles['g_load'] + cycles['g_store'] + cycles['compute'] * (df['act_util'] * GPUCONF.WARPS_MAX - 1) + cycles['shared'] + cycles['sync']
+    cycles = cycles.sort_values(by=['appName', 'c_to_m'])
+    return cycles
 
 def qiang2018(df):
 
@@ -151,42 +207,48 @@ def qiang2018(df):
 
     return cycles
 
+if method == 'qiang2018':
+    cycles = qiang2018(features)
+elif method == 'song2013':
+    cycles = song2013(features)
+elif method == 'hong2009':
+    cycles = hong2009(features)
 
-cycles = qiang2018(features)
 cycles['exec_rounds'] = df['warps'] / (GPUCONF.WARPS_MAX * GPUCONF.SM_COUNT * df['achieved_occupancy'])
 #cycles['exec_rounds'] = cycles['exec_rounds'].astype(int)
 cycles['real_cycle'] = df['time/ms'] * df['coreF'] * 1000.0 / cycles['exec_rounds']
 cycles['abe'] = abs(cycles['modelled_cycle'] - cycles['real_cycle']) / cycles['real_cycle']
 
 # save results to csv/xlsx
-cycles.to_csv("csvs/cycles/%s-cycles.csv" % gpucard)
-writer = pd.ExcelWriter("csvs/cycles/%s-cycles.xlsx" % gpucard)
+cycles.to_csv("csvs/analytical/cycles/%s-%s-cycles.csv" % (gpucard, method))
+writer = pd.ExcelWriter("csvs/analytical/cycles/%s-%s-cycles.xlsx" % (gpucard, method))
 cycles.to_excel(writer, 'Sheet1')
 writer.save()
 
-# pointer = ['backprop', 'matrixMul', 'nn']
-pointer = ['convolutionTexture', 'nn', 'SobolQRNG', 'reduction', 'hotspot'] #, 'backprop', 'conjugateGradient', 'mergeSort', 'quasirandomGenerator', 'scalarProd']
+#pointer = ['convolutionTexture', 'nn', 'SobolQRNG', 'reduction', 'hotspot'] 
+pointer = []
 extras = ['backpropBackward', 'binomialOptions', 'cfd', 'eigenvalues', 'gaussian', 'srad', 'dxtc', 'pathfinder', 'scanUniformUpdate', 'stereoDisparity'] 
-monitors = ['quasirandomGenerator', 'transpose'] 
-#kernels = df['appName']
-#pointer = [kernels[16]]
-# pointer = ['transpose']
 kernels = features['appName'].drop_duplicates()
-kernels.sort_values()
+kernels.sort_values(inplace=True)
 
-f = open("csvs/analytical/%s-dvfs.csv" % gpucard, "w")
-f.write("kernel,coreF,memF,real,predict\n")
+f = open("csvs/analytical/results/%s-%s-dvfs.csv" % (gpucard, method), "w")
+f.write("kernel,coreF,memF,real,predict,error\n")
 for idx, item in cycles.iterrows():
 	kernel = item['appName']
         coreF = item['coreF']
         memF = item['memF']
         real = item['real_cycle']
         predict = item['modelled_cycle']
+        error = abs(item['real_cycle'] - item['modelled_cycle']) / item['real_cycle']
 
-        f.write("%s,%d,%d,%f,%f\n" % (kernel, coreF, memF, real, predict))
+	if kernel in pointer or kernel in extras:
+	    continue
+        f.write("%s,%d,%d,%f,%f,%f\n" % (kernel, coreF, memF, real, predict, error))
 f.close()
 
 
+f = open("csvs/analytical/results/%s-%s-aver.csv" % (gpucard, method), "w")
+f.write("kernel,ape\n")
 for kernel in kernels:
 	tmp_cycles = cycles[df['appName'] == kernel]
 	tmp_ape = np.mean(tmp_cycles['abe'])
@@ -195,36 +257,38 @@ for kernel in kernels:
 	if kernel in pointer or kernel in extras:
 	    continue
 	print "%s:%f, %f" % (kernel, tmp_ape, tmp_err_std)
+	f.write("%s,%f\n" % (kernel, tmp_ape))
+f.close()
 
 
 errors = []
 for i in range(len(cycles['modelled_cycle'])):
-	# if df['appName'][i] not in pointer and df['coreF'][i] >= 500 and df['memF'][i] >= 500:
-	# if df['appName'][i] not in pointer:
-        if not(cycles['appName'][i] in pointer or cycles['appName'][i] in extras) and cycles['coreF'][i] >= 500 and cycles['memF'][i] >= 500:
-	#if cycles['coreF'][i] >= 500 and cycles['memF'][i] >= 500:
-		#if True or cycles['abe'][i] > 0.20:
-		#    print cycles['appName'][i], cycles['coreF'][i], cycles['memF'][i]
-		#    #print i, df['appName'][i], 'relative error', cycles['abe'][i]
-		#    # print i, df['appName'][i]
-		#    print 'n_gld', features['n_gld'][i]
-		#    print 'n_gst', features['n_gst'][i]
-		#    print 'l2_hit', features['l2_hit'][i]
-		#    print 'n_shm_ld', features['n_shm_ld'][i]
-		#    print 'n_shm_st', features['n_shm_st'][i]
-		#    print 'insts', features['insts'][i]
-		#    print 'act_util', features['act_util'][i]
-		#    print 'dram delay', features['D_DM'][i]
-		#    print 'dram latency', features['L_DM'][i]
-		#    print 'coreF', features['coreF'][i]
-		#    print 'memF', features['memF'][i]
-		#    print 'mem_del', cycles['mem_del'][i]
-		#    print 'sm_del', cycles['sm_del'][i]
-		#    print 'modelled', cycles['modelled_cycle'][i]
-		#    print 'real', cycles['real_cycle'][i], df['time/ms'][i], "ms"
-		#    print 'relative error', cycles['abe'][i]
-		#    print '\n'
-		errors.append(cycles['abe'][i])
+        if cycles['appName'][i] in pointer or cycles['appName'][i] in extras:
+            continue
+ 
+        if cycles['coreF'][i] >= 500 and cycles['memF'][i] >= 500:
+	    errors.append(cycles['abe'][i])
+
+    	    #print cycles['appName'][i], cycles['coreF'][i], cycles['memF'][i]
+    	    ##print i, df['appName'][i], 'relative error', cycles['abe'][i]
+    	    ## print i, df['appName'][i]
+    	    #print 'n_gld', features['n_gld'][i]
+    	    #print 'n_gst', features['n_gst'][i]
+    	    #print 'l2_hit', features['l2_hit'][i]
+    	    #print 'n_shm_ld', features['n_shm_ld'][i]
+    	    #print 'n_shm_st', features['n_shm_st'][i]
+    	    #print 'insts', features['insts'][i]
+    	    #print 'act_util', features['act_util'][i]
+    	    #print 'dram delay', features['D_DM'][i]
+    	    #print 'dram latency', features['L_DM'][i]
+    	    #print 'coreF', features['coreF'][i]
+    	    #print 'memF', features['memF'][i]
+    	    #print 'mem_del', cycles['mem_del'][i]
+    	    #print 'sm_del', cycles['sm_del'][i]
+    	    #print 'modelled', cycles['modelled_cycle'][i]
+    	    #print 'real', cycles['real_cycle'][i], df['time/ms'][i], "ms"
+    	    #print 'relative error', cycles['abe'][i]
+    	    #print '\n'
            
 
 print "MAPE of %d samples: %f" % (len(errors), np.mean(errors))

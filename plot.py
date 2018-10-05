@@ -226,7 +226,7 @@ def plot_dvfs_scaling(gpucard, csv_perf):
 
 def plot_perf_acc_analytical(gpu, save_filename = None):
 
-    csv_file = "csvs/analytical/%s-dvfs.csv" % gpu
+    csv_file = "csvs/analytical/%s-kernel-aver.csv" % gpu
     df = pd.read_csv(csv_file, header = 0)
     print df.tail(3)
 
@@ -236,10 +236,10 @@ def plot_perf_acc_analytical(gpu, save_filename = None):
     # ax.title("Instruction Distribution")
 
     bar_width = 0.8
-    x_axis = np.arange(len(m1_df)) * bar_width * 4 + bar_width / 2
+    x_axis = np.arange(len(df)) * bar_width * 4 + bar_width / 2
 
     fsize = 28
-    ax.bar(x_axis, df['m1_error'] * 100, bar_width, label='mode 1', color=COLORS[2], hatch=HATCHES[1])
+    ax.bar(x_axis, df['ape'] * 100, bar_width, label='mode 1', color=COLORS[2], hatch=HATCHES[1])
 
     ax.set_ylabel('Absolute Relative Error (%)', fontsize=fsize)
     ax.yaxis.set_tick_params(labelsize=fsize)
@@ -308,8 +308,10 @@ def plot_perf_acc_kernel(gpu, ml_algo, save_filename = None):
 
 def plot_perf_acc_dvfs(gpu, ml_algo, save_filename = None):
 
-    csv_file = "csvs/ml/%s_%s_dvfs.csv" % (gpu, ml_algo)
-    df = pd.read_csv(csv_file, header = 0)[:-1]
+    #csv_file = "csvs/ml/%s_%s_dvfs.csv" % (gpu, ml_algo)
+    csv_file = "csvs/analytical/%s-%s-dvfs.csv" % (gpu, ml_algo)
+    df = pd.read_csv(csv_file, header = 0)
+    #df = pd.read_csv(csv_file, header = 0)[:-1]
 
     df['error'] = abs(df['real'] - df['predict']) / df['real'] * 100
 
@@ -372,4 +374,9 @@ if __name__ == '__main__':
     #plot_perf_acc_dvfs(gpu, ml_algo, '%s_%s_dvfs' % (gpu, ml_algo))
 
     gpu = 'gtx980'
-    plot_perf_acc_analytical(gpu, '%s_analytical' % gpu)
+    plot_perf_acc_dvfs(gpu, 'qiang2018', '%s_analytical' % gpu)
+    gpu = 'gtx1080ti'
+    plot_perf_acc_dvfs(gpu, 'qiang2018', '%s_analytical' % gpu)
+    gpu = 'p100'
+    plot_perf_acc_dvfs(gpu, 'qiang2018', '%s_analytical' % gpu)
+
