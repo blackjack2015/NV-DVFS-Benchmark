@@ -6,12 +6,15 @@ import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--gpucard', type=str, help='gpu card', default='gtx980')
+parser.add_argument('--kernel', type=str, help='kernel list name', default='real')
 
 opt = parser.parse_args()
 print opt
 
 gpucard = opt.gpucard
-csv_perf = "csvs/v0/%s-DVFS-Performance.csv" % gpucard
+kernel_setting = opt.kernel
+csv_perf = "csvs/%s-%s-Performance.csv" % (gpucard, kernel_setting)
+#csv_perf = "csvs/v0/%s-%s-Performance.csv" % (gpucard, kernel)
 df = pd.read_csv(csv_perf, header = 0)
 
 if gpucard == 'gtx980':
@@ -169,7 +172,7 @@ monitors = ['quasirandomGenerator', 'transpose']
 #pointer = [kernels[16]]
 # pointer = ['transpose']
 kernels = features['appName'].drop_duplicates()
-kernels.sort()
+kernels.sort_values()
 
 f = open("csvs/analytical/%s-dvfs.csv" % gpucard, "w")
 f.write("kernel,coreF,memF,real,predict\n")
