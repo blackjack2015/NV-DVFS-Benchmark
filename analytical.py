@@ -6,6 +6,7 @@ import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--gpucard', type=str, help='gpu card', default='gtx980')
+parser.add_argument('--kernel', type=str, help='kernel list', default='real')
 parser.add_argument('--method', type=str, help='analytical modeling method', default='qiang2018')
 
 opt = parser.parse_args()
@@ -13,16 +14,18 @@ print opt
 
 gpucard = opt.gpucard
 method = opt.method
-csv_perf = "csvs/v0/%s-DVFS-Performance.csv" % gpucard
+kernel_setting = opt.kernel
+#csv_perf = "csvs/v0/%s-%s-Performance.csv" % (gpucard, kernel_setting)
+csv_perf = "csvs/v1/%s-%s-Performance.csv" % (gpucard, kernel_setting)
 df = pd.read_csv(csv_perf, header = 0)
 
-if gpucard == 'gtx980':
+if 'gtx980' in gpucard:
     GPUCONF = GTX980()
-if gpucard == 'gtx1080ti':
+if 'gtx1080ti'in gpucard:
     GPUCONF = GTX1080TI()
-elif gpucard == 'titanx':
+if 'titanx' in gpucard:
     GPUCONF = TITANX()
-elif gpucard == 'p100':
+if 'p100' in gpucard:
     GPUCONF = P100()
 
 features = pd.DataFrame(columns=['appName', 'coreF', 'memF', 'n_shm_ld', 'n_shm_st', 'n_gld', 'n_gst', 'l2_miss', 'l2_hit', 'mem_insts', 'insts', 'act_util', 'L_DM', 'D_DM']) # real_cycle per round
@@ -224,6 +227,7 @@ writer.save()
 #pointer = ['convolutionTexture', 'nn', 'SobolQRNG', 'reduction', 'hotspot'] 
 pointer = []
 extras = ['backpropBackward', 'binomialOptions', 'cfd', 'eigenvalues', 'gaussian', 'srad', 'dxtc', 'pathfinder', 'scanUniformUpdate', 'stereoDisparity'] 
+#extras = []
 kernels = features['appName'].drop_duplicates()
 kernels.sort_values(inplace=True)
 
