@@ -155,13 +155,14 @@ class TITANX:
         # Hardware Configuration
         self.a_L_DM = 222.78   # a * f_core / f_mem + b, a = 222.78, b = 277.32 for gtx980
         self.b_L_DM = 500   # a * f_core / f_mem + b, a = 222.78, b = 277.32 for gtx980
+        self.a_D_DM = 7308.57    # a / f_mem + b, a = 805.03, b = 8.1762 for gtx980
+        self.b_D_DM = 10.0305    # a / f_mem + b, a = 805.03, b = 8.1762 for gtx980
         self.L_L2 = 222   # 222 for gtx980
+        self.D_L2 = 1.2     # 1 for l2 cache
         self.L_INST = 4   # 4 for gtx980
-        self.a_D_DM = 40425    # a / f_mem + b, a = 805.03, b = 8.1762 for gtx980
-        self.b_D_DM = -1.2509    # a / f_mem + b, a = 805.03, b = 8.1762 for gtx980
-        self.D_L2 = 1     # 1 for l2 cache
-        self.D_INST = 1.2     # 1.2 for compute throughput
+        self.D_INST = 1.1    # 1.2 for compute throughput
         self.L_sh = 28    # 28 for gtx980
+        self.D_sh = 0.9    # 28 for gtx980
         self.WARPS_MAX = 64 # 64 for gtx980
         self.SM_COUNT = 28 # 56 for p100, 16 for gtx980, 28 for titanx
         self.CORES_SM = 128 # 64 for p100, 128 for gtx980 and titanx
@@ -172,8 +173,8 @@ class TITANX:
         self.SPEC_UNITS = 32
         self.LS_UNITS = 32
         
-        self.CORE_FREQ = 1800
-        self.MEM_FREQ = 4500
+        self.CORE_FREQ = 1417
+        self.MEM_FREQ = 5005
 
         # kernel equation type
         self.eqType = {}

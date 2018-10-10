@@ -5,18 +5,19 @@ from settings import *
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--gpucard', type=str, help='gpu card', default='gtx980')
-parser.add_argument('--kernel', type=str, help='kernel list', default='real')
+parser.add_argument('--benchmark-setting', type=str, help='gpu and dvfs setting', default='gtx980-DVFS')
+parser.add_argument('--kernel-setting', type=str, help='kernel list', default='real')
 parser.add_argument('--method', type=str, help='analytical modeling method', default='qiang2018')
 
 opt = parser.parse_args()
 print opt
 
-gpucard = opt.gpucard
+gpucard = opt.benchmark_setting
+kernel_setting = opt.kernel_setting
 method = opt.method
-kernel_setting = opt.kernel
-#csv_perf = "csvs/v0/%s-%s-Performance.csv" % (gpucard, kernel_setting)
-csv_perf = "csvs/v1/%s-%s-Performance.csv" % (gpucard, kernel_setting)
+#csv_perf = "csvs/%s-%s-Performance.csv" % (gpucard, kernel_setting)
+csv_perf = "csvs/v0/%s-%s-Performance.csv" % (gpucard, kernel_setting)
+#csv_perf = "csvs/v1/%s-%s-Performance.csv" % (gpucard, kernel_setting)
 df = pd.read_csv(csv_perf, header = 0)
 
 if 'gtx980' in gpucard:
@@ -27,6 +28,12 @@ if 'titanx' in gpucard:
     GPUCONF = TITANX()
 if 'p100' in gpucard:
     GPUCONF = P100()
+
+# experimental test
+pointer = ['convolutionTexture', 'nn', 'SobolQRNG', 'reduction', 'hotspot'] 
+#pointer = []
+extras = ['backpropBackward', 'binomialOptions', 'cfd', 'eigenvalues', 'gaussian', 'srad', 'dxtc', 'pathfinder', 'scanUniformUpdate', 'stereoDisparity'] 
+#extras = []
 
 features = pd.DataFrame(columns=['appName', 'coreF', 'memF', 'n_shm_ld', 'n_shm_st', 'n_gld', 'n_gst', 'l2_miss', 'l2_hit', 'mem_insts', 'insts', 'act_util', 'L_DM', 'D_DM']) # real_cycle per round
 features['appName'] = df['appName']
@@ -63,17 +70,23 @@ features['l2_miss'] = (df['dram_read_transactions'] + df['dram_write_transaction
 features.loc[features['l2_miss'] > 1, 'l2_miss'] = 1
 features['l2_hit'] = 1 - features['l2_miss']
 
-# other parameters
+# compute instructions
+#features['fp_insts'] = df['inst_fp_32'] / (df['warps'] * 32.0)
+#features['dp_insts'] = df['inst_fp_64'] / (df['warps'] * 32.0)
+#features['int_insts'] = df['inst_integer'] / (df['warps'] * 32.0)
+#features['insts'] = features['fp_insts'] + features['dp_insts'] * 2.0 + features['int_insts']
 features['mem_insts'] = features['n_gld'] + features['n_gst'] + features['n_shm_ld'] + features['n_shm_st'] / 4.0
-features['insts'] = df['inst_per_warp'] - features['mem_insts']
+features['insts'] = df['inst_per_warp'] - features['mem_insts'] # + features['dp_insts']
+
+# other parameters
 features.loc[features['insts'] < 0, 'insts'] = 0
 features['act_util'] = df['achieved_occupancy']
 features['L_DM'] = GPUCONF.a_L_DM * df['coreF'] / df['memF'] + GPUCONF.b_L_DM
 features['D_DM'] = (GPUCONF.a_D_DM / df['memF'] + GPUCONF.b_D_DM) * df['coreF'] / df['memF']
 
 # save featuress to csv/xlsx
-features.to_csv("csvs/analytical/features/%s-features.csv" % gpucard)
-writer = pd.ExcelWriter("csvs/analytical/features/%s-features.xlsx" % gpucard)
+features.to_csv("csvs/analytical/features/%s-%s-features.csv" % (gpucard, kernel_setting))
+writer = pd.ExcelWriter("csvs/analytical/features/%s-%s-features.xlsx" % (gpucard, kernel_setting))
 features.to_excel(writer, 'Sheet1')
 writer.save()
 
@@ -219,19 +232,15 @@ cycles['real_cycle'] = df['time/ms'] * df['coreF'] * 1000.0 / cycles['exec_round
 cycles['abe'] = abs(cycles['modelled_cycle'] - cycles['real_cycle']) / cycles['real_cycle']
 
 # save results to csv/xlsx
-cycles.to_csv("csvs/analytical/cycles/%s-%s-cycles.csv" % (gpucard, method))
-writer = pd.ExcelWriter("csvs/analytical/cycles/%s-%s-cycles.xlsx" % (gpucard, method))
+cycles.to_csv("csvs/analytical/cycles/%s-%s-%s-cycles.csv" % (gpucard, kernel_setting, method))
+writer = pd.ExcelWriter("csvs/analytical/cycles/%s-%s-%s-cycles.xlsx" % (gpucard, kernel_setting, method))
 cycles.to_excel(writer, 'Sheet1')
 writer.save()
 
-#pointer = ['convolutionTexture', 'nn', 'SobolQRNG', 'reduction', 'hotspot'] 
-pointer = []
-extras = ['backpropBackward', 'binomialOptions', 'cfd', 'eigenvalues', 'gaussian', 'srad', 'dxtc', 'pathfinder', 'scanUniformUpdate', 'stereoDisparity'] 
-#extras = []
 kernels = features['appName'].drop_duplicates()
 kernels.sort_values(inplace=True)
 
-f = open("csvs/analytical/results/%s-%s-dvfs.csv" % (gpucard, method), "w")
+f = open("csvs/analytical/results/%s-%s-%s-dvfs.csv" % (gpucard, kernel_setting, method), "w")
 f.write("kernel,coreF,memF,real,predict,error\n")
 for idx, item in cycles.iterrows():
 	kernel = item['appName']
@@ -247,7 +256,7 @@ for idx, item in cycles.iterrows():
 f.close()
 
 
-f = open("csvs/analytical/results/%s-%s-aver.csv" % (gpucard, method), "w")
+f = open("csvs/analytical/results/%s-%s-%s-aver.csv" % (gpucard, kernel_setting, method), "w")
 f.write("kernel,ape\n")
 for kernel in kernels:
 	tmp_cycles = cycles[df['appName'] == kernel]
