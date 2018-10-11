@@ -39,10 +39,12 @@ benchmark_programs = cf_ks.sections()
 metrics = []
 recs = []
 for fp in perf_filelist:
-    # print fp
+    fn = fp.split('/')[-1]
+    print fn
 
-    baseInfo = fp.split('_')
+    baseInfo = fn.split('_')
     appName = baseInfo[1]
+    print baseInfo
     coreF = str(int(baseInfo[2][4:]) + coreBase)
     memF = str(int(baseInfo[3][3:]) + memBase)
     argNo = baseInfo[4]
@@ -75,8 +77,10 @@ for fp in perf_filelist:
         time = filter(regex.search, content)[0].split()[3].strip()
         if 'us' in time:
             time = float(time[:-2]) / 1000
-        else:
+        elif 'ms' in time:
             time = float(time[:-2])
+        else:
+	    time = float(time[:-1]) * 1000
         print time
     rec.append(time)
 
