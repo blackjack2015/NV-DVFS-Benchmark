@@ -8,16 +8,17 @@ import matplotlib.pyplot as plt
 
 MARKERS = ['^', '<', 'o', 's']
 HATCHES = ['//', '--', '\\\\', '||', '++', '--', '..', '++', '\\\\']
-COLORS = ['#2F4F4F', '#808080', '#A9A9A9', '#778899', '#DCDCDC', '#556677', '#1D3E3E', '#808080', '#DCDCDC']
-# COLORS = ['b', 'g', 'r', 'c', 'm', 'y', 'k', 'w']
+GRAYS = ['#2F4F4F', '#808080', '#A9A9A9', '#778899', '#DCDCDC', '#556677', '#1D3E3E', '#808080', '#DCDCDC']
+COLORS = ['b', 'g', 'r', 'c', 'm', 'y', 'k', 'w']
 
-in_kernels = ['BlackScholes', 'matrixMulShared', 'backpropForward', 'convolutionSeparable']
+#in_kernels = ['BlackScholes', 'matrixMulShared', 'backpropForward', 'convolutionSeparable']
+in_kernels = ['BlackScholes', 'matrixMul', 'backprop', 'convolutionSeparable']
 out_kernels = ['binomialOptions', 'eigenvalues', 'scanUniformUpdate', 'stereoDisparity', 'reduction', 'matrixMulGlobal', 'cfd', 'hotspot', 'dxtc', 'backpropBackward']
 
-highest_core = 1500
-lowest_core = 700
-highest_mem = 3900
-lowest_mem = 2100
+highest_core = 1000
+lowest_core = 500
+highest_mem = 1000
+lowest_mem = 500
 
 OUTPUT_PATH = 'figures'
 
@@ -109,7 +110,7 @@ def plot_inst_distribution(gpucard, csv_perf, save_filename = None):
     fig.subplots_adjust(top=0.7)
     ax.grid(linestyle=':')
 
-    if not save_filename: # or True:
+    if not save_filename or True:
         plt.show()
 	return
     else:
@@ -142,7 +143,50 @@ def plot_line(selected_df, sorted_key='coreF', save_filename=None):
     ax.grid()
     ax.legend(fontsize='large', loc='upper left')
 
-    if not save_filename: # or True:
+    if not save_filename or True:
+        plt.show()
+	return
+    else:
+        plt.savefig(os.path.join(OUTPUT_PATH, '%s.pdf'%save_filename), bbox_inches='tight')
+        plt.savefig(os.path.join(OUTPUT_PATH, '%s.png'%save_filename), bbox_inches='tight')
+
+def plot_dvfs_roofline(gpu, kernel, save_filename=None):
+
+    #csv_file = "csvs/ml/%s_%s_dvfs.csv" % (gpu, ml_algo)
+    csv_file = "csvs/analytical/cycles/%s-dvfs-real-qiang2018-cycles.csv" % (gpu)
+    df = pd.read_csv(csv_file, header = 0)
+
+    fig, ax = plt.subplots(figsize = (8, 6))
+
+    df = df[df.appName == kernel]
+
+    x_axis = list(df['c_to_m'])
+    x_axis.sort()
+    lines = []
+
+    x_axis = x_axis[::4]
+    #x_axis = x_axis
+    tmp_data = list(df.sort_values(by = ['c_to_m'])['real_cycle'])[::4]
+    lines.append(ax.plot(x_axis, tmp_data, linewidth = 1.5, color = COLORS[0], marker = MARKERS[0], markersize = 10, label = 'measured cycles', markerfacecolor='none'))
+    tmp_data = list(df.sort_values(by = ['c_to_m'])['mem_del'])[::4]
+    lines.append(ax.plot(x_axis, tmp_data, linewidth = 1.5, color = COLORS[1], marker = MARKERS[1], markersize = 10, label = 'memory-bound cycles', markerfacecolor='none'))
+    tmp_data = list(df.sort_values(by = ['c_to_m'])['sm_del'])[::4]
+    lines.append(ax.plot(x_axis, tmp_data, linewidth = 1.5, color = COLORS[2], marker = MARKERS[2], markersize = 10, label = 'compute-bound cycles', markerfacecolor='none'))
+
+    ax.set_ylabel("Cycles", size = 'x-large')
+    ymax = ax.get_ylim()[1] * 1.1
+    ymin = ax.get_ylim()[0] * 0.95
+    ax.set_ylim(top = ymax, bottom = ymin)
+    ax.yaxis.set_tick_params(labelsize=16)
+
+    ax.set_xlabel("$f^{core}/f^{mem}$", size = 'x-large')
+    #ax.set_xlim(min(x_axis) - 100, max(x_axis) + 100)
+    ax.xaxis.set_tick_params(labelsize=16)
+
+    ax.grid()
+    ax.legend(fontsize='large', loc='upper left')
+
+    if not save_filename or True:
         plt.show()
 	return
     else:
@@ -165,16 +209,16 @@ def plot_dvfs_scaling(gpucard, csv_perf):
     df = df.reset_index(drop=True)
 
     # fix core as lowest, scaling memory
-    selected_df = df[df.coreF == lowest_core]
+    selected_df = df[(df.coreF == lowest_core) & (df.memF >= lowest_mem)] 
     plot_line(selected_df, 'memF', '%s_core_%d_mem_scaling' % (gpucard, lowest_core))
 
-    selected_df = df[df.coreF == highest_core]
+    selected_df = df[(df.coreF == highest_core) & (df.memF >= lowest_mem)]
     plot_line(selected_df, 'memF', '%s_core_%d_mem_scaling' % (gpucard, highest_core))
 
-    selected_df = df[df.memF == lowest_mem]
+    selected_df = df[(df.memF == lowest_mem) & (df.coreF >= lowest_core)]
     plot_line(selected_df, 'coreF', '%s_mem_%d_core_scaling' % (gpucard, lowest_mem))
 
-    selected_df = df[df.memF == highest_mem]
+    selected_df = df[(df.memF == highest_mem) & (df.coreF >= lowest_core)]
     plot_line(selected_df, 'coreF', '%s_mem_%d_core_scaling' % (gpucard, highest_mem))
 
     ## fix core as highest, scaling memory 
@@ -224,9 +268,46 @@ def plot_dvfs_scaling(gpucard, csv_perf):
 
     #plt.show()
 
-def plot_perf_acc_analytical(gpu, save_filename = None):
+def plot_perf_acc_corr(gpu, method, save_filename = None):
 
-    csv_file = "csvs/analytical/%s-kernel-aver.csv" % gpu
+    csv_file = "csvs/analytical/results/%s-dvfs-real-%s-dvfs.csv" % (gpu, method)
+    df = pd.read_csv(csv_file, header = 0)
+    print df.tail(3)
+
+    # ax.title("Instruction Distribution")
+    fig, ax = plt.subplots(figsize = (8, 6))
+    lines = []
+
+    x_axis = list(df.predict)
+    y_axis = list(df.real)
+    lines.append(ax.scatter(x_axis, y_axis, linewidth = 1.5, color = 'b', alpha=0.3, marker = 'o', label = 'Modeling Cycles[Correl=0.959, Err=3.8]'))
+    lines.append(ax.plot(x_axis, x_axis, linewidth = 1.5, color = 'r', label = 'Ground Truth'))
+    fsize = 14
+
+    ax.set_ylabel('Modeling Cycles', fontsize=fsize)
+    ax.set_yscale('log')
+    ax.yaxis.set_tick_params(labelsize=fsize)
+    #ymax = ax.get_ylim()[1] * 1.1
+    #ax.set_ylim(top = ymax)
+  
+    ax.set_xscale('log')
+    ax.set_xlabel('Hardware Measured Cycles', fontsize=fsize)
+    ax.xaxis.set_tick_params(labelsize=fsize)
+    #ax.set_xticks(x_axis)
+
+    ax.legend(fontsize=fsize, loc='upper left')
+    ax.grid(linestyle=':')
+
+    if not save_filename or True:
+        plt.show()
+	return
+    else:
+        plt.savefig(os.path.join(OUTPUT_PATH, '%s.pdf'%save_filename), bbox_inches='tight')
+        plt.savefig(os.path.join(OUTPUT_PATH, '%s.png'%save_filename), bbox_inches='tight')
+
+def plot_perf_acc_analytical(gpu, method, save_filename = None):
+
+    csv_file = "csvs/analytical/results/%s-dvfs-real-%s-aver.csv" % (gpu, method)
     df = pd.read_csv(csv_file, header = 0)
     print df.tail(3)
 
@@ -236,22 +317,23 @@ def plot_perf_acc_analytical(gpu, save_filename = None):
     # ax.title("Instruction Distribution")
 
     bar_width = 0.8
-    x_axis = np.arange(len(df)) * bar_width * 4 + bar_width / 2
+    x_axis = np.arange(len(df)) 
 
-    fsize = 28
-    ax.bar(x_axis, df['ape'] * 100, bar_width, label='mode 1', color=COLORS[2], hatch=HATCHES[1])
+    fsize = 20
+    ax.bar(x_axis, df['ape'] * 100, bar_width, color=COLORS[1])
 
     ax.set_ylabel('Absolute Relative Error (%)', fontsize=fsize)
     ax.yaxis.set_tick_params(labelsize=fsize)
     ax.set_xlabel('')
-    ax.set_ylim(top=100)
-    ax.set_xticks(x_axis + bar_width * 1.5)
-    ax.set_xticklabels(map(get_abbr, kernels), fontsize=fsize, rotation=90)
+    ymax = ax.get_ylim()[1] * 1.1
+    ax.set_ylim(top = ymax)
+    ax.set_xticks(x_axis)
+    ax.set_xticklabels(map(get_abbr, kernels), fontsize=fsize) #rotation=90)
 
-    ax.legend(fontsize=fsize, loc='upper center', ncol = 3, bbox_to_anchor=(0.5, 1.3))
+    #ax.legend(fontsize=fsize, loc='upper center', ncol = 3, bbox_to_anchor=(0.5, 1.3))
     ax.grid(linestyle=':')
 
-    if not save_filename: # or True:
+    if not save_filename or True:
         plt.show()
 	return
     else:
@@ -299,7 +381,7 @@ def plot_perf_acc_kernel(gpu, ml_algo, save_filename = None):
     ax.legend(fontsize=fsize, loc='upper center', ncol = 3, bbox_to_anchor=(0.5, 1.3))
     ax.grid(linestyle=':')
 
-    if not save_filename: # or True:
+    if not save_filename or True:
         plt.show()
 	return
     else:
@@ -309,7 +391,7 @@ def plot_perf_acc_kernel(gpu, ml_algo, save_filename = None):
 def plot_perf_acc_dvfs(gpu, ml_algo, save_filename = None):
 
     #csv_file = "csvs/ml/%s_%s_dvfs.csv" % (gpu, ml_algo)
-    csv_file = "csvs/analytical/%s-%s-dvfs.csv" % (gpu, ml_algo)
+    csv_file = "csvs/analytical/results/%s-%s-dvfs.csv" % (gpu, ml_algo)
     df = pd.read_csv(csv_file, header = 0)
     #df = pd.read_csv(csv_file, header = 0)[:-1]
 
@@ -336,13 +418,14 @@ def plot_perf_acc_dvfs(gpu, ml_algo, save_filename = None):
 
     ax.set_ylabel('Absolute Relative Error (%)', fontsize=fsize)
     ax.yaxis.set_tick_params(labelsize=fsize)
+    ax.set_ylim(top=10)
     ax.set_xlabel('')
     ax.set_xticklabels(map(get_abbr, kernels), fontsize=fsize, rotation=90)
     ax.yaxis.grid(True)
 
     fig.subplots_adjust(bottom=0.3)
 
-    if not save_filename: # or True:
+    if not save_filename or True:
         plt.show()
 	return
     else:
@@ -373,10 +456,44 @@ if __name__ == '__main__':
     ## plot_perf_acc_kernel(gpu, ml_algo, '%s_%s_kernel' % (gpu, ml_algo))
     #plot_perf_acc_dvfs(gpu, ml_algo, '%s_%s_dvfs' % (gpu, ml_algo))
 
-    gpu = 'gtx980'
-    plot_perf_acc_dvfs(gpu, 'qiang2018', '%s_analytical' % gpu)
-    gpu = 'gtx1080ti'
-    plot_perf_acc_dvfs(gpu, 'qiang2018', '%s_analytical' % gpu)
-    gpu = 'p100'
-    plot_perf_acc_dvfs(gpu, 'qiang2018', '%s_analytical' % gpu)
+    #gpu = 'gtx980'
+    #plot_perf_acc_dvfs(gpu, 'qiang2018', '%s_analytical' % gpu)
+    #gpu = 'gtx1080ti'
+    #plot_perf_acc_dvfs(gpu, 'qiang2018', '%s_analytical' % gpu)
+    #gpu = 'p100'
+    #plot_perf_acc_dvfs(gpu, 'qiang2018', '%s_analytical' % gpu)
+
+    #gpu = 'gtx980'
+    #plot_perf_acc_analytical(gpu, 'qiang2018', '%s_analytical' % gpu)
+    #gpu = 'gtx1080ti'
+    #plot_perf_acc_analytical(gpu, 'qiang2018', '%s_analytical' % gpu)
+    #gpu = 'p100'
+    #plot_perf_acc_analytical(gpu, 'qiang2018', '%s_analytical' % gpu)
+
+    #gpu = 'gtx980'
+    #plot_perf_acc_corr(gpu, 'qiang2018', '%s_analytical' % gpu)
+    #gpu = 'gtx1080ti'
+    #plot_perf_acc_corr(gpu, 'qiang2018', '%s_analytical' % gpu)
+    #gpu = 'p100'
+    #plot_perf_acc_corr(gpu, 'qiang2018', '%s_analytical' % gpu)
+
+    #gpu = 'gtx1080ti'
+    #csv_file = "csvs/analytical/cycles/%s-dvfs-real-qiang2018-cycles.csv" % (gpu)
+    #df = pd.read_csv(csv_file, header = 0)
+    #kernels = list(df['appName'].drop_duplicates())
+    #print kernels
+    #
+    #for kernel in kernels:
+    #    print kernel
+    #    plot_dvfs_roofline(gpu, kernel, '%s_%s_dvfs_roofline' % (gpu, kernel))
+
+    # gpu card and data file
+    gpu = 'gtx980-dvfs'
+    version = 'real-small-workload'
+
+    csv_file = "csvs/v1/%s-%s-Performance.csv" % (gpu, version)
+    plot_dvfs_scaling(gpu, csv_file)
+
+    csv_file = "csvs/v1/%s-%s-Performance.csv" % (gpu, version)
+    plot_inst_distribution(gpu, csv_file, 'gtx980_sample_inst_dist')
 
