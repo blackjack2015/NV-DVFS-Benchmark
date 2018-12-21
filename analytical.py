@@ -5,8 +5,8 @@ from settings import *
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--benchmark-setting', type=str, help='gpu and dvfs setting', default='gtx980-dvfs')
-parser.add_argument('--kernel-setting', type=str, help='kernel list', default='real')
+parser.add_argument('--benchmark-setting', type=str, help='gpu and dvfs setting', default='gtx980-low-dvfs')
+parser.add_argument('--kernel-setting', type=str, help='kernel list', default='real-small-workload')
 parser.add_argument('--method', type=str, help='analytical modeling method', default='qiang2018')
 
 opt = parser.parse_args()
@@ -15,9 +15,8 @@ print opt
 gpucard = opt.benchmark_setting
 kernel_setting = opt.kernel_setting
 method = opt.method
-csv_perf = "csvs/v0/%s-%s-Performance.csv" % (gpucard, kernel_setting)
 #csv_perf = "csvs/v0/%s-%s-Performance.csv" % (gpucard, kernel_setting)
-#csv_perf = "csvs/v1/%s-%s-Performance.csv" % (gpucard, kernel_setting)
+csv_perf = "csvs/v1/%s-%s-Performance.csv" % (gpucard, kernel_setting)
 df = pd.read_csv(csv_perf, header = 0)
 
 if 'gtx980' in gpucard:
@@ -29,11 +28,17 @@ if 'titanx' in gpucard:
 if 'p100' in gpucard:
     GPUCONF = P100()
 
+lowest_core = 500
+lowest_mem = 500
+
 # experimental test
-pointer = ['convolutionTexture', 'nn', 'SobolQRNG', 'reduction', 'hotspot'] 
-#pointer = []
+#pointer = ['convolutionTexture', 'nn', 'SobolQRNG', 'reduction', 'hotspot'] 
+pointer = []
 extras = ['backpropBackward', 'binomialOptions', 'cfd', 'eigenvalues', 'gaussian', 'srad', 'dxtc', 'pathfinder', 'scanUniformUpdate', 'stereoDisparity'] 
 #extras = []
+df = df[~df.appName.isin(extras) & (df.coreF>=lowest_core) & (df.memF>=lowest_mem)]
+df = df.reset_index(drop=True)
+df = df.sort_values(by = ['appName', 'coreF', 'memF'])
 
 features = pd.DataFrame(columns=['appName', 'coreF', 'memF', 'n_shm_ld', 'n_shm_st', 'n_gld', 'n_gst', 'l2_miss', 'l2_hit', 'mem_insts', 'insts', 'act_util', 'L_DM', 'D_DM']) # real_cycle per round
 features['appName'] = df['appName']
@@ -290,8 +295,6 @@ for idx, item in cycles.iterrows():
         predict = item['modelled_cycle']
         error = abs(item['real_cycle'] - item['modelled_cycle']) / item['real_cycle']
 
-	if kernel in pointer or kernel in extras:
-	    continue
         f.write("%s,%d,%d,%f,%f,%f\n" % (kernel, coreF, memF, real, predict, error))
 f.close()
 
@@ -303,8 +306,6 @@ for kernel in kernels:
 	tmp_ape = np.mean(tmp_cycles['abe'])
 	tmp_err_std = np.std(tmp_cycles['abe'])
 
-	if kernel in pointer or kernel in extras:
-	    continue
 	print "%s:%f, %f" % (kernel, tmp_ape, tmp_err_std)
 	f.write("%s,%f\n" % (kernel, tmp_ape))
 f.close()
@@ -312,11 +313,11 @@ f.close()
 
 errors = []
 for i in range(len(cycles['modelled_cycle'])):
-        if cycles['appName'][i] in pointer or cycles['appName'][i] in extras:
-            continue
+        #if cycles['appName'][i] in pointer or cycles['appName'][i] in extras:
+        #    continue
  
-        if cycles['coreF'][i] >= 500 and cycles['memF'][i] >= 500:
-	    errors.append(cycles['abe'][i])
+        #if cycles['coreF'][i] >= 500 and cycles['memF'][i] >= 500:
+	errors.append(cycles['abe'][i])
 
     	    #print cycles['appName'][i], cycles['coreF'][i], cycles['memF'][i]
     	    ##print i, df['appName'][i], 'relative error', cycles['abe'][i]

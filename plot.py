@@ -5,15 +5,22 @@ import random
 from settings import *
 # from sklearn import cross_validation
 import matplotlib.pyplot as plt
+from scipy.stats.stats import pearsonr 
 
 MARKERS = ['^', '<', 'o', 's']
 HATCHES = ['//', '--', '\\\\', '||', '++', '--', '..', '++', '\\\\']
 GRAYS = ['#2F4F4F', '#808080', '#A9A9A9', '#778899', '#DCDCDC', '#556677', '#1D3E3E', '#808080', '#DCDCDC']
 COLORS = ['b', 'g', 'r', 'c', 'm', 'y', 'k', 'w']
 
-#in_kernels = ['BlackScholes', 'matrixMulShared', 'backpropForward', 'convolutionSeparable']
-in_kernels = ['BlackScholes', 'matrixMul', 'backprop', 'convolutionSeparable']
+in_kernels = ['BlackScholes', 'matrixMulShared', 'backpropForward', 'convolutionSeparable']
+#in_kernels = ['BlackScholes', 'matrixMul', 'backprop', 'convolutionSeparable']
 out_kernels = ['binomialOptions', 'eigenvalues', 'scanUniformUpdate', 'stereoDisparity', 'reduction', 'matrixMulGlobal', 'cfd', 'hotspot', 'dxtc', 'backpropBackward']
+# experimental test
+#pointer = ['convolutionTexture', 'nn', 'SobolQRNG', 'reduction', 'hotspot'] 
+pointer = []
+extras = ['backpropBackward', 'binomialOptions', 'cfd', 'eigenvalues', 'gaussian', 'srad', 'dxtc', 'pathfinder', 'scanUniformUpdate', 'stereoDisparity'] 
+#extras = []
+
 
 highest_core = 1000
 lowest_core = 500
@@ -76,17 +83,20 @@ def plot_inst_distribution(gpucard, csv_perf, save_filename = None):
 
     df = pd.read_csv(csv_perf, header = 0)
 
-    in_kernels.sort()
-    df = df[df.appName.isin(in_kernels)]
+    #in_kernels.sort()
+    #df = df[df.appName.isin(in_kernels) & (df.coreF==highest_core) & (df.memF==highest_mem)]
+    df = df[~df.appName.isin(extras) & (df.coreF==highest_core) & (df.memF==highest_mem)]
+    #df = df[(df.coreF==highest_core) & (df.memF==highest_mem)]
     df = df.reset_index(drop=True)
     df = df.sort_values(by = 'appName')
+    in_kernels = list(df.appName.drop_duplicates())
     
     print in_kernels
-    print df
+    #print df
 
     norm_insts = inst_extract_and_normalize(df)
 
-    fig, ax = plt.subplots(figsize = (8, 4))
+    fig, ax = plt.subplots(figsize = (16, 4))
     # ax.title("Instruction Distribution")
 
     bar_width = 0.5
@@ -94,8 +104,8 @@ def plot_inst_distribution(gpucard, csv_perf, save_filename = None):
     lastInst = np.zeros(len(in_kernels))
     for idx, key in enumerate(norm_insts.keys()):
         tmp_data = norm_insts[key]
-        print tmp_data
-        ax.bar(x_axis, tmp_data, bar_width, bottom=lastInst, label=key, color=COLORS[idx % len(COLORS)], hatch=HATCHES[idx % len(HATCHES)])
+        #print tmp_data
+        ax.bar(x_axis, tmp_data, bar_width, alpha=0.8, bottom=lastInst, label=key, color=GRAYS[idx % len(COLORS)], hatch=HATCHES[idx % len(HATCHES)])
         lastInst += tmp_data
 
     ax.set_ylabel('Percentage', size='x-large')
@@ -103,14 +113,14 @@ def plot_inst_distribution(gpucard, csv_perf, save_filename = None):
     ax.set_xlabel('')
     #margin = ax.get_ylim()[1]/4
     #ax.set_ylim(top=ax.get_ylim()[1]+margin)
-    ax.set_xticks(x_axis + bar_width / 2)
+    ax.set_xticks(x_axis)
     ax.set_xticklabels(map(get_abbr, in_kernels), size='large', rotation=0)
 
     ax.legend(fontsize='large', loc='upper center', bbox_to_anchor=(0.5, 1.35), ncol = min(4, len(norm_insts.keys())))
     fig.subplots_adjust(top=0.7)
     ax.grid(linestyle=':')
 
-    if not save_filename or True:
+    if not save_filename:# or True:
         plt.show()
 	return
     else:
@@ -129,7 +139,7 @@ def plot_line(selected_df, sorted_key='coreF', save_filename=None):
         tmp_data = [tmp_data[0] / item for item in tmp_data]
         print tmp_data
         kl_abbr = get_abbr(kernel)
-        lines.append(ax.plot(x_axis, tmp_data, linewidth = 1.5, color = COLORS[idx], marker = MARKERS[idx], markersize = 10, label = kernel+"(%s)" % kl_abbr))
+        lines.append(ax.plot(x_axis, tmp_data, linewidth = 1.5, color = COLORS[idx], marker = MARKERS[idx], markersize = 10, markerfacecolor = 'none', label = kernel+"(%s)" % kl_abbr))
 
     ax.set_ylabel("Speed Up", size = 'x-large')
     ymax = ax.get_ylim()[1] * 1.1
@@ -143,17 +153,17 @@ def plot_line(selected_df, sorted_key='coreF', save_filename=None):
     ax.grid()
     ax.legend(fontsize='large', loc='upper left')
 
-    if not save_filename or True:
+    if not save_filename:# or True:
         plt.show()
 	return
     else:
         plt.savefig(os.path.join(OUTPUT_PATH, '%s.pdf'%save_filename), bbox_inches='tight')
         plt.savefig(os.path.join(OUTPUT_PATH, '%s.png'%save_filename), bbox_inches='tight')
 
-def plot_dvfs_roofline(gpu, kernel, save_filename=None):
+def plot_dvfs_roofline(gpu, version, kernel, save_filename=None):
 
     #csv_file = "csvs/ml/%s_%s_dvfs.csv" % (gpu, ml_algo)
-    csv_file = "csvs/analytical/cycles/%s-dvfs-real-qiang2018-cycles.csv" % (gpu)
+    csv_file = "csvs/analytical/cycles/%s-%s-qiang2018-cycles.csv" % (gpu, version)
     df = pd.read_csv(csv_file, header = 0)
 
     fig, ax = plt.subplots(figsize = (8, 6))
@@ -186,7 +196,7 @@ def plot_dvfs_roofline(gpu, kernel, save_filename=None):
     ax.grid()
     ax.legend(fontsize='large', loc='upper left')
 
-    if not save_filename or True:
+    if not save_filename:# or True:
         plt.show()
 	return
     else:
@@ -268,9 +278,9 @@ def plot_dvfs_scaling(gpucard, csv_perf):
 
     #plt.show()
 
-def plot_perf_acc_corr(gpu, method, save_filename = None):
+def plot_perf_acc_corr(gpu, version, method, save_filename = None):
 
-    csv_file = "csvs/analytical/results/%s-dvfs-real-%s-dvfs.csv" % (gpu, method)
+    csv_file = "csvs/analytical/results/%s-%s-%s-dvfs.csv" % (gpu, version, method)
     df = pd.read_csv(csv_file, header = 0)
     print df.tail(3)
 
@@ -280,34 +290,38 @@ def plot_perf_acc_corr(gpu, method, save_filename = None):
 
     x_axis = list(df.predict)
     y_axis = list(df.real)
-    lines.append(ax.scatter(x_axis, y_axis, linewidth = 1.5, color = 'b', alpha=0.3, marker = 'o', label = 'Modeling Cycles[Correl=0.959, Err=3.8]'))
+
+    corrs = pearsonr(x_axis, y_axis)[0]
+    aver_errs = np.mean([abs(x_axis[i] - y_axis[i])/y_axis[i] for i in range(len(x_axis))]) * 100
+
+    lines.append(ax.scatter(x_axis, y_axis, linewidth = 1.5, color = 'b', alpha=0.5, marker = 'o', label = 'Modeling Cycles[Correl=%.3f, Err=%.3f]' % (corrs, aver_errs)))
     lines.append(ax.plot(x_axis, x_axis, linewidth = 1.5, color = 'r', label = 'Ground Truth'))
     fsize = 14
 
-    ax.set_ylabel('Modeling Cycles', fontsize=fsize)
+    ax.set_ylabel('Hardware Measured Cycles', fontsize=fsize)
     ax.set_yscale('log')
     ax.yaxis.set_tick_params(labelsize=fsize)
     #ymax = ax.get_ylim()[1] * 1.1
     #ax.set_ylim(top = ymax)
   
     ax.set_xscale('log')
-    ax.set_xlabel('Hardware Measured Cycles', fontsize=fsize)
+    ax.set_xlabel('Modeling Cycles', fontsize=fsize)
     ax.xaxis.set_tick_params(labelsize=fsize)
     #ax.set_xticks(x_axis)
 
     ax.legend(fontsize=fsize, loc='upper left')
     ax.grid(linestyle=':')
 
-    if not save_filename or True:
+    if not save_filename:# or True:
         plt.show()
 	return
     else:
         plt.savefig(os.path.join(OUTPUT_PATH, '%s.pdf'%save_filename), bbox_inches='tight')
         plt.savefig(os.path.join(OUTPUT_PATH, '%s.png'%save_filename), bbox_inches='tight')
 
-def plot_perf_acc_analytical(gpu, method, save_filename = None):
+def plot_perf_acc_analytical(gpu, version, method, save_filename = None):
 
-    csv_file = "csvs/analytical/results/%s-dvfs-real-%s-aver.csv" % (gpu, method)
+    csv_file = "csvs/analytical/results/%s-%s-%s-aver.csv" % (gpu, version, method)
     df = pd.read_csv(csv_file, header = 0)
     print df.tail(3)
 
@@ -463,37 +477,49 @@ if __name__ == '__main__':
     #gpu = 'p100'
     #plot_perf_acc_dvfs(gpu, 'qiang2018', '%s_analytical' % gpu)
 
-    #gpu = 'gtx980'
-    #plot_perf_acc_analytical(gpu, 'qiang2018', '%s_analytical' % gpu)
-    #gpu = 'gtx1080ti'
-    #plot_perf_acc_analytical(gpu, 'qiang2018', '%s_analytical' % gpu)
-    #gpu = 'p100'
-    #plot_perf_acc_analytical(gpu, 'qiang2018', '%s_analytical' % gpu)
+    #method = 'qiang2018'
+    #gpu = 'gtx980-low-dvfs'
+    #version = 'real-small-workload'
+    #plot_perf_acc_analytical(gpu, version, method, '%s_analytical' % gpu)
+    #gpu = 'gtx1080ti-dvfs'
+    #version = 'real'
+    #plot_perf_acc_analytical(gpu, version, method, '%s_analytical' % gpu)
+    #gpu = 'p100-dvfs'
+    #version = 'real'
+    #plot_perf_acc_analytical(gpu, version, method, '%s_analytical' % gpu)
 
-    #gpu = 'gtx980'
-    #plot_perf_acc_corr(gpu, 'qiang2018', '%s_analytical' % gpu)
-    #gpu = 'gtx1080ti'
-    #plot_perf_acc_corr(gpu, 'qiang2018', '%s_analytical' % gpu)
-    #gpu = 'p100'
-    #plot_perf_acc_corr(gpu, 'qiang2018', '%s_analytical' % gpu)
+    ## pipeline paper, plot err and correlation scatter
+    #method = 'qiang2018'
+    #gpu = 'gtx980-low-dvfs'
+    #version = 'real-small-workload'
+    #plot_perf_acc_corr(gpu, version, method, '%s_%s_%s_err_corr' % (gpu, version, method))
+    #gpu = 'gtx1080ti-dvfs'
+    #version = 'real'
+    #plot_perf_acc_corr(gpu, version, method, '%s_%s_%s_err_corr' % (gpu, version, method))
+    #gpu = 'p100-dvfs'
+    #version = 'real'
+    #plot_perf_acc_corr(gpu, version, method, '%s_%s_%s_err_corr' % (gpu, version, method))
 
-    #gpu = 'gtx1080ti'
-    #csv_file = "csvs/analytical/cycles/%s-dvfs-real-qiang2018-cycles.csv" % (gpu)
-    #df = pd.read_csv(csv_file, header = 0)
-    #kernels = list(df['appName'].drop_duplicates())
-    #print kernels
-    #
-    #for kernel in kernels:
-    #    print kernel
-    #    plot_dvfs_roofline(gpu, kernel, '%s_%s_dvfs_roofline' % (gpu, kernel))
-
-    # gpu card and data file
-    gpu = 'gtx980-dvfs'
+    # pipeline paper, plot dvfs-roofline model
+    gpu = 'gtx980-low-dvfs'
     version = 'real-small-workload'
+    #gpu = 'gtx1080ti-dvfs'
+    #version = 'real'
+    csv_file = "csvs/analytical/cycles/%s-%s-qiang2018-cycles.csv" % (gpu, version)
+    df = pd.read_csv(csv_file, header = 0)
+    kernels = list(df['appName'].drop_duplicates())
+    print kernels
+    
+    kernels = ['histogram', 'BlackScholes', 'backpropForward']
+    for kernel in kernels:
+        print kernel
+        plot_dvfs_roofline(gpu, version, kernel, '%s_%s_%s_dvfs_roofline' % (gpu, version, kernel))
 
-    csv_file = "csvs/v1/%s-%s-Performance.csv" % (gpu, version)
-    plot_dvfs_scaling(gpu, csv_file)
+    ## pipeline paper, plot dvfs scaling effect and instruction distributions
+    #gpu = 'gtx980-low-dvfs'
+    #version = 'real-small-workload'
 
-    csv_file = "csvs/v1/%s-%s-Performance.csv" % (gpu, version)
-    plot_inst_distribution(gpu, csv_file, 'gtx980_sample_inst_dist')
+    #csv_file = "csvs/v1/%s-%s-Performance.csv" % (gpu, version)
+    #plot_dvfs_scaling(gpu, csv_file)
+    #plot_inst_distribution(gpu, csv_file, 'gtx980_sample_inst_dist')
 
