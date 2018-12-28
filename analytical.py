@@ -1,23 +1,35 @@
 import pandas as pd
 import numpy as np
-import sys
+import sys, os
 from settings import *
 import argparse
 
+if not os.path.exists("csvs/analytical/cycles"):
+    os.makedirs("csvs/analytical/cycles")
+if not os.path.exists("csvs/analytical/features"):
+    os.makedirs("csvs/analytical/features")
+if not os.path.exists("csvs/analytical/results"):
+    os.makedirs("csvs/analytical/results")
+
+
 parser = argparse.ArgumentParser()
-parser.add_argument('--benchmark-setting', type=str, help='gpu and dvfs setting', default='gtx980-dvfs')
+parser.add_argument('--data-root', type=str, help='data file path', default='raw')
+parser.add_argument('--benchmark-setting', type=str, help='gpu and dvfs setting', default='gtx980-low-dvfs')
 parser.add_argument('--kernel-setting', type=str, help='kernel list', default='real-small-workload')
 parser.add_argument('--method', type=str, help='analytical modeling method', default='qiang2018')
-parser.add_argument('--version', type=str, help='data version', default='v0')
 
 opt = parser.parse_args()
 print opt
 
+lowest_core = 500
+lowest_mem = 500
+
 gpucard = opt.benchmark_setting
 kernel_setting = opt.kernel_setting
 method = opt.method
-version = opt.version
-csv_perf = "csvs/%s/%s-%s-Performance.csv" % (version, gpucard,  kernel_setting)
+data_root = opt.data_root
+
+csv_perf = "csvs/%s/%s-%s-Performance.csv" % (data_root, gpucard, kernel_setting)
 df = pd.read_csv(csv_perf, header = 0)
 
 if 'gtx980' in gpucard:
@@ -30,10 +42,13 @@ if 'p100' in gpucard:
     GPUCONF = P100()
 
 # experimental test
-pointer = ['convolutionTexture', 'nn', 'SobolQRNG', 'reduction', 'hotspot'] 
-#pointer = []
+#pointer = ['convolutionTexture', 'nn', 'SobolQRNG', 'reduction', 'hotspot'] 
+pointer = []
 extras = ['backpropBackward', 'binomialOptions', 'cfd', 'eigenvalues', 'gaussian', 'srad', 'dxtc', 'pathfinder', 'scanUniformUpdate', 'stereoDisparity'] 
 #extras = []
+df = df[~df.appName.isin(extras) & (df.coreF>=lowest_core) & (df.memF>=lowest_mem)]
+df = df.reset_index(drop=True)
+df = df.sort_values(by = ['appName', 'coreF', 'memF'])
 
 features = pd.DataFrame(columns=['appName', 'coreF', 'memF', 'n_shm_ld', 'n_shm_st', 'n_gld', 'n_gst', 'l2_miss', 'l2_hit', 'mem_insts', 'insts', 'act_util', 'L_DM', 'D_DM']) # real_cycle per round
 features['appName'] = df['appName']
@@ -42,6 +57,7 @@ features['memF'] = df['memF']
 # shared memory information
 features['n_shm_ld'] = df['shared_load_transactions'] / df['warps']
 features['n_shm_st'] = df['shared_store_transactions'] / df['warps']
+features['n_shm'] = features['n_shm_ld'] + features['n_shm_st']
 
 # global memory information
 #try:
@@ -74,19 +90,29 @@ features['l2_hit'] = 1 - features['l2_miss']
 try:
     features['fp_insts'] = df['inst_fp_32'] / (df['warps'] * 32.0)
     features['dp_insts'] = df['inst_fp_64'] / (df['warps'] * 32.0)
-    features['int_insts'] = df['inst_integer'] / (df['warps'] * 32.0)
+    #features['int_insts'] = df['inst_integer'] / (df['warps'] * 32.0)
     #features['insts'] = features['fp_insts'] + features['dp_insts'] * 2.0 + features['int_insts']
 except Exception as e:
-    pass
+    print "No compute instruction information..."
 
 features['mem_insts'] = features['n_gld'] + features['n_gst'] + features['n_shm_ld'] + features['n_shm_st'] / 4.0
-features['insts'] = df['inst_per_warp'] - features['mem_insts'] # + features['dp_insts']
+features['insts'] = df['inst_per_warp'] - features['mem_insts'] # + features['dp_insts'] * 3.0
 
 # other parameters
 features.loc[features['insts'] < 0, 'insts'] = 0
 features['act_util'] = df['achieved_occupancy']
 features['L_DM'] = GPUCONF.a_L_DM * df['coreF'] / df['memF'] + GPUCONF.b_L_DM
 features['D_DM'] = (GPUCONF.a_D_DM / df['memF'] + GPUCONF.b_D_DM) * df['coreF'] / df['memF']
+
+# remove shm part if hong2009
+if method == 'hong2009':
+    filter_out_shm = features.n_shm == 0
+
+    features = features[filter_out_shm]
+    features = features.reset_index(drop=True)
+
+    df = df[filter_out_shm]
+    df = df.reset_index(drop=True)
 
 # save featuress to csv/xlsx
 features.to_csv("csvs/analytical/features/%s-%s-features.csv" % (gpucard, kernel_setting))
@@ -98,31 +124,54 @@ writer.save()
 def hong2009(df):
 
     # analytical model
-    cycles = pd.DataFrame(columns=['appName', 'coreF', 'memF', 'cold_miss', 'c_to_m', 'modelled_cycle', 'real_cycle']) # real_cycle per round
+    cycles = pd.DataFrame(columns=['appName', 'coreF', 'memF', 'cold_miss', 'c_to_m', 'modelled_cycle', 'real_cycle', 'c1', 'c2', 'c3']) # real_cycle per round
     cycles['appName'] = df['appName']
     cycles['coreF'] = df['coreF']
     cycles['memF'] = df['memF']
     cycles['c_to_m'] = df['coreF'] * 1.0 / df['memF']
     cycles['cold_miss'] = df['L_DM']
 
-    cycles['depart_delay'] = df['D_DM']
-    cycles['mem_l'] = df['L_DM']
-    cycles['MWP'] = cycles['mem_l'] / cycles['depart_delay']
-    cycles['mem_cycles'] = (df['n_gld'] + df['n_gst']) * cycles['mem_l'] * (GPUCONF.WARPS_MAX * df['act_util'] /cycles['MWP'])
+    cycles['depart_delay'] = df['D_DM'] * df['l2_miss'] + GPUCONF.D_L2 * df['l2_hit']
+    cycles['mem_l'] = df['L_DM'] * df['l2_miss'] + GPUCONF.L_L2 * df['l2_hit']
+    cycles['N'] = GPUCONF.WARPS_MAX * df['act_util']
     cycles['compute_cycles'] = df['insts'] * GPUCONF.D_INST
-
+    cycles['compute_cycles_per_period'] = cycles['compute_cycles'] / (df['n_gld'] + df['n_gst']) #* GPUCONF.D_INST
+    cycles['mem_cycles'] = cycles['depart_delay'] * (df['n_gld'] + df['n_gst']) 
+    cycles['MWP_without_BW'] = cycles['mem_l'] / cycles['depart_delay'] 
+    cycles['MWP_peak_BW'] = cycles['mem_l'] / GPUCONF.SM_COUNT
+    #cycles['MWP'] = cycles[['MWP_without_BW','MWP_peak_BW', 'N']].min(axis=1)
+    cycles['MWP'] = cycles['MWP_without_BW']
+    cycles['CWP_without_OCC'] = (cycles['compute_cycles'] + cycles['mem_cycles']) / cycles['compute_cycles']
+    cycles['CWP'] = cycles[['CWP_without_OCC', 'N']].min(axis=1)
+    
+    cycles['shm_insts'] = df['n_shm_ld'] + df['n_shm_st']
+    #cycles['mem_cycles'] = (df['n_gld'] + df['n_gst']) * cycles['mem_l'] * (GPUCONF.WARPS_MAX * df['act_util'] /cycles['MWP'])
+    #cycles['compute_cycles'] = df['insts'] * GPUCONF.D_INST
 
     for idx, item in cycles.iterrows():
 
-        compute_bound = cycles.loc[idx, 'compute_cycles'] * GPUCONF.WARPS_MAX * df.loc[idx, 'act_util'] + cycles.loc[idx, 'mem_l']
-        memory_bound = cycles.loc[idx, 'mem_cycles'] + cycles.loc[idx, 'compute_cycles']
-        if compute_bound > memory_bound:
-            cycles.loc[idx, 'modelled_cycle'] = compute_bound
-        else:
-	    cycles.loc[idx, 'modelled_cycle'] = memory_bound
+        cycles.loc[idx, 'c1'] = cycles.loc[idx, 'mem_cycles'] + cycles.loc[idx, 'compute_cycles'] + cycles.loc[idx, 'compute_cycles'] / (df.loc[idx, 'n_gld'] + df.loc[idx, 'n_gst']) * (cycles.loc[idx, 'MWP'] - 1)
+       
+        cycles.loc[idx, 'c2'] = cycles.loc[idx, 'mem_cycles'] * cycles.loc[idx, 'N'] / cycles.loc[idx, 'MWP'] + cycles.loc[idx, 'compute_cycles'] / (df.loc[idx, 'n_gld'] + df.loc[idx, 'n_gst']) * (cycles.loc[idx, 'MWP'] - 1) 
 
-        if df.loc[idx, 'act_util'] <= 0.38:
-            cycles.loc[idx, 'modelled_cycle'] = cycles.loc[idx, 'mem_cycles'] + cycles.loc[idx, 'compute_cycles'] 
+        cycles.loc[idx, 'c3'] = cycles.loc[idx, 'mem_l'] + cycles.loc[idx, 'compute_cycles'] * cycles.loc[idx, 'N']
+
+        if cycles.loc[idx, 'MWP'] == cycles.loc[idx, 'N'] and cycles.loc[idx, 'MWP'] == cycles.loc[idx, 'N']:  # not enough warp
+            cycles.loc[idx, 'modelled_cycle'] = cycles.loc[idx, 'c1'] 
+        elif cycles.loc[idx, 'CWP'] >= cycles.loc[idx, 'MWP']:  # memory bound
+            cycles.loc[idx, 'modelled_cycle'] = cycles.loc[idx, 'c2'] 
+        elif cycles.loc[idx, 'MWP'] >= cycles.loc[idx, 'CWP'] or cycles.loc[idx, 'compute_cycles'] > cycles.loc[idx, 'mem_cycles']:  # compute bound
+            cycles.loc[idx, 'modelled_cycle'] = cycles.loc[idx, 'c3'] 
+
+        #compute_bound = cycles.loc[idx, 'compute_cycles'] * GPUCONF.WARPS_MAX * df.loc[idx, 'act_util'] + cycles.loc[idx, 'mem_l']
+        #memory_bound = cycles.loc[idx, 'mem_cycles'] + cycles.loc[idx, 'compute_cycles']
+        #if compute_bound > memory_bound:
+        #    cycles.loc[idx, 'modelled_cycle'] = compute_bound
+        #else:
+	#    cycles.loc[idx, 'modelled_cycle'] = memory_bound
+
+        #if df.loc[idx, 'act_util'] <= 0.38:
+        #    cycles.loc[idx, 'modelled_cycle'] = cycles.loc[idx, 'mem_cycles'] + cycles.loc[idx, 'compute_cycles'] 
 
     cycles = cycles.sort_values(by=['appName', 'c_to_m'])
     return cycles
@@ -137,12 +186,14 @@ def song2013(df):
     cycles['memF'] = df['memF']
     cycles['c_to_m'] = df['coreF'] * 1.0 / df['memF']
 
+    cycles['depart_delay'] = df['D_DM'] * df['l2_miss'] + GPUCONF.D_L2 * df['l2_hit']
+    cycles['mem_l'] = df['L_DM'] * df['l2_miss'] + GPUCONF.L_L2 * df['l2_hit']
     # global load and store
-    cycles['g_load'] = df['L_DM'] + (df['n_gld'] - 1) * df['D_DM']
-    cycles['g_store'] = df['L_DM'] + (df['n_gst'] - 1) * df['D_DM']
+    cycles['g_load'] = cycles['mem_l'] + (df['n_gld'] - 1) * cycles['depart_delay']
+    cycles['g_store'] = cycles['mem_l'] + (df['n_gst'] - 1) * cycles['depart_delay']
 
     # sync
-    cycles['sync'] = (df['act_util'] * GPUCONF.WARPS_MAX - 1) * df['D_DM']
+    cycles['sync'] = (df['act_util'] * GPUCONF.WARPS_MAX - 1) * cycles['depart_delay']
 
     # compute
     cycles['compute'] = GPUCONF.D_INST * 32.0 / GPUCONF.CORES_SM * df['insts']
@@ -254,8 +305,6 @@ for idx, item in cycles.iterrows():
         predict = item['modelled_cycle']
         error = abs(item['real_cycle'] - item['modelled_cycle']) / item['real_cycle']
 
-	if kernel in pointer or kernel in extras:
-	    continue
         f.write("%s,%d,%d,%f,%f,%f\n" % (kernel, coreF, memF, real, predict, error))
 f.close()
 
@@ -267,8 +316,6 @@ for kernel in kernels:
 	tmp_ape = np.mean(tmp_cycles['abe'])
 	tmp_err_std = np.std(tmp_cycles['abe'])
 
-	if kernel in pointer or kernel in extras:
-	    continue
 	print "%s:%f, %f" % (kernel, tmp_ape, tmp_err_std)
 	f.write("%s,%f\n" % (kernel, tmp_ape))
 f.close()
@@ -276,11 +323,11 @@ f.close()
 
 errors = []
 for i in range(len(cycles['modelled_cycle'])):
-        if cycles['appName'][i] in pointer or cycles['appName'][i] in extras:
-            continue
+        #if cycles['appName'][i] in pointer or cycles['appName'][i] in extras:
+        #    continue
  
-        if cycles['coreF'][i] >= 500 and cycles['memF'][i] >= 500:
-	    errors.append(cycles['abe'][i])
+        #if cycles['coreF'][i] >= 500 and cycles['memF'][i] >= 500:
+	errors.append(cycles['abe'][i])
 
     	    #print cycles['appName'][i], cycles['coreF'][i], cycles['memF'][i]
     	    ##print i, df['appName'][i], 'relative error', cycles['abe'][i]
