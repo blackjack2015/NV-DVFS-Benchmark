@@ -5,9 +5,10 @@ from settings import *
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--benchmark-setting', type=str, help='gpu and dvfs setting', default='gtx980-DVFS')
-parser.add_argument('--kernel-setting', type=str, help='kernel list', default='real')
+parser.add_argument('--benchmark-setting', type=str, help='gpu and dvfs setting', default='gtx980-dvfs')
+parser.add_argument('--kernel-setting', type=str, help='kernel list', default='real-small-workload')
 parser.add_argument('--method', type=str, help='analytical modeling method', default='qiang2018')
+parser.add_argument('--version', type=str, help='data version', default='v0')
 
 opt = parser.parse_args()
 print opt
@@ -15,9 +16,8 @@ print opt
 gpucard = opt.benchmark_setting
 kernel_setting = opt.kernel_setting
 method = opt.method
-#csv_perf = "csvs/%s-%s-Performance.csv" % (gpucard, kernel_setting)
-csv_perf = "csvs/v0/%s-%s-Performance.csv" % (gpucard, kernel_setting)
-#csv_perf = "csvs/v1/%s-%s-Performance.csv" % (gpucard, kernel_setting)
+version = opt.version
+csv_perf = "csvs/%s/%s-%s-Performance.csv" % (version, gpucard,  kernel_setting)
 df = pd.read_csv(csv_perf, header = 0)
 
 if 'gtx980' in gpucard:
@@ -71,10 +71,14 @@ features.loc[features['l2_miss'] > 1, 'l2_miss'] = 1
 features['l2_hit'] = 1 - features['l2_miss']
 
 # compute instructions
-#features['fp_insts'] = df['inst_fp_32'] / (df['warps'] * 32.0)
-#features['dp_insts'] = df['inst_fp_64'] / (df['warps'] * 32.0)
-#features['int_insts'] = df['inst_integer'] / (df['warps'] * 32.0)
-#features['insts'] = features['fp_insts'] + features['dp_insts'] * 2.0 + features['int_insts']
+try:
+    features['fp_insts'] = df['inst_fp_32'] / (df['warps'] * 32.0)
+    features['dp_insts'] = df['inst_fp_64'] / (df['warps'] * 32.0)
+    features['int_insts'] = df['inst_integer'] / (df['warps'] * 32.0)
+    #features['insts'] = features['fp_insts'] + features['dp_insts'] * 2.0 + features['int_insts']
+except Exception as e:
+    pass
+
 features['mem_insts'] = features['n_gld'] + features['n_gst'] + features['n_shm_ld'] + features['n_shm_st'] / 4.0
 features['insts'] = df['inst_per_warp'] - features['mem_insts'] # + features['dp_insts']
 
