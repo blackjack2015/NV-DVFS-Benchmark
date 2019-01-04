@@ -18,8 +18,6 @@ csvRoot = 'csvs/raw'
 parser = argparse.ArgumentParser()
 parser.add_argument('--benchmark-setting', type=str, help='gpu benchmark setting', default='gtx980-high-dvfs')
 parser.add_argument('--kernel-setting', type=str, help='kernels of benchmark', default='real-small-workload')
-parser.add_argument('--core-base', type=int, help='base core frequency', default=0)
-parser.add_argument('--mem-base', type=int, help='base memory frequency', default=0)
 
 opt = parser.parse_args()
 print opt
@@ -57,8 +55,8 @@ for fp in power_filelist:
 
     baseInfo = fp.split('_')
     appName = baseInfo[1]
-    coreF = baseInfo[2][4:]
-    memF = baseInfo[3][3:]
+    coreF = int(baseInfo[2][4:]) + coreBase
+    memF = int(baseInfo[3][3:]) + memBase
     argNo = baseInfo[4]
 
     kernel = json.loads(cf_ks.get(appName, 'kernels'))[0]
@@ -69,7 +67,7 @@ for fp in power_filelist:
     content = f.readlines()[2:]
     f.close()
     
-    powerList = [float(line.split()[4].strip()) / 1000.0 for line in content if int(line.split()[1]) == powerState]
+    powerList = [float(line.split()[-1].strip()) / 1000.0 for line in content if int(line.split()[1]) == powerState]
     powerList = powerList[len(powerList) / 7 * 3 :len(powerList) / 7 * 4]   # filter out those power data of cooling down GPU
     rec.append(np.mean(powerList))
 

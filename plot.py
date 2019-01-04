@@ -12,7 +12,7 @@ HATCHES = ['//', '--', '\\\\', '||', '++', '--', '..', '++', '\\\\']
 GRAYS = ['#2F4F4F', '#808080', '#A9A9A9', '#778899', '#DCDCDC', '#556677', '#1D3E3E', '#808080', '#DCDCDC']
 COLORS = ['b', 'g', 'r', 'c', 'm', 'y', 'k', 'w']
 
-in_kernels = ['BlackScholes', 'matrixMulShared', 'backpropForward', 'convolutionSeparable']
+in_kernels = ['BlackScholes', 'matrixMulShared', 'backpropForward', 'histogram']
 #in_kernels = ['BlackScholes', 'matrixMul', 'backprop', 'convolutionSeparable']
 out_kernels = ['binomialOptions', 'eigenvalues', 'scanUniformUpdate', 'stereoDisparity', 'reduction', 'matrixMulGlobal', 'cfd', 'hotspot', 'dxtc', 'backpropBackward']
 # experimental test
@@ -127,7 +127,7 @@ def plot_inst_distribution(gpucard, csv_perf, save_filename = None):
         plt.savefig(os.path.join(OUTPUT_PATH, '%s.pdf'%save_filename), bbox_inches='tight')
         plt.savefig(os.path.join(OUTPUT_PATH, '%s.png'%save_filename), bbox_inches='tight')
 
-def plot_line(selected_df, sorted_key='coreF', save_filename=None):
+def plot_line(selected_df, sorted_key='coreF', fixed_freq=500, save_filename=None):
 
     fig, ax = plt.subplots(figsize = (8, 6))
     x_axis = list(selected_df[sorted_key].drop_duplicates())
@@ -139,19 +139,24 @@ def plot_line(selected_df, sorted_key='coreF', save_filename=None):
         tmp_data = [tmp_data[0] / item for item in tmp_data]
         print tmp_data
         kl_abbr = get_abbr(kernel)
-        lines.append(ax.plot(x_axis, tmp_data, linewidth = 1.5, color = COLORS[idx], marker = MARKERS[idx], markersize = 10, markerfacecolor = 'none', label = kernel+"(%s)" % kl_abbr))
+        #lines.append(ax.plot(x_axis, tmp_data, linewidth = 1.5, color = COLORS[idx], marker = MARKERS[idx], markersize = 14, markerfacecolor = 'none', label = kernel+"(%s)" % kl_abbr))
+        lines.append(ax.plot(x_axis, tmp_data, linewidth = 1.5, color = COLORS[idx], marker = MARKERS[idx], markersize = 14, markeredgecolor='k', markerfacecolor = 'none', label = kernel+"(%s)" % kl_abbr))
 
-    ax.set_ylabel("Speed Up", size = 'x-large')
-    ymax = ax.get_ylim()[1] * 1.1
+    ax.set_ylabel("Speed Up", size = 24)
+    if sorted_key == 'coreF':
+        ax.set_xlabel("$f^{MEM}=$%d MHz, Core Frequency/MHz" % fixed_freq, size = 24)
+    else:
+        ax.set_xlabel("$f^{CORE}=$%d MHz, Memory Frequency/MHz" % fixed_freq, size = 24)
+    ymax = ax.get_ylim()[1] * 1.15
     ymin = ax.get_ylim()[0] * 0.95
     ax.set_ylim(top = ymax, bottom = ymin)
-    ax.yaxis.set_tick_params(labelsize=16)
+    ax.yaxis.set_tick_params(labelsize=24)
 
     ax.set_xlim(min(x_axis) - 100, max(x_axis) + 100)
-    ax.xaxis.set_tick_params(labelsize=16)
+    ax.xaxis.set_tick_params(labelsize=24)
 
-    ax.grid()
-    ax.legend(fontsize='large', loc='upper left')
+    ax.grid(color='#5e5c5c', linestyle='-.', linewidth=1)
+    ax.legend(fontsize=18, loc='upper left')
 
     if not save_filename:# or True:
         plt.show()
@@ -160,7 +165,7 @@ def plot_line(selected_df, sorted_key='coreF', save_filename=None):
         plt.savefig(os.path.join(OUTPUT_PATH, '%s.pdf'%save_filename), bbox_inches='tight')
         plt.savefig(os.path.join(OUTPUT_PATH, '%s.png'%save_filename), bbox_inches='tight')
 
-def plot_dvfs_roofline(gpu, version, kernel, show=True, save_filename=None):
+def plot_dvfs_roofline(gpu, version, kernel, show=False, save_filename=None):
 
     #csv_file = "csvs/ml/%s_%s_dvfs.csv" % (gpu, ml_algo)
     csv_file = "csvs/analytical/cycles/%s-%s-qiang2018-cycles.csv" % (gpu, version)
@@ -177,24 +182,26 @@ def plot_dvfs_roofline(gpu, version, kernel, show=True, save_filename=None):
     x_axis = x_axis[::4]
     #x_axis = x_axis
     tmp_data = list(df.sort_values(by = ['c_to_m'])['real_cycle'])[::4]
-    lines.append(ax.plot(x_axis, tmp_data, linewidth = 1.5, color = COLORS[0], marker = MARKERS[0], markersize = 10, label = 'measured cycles', markerfacecolor='none'))
+    lines.append(ax.plot(x_axis, tmp_data, linewidth = 1.5, color = COLORS[1], marker = MARKERS[1], markersize = 16, markeredgecolor = 'k', label = 'measured cycles', markerfacecolor='none'))
     tmp_data = list(df.sort_values(by = ['c_to_m'])['mem_del'])[::4]
-    lines.append(ax.plot(x_axis, tmp_data, linewidth = 1.5, color = COLORS[1], marker = MARKERS[1], markersize = 10, label = 'memory-bound cycles', markerfacecolor='none'))
+    lines.append(ax.plot(x_axis, tmp_data, linewidth = 1.5, color = COLORS[2], marker = MARKERS[2], markersize = 16, markeredgecolor = 'k', label = 'memory-bound cycles', markerfacecolor='none'))
     tmp_data = list(df.sort_values(by = ['c_to_m'])['sm_del'])[::4]
-    lines.append(ax.plot(x_axis, tmp_data, linewidth = 1.5, color = COLORS[2], marker = MARKERS[2], markersize = 10, label = 'compute-bound cycles', markerfacecolor='none'))
+    lines.append(ax.plot(x_axis, tmp_data, linewidth = 1.5, color = COLORS[3], marker = MARKERS[3], markersize = 16, markeredgecolor = 'k', label = 'compute-bound cycles', markerfacecolor='none'))
 
-    ax.set_ylabel("Cycles", size = 'x-large')
-    ymax = ax.get_ylim()[1] * 1.1
-    ymin = ax.get_ylim()[0] * 0.95
+    ax.set_ylabel("Cycles", size = 24)
+    ymax = ax.get_ylim()[1] * 1.35
+    ymin = ax.get_ylim()[0] * 0.65
     ax.set_ylim(top = ymax, bottom = ymin)
-    ax.yaxis.set_tick_params(labelsize=16)
+    ax.yaxis.set_tick_params(labelsize=24)
+    ax.ticklabel_format(style='sci', scilimits=(1,1), axis='y')
+    ax.yaxis.offsetText.set_fontsize(20)
 
-    ax.set_xlabel("$f^{core}/f^{mem}$", size = 'x-large')
+    ax.set_xlabel("$f^{core}/f^{mem}$", size = 24)
     #ax.set_xlim(min(x_axis) - 100, max(x_axis) + 100)
-    ax.xaxis.set_tick_params(labelsize=16)
+    ax.xaxis.set_tick_params(labelsize=24)
 
-    ax.grid()
-    ax.legend(fontsize='large', loc='upper left')
+    ax.grid(color='#5e5c5c', linestyle='-.', linewidth=1)
+    ax.legend(fontsize=18, loc='upper left')
 
     if show:
         plt.show()
@@ -219,16 +226,19 @@ def plot_dvfs_scaling(gpucard, csv_perf):
 
     # fix core as lowest, scaling memory
     selected_df = df[(df.coreF == lowest_core) & (df.memF >= lowest_mem)] 
-    plot_line(selected_df, 'memF', '%s_core_%d_mem_scaling' % (gpucard, lowest_core))
+    plot_line(selected_df, 'memF', lowest_core, '%s_core_%d_mem_scaling' % (gpucard, lowest_core))
 
+    # fix core as highest, scaling memory
     selected_df = df[(df.coreF == highest_core) & (df.memF >= lowest_mem)]
-    plot_line(selected_df, 'memF', '%s_core_%d_mem_scaling' % (gpucard, highest_core))
+    plot_line(selected_df, 'memF', highest_core, '%s_core_%d_mem_scaling' % (gpucard, highest_core))
 
+    # fix memory as lowest, scaling core
     selected_df = df[(df.memF == lowest_mem) & (df.coreF >= lowest_core)]
-    plot_line(selected_df, 'coreF', '%s_mem_%d_core_scaling' % (gpucard, lowest_mem))
+    plot_line(selected_df, 'coreF', lowest_mem, '%s_mem_%d_core_scaling' % (gpucard, lowest_mem))
 
+    # fix memory as highest, scaling core
     selected_df = df[(df.memF == highest_mem) & (df.coreF >= lowest_core)]
-    plot_line(selected_df, 'coreF', '%s_mem_%d_core_scaling' % (gpucard, highest_mem))
+    plot_line(selected_df, 'coreF', highest_mem, '%s_mem_%d_core_scaling' % (gpucard, highest_mem))
 
     ## fix core as highest, scaling memory 
     #selected_df = df[df.coreF == highest_core]
@@ -447,12 +457,16 @@ def plot_perf_acc_dvfs(gpu, ml_algo, save_filename = None):
 
 if __name__ == '__main__':
 
-    ## gpu card and data file
-    #gpu = 'gtx980'
-    #version = 'real-small-workload'
-    #ml_algo = 'svr-poly'
+    if not os.path.exists("figures"):
+        os.makedirs("figures")
 
-    #csv_file = "csvs/%s-dvfs-%s-Performance.csv" % (gpu, version)
+    # gpu card and data file
+    gpu = 'gtx980-low-dvfs'
+    version = 'real-small-workload'
+    ml_algo = 'svr-poly'
+
+    ## pipeline paper, plot performance scaling behavior in motivation part
+    #csv_file = "csvs/raw/%s-%s-Performance.csv" % (gpu, version)
     #plot_dvfs_scaling(gpu, csv_file)
 
     #csv_file = "csvs/%s-%s-Performance.csv" % (gpu, version)
