@@ -11,7 +11,6 @@ if not os.path.exists("csvs/analytical/features"):
 if not os.path.exists("csvs/analytical/results"):
     os.makedirs("csvs/analytical/results")
 
-
 parser = argparse.ArgumentParser()
 parser.add_argument('--data-root', type=str, help='data file path', default='raw')
 parser.add_argument('--benchmark-setting', type=str, help='gpu and dvfs setting', default='gtx980-low-dvfs')

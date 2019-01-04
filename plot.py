@@ -160,7 +160,7 @@ def plot_line(selected_df, sorted_key='coreF', save_filename=None):
         plt.savefig(os.path.join(OUTPUT_PATH, '%s.pdf'%save_filename), bbox_inches='tight')
         plt.savefig(os.path.join(OUTPUT_PATH, '%s.png'%save_filename), bbox_inches='tight')
 
-def plot_dvfs_roofline(gpu, version, kernel, save_filename=None):
+def plot_dvfs_roofline(gpu, version, kernel, show=True, save_filename=None):
 
     #csv_file = "csvs/ml/%s_%s_dvfs.csv" % (gpu, ml_algo)
     csv_file = "csvs/analytical/cycles/%s-%s-qiang2018-cycles.csv" % (gpu, version)
@@ -196,10 +196,9 @@ def plot_dvfs_roofline(gpu, version, kernel, save_filename=None):
     ax.grid()
     ax.legend(fontsize='large', loc='upper left')
 
-    if not save_filename:# or True:
+    if show:
         plt.show()
-	return
-    else:
+    if save_filename:# or True:
         plt.savefig(os.path.join(OUTPUT_PATH, '%s.pdf'%save_filename), bbox_inches='tight')
         plt.savefig(os.path.join(OUTPUT_PATH, '%s.png'%save_filename), bbox_inches='tight')
 
@@ -513,7 +512,7 @@ if __name__ == '__main__':
     kernels = ['histogram', 'BlackScholes', 'backpropForward']
     for kernel in kernels:
         print kernel
-        plot_dvfs_roofline(gpu, version, kernel, '%s_%s_%s_dvfs_roofline' % (gpu, version, kernel))
+        plot_dvfs_roofline(gpu, version, kernel, save_filename = '%s_%s_%s_dvfs_roofline' % (gpu, version, kernel))
 
     ## pipeline paper, plot dvfs scaling effect and instruction distributions
     #gpu = 'gtx980-low-dvfs'
