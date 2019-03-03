@@ -5,8 +5,8 @@ from settings import *
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--benchmark-setting', type=str, help='gpu and dvfs setting', default='gtx980-DVFS')
-parser.add_argument('--kernel-setting', type=str, help='kernel list', default='real')
+parser.add_argument('--benchmark-setting', type=str, help='gpu and dvfs setting', default='gtx980-low-dvfs')
+parser.add_argument('--kernel-setting', type=str, help='kernel list', default='real-small-workload')
 parser.add_argument('--method', type=str, help='analytical modeling method', default='qiang2018')
 
 opt = parser.parse_args()
@@ -15,8 +15,8 @@ print opt
 gpucard = opt.benchmark_setting
 kernel_setting = opt.kernel_setting
 method = opt.method
-#csv_perf = "csvs/%s-%s-Performance.csv" % (gpucard, kernel_setting)
-csv_perf = "csvs/v0/%s-%s-Performance.csv" % (gpucard, kernel_setting)
+csv_perf = "csvs/%s-%s-Performance.csv" % (gpucard, kernel_setting)
+#csv_perf = "csvs/v1/%s-%s-Performance.csv" % (gpucard, kernel_setting)
 #csv_perf = "csvs/v1/%s-%s-Performance.csv" % (gpucard, kernel_setting)
 df = pd.read_csv(csv_perf, header = 0)
 
