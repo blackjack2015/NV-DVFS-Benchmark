@@ -41,8 +41,7 @@ if 'p100' in gpucard:
     GPUCONF = P100()
 
 # experimental test
-#pointer = ['convolutionTexture', 'nn', 'SobolQRNG', 'reduction', 'hotspot'] 
-pointer = []
+pointer = ['convolutionTexture', 'nn', 'SobolQRNG', 'reduction', 'hotspot'] 
 extras = ['backpropBackward', 'binomialOptions', 'cfd', 'eigenvalues', 'gaussian', 'srad', 'dxtc', 'pathfinder', 'scanUniformUpdate', 'stereoDisparity'] 
 #extras = []
 df = df[~df.appName.isin(extras) & (df.coreF>=lowest_core) & (df.memF>=lowest_mem)]
@@ -322,8 +321,8 @@ f.close()
 
 errors = []
 for i in range(len(cycles['modelled_cycle'])):
-        #if cycles['appName'][i] in pointer or cycles['appName'][i] in extras:
-        #    continue
+        if cycles['appName'][i] in pointer or cycles['appName'][i] in extras:
+            continue
  
         #if cycles['coreF'][i] >= 500 and cycles['memF'][i] >= 500:
 	errors.append(cycles['abe'][i])

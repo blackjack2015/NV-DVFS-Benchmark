@@ -155,6 +155,8 @@ def data_prepare(gpucard, version, csv_perf):
         GPUCONF = P100()
     elif 'titanx' in gpucard:
         GPUCONF = TITANX()
+    elif 'gtx1080ti' in gpucard:
+        GPUCONF = GTX1080TI()
 
     df = pd.read_csv(csv_perf, header = 0)
     
@@ -366,6 +368,8 @@ def leave_one_validate(gpu_X, gpu_y, gpu_df, gpu, ml_algo):
         GPUCONF = P100()
     elif 'titanx' in gpu:
         GPUCONF = TITANX()
+    elif 'gtx1080ti' in gpu:
+        GPUCONF = GTX1080TI()
 
     csv_file = 'csvs/ml/%s_%s_dvfs.csv' % (gpu, ml_algo)
     f = open(csv_file, "w")
@@ -451,18 +455,18 @@ def leave_one_validate(gpu_X, gpu_y, gpu_df, gpu, ml_algo):
 if __name__ == '__main__':
 
     gpu_1 = 'p100'
-    gpu_2 = 'titanx'
+    gpu_2 = 'gtx1080ti'
     gpu_3 = 'gtx980'
 
     ml_algo = 'svr-rbf'
 
     # leave one validation, no test kernel/test kernel at default clock
-    gpu_X, gpu_y, gpu_df = data_prepare(gpu_1, 'real', "csvs/%s-dvfs-%s-Performance.csv" % (gpu_1, 'real'))
+    gpu_X, gpu_y, gpu_df = data_prepare(gpu_1, 'real', "csvs/raw/%s-dvfs-%s-Performance.csv" % (gpu_1, 'real'))
     leave_one_validate(gpu_X, gpu_y, gpu_df, gpu_1, ml_algo)
 
-    gpu_X, gpu_y, gpu_df = data_prepare(gpu_2, 'real', "csvs/%s-dvfs-%s-Performance.csv" % (gpu_2, 'real'))
+    gpu_X, gpu_y, gpu_df = data_prepare(gpu_2, 'real', "csvs/raw/%s-dvfs-%s-Performance.csv" % (gpu_2, 'real'))
     leave_one_validate(gpu_X, gpu_y, gpu_df, gpu_2, ml_algo)
 
-    gpu_X, gpu_y, gpu_df = data_prepare(gpu_3, 'real', "csvs/%s-dvfs-%s-Performance.csv" % (gpu_3, 'real-small-workload'))
+    gpu_X, gpu_y, gpu_df = data_prepare(gpu_3, 'real', "csvs/raw/%s-high-dvfs-%s-Performance.csv" % (gpu_3, 'real-small-workload'))
     leave_one_validate(gpu_X, gpu_y, gpu_df, gpu_3, ml_algo)
 
