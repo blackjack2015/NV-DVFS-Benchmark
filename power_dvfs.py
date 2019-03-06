@@ -250,9 +250,7 @@ class GPU_Power:
     				   'n_flop_sp', 'n_flop_sp_fma', 'n_flop_sp_spec', 'n_flop_dp', 'n_flop_dp_fma', 'n_int', \
     				   ]) 
         
-        # hardware parameters
-        df['c_to_m'] = df['coreF'] * 1.0 / df['memF']
-        
+
         # global memory information
         params['n_gld'] = df['gld_transactions'] / df['warps'] # / GPUCONF.LS_UNITS
         params['n_gst'] = df['gst_transactions'] / df['warps'] # / GPUCONF.LS_UNITS
@@ -301,7 +299,7 @@ class GPU_Power:
         params['n_int'] = df['inst_integer'] * 1.0 / (df['warps'] * 32) # / GPUCONF.CORES_SM
     
         # branch
-        params['branch'] = df['cf_executed'] * 1.0 / (df['warps']) # / GPUCONF.CORES_SM
+        params['branch'] = df['cf_executed'] * 1.0 / (df['warps'] * 32) # / GPUCONF.CORES_SM
     
         # instruction statistic
         params['inst_per_warp'] = df['inst_per_warp']
@@ -313,9 +311,11 @@ class GPU_Power:
         ## print params['other_insts']
         
         params['real_cycle'] = None
-        params['avg_power'] = df['power/W']
+        #params['avg_power'] = df['power/W']
+        params['avg_power'] = None
         for idx, item in df.iterrows():
             params.loc[idx, 'real_cycle'] = float(item['time/ms'] * 1.0 / df[(df['appName'] == item['appName']) & (df['coreF'] == self.GPUCONF.CORE_FREQ) & (df['memF'] == self.GPUCONF.MEM_FREQ)]['time/ms'])
+            params.loc[idx, 'avg_power'] = float(item['power/W'] * 1.0 / df[(df['appName'] == item['appName']) & (df['coreF'] == self.GPUCONF.CORE_FREQ) & (df['memF'] == self.GPUCONF.MEM_FREQ)]['power/W'])
     
         # grouth truth cycle per SM per round / ground truth IPC
         #params['real_cycle'] = df['time/ms'] * df['coreF'] * 1000.0 / (df['warps'] / (GPUCONF.WARPS_MAX * GPUCONF.SM_COUNT * df['achieved_occupancy']))
@@ -326,7 +326,7 @@ class GPU_Power:
         #except Exception as e:
         #    params['real_cycle'] = df['executed_ipc']
     
-        # hardware information, frequency ratio, core/mem
+        # hardware information, frequency ratio, core/mem, runtime efficiency
         params['coreF'] = df['coreF'] * 1.0 / self.GPUCONF.CORE_FREQ
         params['memF'] = df['memF'] * 1.0 / self.GPUCONF.MEM_FREQ
         params['c_to_m'] = df['coreF'] * 1.0 / df['memF']
@@ -340,19 +340,22 @@ class GPU_Power:
         # select features for training
         #inst_features = ['n_dm', 'n_l2', 'n_shm', 'tex_trans', 'n_flop_sp', 'n_flop_dp', 'n_int', 'branch']
         #inst_features = ['n_dm', 'n_l2', 'n_shm', 'tex_trans', 'n_flop_sp', 'n_flop_dp', 'n_int', 'n_flop_sp_spec']
-        inst_features = ['n_dm', 'n_l2', 'n_shm', 'tex_trans', 'n_flop_sp', 'n_flop_dp', 'n_int']
+        inst_features = ['n_dm', 'n_l2', 'n_shm', 'tex_trans', 'n_flop_sp', 'n_flop_dp', 'n_int', 'branch']
     
         ## normalized with inst_per_warp, predict cycle per round
+        #X = X.div(params['inst_per_warp'], axis=0)
         X = params.loc[:, inst_features]
-        X = X.div(params['inst_per_warp'], axis=0)
+        X = X.div(X.loc[:, :].sum(axis=1), axis=0)
+        for feature in inst_features:
+            X[feature] = X[feature] * params['act_util']
+            X[feature] = X[feature] * params['sm_act']
+            X[feature] = X[feature] * params['warp_eff']
         #y = params['real_cycle'] / params['inst_per_warp']
     
         # normalized with total amount of insts, predict cycle per round
-        #X = params.loc[:, inst_features]
         #y = params['real_cycle'].div(X.loc[:, :].sum(axis=1), axis=0) # for real cycle
         #y = params['real_cycle']
         y = params['avg_power']
-        #X = X.div(X.loc[:, :].sum(axis=1), axis=0)
     
         ## normalized with inst_per_warp, predict ipc
         #X = params.loc[:, inst_features]
@@ -370,8 +373,8 @@ class GPU_Power:
         
         #print "Total number of samples:", len(X)
         X = X.astype(np.float64)
-        print X.head(5)
-        print y.head(5)
+        #print X.head(5)
+        #print y.head(5)
     
         features = pd.DataFrame([])
         features['appName'] = df['appName']
@@ -384,15 +387,22 @@ class GPU_Power:
         #return X, y, df
         self.X = X
         self.y = y
+        print y
+        print "total sample number:", len(X)
 
     def get_kernel_set(self):
         self.kernel_set = list(self.gpudata['appName'].drop_duplicates())
-        random.shuffle(self.kernel_set)
+        print "kernel number:", len(self.kernel_set)
+
+    def get_freq_set(self):
+        self.core_freq_set = list(self.gpudata['coreF'].drop_duplicates())
+        self.mem_freq_set = list(self.gpudata['memF'].drop_duplicates())
 
     def split_data(self, mode = 'random', test_size = 0.3):
         if mode == 'random':
-            self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(self.X, self.y, test_size=0.3)
+            self.train_X, self.test_X, self.train_y, self.test_y = train_test_split(self.X, self.y, test_size=0.3)
         elif mode == 'kernel':
+            random.shuffle(self.kernel_set)
             train_kernel = self.kernel_set[:int(len(self.kernel_set) * (1 - 0.3))]
             test_kernel = self.kernel_set[int(len(self.kernel_set) * (1 - 0.3)):]
             train_idx = self.gpudata['appName'].isin(train_kernel)
@@ -419,15 +429,17 @@ def main(opt):
 
     gpucard = bench_conf.split('-')[0]
     gpu_power_model = GPU_Power(gpucard, bench_conf, kernel_conf, method)
-    gpu_power_model.split_data("kernel", 0.2)
-    gpu_power_model.run()
+
+    for i in range(10):
+        gpu_power_model.split_data("kernel", 0.3)
+        gpu_power_model.run()
 
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--data-root', type=str, help='data file path', default='raw')
-    parser.add_argument('--benchmark-setting', type=str, help='gpu and dvfs setting', default='gtx980-high-dvfs')
-    parser.add_argument('--kernel-setting', type=str, help='kernel list', default='real-small-workload')
+    parser.add_argument('--benchmark-setting', type=str, help='gpu and dvfs setting', default='p100-dvfs')
+    parser.add_argument('--kernel-setting', type=str, help='kernel list', default='real')
     parser.add_argument('--method', type=str, help='analytical modeling method', default='svr-poly')
     
     opt = parser.parse_args()

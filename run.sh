@@ -13,9 +13,9 @@
 python power_dvfs.py --benchmark-setting gtx980-low-dvfs --kernel-setting real-small-workload --method svr-poly
 python power_dvfs.py --benchmark-setting gtx980-low-dvfs --kernel-setting real-small-workload --method svr-rbf
 python power_dvfs.py --benchmark-setting gtx980-low-dvfs --kernel-setting real-small-workload --method xgboost
-python power_dvfs.py --benchmark-setting gtx980-high-dvfs --kernel-setting real-small-workload --method svr-poly
-python power_dvfs.py --benchmark-setting gtx980-high-dvfs --kernel-setting real-small-workload --method svr-rbf
-python power_dvfs.py --benchmark-setting gtx980-high-dvfs --kernel-setting real-small-workload --method xgboost
+#python power_dvfs.py --benchmark-setting gtx980-high-dvfs --kernel-setting real-small-workload --method svr-poly
+#python power_dvfs.py --benchmark-setting gtx980-high-dvfs --kernel-setting real-small-workload --method svr-rbf
+#python power_dvfs.py --benchmark-setting gtx980-high-dvfs --kernel-setting real-small-workload --method xgboost
 python power_dvfs.py --benchmark-setting gtx1080ti-dvfs --kernel-setting real --method svr-poly
 python power_dvfs.py --benchmark-setting gtx1080ti-dvfs --kernel-setting real --method svr-rbf
 python power_dvfs.py --benchmark-setting gtx1080ti-dvfs --kernel-setting real --method xgboost
