@@ -17,12 +17,13 @@ import matplotlib.pyplot as plt
 import xgboost as xgb
 from xgboost import XGBClassifier, XGBRegressor, plot_importance
 
+
 rng = np.random.RandomState(31337)
 DATAROOT = "csvs/raw"
 #out_kernels = ['binomialOptions', 'eigenvalues', 'scanUniformUpdate', 'stereoDisparity', 'reduction', 'matrixMulGlobal', 'cfd', 'hotspot', 'dxtc', 'backpropBackward']
 #out_kernels = ['binomialOptions', 'eigenvalues', 'stereoDisparity', 'reduction', 'matrixMulGlobal', 'quasirandomGenerator', 'convolutionTexture']
-out_kernels = ['binomialOptions', 'eigenvalues', 'stereoDisparity', 'reduction', 'matrixMulGlobal', 'quasirandomGenerator']
-#out_kernels = []
+#out_kernels = ['binomialOptions', 'eigenvalues', 'stereoDisparity', 'reduction', 'matrixMulGlobal', 'quasirandomGenerator']
+out_kernels = []
 #out_kernels = ['eigenvalues', 'matrixMulGlobal']
 
 def mean_absolute_error(ground_truth, predictions):
@@ -32,14 +33,18 @@ def mean_absolute_error(ground_truth, predictions):
 def nn_fitting(X, y):
 
     # make score function
+    #scaler = None
+    scaler = StandardScaler()
+    scaler.fit(X)
+    X = scaler.transform(X)
     loss = make_scorer(mean_absolute_error, greater_is_better=False)
 
-    hidden_layer_sizes = [(10, 15, 10)]
-    alpha = [1e-5]
-    activation = ['relu']
+    hidden_layer_sizes = [(20, 15, 10, 15, 20)]
+    alpha = [1e-1, 1e-2, 1e-3, 1e-4]
+    activation = ['relu', 'logistic', 'tanh']
     param_grid = dict(hidden_layer_sizes = hidden_layer_sizes, alpha = alpha, activation = activation)
 
-    nn_model = MLPRegressor(solver='adam', random_state=1, max_iter=60000, warm_start=True)
+    nn_model = MLPRegressor(solver='lbfgs', random_state=1, max_iter=60000, warm_start=True)
 
     nn_model = GridSearchCV(nn_model, cv=10, param_grid = param_grid, scoring='neg_mean_squared_error', n_jobs=8, verbose=True)
     nn_model.fit(X, y)
@@ -48,7 +53,7 @@ def nn_fitting(X, y):
 
     #nn_model = MLPRegressor(solver='adam', hidden_layer_sizes = (10, 15, 10), alpha = 1e-5, random_state=1, max_iter=30000, warm_start=True)
     #nn_model.fit(X, y)
-    return nn_model
+    return nn_model, scaler
 
 def xg_fitting(X, y):
 
@@ -158,6 +163,7 @@ def train(X, y, ml_algo):
     #print "len of train:", len(train_X), len(train_y), len(train_df)
     
     # fit train data and test on test data
+    scaler = None
     if ml_algo == 'svr-poly':
         fit_model = svr_fitting(X, y, 'poly')
     if ml_algo == 'svr-rbf':
@@ -165,11 +171,13 @@ def train(X, y, ml_algo):
     if ml_algo == 'xgboost':
         fit_model = xg_fitting(X, y)
     if ml_algo == 'nn':
-        fit_model = nn_fitting(X, y)
+        fit_model, scaler = nn_fitting(X, y)
 
-    return fit_model
+    return fit_model, scaler
 
-def test(model, X, y):
+def test(model, X, y, scaler = None):
+    if scaler != None:
+        X = scaler.transform(X)
     y_pred = model.predict(X) 
     test_mae = mean_absolute_error(y, y_pred)
     
@@ -371,6 +379,7 @@ class GPU_Power:
         for uf in util_features:
             X[uf] = params[uf]
         
+        
         #print "Total number of samples:", len(X)
         X = X.astype(np.float64)
         #print X.head(5)
@@ -380,9 +389,9 @@ class GPU_Power:
         features['appName'] = df['appName']
         for f in X.keys():
             features[f] = X[f]
-        features['inst_per_warp'] = params['inst_per_warp']
-        features['real_cycle'] = y
-        #features.to_csv("csvs/%s-%s-features.csv" % (gpucard, version))
+        #features['inst_per_warp'] = params['inst_per_warp']
+        features['avg_power'] = y
+        features.to_csv("csvs/%s-%s-features.csv" % (self.bench_conf, self.kernel_conf))
     
         #return X, y, df
         self.X = X
@@ -416,8 +425,8 @@ class GPU_Power:
     
 
     def run(self):
-        self.fit_model = train(self.train_X, self.train_y, self.method)
-        y_pred = test(self.fit_model, self.test_X, self.test_y)
+        self.fit_model, self.scaler = train(self.train_X, self.train_y, self.method)
+        y_pred = test(self.fit_model, self.test_X, self.test_y, self.scaler)
         return y_pred
 
 
