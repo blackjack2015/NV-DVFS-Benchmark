@@ -7,6 +7,7 @@ from settings import *
 import matplotlib.pyplot as plt
 from scipy.stats.stats import pearsonr 
 import seaborn as sns
+from matplotlib_colorbar.colorbar import Colorbar
 
 MARKERS = ['^', '<', 'o', 's']
 HATCHES = ['//', '--', '\\\\', '||', '++', '--', '..', '++', '\\\\']
@@ -294,16 +295,31 @@ def plot_perf_acc_freq(gpu, version, method, save_filename = None):
     df = pd.read_csv(csv_file, header = 0)
     print df.tail(3)
 
-    fig, ax = plt.subplots(figsize = (16, 6))
+    if 'p100' in gpu:
+        fig, ax = plt.subplots(figsize = (16, 3))
+    else:
+        fig, ax = plt.subplots(figsize = (16, 6))
 
     df.error = df.error * 100.0
     #freq_error = df['error'].groupby([df['coreF'], df['memF']]).mean()
-    piv = pd.pivot_table(df, values="error",index=["coreF"], columns=["memF"], fill_value=0)
+    if 'p100' in gpu:
+        piv = pd.pivot_table(df, values="error",index=["memF"], columns=["coreF"], fill_value=0)
+    else:
+        piv = pd.pivot_table(df, values="error",index=["coreF"], columns=["memF"], fill_value=0)
 
     print piv
 
-    im = ax.imshow(piv, cmap="Reds", origin="lower", aspect='auto')
-    cbar = fig.colorbar(im, ax=ax)
+    error_min = piv.values.min()
+    error_max = piv.values.max()
+
+    im = ax.imshow(piv, cmap="Reds", origin="lower", aspect='auto', vmin=error_min * 0.82, vmax=error_max * 1.18)
+    #im = ax.imshow(piv, cmap="gray", origin="lower", aspect='auto', vmin=error_min * 0.6, vmax=error_max * 1.2)
+    if 'p100' in gpu:
+        cbar = fig.colorbar(im, ax=ax, orientation='horizontal', pad=0.4)
+        #cbar = Colorbar(im, location='upper', orientation='horizontal')
+    else:
+        cbar = fig.colorbar(im, ax=ax)
+
     cbar.ax.tick_params(labelsize=24) 
 
     data = piv.values
@@ -401,7 +417,7 @@ def plot_perf_acc_analytical(gpu, version, method, save_filename = None):
     #ax.legend(fontsize=fsize, loc='upper center', ncol = 3, bbox_to_anchor=(0.5, 1.3))
     ax.grid(linestyle=':')
 
-    if not save_filename or True:
+    if not save_filename:
         plt.show()
 	return
     else:
@@ -506,14 +522,22 @@ if __name__ == '__main__':
         os.makedirs("figures")
 
     # gpu card and data file
-    gpu = 'gtx980-low-dvfs'
-    version = 'real-small-workload'
     method = 'qiang2018'
     ml_algo = 'svr-poly'
 
     # pipeline paper, plot error heatmap of different frequency settings
+    #gpu = 'gtx980-low-dvfs'
+    #version = 'real-small-workload'
+    #plot_perf_acc_freq(gpu, version, method, save_filename='%s-%s-%s-acc-dvfs' % (gpu, version, method))
+    #gpu = 'gtx980-high-dvfs'
+    #version = 'real-small-workload'
+    #plot_perf_acc_freq(gpu, version, method, save_filename='%s-%s-%s-acc-dvfs' % (gpu, version, method))
+    #gpu = 'gtx1080ti-dvfs'
+    #version = 'real'
+    #plot_perf_acc_freq(gpu, version, method, save_filename='%s-%s-%s-acc-dvfs' % (gpu, version, method))
+    gpu = 'p100-dvfs'
+    version = 'real'
     plot_perf_acc_freq(gpu, version, method, save_filename='%s-%s-%s-acc-dvfs' % (gpu, version, method))
-    plot_perf_acc_freq('gtx1080ti-dvfs', 'real', method, save_filename='%s-%s-%s-acc-dvfs' % ('gtx1080ti-dvfs', 'real', method))
 
     ## pipeline paper, plot performance scaling behavior in motivation part
     #csv_file = "csvs/raw/%s-%s-Performance.csv" % (gpu, version)
@@ -540,7 +564,9 @@ if __name__ == '__main__':
     #gpu = 'p100'
     #plot_perf_acc_dvfs(gpu, 'qiang2018', '%s_analytical' % gpu)
 
-    #method = 'qiang2018'
+    #gpu = 'gtx980-high-dvfs'
+    #version = 'real-small-workload'
+    #plot_perf_acc_analytical(gpu, version, method, '%s_analytical' % gpu)
     #gpu = 'gtx980-low-dvfs'
     #version = 'real-small-workload'
     #plot_perf_acc_analytical(gpu, version, method, '%s_analytical' % gpu)
@@ -551,17 +577,20 @@ if __name__ == '__main__':
     #version = 'real'
     #plot_perf_acc_analytical(gpu, version, method, '%s_analytical' % gpu)
 
-    # pipeline paper, plot err and correlation scatter
-    method = 'qiang2018'
-    gpu = 'gtx980-low-dvfs'
-    version = 'real-small-workload'
-    plot_perf_acc_corr(gpu, version, method, '%s_%s_%s_err_corr' % (gpu, version, method))
-    gpu = 'gtx1080ti-dvfs'
-    version = 'real'
-    plot_perf_acc_corr(gpu, version, method, '%s_%s_%s_err_corr' % (gpu, version, method))
-    gpu = 'p100-dvfs'
-    version = 'real'
-    plot_perf_acc_corr(gpu, version, method, '%s_%s_%s_err_corr' % (gpu, version, method))
+    ## pipeline paper, plot err and correlation scatter
+    #method = 'qiang2018'
+    #gpu = 'gtx980-low-dvfs'
+    #version = 'real-small-workload'
+    #plot_perf_acc_corr(gpu, version, method, '%s_%s_%s_err_corr' % (gpu, version, method))
+    #gpu = 'gtx980-high-dvfs'
+    #version = 'real-small-workload'
+    #plot_perf_acc_corr(gpu, version, method, '%s_%s_%s_err_corr' % (gpu, version, method))
+    #gpu = 'gtx1080ti-dvfs'
+    #version = 'real'
+    #plot_perf_acc_corr(gpu, version, method, '%s_%s_%s_err_corr' % (gpu, version, method))
+    #gpu = 'p100-dvfs'
+    #version = 'real'
+    #plot_perf_acc_corr(gpu, version, method, '%s_%s_%s_err_corr' % (gpu, version, method))
 
     ## pipeline paper, plot dvfs-roofline model
     #gpu = 'gtx980-low-dvfs'

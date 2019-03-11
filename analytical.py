@@ -41,11 +41,11 @@ if 'p100' in gpucard:
     GPUCONF = P100()
 
 # experimental test
-#pointer = ['convolutionTexture', 'nn', 'SobolQRNG', 'reduction', 'hotspot'] 
-pointer = []
+pointer = ['convolutionTexture', 'nn', 'SobolQRNG', 'reduction', 'hotspot'] 
 extras = ['backpropBackward', 'binomialOptions', 'cfd', 'eigenvalues', 'gaussian', 'srad', 'dxtc', 'pathfinder', 'scanUniformUpdate', 'stereoDisparity'] 
 #extras = []
-df = df[~df.appName.isin(extras) & (df.coreF>=lowest_core) & (df.memF>=lowest_mem)]
+df = df[~df.appName.isin(extras) & ~df.appName.isin(pointer) & (df.coreF>=lowest_core) & (df.memF>=lowest_mem)]
+#df = df[~df.appName.isin(extras) & (df.coreF>=lowest_core) & (df.memF>=lowest_mem)]
 df = df.reset_index(drop=True)
 df = df.sort_values(by = ['appName', 'coreF', 'memF'])
 
@@ -213,6 +213,8 @@ def qiang2018(df):
     cycles['memF'] = df['memF']
     cycles['c_to_m'] = df['coreF'] * 1.0 / df['memF']
     cycles['cold_miss'] = df['L_DM']
+    cycles['avg_mem_lat'] = ((df['L_DM'] + df['D_DM']) * (1 - df['l2_hit']) + GPUCONF.L_L2 * df['l2_hit']) 
+    cycles['avg_mem_del'] = (df['D_DM'] * (1 - df['l2_hit']) + GPUCONF.D_L2 * df['l2_hit'])
     cycles['mem_del'] = (df['n_gld'] + df['n_gst']) * (df['D_DM'] * (1 - df['l2_hit']) + GPUCONF.D_L2 * df['l2_hit']) * GPUCONF.WARPS_MAX * df['act_util'] # memory queue delay for all warps per round
     cycles['mem_lat'] = (df['n_gld'] + df['n_gst']) * ((df['L_DM'] + df['D_DM']) * (1 - df['l2_hit']) + GPUCONF.L_L2 * df['l2_hit']) / 4.0 # memory latency for one warp per round
     cycles['shm_del'] = GPUCONF.D_sh * (df['n_shm_ld'] + df['n_shm_st']) * df['act_util'] * GPUCONF.WARPS_MAX + GPUCONF.L_sh # shared queue delay for all warps per round
@@ -236,11 +238,20 @@ def qiang2018(df):
         else:
 	    cycles.loc[idx, 'modelled_cycle'] = cycles.loc[idx, 'mem_del'] 
 
-        if df.loc[idx, 'act_util'] <= 0.38:
-            if cycles.loc[idx, 'sm_del'] + cycles.loc[idx, 'mem_lat'] > cycles.loc[idx, 'sm_lat'] + cycles.loc[idx, 'mem_del']:
-                cycles.loc[idx, 'modelled_cycle'] = cycles.loc[idx, 'sm_del'] + cycles.loc[idx, 'mem_lat']
+        #if df.loc[idx, 'act_util'] <= 0.38:
+            #if cycles.loc[idx, 'sm_del'] + cycles.loc[idx, 'mem_lat'] > cycles.loc[idx, 'sm_lat'] + cycles.loc[idx, 'mem_del']:
+            #    cycles.loc[idx, 'modelled_cycle'] = cycles.loc[idx, 'sm_del'] + cycles.loc[idx, 'mem_lat']
+            #else:
+            #    cycles.loc[idx, 'modelled_cycle'] = cycles.loc[idx, 'sm_lat'] + cycles.loc[idx, 'mem_del']
+
+        special = ['hotspot', 'convolutionTexture', 'nn']
+        if df.loc[idx, 'appName'] in special:
+            lack_wait = 0.5 * cycles.loc[idx, 'avg_mem_lat'] + cycles.loc[idx, 'compute_offset'] + cycles.loc[idx, 'avg_mem_del'] * GPUCONF.WARPS_MAX * df.loc[idx, 'act_util'] + 0.5 * cycles.loc[idx, 'avg_mem_lat'] + (cycles.loc[idx, 'compute_offset'] + cycles.loc[idx, 'avg_mem_lat']) * (df.loc[idx, 'n_gld'] + df.loc[idx, 'n_gst'] - 1) / 4.0
+            lack_no_wait = cycles.loc[idx, 'compute_offset'] * (GPUCONF.WARPS_MAX * df.loc[idx, 'act_util'] - 1) + (cycles.loc[idx, 'compute_offset'] + cycles.loc[idx, 'avg_mem_lat']) * (df.loc[idx, 'n_gld'] + df.loc[idx, 'n_gst']) / 4.0
+            if lack_wait > lack_no_wait:
+                cycles.loc[idx, 'modelled_cycle'] = lack_wait
             else:
-                cycles.loc[idx, 'modelled_cycle'] = cycles.loc[idx, 'sm_lat'] + cycles.loc[idx, 'mem_del']
+                cycles.loc[idx, 'modelled_cycle'] = lack_no_wait
 
 
     cycles['modelled_cycle'] += cycles['cold_miss'] 
