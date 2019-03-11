@@ -57,7 +57,7 @@ class GTX980:
         self.L_INST = 4   # 4 for gtx980
         self.a_D_DM = 805.03    # a / f_mem + b, a = 805.03, b = 8.1762 for gtx980
         self.b_D_DM = 8.1762    # a / f_mem + b, a = 805.03, b = 8.1762 for gtx980
-        self.D_L2 = 1.2   # 1 for l2 cache, 20% inefficiency
+        self.D_L2 = 1.2  # 1 for l2 cache, 20% inefficiency
         self.D_INST = 1     # 1.2 for compute throughput
         self.L_sh = 28    # 28 for gtx980
         self.D_sh = 1

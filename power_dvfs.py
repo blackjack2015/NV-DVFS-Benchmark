@@ -396,7 +396,6 @@ class GPU_Power:
         #return X, y, df
         self.X = X
         self.y = y
-        print y
         print "total sample number:", len(X)
 
     def get_kernel_set(self):
@@ -427,7 +426,17 @@ class GPU_Power:
     def run(self):
         self.fit_model, self.scaler = train(self.train_X, self.train_y, self.method)
         y_pred = test(self.fit_model, self.test_X, self.test_y, self.scaler)
-        return y_pred
+        y_pred = test(self.fit_model, self.X, self.y, self.scaler)
+        
+        results = pd.DataFrame([])
+        results['appName'] = self.gpudata['appName']
+        results['coreF'] = self.gpudata['coreF']
+        results['memF'] = self.gpudata['memF']
+        results['avg_power'] = self.gpudata['power/W']
+        results['modelled_power'] = None
+        for idx, item in self.gpudata.iterrows():
+            results.loc[idx, 'modelled_power'] = float(y_pred[idx] * self.gpudata[(self.gpudata['appName'] == item['appName']) & (self.gpudata['coreF'] == self.GPUCONF.CORE_FREQ) & (self.gpudata['memF'] == self.GPUCONF.MEM_FREQ)]['power/W'])
+        return results
 
 
 def main(opt):
@@ -439,9 +448,9 @@ def main(opt):
     gpucard = bench_conf.split('-')[0]
     gpu_power_model = GPU_Power(gpucard, bench_conf, kernel_conf, method)
 
-    for i in range(10):
-        gpu_power_model.split_data("kernel", 0.3)
-        gpu_power_model.run()
+    gpu_power_model.split_data("kernel", 0.4)
+    results = gpu_power_model.run()
+    results.to_csv("csvs/ml/%s-%s-%s-Power.csv" % (bench_conf, kernel_conf, method))
 
 if __name__ == '__main__':
 

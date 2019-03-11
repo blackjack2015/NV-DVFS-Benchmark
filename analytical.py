@@ -42,6 +42,7 @@ if 'p100' in gpucard:
 
 # experimental test
 pointer = ['convolutionTexture', 'nn', 'SobolQRNG', 'reduction', 'hotspot'] 
+pointer = []
 extras = ['backpropBackward', 'binomialOptions', 'cfd', 'eigenvalues', 'gaussian', 'srad', 'dxtc', 'pathfinder', 'scanUniformUpdate', 'stereoDisparity'] 
 #extras = []
 df = df[~df.appName.isin(extras) & ~df.appName.isin(pointer) & (df.coreF>=lowest_core) & (df.memF>=lowest_mem)]
@@ -214,9 +215,9 @@ def qiang2018(df):
     cycles['c_to_m'] = df['coreF'] * 1.0 / df['memF']
     cycles['cold_miss'] = df['L_DM']
     cycles['avg_mem_lat'] = ((df['L_DM'] + df['D_DM']) * (1 - df['l2_hit']) + GPUCONF.L_L2 * df['l2_hit']) 
-    cycles['avg_mem_del'] = (df['D_DM'] * (1 - df['l2_hit']) + GPUCONF.D_L2 * df['l2_hit'])
-    cycles['mem_del'] = (df['n_gld'] + df['n_gst']) * (df['D_DM'] * (1 - df['l2_hit']) + GPUCONF.D_L2 * df['l2_hit']) * GPUCONF.WARPS_MAX * df['act_util'] # memory queue delay for all warps per round
-    cycles['mem_lat'] = (df['n_gld'] + df['n_gst']) * ((df['L_DM'] + df['D_DM']) * (1 - df['l2_hit']) + GPUCONF.L_L2 * df['l2_hit']) / 4.0 # memory latency for one warp per round
+    cycles['avg_mem_del'] = (df['D_DM'] * (1 - df['l2_hit']) + GPUCONF.D_L2 * df['l2_hit']) 
+    cycles['mem_del'] = (df['n_gld'] + df['n_gst']) * cycles['avg_mem_del'] * GPUCONF.WARPS_MAX * df['act_util'] # memory queue delay for all warps per round
+    cycles['mem_lat'] = (df['n_gld'] + df['n_gst']) * cycles['avg_mem_lat'] / 4.0 # memory latency for one warp per round
     cycles['shm_del'] = GPUCONF.D_sh * (df['n_shm_ld'] + df['n_shm_st']) * df['act_util'] * GPUCONF.WARPS_MAX + GPUCONF.L_sh # shared queue delay for all warps per round
     cycles['shm_offset'] = ((df['n_shm_ld'] + df['n_shm_st']) * 1.0 / (df['n_gld'] + df['n_gst'])) * GPUCONF.L_sh
     cycles['shm_lat'] = (df['n_shm_ld'] + df['n_shm_st']) * GPUCONF.L_sh # shared latency for one warp per round
@@ -234,9 +235,9 @@ def qiang2018(df):
 
     for idx, item in cycles.iterrows():
         if cycles.loc[idx, 'sm_del'] > cycles.loc[idx, 'mem_del']:
-            cycles.loc[idx, 'modelled_cycle'] = cycles.loc[idx, 'sm_del'] 
+            cycles.loc[idx, 'modelled_cycle'] = cycles.loc[idx, 'sm_del'] #+ cycles.loc[idx, 'avg_mem_lat']
         else:
-	    cycles.loc[idx, 'modelled_cycle'] = cycles.loc[idx, 'mem_del'] 
+	    cycles.loc[idx, 'modelled_cycle'] = cycles.loc[idx, 'mem_del'] #+ cycles.loc[idx, 'avg_mem_lat']
 
         #if df.loc[idx, 'act_util'] <= 0.38:
             #if cycles.loc[idx, 'sm_del'] + cycles.loc[idx, 'mem_lat'] > cycles.loc[idx, 'sm_lat'] + cycles.loc[idx, 'mem_del']:
