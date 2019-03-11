@@ -49,7 +49,7 @@ def get_abbr(kernel):
     return ABBRS[kernel]
 
 class GTX980:
-    def __init__(self):
+    def __init__(self, dvfs_range = 'low'):
         # Hardware Configuration
         self.a_L_DM = 222.78   # a * f_core / f_mem + b, a = 222.78, b = 277.32 for gtx980
         self.b_L_DM = 277.32   # a * f_core / f_mem + b, a = 222.78, b = 277.32 for gtx980
@@ -71,8 +71,12 @@ class GTX980:
         self.SPEC_UNITS = 32
         self.LS_UNITS = 32
 
-        self.CORE_FREQ = 1100
-        self.MEM_FREQ = 3600
+        if dvfs_range == 'low':
+            self.CORE_FREQ = 500
+            self.MEM_FREQ = 500
+        elif dvfs_range == 'high':
+            self.CORE_FREQ = 1100
+            self.MEM_FREQ = 3600
         
         # kernel equation type
         self.eqType = {}
@@ -122,7 +126,7 @@ class GTX1080TI:
         self.SPEC_UNITS = 32
         self.LS_UNITS = 32
         
-        self.CORE_FREQ = 1825
+        self.CORE_FREQ = 1800
         self.MEM_FREQ = 5000
 
         # kernel equation type

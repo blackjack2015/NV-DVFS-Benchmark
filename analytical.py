@@ -333,8 +333,8 @@ f.close()
 
 errors = []
 for i in range(len(cycles['modelled_cycle'])):
-        #if cycles['appName'][i] in pointer or cycles['appName'][i] in extras:
-        #    continue
+        if cycles['appName'][i] in pointer or cycles['appName'][i] in extras:
+            continue
  
         #if cycles['coreF'][i] >= 500 and cycles['memF'][i] >= 500:
 	errors.append(cycles['abe'][i])
