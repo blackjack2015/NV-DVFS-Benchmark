@@ -6,8 +6,8 @@ from settings import *
 # from sklearn import cross_validation
 import matplotlib.pyplot as plt
 from scipy.stats.stats import pearsonr 
-import seaborn as sns
-from matplotlib_colorbar.colorbar import Colorbar
+#import seaborn as sns
+#from matplotlib_colorbar.colorbar import Colorbar
 
 MARKERS = ['^', '<', 'o', 's']
 HATCHES = ['//', '--', '\\\\', '||', '++', '--', '..', '++', '\\\\']
@@ -18,8 +18,8 @@ in_kernels = ['BlackScholes', 'matrixMulShared', 'backpropForward', 'histogram']
 #in_kernels = ['BlackScholes', 'matrixMul', 'backprop', 'convolutionSeparable']
 out_kernels = ['binomialOptions', 'eigenvalues', 'scanUniformUpdate', 'stereoDisparity', 'reduction', 'matrixMulGlobal', 'cfd', 'hotspot', 'dxtc', 'backpropBackward']
 # experimental test
-#pointer = ['convolutionTexture', 'nn', 'SobolQRNG', 'reduction', 'hotspot'] 
-pointer = []
+pointer = ['convolutionTexture', 'nn', 'SobolQRNG', 'reduction', 'hotspot'] 
+#pointer = []
 extras = ['backpropBackward', 'binomialOptions', 'cfd', 'eigenvalues', 'gaussian', 'srad', 'dxtc', 'pathfinder', 'scanUniformUpdate', 'stereoDisparity'] 
 #extras = []
 
@@ -289,6 +289,126 @@ def plot_dvfs_scaling(gpucard, csv_perf):
 
     #plt.show()
 
+def plot_perf_acc_freq_merge(save_filename = None):
+
+    fig, axes = plt.subplots(nrows = 3, ncols = 1, figsize = (9, 9), gridspec_kw = {'height_ratios':[4, 4, 1]})
+    ax_size = 18
+    cmap_str = 'gist_rainbow'
+
+    # read gtx980
+    csv_file = "csvs/analytical/results/gtx980-low-dvfs-real-small-workload-qiang2018-dvfs.csv"
+    df = pd.read_csv(csv_file, header = 0)
+    print df.tail(3)
+
+    df.error = df.error * 100.0
+    #freq_error = df['error'].groupby([df['coreF'], df['memF']]).mean()
+    piv = pd.pivot_table(df, values="error",index=["coreF"], columns=["memF"], fill_value=0)
+
+    print piv
+
+    ax = axes[0]
+    im = ax.imshow(piv, cmap = cmap_str, origin="lower", aspect = 'auto', vmin=4, vmax=12)
+
+    data = piv.values
+    for y in range(data.shape[0]):
+        for x in range(data.shape[1]):
+            ax.text(x , y, '%.2f' % (data[y, x]), #data[y,x] +0.05 , data[y,x] + 0.05
+                 horizontalalignment='center',
+                 verticalalignment='center',
+                 size=ax_size,
+                 color='k')
+
+    ax.set_xticks(range(len(piv.columns)))
+    ax.set_yticks(range(len(piv.index)))
+    ax.set_xticklabels(piv.columns, size=ax_size)
+    ax.set_yticklabels(piv.index, size=ax_size)
+    ax.set_xlabel("Memory Frequency/MHz", size=ax_size)
+    ax.set_ylabel("Core Frequency/MHz", size=ax_size)
+    
+    # read gtx1080ti
+    csv_file = "csvs/analytical/results/gtx1080ti-dvfs-real-qiang2018-dvfs.csv"
+    df = pd.read_csv(csv_file, header = 0)
+    print df.tail(3)
+
+    df.error = df.error * 100.0
+    #freq_error = df['error'].groupby([df['coreF'], df['memF']]).mean()
+    piv = pd.pivot_table(df, values="error",index=["coreF"], columns=["memF"], fill_value=0)
+
+    print piv
+
+    ax = axes[1]
+    im = ax.imshow(piv, cmap = cmap_str, origin="lower", aspect = 'auto', vmin=4, vmax=12)
+
+    data = piv.values
+    for y in range(data.shape[0]):
+        for x in range(data.shape[1]):
+            ax.text(x , y, '%.2f' % (data[y, x]), #data[y,x] +0.05 , data[y,x] + 0.05
+                 horizontalalignment='center',
+                 verticalalignment='center',
+                 size=ax_size,
+                 color='k')
+
+    ax.set_xticks(range(len(piv.columns)))
+    ax.set_yticks(range(len(piv.index)))
+    ax.set_xticklabels(piv.columns, size=ax_size)
+    ax.set_yticklabels(piv.index, size=ax_size)
+    ax.set_xlabel("Memory Frequency/MHz", size=ax_size)
+    ax.set_ylabel("Core Frequency/MHz", size=ax_size)
+
+    # read p100
+    csv_file = "csvs/analytical/results/p100-dvfs-real-qiang2018-dvfs.csv"
+    df = pd.read_csv(csv_file, header = 0)
+    print df.tail(3)
+
+    df.error = df.error * 100.0
+    #freq_error = df['error'].groupby([df['coreF'], df['memF']]).mean()
+    piv = pd.pivot_table(df, values="error",index=["memF"], columns=["coreF"], fill_value=0)
+
+    print piv
+
+    ax = axes[2]
+    im = ax.imshow(piv, cmap = cmap_str, origin="lower", aspect = 'auto', vmin=4, vmax=12)
+
+    data = piv.values
+    for y in range(data.shape[0]):
+        for x in range(data.shape[1]):
+            ax.text(x , y, '%.2f' % (data[y, x]), #data[y,x] +0.05 , data[y,x] + 0.05
+                 horizontalalignment='center',
+                 verticalalignment='center',
+                 size=ax_size,
+                 color='k')
+
+    ax.get_yaxis().set_visible(False)
+    ax.set_xticks(range(len(piv.columns)))
+    #ax.set_yticks(range(len(piv.index)))
+    ax.set_xticklabels(piv.columns, size=ax_size)
+    #ax.set_yticklabels(piv.index, size=ax_size)
+    ax.set_xlabel("Memory Frequency/MHz", size=ax_size)
+    #ax.set_ylabel("Core Frequency/MHz", size=ax_size)
+
+    fig.subplots_adjust(right=0.85, hspace = 0.62)
+    # add an axes, lower left corner in [0.83, 0.1] measured in figure coordinate with axes width 0.02 and height 0.8
+    cb_ax = fig.add_axes([0.9, 0.1, 0.04, 0.8])
+    cbar = fig.colorbar(im, cax=cb_ax)
+
+    #fig.subplots_adjust(right=1.2)
+    #cbar_ax = fig.add_axes([0.9, 0.15, 0.05, 0.7])
+
+    #ax.set_xticks(range(len(piv.columns)))
+    #ax.set_yticks(range(len(piv.index)))
+    #ax.set_xticklabels(piv.columns, size=24)
+    #ax.set_yticklabels(piv.index, size=24)
+    #ax.set_xlabel("Memory Frequency/MHz", size=26)
+    #ax.set_ylabel("Core Frequency/MHz", size=26)
+    
+    if not save_filename:# or True:
+        #plt.tight_layout()
+        plt.show()
+	return
+    else:
+        plt.savefig(os.path.join(OUTPUT_PATH, '%s.pdf'%save_filename), bbox_inches='tight')
+        plt.savefig(os.path.join(OUTPUT_PATH, '%s.png'%save_filename), bbox_inches='tight')
+
 def plot_perf_acc_freq(gpu, version, method, save_filename = None):
 
     csv_file = "csvs/analytical/results/%s-%s-%s-dvfs.csv" % (gpu, version, method)
@@ -516,6 +636,58 @@ def plot_perf_acc_dvfs(gpu, ml_algo, save_filename = None):
         plt.savefig(os.path.join(OUTPUT_PATH, '%s.pdf'%save_filename), bbox_inches='tight')
         plt.savefig(os.path.join(OUTPUT_PATH, '%s.png'%save_filename), bbox_inches='tight')
 
+def plot_energy(gpu, version, save_filename = None):
+    
+    csv_file = "csvs/analytical/results/%s-%s-qiang2018-dvfs.csv" % (gpu, version)
+    perf_data = pd.read_csv(csv_file, header = 0)
+    csv_file = "csvs/ml/%s-%s-xgboost-Power.csv" % (gpu, version)
+    pow_data = pd.read_csv(csv_file, header = 0)
+
+    energy_data = pd.DataFrame([])
+
+    kernelset = perf_data['kernel'].drop_duplicates().reset_index(drop=True)
+    print kernelset
+
+    energy_data['appName'] = kernelset
+    energy_data['defaultE'] = None
+    energy_data['bestE'] = None
+    energy_data['bestC'] = None
+    energy_data['bestM'] = None
+    energy_data['predictE'] = None
+    energy_data['predictC'] = None
+    energy_data['predictM'] = None
+
+    for idx, item in energy_data.iterrows():
+        cur_app = item.appName
+        cur_perf = perf_data[perf_data['kernel'] == cur_app]
+        cur_pow = pow_data[pow_data['appName'] == cur_app]
+        cur_perf = cur_perf.sort_values(by = ['kernel', 'coreF', 'memF']).reset_index(drop=True)
+        cur_pow = cur_pow.sort_values(by = ['appName', 'coreF', 'memF']).reset_index(drop=True)
+
+        cur_perf.real = cur_perf.real / 1.0e6 / cur_perf.coreF
+        cur_perf.predict = cur_perf.predict / 1.0e6 / cur_perf.coreF
+        measureE = cur_perf.real * cur_pow.avg_power
+        modelledE = cur_perf.predict * cur_pow.modelled_power
+
+        bestE = min(measureE)
+        bestE_idx = np.argmin(measureE)
+        bestC = cur_perf.loc[bestE_idx, 'coreF']
+        bestM = cur_perf.loc[bestE_idx, 'memF']
+        predictE = min(modelledE)
+        predictE_idx = np.argmin(modelledE)
+        predictC = cur_perf.loc[predictE_idx, 'coreF']
+        predictM = cur_perf.loc[predictE_idx, 'memF']
+
+        item['bestE'] = bestE
+        item['bestC'] = bestC
+        item['bestM'] = bestM
+        item['predictE'] = predictE
+        item['predictC'] = predictC
+        item['predictM'] = predictM
+
+
+    print energy_data
+
 if __name__ == '__main__':
 
     if not os.path.exists("figures"):
@@ -525,19 +697,21 @@ if __name__ == '__main__':
     method = 'qiang2018'
     ml_algo = 'svr-poly'
 
-    # pipeline paper, plot error heatmap of different frequency settings
-    #gpu = 'gtx980-low-dvfs'
-    #version = 'real-small-workload'
+    ## pipeline paper, plot error heatmap of different frequency settings
+    gpu = 'gtx980-low-dvfs'
+    version = 'real-small-workload'
     #plot_perf_acc_freq(gpu, version, method, save_filename='%s-%s-%s-acc-dvfs' % (gpu, version, method))
     #gpu = 'gtx980-high-dvfs'
     #version = 'real-small-workload'
     #plot_perf_acc_freq(gpu, version, method, save_filename='%s-%s-%s-acc-dvfs' % (gpu, version, method))
-    #gpu = 'gtx1080ti-dvfs'
+    ##gpu = 'gtx1080ti-dvfs'
+    ##version = 'real'
+    ##plot_perf_acc_freq(gpu, version, method, save_filename='%s-%s-%s-acc-dvfs' % (gpu, version, method))
+    #gpu = 'p100-dvfs'
     #version = 'real'
     #plot_perf_acc_freq(gpu, version, method, save_filename='%s-%s-%s-acc-dvfs' % (gpu, version, method))
-    gpu = 'p100-dvfs'
-    version = 'real'
-    plot_perf_acc_freq(gpu, version, method, save_filename='%s-%s-%s-acc-dvfs' % (gpu, version, method))
+    #plot_perf_acc_freq_merge(save_filename='acc-freq-merge')
+    plot_energy(gpu, version, save_filename='%s-%s-%s-energy' % (gpu, version, method))
 
     ## pipeline paper, plot performance scaling behavior in motivation part
     #csv_file = "csvs/raw/%s-%s-Performance.csv" % (gpu, version)
