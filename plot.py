@@ -186,9 +186,9 @@ def plot_dvfs_roofline(gpu, version, kernel, show=False, save_filename=None):
     tmp_data = list(df.sort_values(by = ['c_to_m'])['real_cycle'])[::4]
     lines.append(ax.plot(x_axis, tmp_data, linewidth = 1.5, color = COLORS[1], marker = MARKERS[1], markersize = 16, markeredgecolor = 'k', label = 'measured cycles', markerfacecolor='none'))
     tmp_data = list(df.sort_values(by = ['c_to_m'])['mem_del'])[::4]
-    lines.append(ax.plot(x_axis, tmp_data, linewidth = 1.5, color = COLORS[2], marker = MARKERS[2], markersize = 16, markeredgecolor = 'k', label = 'memory-bound cycles', markerfacecolor='none'))
+    lines.append(ax.plot(x_axis, tmp_data, linewidth = 1.5, color = COLORS[2], marker = MARKERS[2], markersize = 16, markeredgecolor = 'k', label = 'FULL_MEM cycles', markerfacecolor='none'))
     tmp_data = list(df.sort_values(by = ['c_to_m'])['sm_del'])[::4]
-    lines.append(ax.plot(x_axis, tmp_data, linewidth = 1.5, color = COLORS[3], marker = MARKERS[3], markersize = 16, markeredgecolor = 'k', label = 'compute-bound cycles', markerfacecolor='none'))
+    lines.append(ax.plot(x_axis, tmp_data, linewidth = 1.5, color = COLORS[3], marker = MARKERS[3], markersize = 16, markeredgecolor = 'k', label = 'FULL_COMP cycles', markerfacecolor='none'))
 
     ax.set_ylabel("Cycles", size = 24)
     ymax = ax.get_ylim()[1] * 1.35
@@ -364,9 +364,9 @@ def plot_perf_acc_corr(gpu, version, method, save_filename = None):
     corrs = pearsonr(x_axis, y_axis)[0]
     aver_errs = np.mean([abs(x_axis[i] - y_axis[i])/y_axis[i] for i in range(len(x_axis))]) * 100
 
-    lines.append(ax.scatter(x_axis, y_axis, linewidth = 1.5, color = 'b', alpha=0.5, marker = 'o', label = 'Modeling Cycles[Correl=%.3f, Err=%.3f]' % (corrs, aver_errs)))
+    lines.append(ax.scatter(x_axis, y_axis, linewidth = 1.5, color = 'b', alpha=0.5, marker = 'o', label = 'Modeling Cycles\n[Correl=%.3f, Err=%.3f]' % (corrs, aver_errs)))
     lines.append(ax.plot(x_axis, x_axis, linewidth = 1.5, color = 'r', label = 'Ground Truth'))
-    fsize = 14
+    fsize = 18
 
     ax.set_ylabel('Hardware Measured Cycles', fontsize=fsize)
     ax.set_yscale('log')
@@ -577,20 +577,20 @@ if __name__ == '__main__':
     #version = 'real'
     #plot_perf_acc_analytical(gpu, version, method, '%s_analytical' % gpu)
 
-    ## pipeline paper, plot err and correlation scatter
-    #method = 'qiang2018'
-    #gpu = 'gtx980-low-dvfs'
-    #version = 'real-small-workload'
-    #plot_perf_acc_corr(gpu, version, method, '%s_%s_%s_err_corr' % (gpu, version, method))
+    # pipeline paper, plot err and correlation scatter
+    method = 'qiang2018'
+    gpu = 'gtx980-low-dvfs'
+    version = 'real-small-workload'
+    plot_perf_acc_corr(gpu, version, method, '%s_%s_%s_err_corr' % (gpu, version, method))
     #gpu = 'gtx980-high-dvfs'
     #version = 'real-small-workload'
     #plot_perf_acc_corr(gpu, version, method, '%s_%s_%s_err_corr' % (gpu, version, method))
-    #gpu = 'gtx1080ti-dvfs'
-    #version = 'real'
-    #plot_perf_acc_corr(gpu, version, method, '%s_%s_%s_err_corr' % (gpu, version, method))
-    #gpu = 'p100-dvfs'
-    #version = 'real'
-    #plot_perf_acc_corr(gpu, version, method, '%s_%s_%s_err_corr' % (gpu, version, method))
+    gpu = 'gtx1080ti-dvfs'
+    version = 'real'
+    plot_perf_acc_corr(gpu, version, method, '%s_%s_%s_err_corr' % (gpu, version, method))
+    gpu = 'p100-dvfs'
+    version = 'real'
+    plot_perf_acc_corr(gpu, version, method, '%s_%s_%s_err_corr' % (gpu, version, method))
 
     ## pipeline paper, plot dvfs-roofline model
     #gpu = 'gtx980-low-dvfs'

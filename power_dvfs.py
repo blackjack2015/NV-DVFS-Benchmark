@@ -450,7 +450,7 @@ def main(opt):
 
     gpu_power_model.split_data("kernel", 0.4)
     results = gpu_power_model.run()
-    results.to_csv("csvs/ml/%s-%s-%s-Power.csv" % (bench_conf, kernel_conf, method))
+    #results.to_csv("csvs/ml/%s-%s-%s-Power.csv" % (bench_conf, kernel_conf, method))
 
 if __name__ == '__main__':
 
