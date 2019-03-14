@@ -42,7 +42,7 @@ if 'p100' in gpucard:
 
 # experimental test
 pointer = ['convolutionTexture', 'nn', 'SobolQRNG', 'reduction', 'hotspot'] 
-pointer = []
+#pointer = []
 extras = ['backpropBackward', 'binomialOptions', 'cfd', 'eigenvalues', 'gaussian', 'srad', 'dxtc', 'pathfinder', 'scanUniformUpdate', 'stereoDisparity'] 
 #extras = []
 df = df[~df.appName.isin(extras) & ~df.appName.isin(pointer) & (df.coreF>=lowest_core) & (df.memF>=lowest_mem)]
@@ -116,9 +116,9 @@ if method == 'hong2009':
 
 # save featuress to csv/xlsx
 features.to_csv("csvs/analytical/features/%s-%s-features.csv" % (gpucard, kernel_setting))
-writer = pd.ExcelWriter("csvs/analytical/features/%s-%s-features.xlsx" % (gpucard, kernel_setting))
-features.to_excel(writer, 'Sheet1')
-writer.save()
+#writer = pd.ExcelWriter("csvs/analytical/features/%s-%s-features.xlsx" % (gpucard, kernel_setting))
+#features.to_excel(writer, 'Sheet1')
+#writer.save()
 
 # other methodology
 def hong2009(df):
@@ -299,9 +299,9 @@ cycles['abe'] = abs(cycles['modelled_cycle'] - cycles['real_cycle']) / cycles['r
 
 # save results to csv/xlsx
 cycles.to_csv("csvs/analytical/cycles/%s-%s-%s-cycles.csv" % (gpucard, kernel_setting, method))
-writer = pd.ExcelWriter("csvs/analytical/cycles/%s-%s-%s-cycles.xlsx" % (gpucard, kernel_setting, method))
-cycles.to_excel(writer, 'Sheet1')
-writer.save()
+#writer = pd.ExcelWriter("csvs/analytical/cycles/%s-%s-%s-cycles.xlsx" % (gpucard, kernel_setting, method))
+#cycles.to_excel(writer, 'Sheet1')
+#writer.save()
 
 kernels = features['appName'].drop_duplicates()
 kernels.sort_values(inplace=True)
