@@ -643,6 +643,13 @@ def plot_energy(gpu, version, save_filename = None):
     csv_file = "csvs/ml/%s-%s-xgboost-Power.csv" % (gpu, version)
     pow_data = pd.read_csv(csv_file, header = 0)
 
+    if gpu == 'gtx980-low-dvfs':
+        GPUCONF = GTX980('low')
+    elif gpu == 'gtx1080ti-dvfs':
+        GPUCONF = GTX1080TI()
+    elif gpu == 'p100-dvfs':
+        GPUCONF = P100()
+
     energy_data = pd.DataFrame([])
 
     kernelset = perf_data['kernel'].drop_duplicates().reset_index(drop=True)
@@ -669,24 +676,61 @@ def plot_energy(gpu, version, save_filename = None):
         measureE = cur_perf.real * cur_pow.avg_power
         modelledE = cur_perf.predict * cur_pow.modelled_power
 
+        defaultE_idx = cur_perf.index[(cur_perf['coreF'] == GPUCONF.CORE_FREQ) & (cur_perf['memF'] == GPUCONF.MEM_FREQ)].tolist()[0]
+        defaultE = measureE[defaultE_idx]
+
         bestE = min(measureE)
         bestE_idx = np.argmin(measureE)
         bestC = cur_perf.loc[bestE_idx, 'coreF']
         bestM = cur_perf.loc[bestE_idx, 'memF']
-        predictE = min(modelledE)
+
         predictE_idx = np.argmin(modelledE)
         predictC = cur_perf.loc[predictE_idx, 'coreF']
         predictM = cur_perf.loc[predictE_idx, 'memF']
+        #predictE = min(modelledE)
+        predictE = measureE[predictE_idx]
 
-        item['bestE'] = bestE
+        item['defaultE'] = 1
+        item['bestE'] = bestE / defaultE
         item['bestC'] = bestC
         item['bestM'] = bestM
-        item['predictE'] = predictE
-        item['predictC'] = predictC
+        item['predictE'] = predictE / defaultE
+        item['predictC'] = predictC 
         item['predictM'] = predictM
-
-
+        
     print energy_data
+
+    fig, ax = plt.subplots(figsize = (24, 5))
+    # ax.title("Instruction Distribution")
+
+    bar_width = 0.8
+    x_axis = np.arange(len(kernelset)) * bar_width * 4 + bar_width / 2
+
+    fsize = 22
+    ax.bar(x_axis, energy_data['defaultE'] * 100, bar_width, label='Default Energy', color=COLORS[2], hatch=HATCHES[1])
+    ax.bar(x_axis + bar_width, energy_data['bestE'] * 100, bar_width, label='Best Measured Energy', color=COLORS[3], hatch=HATCHES[2])
+    ax.bar(x_axis + 2 * bar_width, energy_data['predictE'] * 100, bar_width, label='Best Predicted Energy', color=COLORS[4], hatch=HATCHES[3])
+    #ax.bar(x_axis, m1_df['m1_error'] * 100, bar_width, label='mode 1', color='yellow', hatch=HATCHES[1])
+    #ax.bar(x_axis + bar_width, m2_df['m2_error'] * 100, bar_width, label='mode 2', color='gray', hatch=HATCHES[2])
+    #ax.bar(x_axis + 2 * bar_width, m3_df['m3_error'] * 100, bar_width, label='mode 3', color='red', hatch=HATCHES[3])
+
+    ax.set_ylabel('Energy Consumption', fontsize=fsize)
+    ax.yaxis.set_tick_params(labelsize=fsize)
+    ax.set_xlabel('')
+    ax.set_ylim(top=130)
+    ax.set_xticks(x_axis + bar_width * 1.5)
+    ax.set_xticklabels(map(get_abbr, kernelset), fontsize=fsize, rotation=90)
+
+    ax.legend(fontsize=fsize, loc='upper center', ncol = 3)
+    ax.grid(linestyle=':')
+
+    if not save_filename:# or True:
+        plt.show()
+	return
+    else:
+        plt.savefig(os.path.join(OUTPUT_PATH, '%s.pdf'%save_filename), bbox_inches='tight')
+        plt.savefig(os.path.join(OUTPUT_PATH, '%s.png'%save_filename), bbox_inches='tight')
+
 
 if __name__ == '__main__':
 
@@ -698,17 +742,17 @@ if __name__ == '__main__':
     ml_algo = 'svr-poly'
 
     ## pipeline paper, plot error heatmap of different frequency settings
-    gpu = 'gtx980-low-dvfs'
-    version = 'real-small-workload'
+    #gpu = 'gtx980-low-dvfs'
+    #version = 'real-small-workload'
     #plot_perf_acc_freq(gpu, version, method, save_filename='%s-%s-%s-acc-dvfs' % (gpu, version, method))
     #gpu = 'gtx980-high-dvfs'
     #version = 'real-small-workload'
     #plot_perf_acc_freq(gpu, version, method, save_filename='%s-%s-%s-acc-dvfs' % (gpu, version, method))
-    ##gpu = 'gtx1080ti-dvfs'
-    ##version = 'real'
-    ##plot_perf_acc_freq(gpu, version, method, save_filename='%s-%s-%s-acc-dvfs' % (gpu, version, method))
-    #gpu = 'p100-dvfs'
+    #gpu = 'gtx1080ti-dvfs'
     #version = 'real'
+    ##plot_perf_acc_freq(gpu, version, method, save_filename='%s-%s-%s-acc-dvfs' % (gpu, version, method))
+    gpu = 'p100-dvfs'
+    version = 'real'
     #plot_perf_acc_freq(gpu, version, method, save_filename='%s-%s-%s-acc-dvfs' % (gpu, version, method))
     #plot_perf_acc_freq_merge(save_filename='acc-freq-merge')
     plot_energy(gpu, version, save_filename='%s-%s-%s-energy' % (gpu, version, method))
@@ -752,19 +796,19 @@ if __name__ == '__main__':
     #plot_perf_acc_analytical(gpu, version, method, '%s_analytical' % gpu)
 
     # pipeline paper, plot err and correlation scatter
-    method = 'qiang2018'
-    gpu = 'gtx980-low-dvfs'
-    version = 'real-small-workload'
-    plot_perf_acc_corr(gpu, version, method, '%s_%s_%s_err_corr' % (gpu, version, method))
-    #gpu = 'gtx980-high-dvfs'
+    #method = 'qiang2018'
+    #gpu = 'gtx980-low-dvfs'
     #version = 'real-small-workload'
     #plot_perf_acc_corr(gpu, version, method, '%s_%s_%s_err_corr' % (gpu, version, method))
-    gpu = 'gtx1080ti-dvfs'
-    version = 'real'
-    plot_perf_acc_corr(gpu, version, method, '%s_%s_%s_err_corr' % (gpu, version, method))
-    gpu = 'p100-dvfs'
-    version = 'real'
-    plot_perf_acc_corr(gpu, version, method, '%s_%s_%s_err_corr' % (gpu, version, method))
+    ##gpu = 'gtx980-high-dvfs'
+    ##version = 'real-small-workload'
+    ##plot_perf_acc_corr(gpu, version, method, '%s_%s_%s_err_corr' % (gpu, version, method))
+    #gpu = 'gtx1080ti-dvfs'
+    #version = 'real'
+    #plot_perf_acc_corr(gpu, version, method, '%s_%s_%s_err_corr' % (gpu, version, method))
+    #gpu = 'p100-dvfs'
+    #version = 'real'
+    #plot_perf_acc_corr(gpu, version, method, '%s_%s_%s_err_corr' % (gpu, version, method))
 
     ## pipeline paper, plot dvfs-roofline model
     #gpu = 'gtx980-low-dvfs'
