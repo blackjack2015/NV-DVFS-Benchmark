@@ -318,6 +318,7 @@ def plot_perf_acc_freq_merge(save_filename = None):
                  size=ax_size,
                  color='k')
 
+    ax.set_title("GTX 980", fontsize=ax_size)
     ax.set_xticks(range(len(piv.columns)))
     ax.set_yticks(range(len(piv.index)))
     ax.set_xticklabels(piv.columns, size=ax_size)
@@ -348,6 +349,7 @@ def plot_perf_acc_freq_merge(save_filename = None):
                  size=ax_size,
                  color='k')
 
+    ax.set_title("GTX 1080Ti", fontsize=ax_size)
     ax.set_xticks(range(len(piv.columns)))
     ax.set_yticks(range(len(piv.index)))
     ax.set_xticklabels(piv.columns, size=ax_size)
@@ -378,18 +380,20 @@ def plot_perf_acc_freq_merge(save_filename = None):
                  size=ax_size,
                  color='k')
 
+    ax.set_title("Tesla P100", fontsize=ax_size)
     ax.get_yaxis().set_visible(False)
     ax.set_xticks(range(len(piv.columns)))
     #ax.set_yticks(range(len(piv.index)))
     ax.set_xticklabels(piv.columns, size=ax_size)
     #ax.set_yticklabels(piv.index, size=ax_size)
-    ax.set_xlabel("Memory Frequency/MHz", size=ax_size)
+    ax.set_xlabel("Core Frequency/MHz", size=ax_size)
     #ax.set_ylabel("Core Frequency/MHz", size=ax_size)
 
-    fig.subplots_adjust(right=0.85, hspace = 0.62)
+    fig.subplots_adjust(top=0.94, right=0.85, hspace = 0.92)
     # add an axes, lower left corner in [0.83, 0.1] measured in figure coordinate with axes width 0.02 and height 0.8
-    cb_ax = fig.add_axes([0.9, 0.1, 0.04, 0.8])
+    cb_ax = fig.add_axes([0.9, 0.08, 0.04, 0.9])
     cbar = fig.colorbar(im, cax=cb_ax)
+    cbar.ax.tick_params(labelsize=ax_size) 
 
     #fig.subplots_adjust(right=1.2)
     #cbar_ax = fig.add_axes([0.9, 0.15, 0.05, 0.7])
@@ -706,7 +710,7 @@ def plot_energy(gpu, version, save_filename = None):
     bar_width = 0.8
     x_axis = np.arange(len(kernelset)) * bar_width * 4 + bar_width / 2
 
-    fsize = 22
+    fsize = 25
     ax.bar(x_axis, energy_data['defaultE'] * 100, bar_width, label='Default Energy', color=COLORS[2], hatch=HATCHES[1])
     ax.bar(x_axis + bar_width, energy_data['bestE'] * 100, bar_width, label='Best Measured Energy', color=COLORS[3], hatch=HATCHES[2])
     ax.bar(x_axis + 2 * bar_width, energy_data['predictE'] * 100, bar_width, label='Best Predicted Energy', color=COLORS[4], hatch=HATCHES[3])
@@ -717,7 +721,7 @@ def plot_energy(gpu, version, save_filename = None):
     ax.set_ylabel('Energy Consumption', fontsize=fsize)
     ax.yaxis.set_tick_params(labelsize=fsize)
     ax.set_xlabel('')
-    ax.set_ylim(top=130)
+    ax.set_ylim(top=140)
     ax.set_xticks(x_axis + bar_width * 1.5)
     ax.set_xticklabels(map(get_abbr, kernelset), fontsize=fsize, rotation=90)
 

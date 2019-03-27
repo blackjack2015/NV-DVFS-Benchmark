@@ -93,7 +93,13 @@ try:
     #features['int_insts'] = df['inst_integer'] / (df['warps'] * 32.0)
     #features['insts'] = features['fp_insts'] + features['dp_insts'] * 2.0 + features['int_insts']
 except Exception as e:
-    print "No compute instruction information..."
+    print "No float/double instruction information..."
+
+try:
+    features['int_insts'] = df['inst_integer'] / (df['warps'] * 32.0)
+    #features['insts'] = features['fp_insts'] + features['dp_insts'] * 2.0 + features['int_insts']
+except Exception as e:
+    print "No integer instruction information..."
 
 features['mem_insts'] = features['n_gld'] + features['n_gst'] + features['n_shm_ld'] + features['n_shm_st'] / 4.0
 features['insts'] = df['inst_per_warp'] - features['mem_insts'] # + features['dp_insts'] * 3.0
@@ -114,6 +120,7 @@ if method == 'hong2009':
     df = df[filter_out_shm]
     df = df.reset_index(drop=True)
 
+print len(features)
 # save featuress to csv/xlsx
 features.to_csv("csvs/analytical/features/%s-%s-features.csv" % (gpucard, kernel_setting))
 #writer = pd.ExcelWriter("csvs/analytical/features/%s-%s-features.xlsx" % (gpucard, kernel_setting))
@@ -219,14 +226,18 @@ def qiang2018(df):
     cycles['mem_del'] = (df['n_gld'] + df['n_gst']) * cycles['avg_mem_del'] * GPUCONF.WARPS_MAX * df['act_util'] # memory queue delay for all warps per round
     cycles['mem_lat'] = (df['n_gld'] + df['n_gst']) * cycles['avg_mem_lat'] / 4.0 # memory latency for one warp per round
     cycles['shm_del'] = GPUCONF.D_sh * (df['n_shm_ld'] + df['n_shm_st']) * df['act_util'] * GPUCONF.WARPS_MAX + GPUCONF.L_sh # shared queue delay for all warps per round
+    cycles['tex_del'] = df['tex_trans'] * df['act_util'] * GPUCONF.WARPS_MAX / GPUCONF.TEX_UNITS * GPUCONF.D_TEX
+    cycles['dp_del'] = df['dp_insts'] * df['act_util'] * GPUCONF.WARPS_MAX * GPUCONF.D_DP
+    cycles['int_del'] = df['int_insts'] * df['act_util'] * GPUCONF.WARPS_MAX
+    #cycles['tex_del'] = 0
     cycles['shm_offset'] = ((df['n_shm_ld'] + df['n_shm_st']) * 1.0 / (df['n_gld'] + df['n_gst'])) * GPUCONF.L_sh
     cycles['shm_lat'] = (df['n_shm_ld'] + df['n_shm_st']) * GPUCONF.L_sh # shared latency for one warp per round
-    cycles['compute_del'] = GPUCONF.D_INST * df['insts'] * df['act_util'] * 32.0 * GPUCONF.WARPS_MAX / GPUCONF.CORES_SM + GPUCONF.L_INST # compute delay for all warps per round
+    cycles['compute_del'] = GPUCONF.D_INST * (df['insts']) * df['act_util'] * 32.0 * GPUCONF.WARPS_MAX / GPUCONF.CORES_SM + GPUCONF.L_INST # compute delay for all warps per round
     cycles['compute_offset'] = df['insts'] * 1.0 / (df['n_gld'] + df['n_gst']) * GPUCONF.L_INST
     cycles['compute_lat'] = df['insts'] * GPUCONF.L_INST # compute latency for one warp per round
-    cycles['sm_del'] = (cycles['compute_del'] + cycles['shm_del']) 
+    cycles['sm_del'] = (cycles['compute_del'] + cycles['shm_del'] + cycles['dp_del']) 
+    #cycles['sm_del'] = (cycles['compute_del'] + cycles['shm_del']) 
     cycles['sm_lat'] = cycles['compute_lat'] + cycles['shm_lat']
-    cycles['tex_del'] = df['tex_trans'] * GPUCONF.WARPS_MAX * df['act_util']
     #cycles['sm_op'] = df['insts'] * L_INST
     cycles['insts'] = df['insts']
     
@@ -234,19 +245,28 @@ def qiang2018(df):
     #cycles['offset'] = None
 
     for idx, item in cycles.iterrows():
+        # app using texture memory
+        if item.appName == 'convolutionTexture':
+            cycles.loc[idx, 'mem_del'] += cycles.loc[idx, 'tex_del']
+            #cycles.loc[idx, 'modelled_cycle'] = cycles.loc[idx, 'mem_del'] + cycles.loc[idx, 'tex_del']
+
         if cycles.loc[idx, 'sm_del'] > cycles.loc[idx, 'mem_del']:
             cycles.loc[idx, 'modelled_cycle'] = cycles.loc[idx, 'sm_del'] #+ cycles.loc[idx, 'avg_mem_lat']
         else:
 	    cycles.loc[idx, 'modelled_cycle'] = cycles.loc[idx, 'mem_del'] #+ cycles.loc[idx, 'avg_mem_lat']
 
-        #if df.loc[idx, 'act_util'] <= 0.38:
-            #if cycles.loc[idx, 'sm_del'] + cycles.loc[idx, 'mem_lat'] > cycles.loc[idx, 'sm_lat'] + cycles.loc[idx, 'mem_del']:
-            #    cycles.loc[idx, 'modelled_cycle'] = cycles.loc[idx, 'sm_del'] + cycles.loc[idx, 'mem_lat']
-            #else:
-            #    cycles.loc[idx, 'modelled_cycle'] = cycles.loc[idx, 'sm_lat'] + cycles.loc[idx, 'mem_del']
+        if (item.appName != 'nn') or (cycles.loc[idx, 'modelled_cycle'] < 2800):
+            cycles.loc[idx, 'modelled_cycle'] += cycles.loc[idx, 'cold_miss'] 
 
-        special = ['hotspot', 'convolutionTexture', 'nn']
-        if df.loc[idx, 'appName'] in special:
+        #if df.loc[idx, 'act_util'] <= 0.30:
+        #    if cycles.loc[idx, 'sm_del'] + cycles.loc[idx, 'mem_lat'] > cycles.loc[idx, 'sm_lat'] + cycles.loc[idx, 'mem_del']:
+        #        cycles.loc[idx, 'modelled_cycle'] = cycles.loc[idx, 'sm_del'] + cycles.loc[idx, 'mem_lat']
+        #    else:
+        #        cycles.loc[idx, 'modelled_cycle'] = cycles.loc[idx, 'sm_lat'] + cycles.loc[idx, 'mem_del']
+
+        #special = ['hotspot', 'convolutionTexture', 'nn']
+        if df.loc[idx, 'act_util'] <= 0.30:
+        #if df.loc[idx, 'appName'] in special:
             lack_wait = 0.5 * cycles.loc[idx, 'avg_mem_lat'] + cycles.loc[idx, 'compute_offset'] + cycles.loc[idx, 'avg_mem_del'] * GPUCONF.WARPS_MAX * df.loc[idx, 'act_util'] + 0.5 * cycles.loc[idx, 'avg_mem_lat'] + (cycles.loc[idx, 'compute_offset'] + cycles.loc[idx, 'avg_mem_lat']) * (df.loc[idx, 'n_gld'] + df.loc[idx, 'n_gst'] - 1) / 4.0
             lack_no_wait = cycles.loc[idx, 'compute_offset'] * (GPUCONF.WARPS_MAX * df.loc[idx, 'act_util'] - 1) + (cycles.loc[idx, 'compute_offset'] + cycles.loc[idx, 'avg_mem_lat']) * (df.loc[idx, 'n_gld'] + df.loc[idx, 'n_gst']) / 4.0
             if lack_wait > lack_no_wait:
@@ -255,7 +275,6 @@ def qiang2018(df):
                 cycles.loc[idx, 'modelled_cycle'] = lack_no_wait
 
 
-    cycles['modelled_cycle'] += cycles['cold_miss'] 
     cycles = cycles.sort_values(by=['appName', 'c_to_m'])
     #for idx, item in df.iterrows():
     	#cur_name = df['appName'][idx]
@@ -292,10 +311,15 @@ elif method == 'song2013':
 elif method == 'hong2009':
     cycles = hong2009(features)
 
+def print_kernel(cycles, kernel):
+    kernel_idx = cycles.appName == kernel
+    print cycles[kernel_idx][['real_cycle', 'modelled_cycle', 'mem_del', 'sm_del', 'tex_del']]
+
 cycles['exec_rounds'] = df['warps'] / (GPUCONF.WARPS_MAX * GPUCONF.SM_COUNT * df['achieved_occupancy'])
 #cycles['exec_rounds'] = cycles['exec_rounds'].astype(int)
 cycles['real_cycle'] = df['time/ms'] * df['coreF'] * 1000.0 / cycles['exec_rounds']
 cycles['abe'] = abs(cycles['modelled_cycle'] - cycles['real_cycle']) / cycles['real_cycle']
+print_kernel(cycles, 'scanScanExclusiveShared')
 
 # save results to csv/xlsx
 cycles.to_csv("csvs/analytical/cycles/%s-%s-%s-cycles.csv" % (gpucard, kernel_setting, method))

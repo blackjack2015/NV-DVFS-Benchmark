@@ -61,11 +61,14 @@ class GTX980:
         self.D_INST = 1     # 1.2 for compute throughput
         self.L_sh = 28    # 28 for gtx980
         self.D_sh = 1
+        self.D_DP = 20
+        self.D_TEX = 1
         self.WARPS_MAX = 64 # 64 for gtx980
         self.SM_COUNT = 16 # 56 for p100, 16 for gtx980, 28 for titanx
         self.CORES_SM = 128 # 64 for p100, 128 for gtx980 and titanx
         self.WIDTH_MEM = 256 # 4096 for p100, 256 for gtx980, 384 for titanx
 
+        self.TEX_UNITS = 8
         self.DP_UNITS = 4
         self.SP_UNITS = 128
         self.SPEC_UNITS = 32
@@ -116,12 +119,15 @@ class GTX1080TI:
         self.D_INST = 1.2    # 1.2 for compute throughput
         self.L_sh = 28    # 28 for gtx980
         self.D_sh = 0.95    # 28 for gtx980
+        self.D_DP = 20
+        self.D_TEX = 1.4
         self.WARPS_MAX = 64 # 64 for gtx980
         self.SM_COUNT = 28 # 56 for p100, 16 for gtx980, 28 for titanx
         self.CORES_SM = 128 # 64 for p100, 128 for gtx980 and titanx
         self.WIDTH_MEM = 384 # 4096 for p100, 256 for gtx980, 384 for titanx
         
         self.DP_UNITS = 4
+        self.TEX_UNITS = 8
         self.SP_UNITS = 128
         self.SPEC_UNITS = 32
         self.LS_UNITS = 32
@@ -171,6 +177,7 @@ class TITANX:
         self.SM_COUNT = 28 # 56 for p100, 16 for gtx980, 28 for titanx
         self.CORES_SM = 128 # 64 for p100, 128 for gtx980 and titanx
         self.WIDTH_MEM = 384 # 4096 for p100, 256 for gtx980, 384 for titanx
+        self.D_DP = 20
         
         self.DP_UNITS = 4
         self.SP_UNITS = 128
@@ -218,11 +225,14 @@ class P100:
         self.D_INST = 1.4    # 1.2 for compute throughput
         self.L_sh = 56    # 28 for gtx980
         self.D_sh = 1
+        self.D_DP = 1.2
+        self.D_TEX = 2.5
         self.WARPS_MAX = 64 # 64 for gtx980
         self.SM_COUNT = 56 # 56 for p100, 16 for gtx980, 28 for titanx
         self.CORES_SM = 64 # 64 for p100, 128 for gtx980 and titanx
         self.WIDTH_MEM = 4096 # 4096 for p100, 256 for gtx980, 384 for titanx
 
+        self.TEX_UNITS = 4
         self.DP_UNITS = 32
         self.SP_UNITS = 64
         self.SPEC_UNITS = 16
