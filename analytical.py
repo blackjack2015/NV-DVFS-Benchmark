@@ -103,6 +103,7 @@ except Exception as e:
 
 features['mem_insts'] = features['n_gld'] + features['n_gst'] + features['n_shm_ld'] + features['n_shm_st'] / 4.0
 features['insts'] = df['inst_per_warp'] - features['mem_insts'] # + features['dp_insts'] * 3.0
+features['branch_insts'] = df['cf_executed'] / (df['warps'] * 32.0)
 
 # other parameters
 features.loc[features['insts'] < 0, 'insts'] = 0
@@ -228,7 +229,8 @@ def qiang2018(df):
     cycles['shm_del'] = GPUCONF.D_sh * (df['n_shm_ld'] + df['n_shm_st']) * df['act_util'] * GPUCONF.WARPS_MAX + GPUCONF.L_sh # shared queue delay for all warps per round
     cycles['tex_del'] = df['tex_trans'] * df['act_util'] * GPUCONF.WARPS_MAX / GPUCONF.TEX_UNITS * GPUCONF.D_TEX
     cycles['dp_del'] = df['dp_insts'] * df['act_util'] * GPUCONF.WARPS_MAX * GPUCONF.D_DP
-    cycles['int_del'] = df['int_insts'] * df['act_util'] * GPUCONF.WARPS_MAX
+    #cycles['int_del'] = df['int_insts'] * df['act_util'] * GPUCONF.WARPS_MAX
+    cycles['branch_del'] = df['branch_insts'] * df['act_util'] * GPUCONF.WARPS_MAX * 32.0 * 0.5
     #cycles['tex_del'] = 0
     cycles['shm_offset'] = ((df['n_shm_ld'] + df['n_shm_st']) * 1.0 / (df['n_gld'] + df['n_gst'])) * GPUCONF.L_sh
     cycles['shm_lat'] = (df['n_shm_ld'] + df['n_shm_st']) * GPUCONF.L_sh # shared latency for one warp per round
@@ -248,7 +250,12 @@ def qiang2018(df):
         # app using texture memory
         if item.appName == 'convolutionTexture':
             cycles.loc[idx, 'mem_del'] += cycles.loc[idx, 'tex_del']
-            #cycles.loc[idx, 'modelled_cycle'] = cycles.loc[idx, 'mem_del'] + cycles.loc[idx, 'tex_del']
+        # app using many branch instructions
+        if item.appName == 'reduction':
+            cycles.loc[idx, 'sm_del'] += cycles.loc[idx, 'branch_del']
+        # app only have dram write transactions
+        #if item.appName == 'quasirandomGenerator':
+        #    cycles.loc[idx, 'mem_del'] = df.loc[idx, 'n_gst'] * df.loc[idx, 'D_DM'] * GPUCONF.WARPS_MAX * df.loc[idx, 'act_util'] * 1.1
 
         if cycles.loc[idx, 'sm_del'] > cycles.loc[idx, 'mem_del']:
             cycles.loc[idx, 'modelled_cycle'] = cycles.loc[idx, 'sm_del'] #+ cycles.loc[idx, 'avg_mem_lat']
@@ -313,13 +320,13 @@ elif method == 'hong2009':
 
 def print_kernel(cycles, kernel):
     kernel_idx = cycles.appName == kernel
-    print cycles[kernel_idx][['real_cycle', 'modelled_cycle', 'mem_del', 'sm_del', 'tex_del']]
+    print cycles[kernel_idx][['real_cycle', 'modelled_cycle', 'mem_del', 'sm_del', 'tex_del', 'branch_del']]
 
 cycles['exec_rounds'] = df['warps'] / (GPUCONF.WARPS_MAX * GPUCONF.SM_COUNT * df['achieved_occupancy'])
 #cycles['exec_rounds'] = cycles['exec_rounds'].astype(int)
 cycles['real_cycle'] = df['time/ms'] * df['coreF'] * 1000.0 / cycles['exec_rounds']
 cycles['abe'] = abs(cycles['modelled_cycle'] - cycles['real_cycle']) / cycles['real_cycle']
-print_kernel(cycles, 'scanScanExclusiveShared')
+print_kernel(cycles, 'quasirandomGenerator')
 
 # save results to csv/xlsx
 cycles.to_csv("csvs/analytical/cycles/%s-%s-%s-cycles.csv" % (gpucard, kernel_setting, method))
