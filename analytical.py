@@ -111,6 +111,12 @@ features['act_util'] = df['achieved_occupancy']
 features['L_DM'] = GPUCONF.a_L_DM * df['coreF'] / df['memF'] + GPUCONF.b_L_DM
 features['D_DM'] = (GPUCONF.a_D_DM / df['memF'] + GPUCONF.b_D_DM) * df['coreF'] / df['memF']
 
+# add bias to model parameters
+#features['L_DM'] = features['L_DM'] * 1.2
+#features['D_DM'] = features['D_DM'] * 1.2
+#features['act_util'] = features['act_util'] * 1.2
+#features['l2_hit'] = features['l2_hit'] * 0.8 
+
 # remove shm part if hong2009
 if method == 'hong2009':
     filter_out_shm = features.n_shm == 0
@@ -121,7 +127,6 @@ if method == 'hong2009':
     df = df[filter_out_shm]
     df = df.reset_index(drop=True)
 
-print len(features)
 # save featuress to csv/xlsx
 features.to_csv("csvs/analytical/features/%s-%s-features.csv" % (gpucard, kernel_setting))
 #writer = pd.ExcelWriter("csvs/analytical/features/%s-%s-features.xlsx" % (gpucard, kernel_setting))
@@ -327,7 +332,6 @@ cycles['exec_rounds'] = df['warps'] / (GPUCONF.WARPS_MAX * GPUCONF.SM_COUNT * df
 cycles['real_cycle'] = df['time/ms'] * df['coreF'] * 1000.0 / cycles['exec_rounds']
 cycles['abe'] = abs(cycles['modelled_cycle'] - cycles['real_cycle']) / cycles['real_cycle']
 #print_kernel(cycles, 'quasirandomGenerator')
-print_kernel(cycles, 'convolutionTexture')
 
 # save results to csv/xlsx
 cycles.to_csv("csvs/analytical/cycles/%s-%s-%s-cycles.csv" % (gpucard, kernel_setting, method))
@@ -355,7 +359,7 @@ f.close()
 f = open("csvs/analytical/results/%s-%s-%s-aver.csv" % (gpucard, kernel_setting, method), "w")
 f.write("kernel,ape\n")
 for kernel in kernels:
-	tmp_cycles = cycles[df['appName'] == kernel]
+	tmp_cycles = cycles.loc[df['appName'] == kernel]
 	tmp_ape = np.mean(tmp_cycles['abe'])
 	tmp_err_std = np.std(tmp_cycles['abe'])
 
@@ -395,3 +399,9 @@ for i in range(len(cycles['modelled_cycle'])):
            
 
 print "MAPE of %d samples: %f" % (len(errors), np.mean(errors))
+#if 'gtx980' in gpucard:
+#    print "sensitive error:", (np.mean(errors) - 0.03854) * 100
+#if 'gtx1080ti'in gpucard:
+#    print "sensitive error:", (np.mean(errors) - 0.08596) * 100
+#if 'p100' in gpucard:
+#    print "sensitive error:", (np.mean(errors) - 0.10378) * 100

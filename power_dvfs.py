@@ -425,6 +425,7 @@ class GPU_Power:
 
     def run(self):
         self.fit_model, self.scaler = train(self.train_X, self.train_y, self.method)
+        y_pred = test(self.fit_model, self.train_X, self.train_y, self.scaler)
         y_pred = test(self.fit_model, self.test_X, self.test_y, self.scaler)
         y_pred = test(self.fit_model, self.X, self.y, self.scaler)
         
@@ -450,7 +451,7 @@ def main(opt):
 
     gpu_power_model.split_data("kernel", 0.4)
     results = gpu_power_model.run()
-    #results.to_csv("csvs/ml/%s-%s-%s-Power.csv" % (bench_conf, kernel_conf, method))
+    results.to_csv("csvs/ml/%s-%s-%s-Power.csv" % (bench_conf, kernel_conf, method))
 
 if __name__ == '__main__':
 

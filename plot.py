@@ -705,7 +705,8 @@ def plot_energy(gpu, version, save_filename = None):
         item['predictC'] = predictC 
         item['predictM'] = predictM
         
-    print energy_data
+    #print energy_data
+    print "average energy conservation:", 1 - np.mean(energy_data['predictE'])
 
     fig, ax = plt.subplots(figsize = (24, 5))
     # ax.title("Instruction Distribution")
@@ -761,18 +762,18 @@ if __name__ == '__main__':
     #gpu = 'p100-dvfs'
     #version = 'real'
     #plot_perf_acc_freq(gpu, version, method, save_filename='%s-%s-%s-acc-dvfs' % (gpu, version, method))
-    #plot_perf_acc_freq_merge(save_filename='acc-freq-merge')
+    plot_perf_acc_freq_merge(save_filename='acc-freq-merge')
 
     # plot energy conservation study
-    #gpu = 'gtx980-low-dvfs'
-    #version = 'real-small-workload'
-    #plot_energy(gpu, version, save_filename='%s-%s-%s-energy' % (gpu, version, method))
+    gpu = 'gtx980-low-dvfs'
+    version = 'real-small-workload'
+    plot_energy(gpu, version, save_filename='%s-%s-%s-energy' % (gpu, version, method))
     gpu = 'gtx1080ti-dvfs'
     version = 'real'
     plot_energy(gpu, version, save_filename='%s-%s-%s-energy' % (gpu, version, method))
-    #gpu = 'p100-dvfs'
-    #version = 'real'
-    #plot_energy(gpu, version, save_filename='%s-%s-%s-energy' % (gpu, version, method))
+    gpu = 'p100-dvfs'
+    version = 'real'
+    plot_energy(gpu, version, save_filename='%s-%s-%s-energy' % (gpu, version, method))
 
     ## pipeline paper, plot performance scaling behavior in motivation part
     #csv_file = "csvs/raw/%s-%s-Performance.csv" % (gpu, version)
@@ -812,20 +813,20 @@ if __name__ == '__main__':
     #version = 'real'
     #plot_perf_acc_analytical(gpu, version, method, '%s_analytical' % gpu)
 
-    ## pipeline paper, plot err and correlation scatter
-    #method = 'qiang2018'
-    #gpu = 'gtx980-low-dvfs'
+    # pipeline paper, plot err and correlation scatter
+    method = 'qiang2018'
+    gpu = 'gtx980-low-dvfs'
+    version = 'real-small-workload'
+    plot_perf_acc_corr(gpu, version, method, '%s_%s_%s_err_corr' % (gpu, version, method))
+    #gpu = 'gtx980-high-dvfs'
     #version = 'real-small-workload'
     #plot_perf_acc_corr(gpu, version, method, '%s_%s_%s_err_corr' % (gpu, version, method))
-    ##gpu = 'gtx980-high-dvfs'
-    ##version = 'real-small-workload'
-    ##plot_perf_acc_corr(gpu, version, method, '%s_%s_%s_err_corr' % (gpu, version, method))
-    #gpu = 'gtx1080ti-dvfs'
-    #version = 'real'
-    #plot_perf_acc_corr(gpu, version, method, '%s_%s_%s_err_corr' % (gpu, version, method))
-    #gpu = 'p100-dvfs'
-    #version = 'real'
-    #plot_perf_acc_corr(gpu, version, method, '%s_%s_%s_err_corr' % (gpu, version, method))
+    gpu = 'gtx1080ti-dvfs'
+    version = 'real'
+    plot_perf_acc_corr(gpu, version, method, '%s_%s_%s_err_corr' % (gpu, version, method))
+    gpu = 'p100-dvfs'
+    version = 'real'
+    plot_perf_acc_corr(gpu, version, method, '%s_%s_%s_err_corr' % (gpu, version, method))
 
     ## pipeline paper, plot dvfs-roofline model
     #gpu = 'gtx980-low-dvfs'
