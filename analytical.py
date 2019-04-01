@@ -326,7 +326,8 @@ cycles['exec_rounds'] = df['warps'] / (GPUCONF.WARPS_MAX * GPUCONF.SM_COUNT * df
 #cycles['exec_rounds'] = cycles['exec_rounds'].astype(int)
 cycles['real_cycle'] = df['time/ms'] * df['coreF'] * 1000.0 / cycles['exec_rounds']
 cycles['abe'] = abs(cycles['modelled_cycle'] - cycles['real_cycle']) / cycles['real_cycle']
-print_kernel(cycles, 'quasirandomGenerator')
+#print_kernel(cycles, 'quasirandomGenerator')
+print_kernel(cycles, 'convolutionTexture')
 
 # save results to csv/xlsx
 cycles.to_csv("csvs/analytical/cycles/%s-%s-%s-cycles.csv" % (gpucard, kernel_setting, method))

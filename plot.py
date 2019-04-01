@@ -675,6 +675,9 @@ def plot_energy(gpu, version, save_filename = None):
         cur_perf = cur_perf.sort_values(by = ['kernel', 'coreF', 'memF']).reset_index(drop=True)
         cur_pow = cur_pow.sort_values(by = ['appName', 'coreF', 'memF']).reset_index(drop=True)
 
+        if cur_app == 'convolutionTexture':
+            print cur_perf
+            print cur_pow
         cur_perf.real = cur_perf.real / 1.0e6 / cur_perf.coreF
         cur_perf.predict = cur_perf.predict / 1.0e6 / cur_perf.coreF
         measureE = cur_perf.real * cur_pow.avg_power
@@ -754,12 +757,22 @@ if __name__ == '__main__':
     #plot_perf_acc_freq(gpu, version, method, save_filename='%s-%s-%s-acc-dvfs' % (gpu, version, method))
     #gpu = 'gtx1080ti-dvfs'
     #version = 'real'
-    ##plot_perf_acc_freq(gpu, version, method, save_filename='%s-%s-%s-acc-dvfs' % (gpu, version, method))
-    gpu = 'p100-dvfs'
-    version = 'real'
+    #plot_perf_acc_freq(gpu, version, method, save_filename='%s-%s-%s-acc-dvfs' % (gpu, version, method))
+    #gpu = 'p100-dvfs'
+    #version = 'real'
     #plot_perf_acc_freq(gpu, version, method, save_filename='%s-%s-%s-acc-dvfs' % (gpu, version, method))
     #plot_perf_acc_freq_merge(save_filename='acc-freq-merge')
+
+    # plot energy conservation study
+    #gpu = 'gtx980-low-dvfs'
+    #version = 'real-small-workload'
+    #plot_energy(gpu, version, save_filename='%s-%s-%s-energy' % (gpu, version, method))
+    gpu = 'gtx1080ti-dvfs'
+    version = 'real'
     plot_energy(gpu, version, save_filename='%s-%s-%s-energy' % (gpu, version, method))
+    #gpu = 'p100-dvfs'
+    #version = 'real'
+    #plot_energy(gpu, version, save_filename='%s-%s-%s-energy' % (gpu, version, method))
 
     ## pipeline paper, plot performance scaling behavior in motivation part
     #csv_file = "csvs/raw/%s-%s-Performance.csv" % (gpu, version)
@@ -799,7 +812,7 @@ if __name__ == '__main__':
     #version = 'real'
     #plot_perf_acc_analytical(gpu, version, method, '%s_analytical' % gpu)
 
-    # pipeline paper, plot err and correlation scatter
+    ## pipeline paper, plot err and correlation scatter
     #method = 'qiang2018'
     #gpu = 'gtx980-low-dvfs'
     #version = 'real-small-workload'
