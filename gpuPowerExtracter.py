@@ -34,6 +34,8 @@ metrics = json.loads(cf_bs.get("profile_control", "metrics"))
 coreBase = json.loads(cf_bs.get("dvfs_control", "coreBase"))
 memBase = json.loads(cf_bs.get("dvfs_control", "memBase"))
 powerState = json.loads(cf_bs.get("dvfs_control", "powerState"))
+runState = json.loads(cf_bs.get("dvfs_control", "runState"))
+dvfsEnv = json.loads(cf_bs.get("dvfs_control", "dvfsEnv"))
 
 # Read GPU application settings
 cf_ks = ConfigParser.SafeConfigParser()
@@ -67,8 +69,15 @@ for fp in power_filelist:
     content = f.readlines()[2:]
     f.close()
     
-    powerList = [float(line.split()[-1].strip()) / 1000.0 for line in content if int(line.split()[1]) == powerState]
-    powerList = powerList[len(powerList) / 7 * 3 :len(powerList) / 7 * 4]   # filter out those power data of cooling down GPU
+    if dvfsEnv == 'linux': # filter with frequency
+        print coreF
+        powerList = [float(line.split()[-1].strip()) / 1000.0 for line in content if int(line.split()[3]) == coreF]
+    else:
+        powerList = [float(line.split()[-1].strip()) / 1000.0 for line in content if int(line.split()[1]) == runState]
+
+    #powerList = powerList[len(powerList) / 10 * 5 :len(powerList) / 10 * 6]   # filter out those power data of cooling down GPU
+    powerList.sort()
+    powerList = powerList[-100:]   # filter out those power data of cooling down GPU
     rec.append(np.mean(powerList))
 
     print rec
