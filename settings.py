@@ -272,3 +272,59 @@ class P100:
         self.eqType['transpose'] = COMP_HID
         self.eqType['vectorAdd'] = DM_COMP_HID
 
+class V100:
+    def __init__(self):
+        # Hardware Configuration
+        #self.a_L_DM = 222.78 / 8   # a * f_core / f_mem + b, a = 222.78, b = 277.32 for gtx980
+        self.a_L_DM = 26.73   # a * f_core / f_mem + b, a = 222.78, b = 277.32 for gtx980
+        #self.b_L_DM = 277.32   # a * f_core / f_mem + b, a = 222.78, b = 277.32 for gtx980
+        self.b_L_DM = 133.23   # a * f_core / f_mem + b, a = 222.78, b = 277.32 for gtx980
+        self.L_L2 = 263   # 222 for gtx980
+        self.L_INST = 8   # 4 for gtx980
+        self.a_D_DM = 705.03 / 4    # a / f_mem + b, a = 805.03, b = 8.1762 for gtx980
+        self.b_D_DM = 1.8  # a / f_mem + b, a = 805.03, b = 8.1762 for gtx980
+        self.D_L2 = 1     # 1 for l2 cache
+        self.D_INST = 1.4    # 1.2 for compute throughput
+        self.L_sh = 56    # 28 for gtx980
+        self.D_sh = 1
+        self.D_DP = 1.2
+        self.D_TEX = 2.5
+        self.WARPS_MAX = 64 # 64 for gtx980
+        self.SM_COUNT = 80 # 56 for p100, 16 for gtx980, 28 for titanx
+        self.CORES_SM = 128 # 64 for p100, 128 for gtx980 and titanx
+        self.WIDTH_MEM = 4096 # 4096 for p100, 256 for gtx980, 384 for titanx
+
+        self.TEX_UNITS = 4
+        self.DP_UNITS = 32
+        self.SP_UNITS = 64
+        self.SPEC_UNITS = 16
+        self.LS_UNITS = 16
+
+        self.CORE_FREQ = 1380
+        self.MEM_FREQ = 877
+
+        # kernel equation type
+        self.eqType = {}
+        self.eqType['backprop'] = MEM_LAT_BOUND    				# 0.111, too few workload
+        self.eqType['BlackScholes'] = NO_HID
+        self.eqType['conjugateGradient'] = COMP_BOUND
+        self.eqType['convolutionSeparable'] = MEM_HID
+        self.eqType['convolutionTexture'] = COMP_BOUND
+        self.eqType['fastWalshTransform'] = NO_HID
+        self.eqType['histogram'] = SHM_BOUND			# 0.076, to be witnessed
+        self.eqType['hotspot'] = COMP_BOUND
+        self.eqType['matrixMul'] = COMP_BOUND  			# 0.15, consider how to deal with shared memory
+        self.eqType['matrixMulShared'] = NO_HID    			# 0.15, consider how to deal with shared memory
+        self.eqType['matrixMul(Global)'] = COMP_HID
+        self.eqType['matrixMulGlobal'] = COMP_HID
+        self.eqType['mergeSort'] = COMP_BOUND 
+        self.eqType['nn'] = NO_HID   				# 0.174, too few workload
+        self.eqType['quasirandomGenerator'] = COMP_BOUND
+        self.eqType['reduction'] = MEM_HID
+        self.eqType['scalarProd'] = NO_HID
+        self.eqType['scan'] = DM_HID
+        self.eqType['SobolQRNG'] = DM_HID
+        self.eqType['sortingNetworks'] = COMP_HID
+        self.eqType['transpose'] = COMP_HID
+        self.eqType['vectorAdd'] = DM_COMP_HID
+
