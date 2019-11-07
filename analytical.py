@@ -39,6 +39,8 @@ if 'titanx' in gpucard:
     GPUCONF = TITANX()
 if 'p100' in gpucard:
     GPUCONF = P100()
+if 'v100' in gpucard:
+    GPUCONF = V100()
 
 # experimental test
 #pointer = ['convolutionTexture', 'nn', 'SobolQRNG', 'reduction', 'hotspot'] 

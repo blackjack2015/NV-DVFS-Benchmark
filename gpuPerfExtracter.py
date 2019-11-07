@@ -74,7 +74,9 @@ for fp in perf_filelist:
         print time
     else:  
         regex = re.compile(r'.*\%.*' + kernel)
-        time = filter(regex.search, content)[0].split()[3].strip()
+        time = filter(regex.search, content)[0]
+        time = time.replace("GPU activities:", "")
+        time = time.split()[3].strip()
         if 'us' in time:
             time = float(time[:-2]) / 1000
         elif 'ms' in time:

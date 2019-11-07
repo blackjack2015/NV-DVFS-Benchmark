@@ -281,10 +281,10 @@ class V100:
         self.b_L_DM = 133.23   # a * f_core / f_mem + b, a = 222.78, b = 277.32 for gtx980
         self.L_L2 = 263   # 222 for gtx980
         self.L_INST = 8   # 4 for gtx980
-        self.a_D_DM = 705.03 / 4    # a / f_mem + b, a = 805.03, b = 8.1762 for gtx980
-        self.b_D_DM = 1.8  # a / f_mem + b, a = 805.03, b = 8.1762 for gtx980
-        self.D_L2 = 1     # 1 for l2 cache
-        self.D_INST = 1.4    # 1.2 for compute throughput
+        self.a_D_DM = 1005.03 / 4    # a / f_mem + b, a = 805.03, b = 8.1762 for gtx980
+        self.b_D_DM = 2.8  # a / f_mem + b, a = 805.03, b = 8.1762 for gtx980
+        self.D_L2 = 2     # 1 for l2 cache
+        self.D_INST = 1    # 1.2 for compute throughput
         self.L_sh = 56    # 28 for gtx980
         self.D_sh = 1
         self.D_DP = 1.2
@@ -295,8 +295,8 @@ class V100:
         self.WIDTH_MEM = 4096 # 4096 for p100, 256 for gtx980, 384 for titanx
 
         self.TEX_UNITS = 4
-        self.DP_UNITS = 32
-        self.SP_UNITS = 64
+        self.DP_UNITS = 64
+        self.SP_UNITS = 128
         self.SPEC_UNITS = 16
         self.LS_UNITS = 16
 
