@@ -20,7 +20,7 @@ parser.add_argument('--method', type=str, help='analytical modeling method', def
 opt = parser.parse_args()
 print opt
 
-lowest_core = 500
+lowest_core = 700
 lowest_mem = 500
 
 gpucard = opt.benchmark_setting
@@ -47,6 +47,7 @@ if 'v100' in gpucard:
 pointer = []
 extras = ['backpropBackward', 'binomialOptions', 'cfd', 'eigenvalues', 'gaussian', 'srad', 'dxtc', 'pathfinder', 'scanUniformUpdate', 'stereoDisparity'] 
 #extras = []
+#extras += ['histogram', 'matrixMulGlobal', 'mergeSort', 'quasirandomGenerator']
 df = df[~df.appName.isin(extras) & ~df.appName.isin(pointer) & (df.coreF>=lowest_core) & (df.memF>=lowest_mem)]
 #df = df[~df.appName.isin(extras) & (df.coreF>=lowest_core) & (df.memF>=lowest_mem)]
 df = df.reset_index(drop=True)
@@ -258,8 +259,8 @@ def qiang2018(df):
         if item.appName == 'convolutionTexture':
             cycles.loc[idx, 'mem_del'] += cycles.loc[idx, 'tex_del']
         # app using many branch instructions
-        if item.appName == 'reduction':
-            cycles.loc[idx, 'sm_del'] += cycles.loc[idx, 'branch_del']
+        #if item.appName in ['reduction']:
+        #    cycles.loc[idx, 'sm_del'] += cycles.loc[idx, 'branch_del'] 
         # app only have dram write transactions
         #if item.appName == 'quasirandomGenerator':
         #    cycles.loc[idx, 'mem_del'] = df.loc[idx, 'n_gst'] * df.loc[idx, 'D_DM'] * GPUCONF.WARPS_MAX * df.loc[idx, 'act_util'] * 1.1
