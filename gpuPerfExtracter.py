@@ -159,7 +159,7 @@ head = ["appName", "coreF", "memF", "argNo", "kernel", "time/ms", "blocks", "war
 print head
 
 # prepare csv file
-csvfile = open('csvs/%s-%s-Performance.csv' % (gpucard, version), 'wb')
+csvfile = open('csvs/raw/%s-%s-Performance.csv' % (gpucard, version), 'wb')
 csvWriter = csv.writer(csvfile, dialect='excel')
 
 # write table head

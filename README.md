@@ -43,6 +43,7 @@ We provide some examples in those two folders. For the benchmark-setting file, t
 + rest_time: the time interval (s) between two consecutive benchmarks
 + power_sample_interval: the power sampling interval (ms)
 + metrics: the list of profiling performance counters
+
 \[dvfs_control\]
 + coreF: the list of tested core frequencies
 + memF: the list of tested memory frequencies
@@ -50,9 +51,9 @@ We provide some examples in those two folders. For the benchmark-setting file, t
 
 The kernel-setting file is composed by a list of elements, each of which defines one GPU application. The format is:
 ```
-[*application_name*`]
-args = ["*arguments*`"]
-kernels = ["*kernel_name*`"]
+[(application name)]
+args = ["(arguments)"]
+kernels = ["(GPU kernel name)"]
 ```
 
 Then one can run the benchmarks with the following command (The file name arguments have no suffix.)
@@ -64,7 +65,7 @@ python dvfs_benchmark.py --benchmark-setting (your benchmark-setting file) \
 
 By default, we provide the executable files of those GPU applications that occurs in our paper, and they are compiled under CUDA 10.0. One can also add their own applications and revise the kernel-setting file accordingly. 
 
-After the benchmarks are finished, one should find the logs stored in the folder /logs/(your benchmark-setting file name)-(your kernel-setting file name)
+After the benchmarks are finished, one should find the logs stored in the folder /logs/(your benchmark-setting file)-(your kernel-setting file)
 
 ### Data Extraction
 Use the following command to extract the performance counters and the average kernel execution time from the logs (The file name arguments have no suffix.)
@@ -80,9 +81,11 @@ Now all the data are ready in the csv file. Use the following command to estimat
 python analytical.py --benchmark-setting (your benchmark-setting file) \
                      --kernel-setting (your kernel-setting file)
 ```
-Then the program should output some results detailedly in csv/analytical/.
+Then the program should output some results detailedly in csvs/analytical/.
 
 ## Contact
 Email: [qiangwang@comp.hkbu.edu.hk](mainto:qiangwang@comp.hkbu.edu.hk)
+
 Personal Website: [https://blackjack2015.github.io](https://blackjack2015.github.io)
+
 Welcome any suggestion or concern!
