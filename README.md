@@ -34,6 +34,7 @@ This repository contains the code for modeling/benchmarking NVIDIA GPU performan
 To use the performance/power models, one should first collect the needed performance counters and the groundtruth of kernel execution time and average runtime power. There are two configuration files that users should edit. One is called the benchmark-setting file, stored in configs/benchmarks/, which defines how the benchmarks run and repeat, what performance counters to collect and what frequencies are tested. The other is called the kernel-setting file, stored in configs/kernels/, which defines the set of tested GPU applications.
 
 We provide some examples in those two folders. For the benchmark-setting file, the parameters contain:
+
 \[profile_control\]
 + iters: the number of repetitions for GPU kernels 
 + secs: the execution time that the GPU application should run by repeating the kernel, prior to "iters"
@@ -49,10 +50,37 @@ We provide some examples in those two folders. For the benchmark-setting file, t
 
 The kernel-setting file is composed by a list of elements, each of which defines one GPU application. The format is:
 ```
-[*application_name*]
-args = ["*arguments*"]
-kernels = ["*kernel_name*"]
+[*application_name*`]
+args = ["*arguments*`"]
+kernels = ["*kernel_name*`"]
 ```
+
+Then one can run the benchmarks with the following command (The file name arguments have no suffix.)
+```
+python dvfs_benchmark.py --benchmark-setting (your benchmark-setting file) \
+                         --kernel-setting (your kernel-setting file) \
+                         --app-root (the folder where stores your applications)
+```
+
+By default, we provide the executable files of those GPU applications that occurs in our paper, and they are compiled under CUDA 10.0. One can also add their own applications and revise the kernel-setting file accordingly. 
+
+After the benchmarks are finished, one should find the logs stored in the folder /logs/(your benchmark-setting file name)-(your kernel-setting file name)
+
+### Data Extraction
+Use the following command to extract the performance counters and the average kernel execution time from the logs (The file name arguments have no suffix.)
+```
+python gpuPerfExtracter.py --benchmark-setting (your benchmark-setting file) \
+                           --kernel-setting (your kernel-setting file) 
+```
+Then the corresponding csv file will be generated under csvs/raw/.
+
+### Performance Modeling with DVFS
+Now all the data are ready in the csv file. Use the following command to estimate the execution time of each kernel with DVFS and compare them with the groundtruth (The file name arguments have no suffix.)
+```
+python analytical.py --benchmark-setting (your benchmark-setting file) \
+                     --kernel-setting (your kernel-setting file)
+```
+Then the program should output some results detailedly in csv/analytical/.
 
 ## Contact
 Email: [qiangwang@comp.hkbu.edu.hk](mainto:qiangwang@comp.hkbu.edu.hk)
