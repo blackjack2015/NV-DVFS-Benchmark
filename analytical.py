@@ -3,6 +3,7 @@ import numpy as np
 import sys, os
 from settings import *
 import argparse
+import math
 
 if not os.path.exists("csvs/analytical/cycles"):
     os.makedirs("csvs/analytical/cycles")
@@ -39,12 +40,16 @@ if 'titanx' in gpucard:
     GPUCONF = TITANX()
 if 'p100' in gpucard:
     GPUCONF = P100()
+if 'v100' in gpucard:
+    GPUCONF = V100()
 
 # experimental test
 #pointer = ['convolutionTexture', 'nn', 'SobolQRNG', 'reduction', 'hotspot'] 
 pointer = []
 extras = ['backpropBackward', 'binomialOptions', 'cfd', 'eigenvalues', 'gaussian', 'srad', 'dxtc', 'pathfinder', 'scanUniformUpdate', 'stereoDisparity'] 
 #extras = []
+#extras += ['quasirandomGenerator', 'matrixMulGlobal', 'mergeSort']
+#extras += ['histogram', 'matrixMulGlobal', 'mergeSort', 'quasirandomGenerator']
 df = df[~df.appName.isin(extras) & ~df.appName.isin(pointer) & (df.coreF>=lowest_core) & (df.memF>=lowest_mem)]
 #df = df[~df.appName.isin(extras) & (df.coreF>=lowest_core) & (df.memF>=lowest_mem)]
 df = df.reset_index(drop=True)
@@ -251,13 +256,14 @@ def qiang2018(df):
     # add type for offset
     #cycles['offset'] = None
 
+    lack_thres = 0.25 # for p100, 0.3 gives in marginally better results. 
     for idx, item in cycles.iterrows():
         # app using texture memory
         if item.appName == 'convolutionTexture':
             cycles.loc[idx, 'mem_del'] += cycles.loc[idx, 'tex_del']
-        # app using many branch instructions
-        if item.appName == 'reduction':
-            cycles.loc[idx, 'sm_del'] += cycles.loc[idx, 'branch_del']
+        # app using many branch instructions, strange for v100
+        if (item.appName in ['reduction']) and (not "v100" in gpucard):
+            cycles.loc[idx, 'sm_del'] += cycles.loc[idx, 'branch_del'] 
         # app only have dram write transactions
         #if item.appName == 'quasirandomGenerator':
         #    cycles.loc[idx, 'mem_del'] = df.loc[idx, 'n_gst'] * df.loc[idx, 'D_DM'] * GPUCONF.WARPS_MAX * df.loc[idx, 'act_util'] * 1.1
@@ -277,7 +283,7 @@ def qiang2018(df):
         #        cycles.loc[idx, 'modelled_cycle'] = cycles.loc[idx, 'sm_lat'] + cycles.loc[idx, 'mem_del']
 
         #special = ['hotspot', 'convolutionTexture', 'nn']
-        if df.loc[idx, 'act_util'] <= 0.30:
+        if df.loc[idx, 'act_util'] <= lack_thres:
         #if df.loc[idx, 'appName'] in special:
             lack_wait = 0.5 * cycles.loc[idx, 'avg_mem_lat'] + cycles.loc[idx, 'compute_offset'] + cycles.loc[idx, 'avg_mem_del'] * GPUCONF.WARPS_MAX * df.loc[idx, 'act_util'] + 0.5 * cycles.loc[idx, 'avg_mem_lat'] + (cycles.loc[idx, 'compute_offset'] + cycles.loc[idx, 'avg_mem_lat']) * (df.loc[idx, 'n_gld'] + df.loc[idx, 'n_gst'] - 1) / 4.0
             lack_no_wait = cycles.loc[idx, 'compute_offset'] * (GPUCONF.WARPS_MAX * df.loc[idx, 'act_util'] - 1) + (cycles.loc[idx, 'compute_offset'] + cycles.loc[idx, 'avg_mem_lat']) * (df.loc[idx, 'n_gld'] + df.loc[idx, 'n_gst']) / 4.0
@@ -396,8 +402,14 @@ for i in range(len(cycles['modelled_cycle'])):
     	    #print 'real', cycles['real_cycle'][i], df['time/ms'][i], "ms"
     	    #print 'relative error', cycles['abe'][i]
     	    #print '\n'
-           
-
+ 
+pos_50 = int(len(errors) * 0.50)
+pos_75 = int(len(errors) * 0.75)
+pos_95 = int(len(errors) * 0.95)
+errors = np.sort(errors)
+print "50th percentile:", errors[pos_50]
+print "75th percentile:", errors[pos_75]
+print "95th percentile:", errors[pos_95]
 print "MAPE of %d samples: %f" % (len(errors), np.mean(errors))
 print "Error less than 10%%: is %f" % (len([e for e in errors if e < 0.15]) * 1.0 / len(errors))
 #if 'gtx980' in gpucard:

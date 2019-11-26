@@ -94,7 +94,7 @@ def xg_fitting(X, y):
     #min_child_weight = [0.5]
     param_grid = dict(max_depth=max_depth, n_estimators=n_estimators, learning_rate=learning_rate, min_child_weight=min_child_weight)
     
-    xg_model = GridSearchCV(XGBRegressor(verbose=False), cv=3, param_grid=param_grid, scoring='neg_mean_squared_error', n_jobs=-1, verbose=False)
+    xg_model = GridSearchCV(XGBRegressor(verbose=False), cv=3, param_grid=param_grid, scoring='neg_mean_squared_error', n_jobs=8, verbose=False)
     #xg_model = GridSearchCV(XGBRegressor(verbose=True, early_stopping_rounds=5), cv=10, param_grid=param_grid, scoring='neg_mean_squared_error', n_jobs=-1, verbose=True)
     xg_model.fit(X, y)
     # print xg_model.grid_scores_
@@ -230,6 +230,8 @@ class GPU_Power:
                 self.GPUCONF = GTX980(dvfs_range = 'high')
         elif 'p100' in gpucard:
             self.GPUCONF = P100()
+        elif 'v100' in gpucard:
+            self.GPUCONF = V100()
         elif 'titanx' in gpucard:
             self.GPUCONF = TITANX()
         elif 'gtx1080ti' in gpucard:
