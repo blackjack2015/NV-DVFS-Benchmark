@@ -46,7 +46,9 @@ if 'v100' in gpucard:
 # experimental test
 #pointer = ['convolutionTexture', 'nn', 'SobolQRNG', 'reduction', 'hotspot'] 
 pointer = []
-extras = ['backpropBackward', 'binomialOptions', 'cfd', 'eigenvalues', 'gaussian', 'srad', 'dxtc', 'pathfinder', 'scanUniformUpdate', 'stereoDisparity'] 
+#extras = ['backpropBackward', 'binomialOptions', 'cfd', 'eigenvalues', 'gaussian', 'srad', 'dxtc', 'pathfinder', 'scanUniformUpdate', 'stereoDisparity'] 
+extras = ['backpropBackward', 'binomialOptions', 'cfd', 'eigenvalues', 'gaussian', 'srad', 'dxtc', 'pathfinder', 'scanScanExclusiveShared', 'stereoDisparity'] 
+#extras = ['backpropBackward', 'binomialOptions', 'cfd', 'eigenvalues', 'gaussian', 'srad', 'dxtc', 'pathfinder', 'stereoDisparity'] 
 #extras = []
 #extras += ['quasirandomGenerator', 'matrixMulGlobal', 'mergeSort']
 #extras += ['histogram', 'matrixMulGlobal', 'mergeSort', 'quasirandomGenerator']
@@ -256,7 +258,10 @@ def qiang2018(df):
     # add type for offset
     #cycles['offset'] = None
 
-    lack_thres = 0.3 # for p100, 0.3 gives in marginally better results. 
+    if "v100" in gpucard:
+        lack_thres = 0.25 # for v100, 0.25 gives better results for histogram. 
+    else:
+        lack_thres = 0.3
     for idx, item in cycles.iterrows():
         # app using texture memory
         if item.appName == 'convolutionTexture':
@@ -411,7 +416,9 @@ print "50th percentile:", errors[pos_50]
 print "75th percentile:", errors[pos_75]
 print "95th percentile:", errors[pos_95]
 print "MAPE of %d samples: %f" % (len(errors), np.mean(errors))
-print "Error less than 10%%: is %f" % (len([e for e in errors if e < 0.15]) * 1.0 / len(errors))
+print "Error less than 10%%: is %f" % (len([e for e in errors if e <= 0.1]) * 1.0 / len(errors))
+print "Error less than 15%%: is %f" % (len([e for e in errors if e <= 0.15]) * 1.0 / len(errors))
+print "Error less than 20%%: is %f" % (len([e for e in errors if e <= 0.2]) * 1.0 / len(errors))
 #if 'gtx980' in gpucard:
 #    print "sensitive error:", (np.mean(errors) - 0.03854) * 100
 #if 'gtx1080ti'in gpucard:

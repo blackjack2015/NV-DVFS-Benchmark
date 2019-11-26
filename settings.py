@@ -123,9 +123,9 @@ class P100:
         self.L_INST = 8   # 4 for gtx980
         self.a_D_DM = 705.03 / 4    # a / f_mem + b 
         self.b_D_DM = 1.8  # a / f_mem + b
-        self.D_L2 = 1     # 1 for l2 cache
+        self.D_L2 = 1.0     # 1 for l2 cache
         self.D_INST = 1.4    # 1.2 for compute throughput
-        self.L_sh = 28    # 28 for gtx980
+        self.L_sh = 28    # 56 gives slicely better results.
         self.D_sh = 1
         self.D_DP = 1.2
         self.D_TEX = 2.5
@@ -156,7 +156,7 @@ class V100:
         self.a_D_DM = 1005.03 / 4    # a / f_mem + b
         self.b_D_DM = 2.5  # a / f_mem + b
         self.D_L2 = 1.0     # 1 for l2 cache
-        self.D_INST = 1.2   # 1.2 for compute throughput
+        self.D_INST = 1.2   # 1.1 for compute throughput
         self.L_sh = 28    # 56 for v100
         self.D_sh = 1
         self.D_DP = 1.2
