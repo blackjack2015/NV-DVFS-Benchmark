@@ -17,6 +17,8 @@ def energy_best(gpu, version):
         GPUCONF = GTX1080TI()
     elif gpu == 'p100-dvfs':
         GPUCONF = P100()
+    elif gpu == 'v100-dvfs':
+        GPUCONF = V100()
 
     energy_data = pd.DataFrame([])
 
@@ -97,3 +99,6 @@ def energy_best(gpu, version):
 
 if __name__ == '__main__':
     energy_best("gtx980-low-dvfs", "real-small-workload")
+    energy_best("gtx1080ti-dvfs", "real")
+    energy_best("p100-dvfs", "real")
+    energy_best("v100-dvfs", "real")
