@@ -403,9 +403,11 @@ for i in range(len(cycles['modelled_cycle'])):
     	    #print 'relative error', cycles['abe'][i]
     	    #print '\n'
  
+pos_50 = int(len(errors) * 0.50)
 pos_75 = int(len(errors) * 0.75)
 pos_95 = int(len(errors) * 0.95)
 errors = np.sort(errors)
+print "50th percentile:", errors[pos_50]
 print "75th percentile:", errors[pos_75]
 print "95th percentile:", errors[pos_95]
 print "MAPE of %d samples: %f" % (len(errors), np.mean(errors))
