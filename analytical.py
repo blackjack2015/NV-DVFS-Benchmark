@@ -256,7 +256,7 @@ def qiang2018(df):
     # add type for offset
     #cycles['offset'] = None
 
-    lack_thres = 0.25 # for p100, 0.3 gives in marginally better results. 
+    lack_thres = 0.3 # for p100, 0.3 gives in marginally better results. 
     for idx, item in cycles.iterrows():
         # app using texture memory
         if item.appName == 'convolutionTexture':
