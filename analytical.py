@@ -399,6 +399,7 @@ for i in range(len(cycles['modelled_cycle'])):
            
 
 print "MAPE of %d samples: %f" % (len(errors), np.mean(errors))
+print "Error less than 10%%: is %f" % (len([e for e in errors if e < 0.15]) * 1.0 / len(errors))
 #if 'gtx980' in gpucard:
 #    print "sensitive error:", (np.mean(errors) - 0.03854) * 100
 #if 'gtx1080ti'in gpucard:

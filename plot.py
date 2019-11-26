@@ -107,7 +107,7 @@ def plot_inst_distribution(gpucard, csv_perf, save_filename = None):
     for idx, key in enumerate(norm_insts.keys()):
         tmp_data = norm_insts[key]
         #print tmp_data
-        ax.bar(x_axis, tmp_data, bar_width, alpha=0.8, bottom=lastInst, label=key, color=GRAYS[idx % len(COLORS)], hatch=HATCHES[idx % len(HATCHES)])
+        ax.bar(x_axis, tmp_data, bar_width, alpha=0.8, bottom=lastInst, label=key, color=GRAYS[idx % len(COLORS)], hatch=HATCHES[idx % len(HATCHES)], edgecolor='black')
         lastInst += tmp_data
 
     ax.set_ylabel('Percentage', size='x-large')
@@ -118,7 +118,7 @@ def plot_inst_distribution(gpucard, csv_perf, save_filename = None):
     ax.set_xticks(x_axis)
     ax.set_xticklabels(map(get_abbr, in_kernels), size='large', rotation=0)
 
-    ax.legend(fontsize='large', loc='upper center', bbox_to_anchor=(0.5, 1.35), ncol = min(4, len(norm_insts.keys())))
+    ax.legend(fontsize='large', loc='upper center', bbox_to_anchor=(0.5, 1.2), ncol = min(7, len(norm_insts.keys())))
     fig.subplots_adjust(top=0.7)
     ax.grid(linestyle=':')
 
@@ -142,23 +142,27 @@ def plot_line(selected_df, sorted_key='coreF', fixed_freq=500, save_filename=Non
         print tmp_data
         kl_abbr = get_abbr(kernel)
         #lines.append(ax.plot(x_axis, tmp_data, linewidth = 1.5, color = COLORS[idx], marker = MARKERS[idx], markersize = 14, markerfacecolor = 'none', label = kernel+"(%s)" % kl_abbr))
-        lines.append(ax.plot(x_axis, tmp_data, linewidth = 1.5, color = COLORS[idx], marker = MARKERS[idx], markersize = 14, markeredgecolor='k', markerfacecolor = 'none', label = kernel+"(%s)" % kl_abbr))
+        #lines.append(ax.plot(x_axis, tmp_data, linewidth = 1.5, color = COLORS[idx], marker = MARKERS[idx], markersize = 14, markeredgecolor='k', markerfacecolor = 'none', label = kernel+"(%s)" % kl_abbr))
+        lines.append(ax.plot(x_axis, tmp_data, linewidth = 1.5, color = COLORS[idx], marker = MARKERS[idx], markersize = 14, markeredgecolor='k', markerfacecolor = 'none', label = kl_abbr))
 
     ax.set_ylabel("Speed Up", size = 24)
     if sorted_key == 'coreF':
-        ax.set_xlabel("$f^{MEM}=$%d MHz, Core Frequency/MHz" % fixed_freq, size = 24)
+        ax.set_xlabel("Core Frequency/MHz", size = 24)
     else:
-        ax.set_xlabel("$f^{SM}=$%d MHz, Memory Frequency/MHz" % fixed_freq, size = 24)
-    ymax = ax.get_ylim()[1] * 1.15
-    ymin = ax.get_ylim()[0] * 0.95
+        ax.set_xlabel("Memory Frequency/MHz", size = 24)
+    #ymax = ax.get_ylim()[1] * 1.15
+    #ymin = ax.get_ylim()[0] * 0.95
+    ymax = 2.3
+    ymin = 0.9
     ax.set_ylim(top = ymax, bottom = ymin)
     ax.yaxis.set_tick_params(labelsize=24)
 
-    ax.set_xlim(min(x_axis) - 100, max(x_axis) + 100)
+    #ax.set_xlim(min(x_axis) - 100, max(x_axis) + 100)
+    ax.set_xlim(min(x_axis) - 20, max(x_axis) + 20)
     ax.xaxis.set_tick_params(labelsize=24)
 
     ax.grid(color='#5e5c5c', linestyle='-.', linewidth=1)
-    ax.legend(fontsize=18, loc='upper left')
+    ax.legend(fontsize=24, loc='upper left')
 
     if not save_filename:# or True:
         plt.show()
@@ -293,7 +297,8 @@ def plot_perf_acc_freq_merge(save_filename = None):
 
     fig, axes = plt.subplots(nrows = 3, ncols = 1, figsize = (9, 9), gridspec_kw = {'height_ratios':[4, 4, 1]})
     ax_size = 18
-    cmap_str = 'gist_rainbow'
+    #cmap_str = 'gist_rainbow'
+    cmap_str = 'Oranges'
 
     # read gtx980
     csv_file = "csvs/analytical/results/gtx980-low-dvfs-real-small-workload-qiang2018-dvfs.csv"
@@ -471,6 +476,47 @@ def plot_perf_acc_freq(gpu, version, method, save_filename = None):
         plt.savefig(os.path.join(OUTPUT_PATH, '%s.png'%save_filename), bbox_inches='tight')
 
 
+def plot_power_acc_corr(gpu, version, method, save_filename = None):
+
+    csv_file = "csvs/ml/%s-%s-%s-Power.csv" % (gpu, version, method)
+    df = pd.read_csv(csv_file, header = 0)
+    print df.tail(3)
+
+    # ax.title("Instruction Distribution")
+    fig, ax = plt.subplots(figsize = (8, 6))
+    lines = []
+
+    x_axis = list(df.modelled_power)
+    y_axis = list(df.avg_power)
+
+    corrs = pearsonr(x_axis, y_axis)[0]
+    aver_errs = np.mean([abs(x_axis[i] - y_axis[i])/y_axis[i] for i in range(len(x_axis))]) * 100
+
+    lines.append(ax.scatter(x_axis, y_axis, linewidth = 1.5, color = 'b', alpha=0.5, marker = 'o', label = 'Modeling Power(W)\n'+r'[$\rho$=%.3f, $\sigma$=%.3f]' % (corrs, aver_errs)))
+    lines.append(ax.plot(x_axis, x_axis, linewidth = 1.5, color = 'r', label = 'Ground Truth'))
+    fsize = 24
+
+    ax.set_ylabel('Hardware Measured Power(W)', fontsize=fsize)
+    #ax.set_yscale('log')
+    ax.yaxis.set_tick_params(labelsize=fsize)
+    #ymax = ax.get_ylim()[1] * 1.1
+    #ax.set_ylim(top = ymax)
+  
+    #ax.set_xscale('log')
+    ax.set_xlabel('Modeling Power(W)', fontsize=fsize)
+    ax.xaxis.set_tick_params(labelsize=fsize)
+    #ax.set_xticks(x_axis)
+
+    ax.legend(fontsize=fsize - 4, loc='upper left')
+    ax.grid(linestyle=':')
+
+    if not save_filename:# or True:
+        plt.show()
+	return
+    else:
+        plt.savefig(os.path.join(OUTPUT_PATH, '%s.pdf'%save_filename), bbox_inches='tight')
+        plt.savefig(os.path.join(OUTPUT_PATH, '%s.png'%save_filename), bbox_inches='tight')
+
 
 def plot_perf_acc_corr(gpu, version, method, save_filename = None):
 
@@ -488,9 +534,9 @@ def plot_perf_acc_corr(gpu, version, method, save_filename = None):
     corrs = pearsonr(x_axis, y_axis)[0]
     aver_errs = np.mean([abs(x_axis[i] - y_axis[i])/y_axis[i] for i in range(len(x_axis))]) * 100
 
-    lines.append(ax.scatter(x_axis, y_axis, linewidth = 1.5, color = 'b', alpha=0.5, marker = 'o', label = 'Modeling Cycles\n[Correl=%.3f, Err=%.3f]' % (corrs, aver_errs)))
+    lines.append(ax.scatter(x_axis, y_axis, linewidth = 1.5, color = 'b', alpha=0.5, marker = 'o', label = 'Modeling Cycles\n'+r'[$\rho$=%.3f, $\sigma$=%.3f]' % (corrs, aver_errs)))
     lines.append(ax.plot(x_axis, x_axis, linewidth = 1.5, color = 'r', label = 'Ground Truth'))
-    fsize = 18
+    fsize = 24
 
     ax.set_ylabel('Hardware Measured Cycles', fontsize=fsize)
     ax.set_yscale('log')
@@ -503,7 +549,7 @@ def plot_perf_acc_corr(gpu, version, method, save_filename = None):
     ax.xaxis.set_tick_params(labelsize=fsize)
     #ax.set_xticks(x_axis)
 
-    ax.legend(fontsize=fsize, loc='upper left')
+    ax.legend(fontsize=fsize - 4, loc='upper left')
     ax.grid(linestyle=':')
 
     if not save_filename:# or True:
@@ -715,9 +761,12 @@ def plot_energy(gpu, version, save_filename = None):
     x_axis = np.arange(len(kernelset)) * bar_width * 4 + bar_width / 2
 
     fsize = 25
-    ax.bar(x_axis, energy_data['defaultE'] * 100, bar_width, label='Default Energy', color=COLORS[2], hatch=HATCHES[1])
-    ax.bar(x_axis + bar_width, energy_data['bestE'] * 100, bar_width, label='Best Measured Energy', color=COLORS[3], hatch=HATCHES[2])
-    ax.bar(x_axis + 2 * bar_width, energy_data['predictE'] * 100, bar_width, label='Best Predicted Energy', color=COLORS[4], hatch=HATCHES[3])
+    #ax.bar(x_axis, energy_data['defaultE'] * 100, bar_width, label='Default Energy', color=COLORS[2], hatch=HATCHES[1])
+    #ax.bar(x_axis + bar_width, energy_data['bestE'] * 100, bar_width, label='Best Measured Energy', color=COLORS[3], hatch=HATCHES[2])
+    #ax.bar(x_axis + 2 * bar_width, energy_data['predictE'] * 100, bar_width, label='Best Predicted Energy', color='y', hatch=HATCHES[3])
+    ax.bar(x_axis, energy_data['defaultE'] * 100, bar_width, label='Default Energy', color=GRAYS[3], hatch=HATCHES[1])
+    ax.bar(x_axis + bar_width, energy_data['bestE'] * 100, bar_width, label='Best Measured Energy', color=GRAYS[2], hatch=HATCHES[2])
+    ax.bar(x_axis + 2 * bar_width, energy_data['predictE'] * 100, bar_width, label='Best Predicted Energy', color=GRAYS[4], hatch=HATCHES[3])
     #ax.bar(x_axis, m1_df['m1_error'] * 100, bar_width, label='mode 1', color='yellow', hatch=HATCHES[1])
     #ax.bar(x_axis + bar_width, m2_df['m2_error'] * 100, bar_width, label='mode 2', color='gray', hatch=HATCHES[2])
     #ax.bar(x_axis + 2 * bar_width, m3_df['m3_error'] * 100, bar_width, label='mode 3', color='red', hatch=HATCHES[3])
@@ -725,11 +774,11 @@ def plot_energy(gpu, version, save_filename = None):
     ax.set_ylabel('Energy Consumption', fontsize=fsize)
     ax.yaxis.set_tick_params(labelsize=fsize)
     ax.set_xlabel('')
-    ax.set_ylim(top=140)
+    ax.set_ylim(top=115, bottom=40)
     ax.set_xticks(x_axis + bar_width * 1.5)
     ax.set_xticklabels(map(get_abbr, kernelset), fontsize=fsize, rotation=90)
 
-    ax.legend(fontsize=fsize, loc='upper center', ncol = 3)
+    ax.legend(fontsize=fsize-4, loc='upper center', ncol = 3)
     ax.grid(linestyle=':')
 
     if not save_filename:# or True:
@@ -745,9 +794,9 @@ if __name__ == '__main__':
     if not os.path.exists("figures"):
         os.makedirs("figures")
 
-    # gpu card and data file
-    method = 'qiang2018'
-    ml_algo = 'svr-poly'
+    ## gpu card and data file
+    #method = 'qiang2018'
+    #ml_algo = 'svr-poly'
 
     ## pipeline paper, plot error heatmap of different frequency settings
     #gpu = 'gtx980-low-dvfs'
@@ -762,20 +811,22 @@ if __name__ == '__main__':
     #gpu = 'p100-dvfs'
     #version = 'real'
     #plot_perf_acc_freq(gpu, version, method, save_filename='%s-%s-%s-acc-dvfs' % (gpu, version, method))
-    plot_perf_acc_freq_merge(save_filename='acc-freq-merge')
+    #plot_perf_acc_freq_merge(save_filename='acc-freq-merge')
 
     # plot energy conservation study
-    gpu = 'gtx980-low-dvfs'
-    version = 'real-small-workload'
-    plot_energy(gpu, version, save_filename='%s-%s-%s-energy' % (gpu, version, method))
-    gpu = 'gtx1080ti-dvfs'
-    version = 'real'
-    plot_energy(gpu, version, save_filename='%s-%s-%s-energy' % (gpu, version, method))
-    gpu = 'p100-dvfs'
-    version = 'real'
-    plot_energy(gpu, version, save_filename='%s-%s-%s-energy' % (gpu, version, method))
+    #gpu = 'gtx980-low-dvfs'
+    #version = 'real-small-workload'
+    #plot_energy(gpu, version, save_filename='%s-%s-%s-energy' % (gpu, version, method))
+    #gpu = 'gtx1080ti-dvfs'
+    #version = 'real'
+    #plot_energy(gpu, version, save_filename='%s-%s-%s-energy' % (gpu, version, method))
+    #gpu = 'p100-dvfs'
+    #version = 'real'
+    #plot_energy(gpu, version, save_filename='%s-%s-%s-energy' % (gpu, version, method))
 
     ## pipeline paper, plot performance scaling behavior in motivation part
+    #gpu = 'gtx980-low-dvfs'
+    #version = 'real-small-workload'
     #csv_file = "csvs/raw/%s-%s-Performance.csv" % (gpu, version)
     #plot_dvfs_scaling(gpu, csv_file)
 
@@ -813,20 +864,35 @@ if __name__ == '__main__':
     #version = 'real'
     #plot_perf_acc_analytical(gpu, version, method, '%s_analytical' % gpu)
 
-    # pipeline paper, plot err and correlation scatter
-    method = 'qiang2018'
+    ## pipeline paper, plot err and correlation scatter
+    #method = 'qiang2018'
+    #gpu = 'gtx980-low-dvfs'
+    #version = 'real-small-workload'
+    #plot_perf_acc_corr(gpu, version, method, '%s_%s_%s_err_corr' % (gpu, version, method))
+    ##gpu = 'gtx980-high-dvfs'
+    ##version = 'real-small-workload'
+    ##plot_perf_acc_corr(gpu, version, method, '%s_%s_%s_err_corr' % (gpu, version, method))
+    #gpu = 'gtx1080ti-dvfs'
+    #version = 'real'
+    #plot_perf_acc_corr(gpu, version, method, '%s_%s_%s_err_corr' % (gpu, version, method))
+    #gpu = 'p100-dvfs'
+    #version = 'real'
+    #plot_perf_acc_corr(gpu, version, method, '%s_%s_%s_err_corr' % (gpu, version, method))
+
+    # ml paper, plot err and correlation scatter for power
+    method = 'xgboost'
     gpu = 'gtx980-low-dvfs'
     version = 'real-small-workload'
-    plot_perf_acc_corr(gpu, version, method, '%s_%s_%s_err_corr' % (gpu, version, method))
+    plot_power_acc_corr(gpu, version, method, '%s_%s_%s_power_err_corr' % (gpu, version, method))
     #gpu = 'gtx980-high-dvfs'
     #version = 'real-small-workload'
     #plot_perf_acc_corr(gpu, version, method, '%s_%s_%s_err_corr' % (gpu, version, method))
     gpu = 'gtx1080ti-dvfs'
     version = 'real'
-    plot_perf_acc_corr(gpu, version, method, '%s_%s_%s_err_corr' % (gpu, version, method))
+    plot_power_acc_corr(gpu, version, method, '%s_%s_%s_power_err_corr' % (gpu, version, method))
     gpu = 'p100-dvfs'
     version = 'real'
-    plot_perf_acc_corr(gpu, version, method, '%s_%s_%s_err_corr' % (gpu, version, method))
+    plot_power_acc_corr(gpu, version, method, '%s_%s_%s_power_err_corr' % (gpu, version, method))
 
     ## pipeline paper, plot dvfs-roofline model
     #gpu = 'gtx980-low-dvfs'
@@ -846,6 +912,6 @@ if __name__ == '__main__':
     #version = 'real-small-workload'
 
     #csv_file = "csvs/v1/%s-%s-Performance.csv" % (gpu, version)
-    #plot_dvfs_scaling(gpu, csv_file)
+    ##plot_dvfs_scaling(gpu, csv_file)
     #plot_inst_distribution(gpu, csv_file, 'gtx980_sample_inst_dist')
 
