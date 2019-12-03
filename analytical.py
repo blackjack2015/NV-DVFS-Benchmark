@@ -50,7 +50,8 @@ pointer = []
 extras = ['backpropBackward', 'binomialOptions', 'cfd', 'eigenvalues', 'gaussian', 'srad', 'dxtc', 'pathfinder', 'scanScanExclusiveShared', 'stereoDisparity'] 
 #extras = ['backpropBackward', 'binomialOptions', 'cfd', 'eigenvalues', 'gaussian', 'srad', 'dxtc', 'pathfinder', 'stereoDisparity'] 
 #extras = []
-#extras += ['quasirandomGenerator', 'matrixMulGlobal', 'mergeSort']
+#extras += ['quasirandomGenerator', 'matrixMulGlobal']
+#extras += ['matrixMulGlobal']
 #extras += ['histogram', 'matrixMulGlobal', 'mergeSort', 'quasirandomGenerator']
 df = df[~df.appName.isin(extras) & ~df.appName.isin(pointer) & (df.coreF>=lowest_core) & (df.memF>=lowest_mem)]
 #df = df[~df.appName.isin(extras) & (df.coreF>=lowest_core) & (df.memF>=lowest_mem)]
@@ -117,6 +118,8 @@ features.loc[features['insts'] < 0, 'insts'] = 0
 features['act_util'] = df['achieved_occupancy']
 features['L_DM'] = GPUCONF.a_L_DM * df['coreF'] / df['memF'] + GPUCONF.b_L_DM
 features['D_DM'] = (GPUCONF.a_D_DM / df['memF'] + GPUCONF.b_D_DM) * df['coreF'] / df['memF']
+#features['L_DM'] = GPUCONF.a_L_DM * GPUCONF.CORE_FREQ * 1.0 / GPUCONF.MEM_FREQ + GPUCONF.b_L_DM # no dvfs effect
+#features['D_DM'] = (GPUCONF.a_D_DM / GPUCONF.MEM_FREQ + GPUCONF.b_D_DM) * GPUCONF.CORE_FREQ * 1.0 / GPUCONF.MEM_FREQ # no dvfs effect
 
 # add bias to model parameters
 #features['L_DM'] = features['L_DM'] * 1.2
@@ -228,7 +231,7 @@ def song2013(df):
 def qiang2018(df):
 
     # analytical model
-    cycles = pd.DataFrame(columns=['appName', 'coreF', 'memF', 'cold_miss', 'c_to_m', 'modelled_cycle', 'real_cycle']) # real_cycle per round
+    cycles = pd.DataFrame(columns=['appName', 'coreF', 'memF', 'cold_miss', 'c_to_m', 'type', 'modelled_cycle', 'real_cycle']) # real_cycle per round
     cycles['appName'] = df['appName']
     cycles['coreF'] = df['coreF']
     cycles['memF'] = df['memF']
@@ -236,6 +239,8 @@ def qiang2018(df):
     cycles['cold_miss'] = df['L_DM']
     cycles['avg_mem_lat'] = ((df['L_DM'] + df['D_DM']) * (1 - df['l2_hit']) + GPUCONF.L_L2 * df['l2_hit']) 
     cycles['avg_mem_del'] = (df['D_DM'] * (1 - df['l2_hit']) + GPUCONF.D_L2 * df['l2_hit']) 
+    #cycles['avg_mem_lat'] = (df['L_DM'] + df['D_DM']) # no L2 effect
+    #cycles['avg_mem_del'] = df['D_DM'] # no L2 effect
     cycles['mem_del'] = (df['n_gld'] + df['n_gst']) * cycles['avg_mem_del'] * GPUCONF.WARPS_MAX * df['act_util'] # memory queue delay for all warps per round
     cycles['mem_lat'] = (df['n_gld'] + df['n_gst']) * cycles['avg_mem_lat'] / 4.0 # memory latency for one warp per round
     cycles['shm_del'] = GPUCONF.D_sh * (df['n_shm_ld'] + df['n_shm_st']) * df['act_util'] * GPUCONF.WARPS_MAX + GPUCONF.L_sh # shared queue delay for all warps per round
@@ -275,8 +280,10 @@ def qiang2018(df):
 
         if cycles.loc[idx, 'sm_del'] > cycles.loc[idx, 'mem_del']:
             cycles.loc[idx, 'modelled_cycle'] = cycles.loc[idx, 'sm_del'] #+ cycles.loc[idx, 'avg_mem_lat']
+            cycles.loc[idx, 'type'] = 'FULL_COMP'
         else:
 	    cycles.loc[idx, 'modelled_cycle'] = cycles.loc[idx, 'mem_del'] #+ cycles.loc[idx, 'avg_mem_lat']
+            cycles.loc[idx, 'type'] = 'FULL_MEM'
 
         if (item.appName != 'nn') or (cycles.loc[idx, 'modelled_cycle'] < 2800):
             cycles.loc[idx, 'modelled_cycle'] += cycles.loc[idx, 'cold_miss'] 
@@ -294,8 +301,10 @@ def qiang2018(df):
             lack_no_wait = cycles.loc[idx, 'compute_offset'] * (GPUCONF.WARPS_MAX * df.loc[idx, 'act_util'] - 1) + (cycles.loc[idx, 'compute_offset'] + cycles.loc[idx, 'avg_mem_lat']) * (df.loc[idx, 'n_gld'] + df.loc[idx, 'n_gst']) / 4.0
             if lack_wait > lack_no_wait:
                 cycles.loc[idx, 'modelled_cycle'] = lack_wait
+                cycles.loc[idx, 'type'] = 'LACK_WAIT'
             else:
                 cycles.loc[idx, 'modelled_cycle'] = lack_no_wait
+                cycles.loc[idx, 'type'] = 'LACK_NO_WAIT'
 
 
     cycles = cycles.sort_values(by=['appName', 'c_to_m'])
@@ -350,11 +359,16 @@ cycles.to_csv("csvs/analytical/cycles/%s-%s-%s-cycles.csv" % (gpucard, kernel_se
 #cycles.to_excel(writer, 'Sheet1')
 #writer.save()
 
+print "FULL COMP error:", np.mean(cycles[cycles["type"] == "FULL_COMP"]["abe"])
+print "FULL MEM error:", np.mean(cycles[cycles["type"] == "FULL_MEM"]["abe"])
+print "LACK WAIT error:", np.mean(cycles[cycles["type"] == "LACK_WAIT"]["abe"])
+print "LACK NO WAIT error:", np.mean(cycles[cycles["type"] == "LACK_NO_WAIT"]["abe"])
+
 kernels = features['appName'].drop_duplicates()
 kernels.sort_values(inplace=True)
 
 f = open("csvs/analytical/results/%s-%s-%s-dvfs.csv" % (gpucard, kernel_setting, method), "w")
-f.write("kernel,coreF,memF,real,predict,error\n")
+f.write("kernel,type,coreF,memF,real,predict,error\n")
 for idx, item in cycles.iterrows():
 	kernel = item['appName']
         coreF = item['coreF']
@@ -362,8 +376,9 @@ for idx, item in cycles.iterrows():
         real = item['real_cycle']
         predict = item['modelled_cycle']
         error = abs(item['real_cycle'] - item['modelled_cycle']) / item['real_cycle']
+        kernel_type = item['type']
 
-        f.write("%s,%d,%d,%f,%f,%f\n" % (kernel, coreF, memF, real, predict, error))
+        f.write("%s,%s,%d,%d,%f,%f,%f\n" % (kernel, kernel_type, coreF, memF, real, predict, error))
 f.close()
 
 
@@ -408,9 +423,9 @@ for i in range(len(cycles['modelled_cycle'])):
     	    #print 'relative error', cycles['abe'][i]
     	    #print '\n'
  
-pos_50 = int(len(errors) * 0.50)
-pos_75 = int(len(errors) * 0.75)
-pos_95 = int(len(errors) * 0.95)
+pos_50 = int(len(errors) * 0.50) - 1
+pos_75 = int(len(errors) * 0.75) - 1
+pos_95 = int(len(errors) * 0.95) - 1
 errors = np.sort(errors)
 print "50th percentile:", errors[pos_50]
 print "75th percentile:", errors[pos_75]

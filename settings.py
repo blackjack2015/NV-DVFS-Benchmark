@@ -80,8 +80,8 @@ class GTX980:
             #self.CORE_FREQ = 500
             #self.MEM_FREQ = 500
         elif dvfs_range == 'high':
-            self.CORE_FREQ = 1100
-            self.MEM_FREQ = 3600
+            self.CORE_FREQ = 1500
+            self.MEM_FREQ = 3900
         
 class GTX1080TI:
     def __init__(self):
@@ -127,7 +127,7 @@ class P100:
         self.D_INST = 1.4    # 1.2 for compute throughput
         self.L_sh = 28    # 56 gives slicely better results.
         self.D_sh = 1
-        self.D_DP = 1.2
+        self.D_DP = 1.0
         self.D_TEX = 2.5
         self.WARPS_MAX = 64 # 64 for gtx980
         self.SM_COUNT = 56 # 56 for p100, 16 for gtx980, 28 for titanx
@@ -156,10 +156,10 @@ class V100:
         self.a_D_DM = 1005.03 / 4    # a / f_mem + b
         self.b_D_DM = 2.5  # a / f_mem + b
         self.D_L2 = 1.0     # 1 for l2 cache
-        self.D_INST = 1.2   # 1.1 for compute throughput
+        self.D_INST = 1.0  # 1.1 for compute throughput
         self.L_sh = 28    # 56 for v100
         self.D_sh = 1
-        self.D_DP = 1.2
+        self.D_DP = 1.0
         self.D_TEX = 2.5
         self.WARPS_MAX = 64 # 64 for gtx980
         self.SM_COUNT = 80 # 80 for v100, 56 for p100, 16 for gtx980, 28 for titanx
