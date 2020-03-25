@@ -44,17 +44,9 @@ if 'v100' in gpucard:
     GPUCONF = V100()
 
 # experimental test
-#pointer = ['convolutionTexture', 'nn', 'SobolQRNG', 'reduction', 'hotspot'] 
 pointer = []
-#extras = ['backpropBackward', 'binomialOptions', 'cfd', 'eigenvalues', 'gaussian', 'srad', 'dxtc', 'pathfinder', 'scanUniformUpdate', 'stereoDisparity'] 
 extras = ['backpropBackward', 'binomialOptions', 'cfd', 'eigenvalues', 'gaussian', 'srad', 'dxtc', 'pathfinder', 'scanScanExclusiveShared', 'stereoDisparity'] 
-#extras = ['backpropBackward', 'binomialOptions', 'cfd', 'eigenvalues', 'gaussian', 'srad', 'dxtc', 'pathfinder', 'stereoDisparity'] 
-#extras = []
-#extras += ['quasirandomGenerator', 'matrixMulGlobal']
-#extras += ['matrixMulGlobal']
-#extras += ['histogram', 'matrixMulGlobal', 'mergeSort', 'quasirandomGenerator']
 df = df[~df.appName.isin(extras) & ~df.appName.isin(pointer) & (df.coreF>=lowest_core) & (df.memF>=lowest_mem)]
-#df = df[~df.appName.isin(extras) & (df.coreF>=lowest_core) & (df.memF>=lowest_mem)]
 df = df.reset_index(drop=True)
 df = df.sort_values(by = ['appName', 'coreF', 'memF'])
 
@@ -62,34 +54,24 @@ features = pd.DataFrame(columns=['appName', 'coreF', 'memF', 'n_shm_ld', 'n_shm_
 features['appName'] = df['appName']
 features['coreF'] = df['coreF']
 features['memF'] = df['memF']
+
 # shared memory information
 features['n_shm_ld'] = df['shared_load_transactions'] / df['warps']
 features['n_shm_st'] = df['shared_store_transactions'] / df['warps']
 features['n_shm'] = features['n_shm_ld'] + features['n_shm_st']
 
 # global memory information
-#try:
-#    features['n_gld'] = df['gld_transactions'] / df['warps']
-#    features['n_gst'] = df['gst_transactions'] / df['warps']
-#except Exception as e:
-#    features['n_gld'] = df['l2_read_transactions'] / df['warps']
-#    features['n_gst'] = df['l2_write_transactions'] / df['warps']
-
 features['n_gld'] = df['l2_read_transactions'] / df['warps']
 features['n_gst'] = df['l2_write_transactions'] / df['warps']
+
+# texture memory information
 try:
     features['tex_trans'] = df['tex_cache_transactions'] / df['warps'] 
     features.loc[features['tex_trans'] < 0, 'tex_trans'] = 0
 except Exception as e:
     features['tex_trans'] = 0
 
-#features['n_gld'] = (df['l2_read_transactions'] + df['shared_load_transactions']) / df['warps']
-#features['n_gst'] = (df['l2_write_transactions'] + df['shared_store_transactions']) / df['warps']
-
 # l2 information
-#features['l2_miss'] = df['dram_read_transactions'] / df['l2_read_transactions']
-#features['l2_miss'] = df['dram_write_transactions'] / df['l2_write_transactions']
-#features['l2_miss'] = (df['dram_read_transactions'] + df['dram_write_transactions']) / (df['l2_read_transactions'] + df['l2_write_transactions'])
 features['l2_miss'] = (df['dram_read_transactions'] + df['dram_write_transactions']) / ((features['n_gst'] + features['n_gld']) * df['warps'])
 features.loc[features['l2_miss'] > 1, 'l2_miss'] = 1
 features['l2_hit'] = 1 - features['l2_miss']
@@ -98,8 +80,6 @@ features['l2_hit'] = 1 - features['l2_miss']
 try:
     features['fp_insts'] = df['inst_fp_32'] / (df['warps'] * 32.0)
     features['dp_insts'] = df['inst_fp_64'] / (df['warps'] * 32.0)
-    #features['int_insts'] = df['inst_integer'] / (df['warps'] * 32.0)
-    #features['insts'] = features['fp_insts'] + features['dp_insts'] * 2.0 + features['int_insts']
 except Exception as e:
     print "No float/double instruction information..."
 
@@ -288,15 +268,20 @@ def qiang2018(df):
         if (item.appName != 'nn') or (cycles.loc[idx, 'modelled_cycle'] < 2800):
             cycles.loc[idx, 'modelled_cycle'] += cycles.loc[idx, 'cold_miss'] 
 
+        # L1/tex cache adjustment for v100
+        if ("v100" in gpucard) and (item.appName in ['matrixMulGlobal', 'conjugateGradient', 'histogram']):
+            cycles.loc[idx, 'modelled_cycle'] += cycles.loc[idx, 'tex_del'] 
+        # branch instruction adjustment for v100
+        if ("v100" in gpucard) and (item.appName in ['quasirandomGenerator']):
+            cycles.loc[idx, 'modelled_cycle'] = cycles.loc[idx, 'mem_lat'] + cycles.loc[idx, 'sm_lat']
+
         #if df.loc[idx, 'act_util'] <= 0.30:
         #    if cycles.loc[idx, 'sm_del'] + cycles.loc[idx, 'mem_lat'] > cycles.loc[idx, 'sm_lat'] + cycles.loc[idx, 'mem_del']:
         #        cycles.loc[idx, 'modelled_cycle'] = cycles.loc[idx, 'sm_del'] + cycles.loc[idx, 'mem_lat']
         #    else:
         #        cycles.loc[idx, 'modelled_cycle'] = cycles.loc[idx, 'sm_lat'] + cycles.loc[idx, 'mem_del']
 
-        #special = ['hotspot', 'convolutionTexture', 'nn']
         if df.loc[idx, 'act_util'] <= lack_thres:
-        #if df.loc[idx, 'appName'] in special:
             lack_wait = 0.5 * cycles.loc[idx, 'avg_mem_lat'] + cycles.loc[idx, 'compute_offset'] + cycles.loc[idx, 'avg_mem_del'] * GPUCONF.WARPS_MAX * df.loc[idx, 'act_util'] + 0.5 * cycles.loc[idx, 'avg_mem_lat'] + (cycles.loc[idx, 'compute_offset'] + cycles.loc[idx, 'avg_mem_lat']) * (df.loc[idx, 'n_gld'] + df.loc[idx, 'n_gst'] - 1) / 4.0
             lack_no_wait = cycles.loc[idx, 'compute_offset'] * (GPUCONF.WARPS_MAX * df.loc[idx, 'act_util'] - 1) + (cycles.loc[idx, 'compute_offset'] + cycles.loc[idx, 'avg_mem_lat']) * (df.loc[idx, 'n_gld'] + df.loc[idx, 'n_gst']) / 4.0
             if lack_wait > lack_no_wait:
