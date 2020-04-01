@@ -102,10 +102,10 @@ features['D_DM'] = (GPUCONF.a_D_DM / df['memF'] + GPUCONF.b_D_DM) * df['coreF'] 
 #features['D_DM'] = (GPUCONF.a_D_DM / GPUCONF.MEM_FREQ + GPUCONF.b_D_DM) * GPUCONF.CORE_FREQ * 1.0 / GPUCONF.MEM_FREQ # no dvfs effect
 
 # add bias to model parameters
-#features['L_DM'] = features['L_DM'] * 1.2
-#features['D_DM'] = features['D_DM'] * 1.2
-#features['act_util'] = features['act_util'] * 1.2
-#features['l2_hit'] = features['l2_hit'] * 0.8 
+#features['L_DM'] = features['L_DM'] * 0.8
+#features['D_DM'] = features['D_DM'] * 0.8
+#features['act_util'] = features['act_util'] * 0.8
+#features['l2_hit'] = features['l2_hit'] * 1.2
 
 # remove shm part if hong2009
 if method == 'hong2009':
@@ -240,9 +240,6 @@ def qiang2018(df):
     #cycles['sm_op'] = df['insts'] * L_INST
     cycles['insts'] = df['insts']
     
-    # add type for offset
-    #cycles['offset'] = None
-
     if "v100" in gpucard:
         lack_thres = 0.25 # for v100, 0.25 gives better results for histogram. 
     else:
@@ -254,9 +251,6 @@ def qiang2018(df):
         # app using many branch instructions, strange for v100
         if (item.appName in ['reduction']) and (not "v100" in gpucard):
             cycles.loc[idx, 'sm_del'] += cycles.loc[idx, 'branch_del'] 
-        # app only have dram write transactions
-        #if item.appName == 'quasirandomGenerator':
-        #    cycles.loc[idx, 'mem_del'] = df.loc[idx, 'n_gst'] * df.loc[idx, 'D_DM'] * GPUCONF.WARPS_MAX * df.loc[idx, 'act_util'] * 1.1
 
         if cycles.loc[idx, 'sm_del'] > cycles.loc[idx, 'mem_del']:
             cycles.loc[idx, 'modelled_cycle'] = cycles.loc[idx, 'sm_del'] #+ cycles.loc[idx, 'avg_mem_lat']
@@ -275,12 +269,6 @@ def qiang2018(df):
         if ("v100" in gpucard) and (item.appName in ['quasirandomGenerator']):
             cycles.loc[idx, 'modelled_cycle'] = cycles.loc[idx, 'mem_lat'] + cycles.loc[idx, 'sm_lat']
 
-        #if df.loc[idx, 'act_util'] <= 0.30:
-        #    if cycles.loc[idx, 'sm_del'] + cycles.loc[idx, 'mem_lat'] > cycles.loc[idx, 'sm_lat'] + cycles.loc[idx, 'mem_del']:
-        #        cycles.loc[idx, 'modelled_cycle'] = cycles.loc[idx, 'sm_del'] + cycles.loc[idx, 'mem_lat']
-        #    else:
-        #        cycles.loc[idx, 'modelled_cycle'] = cycles.loc[idx, 'sm_lat'] + cycles.loc[idx, 'mem_del']
-
         if df.loc[idx, 'act_util'] <= lack_thres:
             lack_wait = 0.5 * cycles.loc[idx, 'avg_mem_lat'] + cycles.loc[idx, 'compute_offset'] + cycles.loc[idx, 'avg_mem_del'] * GPUCONF.WARPS_MAX * df.loc[idx, 'act_util'] + 0.5 * cycles.loc[idx, 'avg_mem_lat'] + (cycles.loc[idx, 'compute_offset'] + cycles.loc[idx, 'avg_mem_lat']) * (df.loc[idx, 'n_gld'] + df.loc[idx, 'n_gst'] - 1) / 4.0
             lack_no_wait = cycles.loc[idx, 'compute_offset'] * (GPUCONF.WARPS_MAX * df.loc[idx, 'act_util'] - 1) + (cycles.loc[idx, 'compute_offset'] + cycles.loc[idx, 'avg_mem_lat']) * (df.loc[idx, 'n_gld'] + df.loc[idx, 'n_gst']) / 4.0
@@ -293,31 +281,6 @@ def qiang2018(df):
 
 
     cycles = cycles.sort_values(by=['appName', 'c_to_m'])
-    #for idx, item in df.iterrows():
-    	#cur_name = df['appName'][idx]
-    	#if GPUCONF.eqType[cur_name] == DM_HID:
-    	#	cycles.loc[idx, 'offset'] = -cycles.loc[idx, 'cold_miss']
-    	#elif GPUCONF.eqType[cur_name] == COMP_HID:
-    	#	cycles.loc[idx, 'offset'] = -cycles.loc[idx, 'sm_op']
-    	#elif GPUCONF.eqType[cur_name] == MEM_HID:
-    	#	cycles.loc[idx, 'offset'] = -cycles.loc[idx, 'mem_op']
-    	#elif GPUCONF.eqType[cur_name] == DM_COMP_HID:
-    	#	cycles.loc[idx, 'offset'] = -cycles.loc[idx, 'cold_miss'] -cycles.loc[idx, 'sm_op']
-    	#elif GPUCONF.eqType[cur_name] == MEM_LAT_BOUND:
-    	#	cycles.loc[idx, 'offset'] = -cycles.loc[idx, 'mem_op'] -cycles.loc[idx, 'cold_miss'] +cycles.loc[idx, 'lat_op']
-    	#elif GPUCONF.eqType[cur_name] == NO_HID:
-    	#	cycles.loc[idx, 'offset'] = 0
-    	#elif GPUCONF.eqType[cur_name] == MIX:
-    	#	cycles.loc[idx, 'offset'] = 0
-    	#elif GPUCONF.eqType[cur_name] == COMP_BOUND:
-    	#	cycles.loc[idx, 'offset'] = -cycles.loc[idx, 'sm_op'] - cycles.loc[idx, 'mem_op'] + cycles.loc[idx, 'compute_del']
-    	#elif GPUCONF.eqType[cur_name] == SHM_BOUND:
-    	#	cycles.loc[idx, 'offset'] = -cycles.loc[idx, 'sm_op'] - cycles.loc[idx, 'mem_op'] + cycles.loc[idx, 'shm_del']
-    	#else:
-    	#	print "Invalid modeling type of %s..." % cur_name
-    	#	sys.exit(-1)	
-    
-    #cycles['modelled_cycle'] = cycles['cold_miss'] + cycles['mem_op'] + cycles['sm_op'] + cycles['offset']
 
     return cycles
 
@@ -381,32 +344,12 @@ f.close()
 
 errors = []
 for i in range(len(cycles['modelled_cycle'])):
-        if cycles['appName'][i] in pointer or cycles['appName'][i] in extras:
-            continue
- 
-        #if cycles['coreF'][i] >= 500 and cycles['memF'][i] >= 500:
-	errors.append(cycles['abe'][i])
+    if cycles['appName'][i] in pointer or cycles['appName'][i] in extras:
+        continue
+    
+    #if cycles['coreF'][i] >= 500 and cycles['memF'][i] >= 500:
+    errors.append(cycles['abe'][i])
 
-    	    #print cycles['appName'][i], cycles['coreF'][i], cycles['memF'][i]
-    	    ##print i, df['appName'][i], 'relative error', cycles['abe'][i]
-    	    ## print i, df['appName'][i]
-    	    #print 'n_gld', features['n_gld'][i]
-    	    #print 'n_gst', features['n_gst'][i]
-    	    #print 'l2_hit', features['l2_hit'][i]
-    	    #print 'n_shm_ld', features['n_shm_ld'][i]
-    	    #print 'n_shm_st', features['n_shm_st'][i]
-    	    #print 'insts', features['insts'][i]
-    	    #print 'act_util', features['act_util'][i]
-    	    #print 'dram delay', features['D_DM'][i]
-    	    #print 'dram latency', features['L_DM'][i]
-    	    #print 'coreF', features['coreF'][i]
-    	    #print 'memF', features['memF'][i]
-    	    #print 'mem_del', cycles['mem_del'][i]
-    	    #print 'sm_del', cycles['sm_del'][i]
-    	    #print 'modelled', cycles['modelled_cycle'][i]
-    	    #print 'real', cycles['real_cycle'][i], df['time/ms'][i], "ms"
-    	    #print 'relative error', cycles['abe'][i]
-    	    #print '\n'
  
 pos_50 = int(len(errors) * 0.50) - 1
 pos_75 = int(len(errors) * 0.75) - 1

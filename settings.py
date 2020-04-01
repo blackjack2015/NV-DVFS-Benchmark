@@ -157,7 +157,7 @@ class V100:
         self.b_D_DM = 2.5  # a / f_mem + b
         self.D_L2 = 1.0     # 1 for l2 cache
         self.D_INST = 1.0  # 1.1 for compute throughput
-        self.L_sh = 28    # 56 for v100
+        self.L_sh = 28   # 56 for v100
         self.D_sh = 1
         self.D_DP = 1.0
         self.D_TEX = 2.5

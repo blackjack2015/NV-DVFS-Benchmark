@@ -182,12 +182,12 @@ def energy_best(gpu, version):
     print "average energy conservation:", np.mean(1 - energy_data['predictE']), "[max: %f]." % (1 - min(energy_data['predictE']))
 
 if __name__ == '__main__':
-    energy_best("gtx980-low-dvfs", "real-small-workload")
-    energy_best("gtx1080ti-dvfs", "real")
-    energy_best("p100-dvfs", "real")
-    #energy_best("v100-dvfs", "real")
+    #energy_best("gtx980-low-dvfs", "real-small-workload")
+    #energy_best("gtx1080ti-dvfs", "real")
+    #energy_best("p100-dvfs", "real")
+    energy_best("v100-dvfs", "real")
 
-    energy_const("gtx980-low-dvfs", "real-small-workload")
-    energy_const("gtx1080ti-dvfs", "real")
-    energy_const("p100-dvfs", "real")
-    #energy_const("v100-dvfs", "real")
+    #energy_const("gtx980-low-dvfs", "real-small-workload")
+    #energy_const("gtx1080ti-dvfs", "real")
+    #energy_const("p100-dvfs", "real")
+    energy_const("v100-dvfs", "real")

@@ -14,5 +14,5 @@ power_algo=xgboost
 python analytical.py --data-root raw --benchmark-setting ${gpu} --kernel-setting ${kernels} --method ${perf_algo}
 
 # use ML model to fit power data
-#python power_dvfs.py --benchmark-setting ${gpu} --kernel-setting ${kernels} --method${power_algo}
+#python power_dvfs.py --benchmark-setting ${gpu} --kernel-setting ${kernels} --method ${power_algo}
 
