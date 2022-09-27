@@ -290,10 +290,11 @@ ifeq ($(GENCODE_FLAGS),)
 $(foreach sm,$(SMS),$(eval GENCODE_FLAGS += -gencode arch=compute_$(sm),code=sm_$(sm)))
 
 # Generate PTX code from the highest SM architecture in $(SMS) to guarantee forward-compatibility
-HIGHEST_SM := $(lastword $(sort $(SMS)))
-ifneq ($(HIGHEST_SM),)
-GENCODE_FLAGS += -gencode arch=compute_$(HIGHEST_SM),code=compute_$(HIGHEST_SM)
-endif
+# HIGHEST_SM := $(lastword $(sort $(SMS)))
+# ifneq ($(HIGHEST_SM),)
+# GENCODE_FLAGS += -gencode arch=compute_$(HIGHEST_SM),code=compute_$(HIGHEST_SM)
+# endif
+$(foreach sm,$(SMS),$(eval GENCODE_FLAGS += -gencode arch=compute_$(sm),code=compute_$(sm)))
 endif
 
 ALL_CCFLAGS += --threads 0
@@ -322,7 +323,7 @@ matrixMul.o:matrixMul.cu
 matrixMul: matrixMul.o
 	$(EXEC) $(NVCC) $(ALL_LDFLAGS) $(GENCODE_FLAGS) -o $@ $+ $(LIBRARIES)
 	$(EXEC) mkdir -p ../bin/
-	$(EXEC) cp $@ ../bin/
+	$(EXEC) mv $@ ../bin/
 
 run: build
 	$(EXEC) ./matrixMul
