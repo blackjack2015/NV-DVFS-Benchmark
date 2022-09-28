@@ -308,7 +308,7 @@ endif
 # Target rules
 all: build
 
-build: matrixMul
+build: transpose
 
 check.deps:
 ifeq ($(SAMPLE_ENABLED),0)
@@ -317,19 +317,19 @@ else
 	@echo "Sample is ready - all dependencies have been met"
 endif
 
-matrixMul.o:matrixMul.cu
+transpose.o:transpose.cu
 	$(EXEC) $(NVCC) $(INCLUDES) $(ALL_CCFLAGS) $(GENCODE_FLAGS) -o $@ -c $<
 
-matrixMul: matrixMul.o
+transpose:transpose.o
 	$(EXEC) $(NVCC) $(ALL_LDFLAGS) $(GENCODE_FLAGS) -o $@ $+ $(LIBRARIES)
 	$(EXEC) mkdir -p ../bin/
 	$(EXEC) mv $@ ../bin/
 
 run: build
-	$(EXEC) ./matrixMul
+	$(EXEC) ./transpose
 
 clean:
 	rm -f *.o
-	rm -rf ../bin/matrixMul
+	rm -rf ../bin/transpose
 
 clobber: clean

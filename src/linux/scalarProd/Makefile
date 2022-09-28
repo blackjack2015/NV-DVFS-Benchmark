@@ -278,7 +278,7 @@ LIBRARIES :=
 ################################################################################
 
 # Gencode arguments
-SMS ?= 50 52 60 61 70 75 80 86
+SMS ?= 52 60 61 70 75 80 86
 
 ifeq ($(SMS),)
 $(info >>> WARNING - no SM architectures have been specified - waiving sample <<<)
@@ -308,7 +308,7 @@ endif
 # Target rules
 all: build
 
-build: matrixMul
+build: scalarProd
 
 check.deps:
 ifeq ($(SAMPLE_ENABLED),0)
@@ -317,19 +317,22 @@ else
 	@echo "Sample is ready - all dependencies have been met"
 endif
 
-matrixMul.o:matrixMul.cu
+scalarProd_cpu.o:scalarProd_cpu.cpp
 	$(EXEC) $(NVCC) $(INCLUDES) $(ALL_CCFLAGS) $(GENCODE_FLAGS) -o $@ -c $<
 
-matrixMul: matrixMul.o
+scalarProd.o:scalarProd.cu
+	$(EXEC) $(NVCC) $(INCLUDES) $(ALL_CCFLAGS) $(GENCODE_FLAGS) -o $@ -c $<
+
+scalarProd:scalarProd_cpu.o scalarProd.o
 	$(EXEC) $(NVCC) $(ALL_LDFLAGS) $(GENCODE_FLAGS) -o $@ $+ $(LIBRARIES)
 	$(EXEC) mkdir -p ../bin/
 	$(EXEC) mv $@ ../bin/
 
 run: build
-	$(EXEC) ./matrixMul
+	$(EXEC) ./scalarProd
 
 clean:
 	rm -f *.o
-	rm -rf ../bin/matrixMul
+	rm -rf ../bin/scalarProd
 
 clobber: clean

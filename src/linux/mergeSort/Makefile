@@ -273,7 +273,7 @@ ALL_LDFLAGS += $(addprefix -Xlinker ,$(EXTRA_LDFLAGS))
 
 # Common includes and paths for CUDA
 INCLUDES  := -I../common/inc
-LIBRARIES :=
+LIBRARIES := -lcufft
 
 ################################################################################
 
@@ -308,7 +308,7 @@ endif
 # Target rules
 all: build
 
-build: matrixMul
+build: mergeSort
 
 check.deps:
 ifeq ($(SAMPLE_ENABLED),0)
@@ -317,19 +317,31 @@ else
 	@echo "Sample is ready - all dependencies have been met"
 endif
 
-matrixMul.o:matrixMul.cu
+bitonic.o:bitonic.cu
 	$(EXEC) $(NVCC) $(INCLUDES) $(ALL_CCFLAGS) $(GENCODE_FLAGS) -o $@ -c $<
 
-matrixMul: matrixMul.o
+mergeSort.o:mergeSort.cu
+	$(EXEC) $(NVCC) $(INCLUDES) $(ALL_CCFLAGS) $(GENCODE_FLAGS) -o $@ -c $<
+
+mergeSort_host.o:mergeSort_host.cpp
+	$(EXEC) $(NVCC) $(INCLUDES) $(ALL_CCFLAGS) $(GENCODE_FLAGS) -o $@ -c $<
+
+mergeSort_validate.o:mergeSort_validate.cpp
+	$(EXEC) $(NVCC) $(INCLUDES) $(ALL_CCFLAGS) $(GENCODE_FLAGS) -o $@ -c $<
+
+main.o:main.cpp
+	$(EXEC) $(NVCC) $(INCLUDES) $(ALL_CCFLAGS) $(GENCODE_FLAGS) -o $@ -c $<
+
+mergeSort:bitonic.o mergeSort.o mergeSort_host.o mergeSort_validate.o main.o
 	$(EXEC) $(NVCC) $(ALL_LDFLAGS) $(GENCODE_FLAGS) -o $@ $+ $(LIBRARIES)
 	$(EXEC) mkdir -p ../bin/
 	$(EXEC) mv $@ ../bin/
 
 run: build
-	$(EXEC) ./matrixMul
+	$(EXEC) ./mergeSort
 
 clean:
 	rm -f *.o
-	rm -rf ../bin/matrixMul
+	rm -rf ../bin/mergeSort
 
 clobber: clean

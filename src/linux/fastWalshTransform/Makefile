@@ -308,7 +308,7 @@ endif
 # Target rules
 all: build
 
-build: matrixMul
+build: fastWalshTransform
 
 check.deps:
 ifeq ($(SAMPLE_ENABLED),0)
@@ -317,19 +317,22 @@ else
 	@echo "Sample is ready - all dependencies have been met"
 endif
 
-matrixMul.o:matrixMul.cu
+fastWalshTransform.o:fastWalshTransform.cu
 	$(EXEC) $(NVCC) $(INCLUDES) $(ALL_CCFLAGS) $(GENCODE_FLAGS) -o $@ -c $<
 
-matrixMul: matrixMul.o
+fastWalshTransform_gold.o:fastWalshTransform_gold.cpp
+	$(EXEC) $(NVCC) $(INCLUDES) $(ALL_CCFLAGS) $(GENCODE_FLAGS) -o $@ -c $<
+
+fastWalshTransform: fastWalshTransform.o fastWalshTransform_gold.o
 	$(EXEC) $(NVCC) $(ALL_LDFLAGS) $(GENCODE_FLAGS) -o $@ $+ $(LIBRARIES)
 	$(EXEC) mkdir -p ../bin/
 	$(EXEC) mv $@ ../bin/
 
 run: build
-	$(EXEC) ./matrixMul
+	$(EXEC) ./fastWalshTransform
 
 clean:
 	rm -f *.o
-	rm -rf ../bin/matrixMul
+	rm -rf ../bin/fastWalshTransform
 
 clobber: clean

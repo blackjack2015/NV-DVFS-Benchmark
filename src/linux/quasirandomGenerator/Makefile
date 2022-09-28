@@ -272,7 +272,7 @@ ALL_LDFLAGS += $(addprefix -Xlinker ,$(LDFLAGS))
 ALL_LDFLAGS += $(addprefix -Xlinker ,$(EXTRA_LDFLAGS))
 
 # Common includes and paths for CUDA
-INCLUDES  := -I../common/inc
+INCLUDES  := -I../common/inc 
 LIBRARIES :=
 
 ################################################################################
@@ -290,11 +290,11 @@ ifeq ($(GENCODE_FLAGS),)
 $(foreach sm,$(SMS),$(eval GENCODE_FLAGS += -gencode arch=compute_$(sm),code=sm_$(sm)))
 
 # Generate PTX code from the highest SM architecture in $(SMS) to guarantee forward-compatibility
-# HIGHEST_SM := $(lastword $(sort $(SMS)))
-# ifneq ($(HIGHEST_SM),)
-# GENCODE_FLAGS += -gencode arch=compute_$(HIGHEST_SM),code=compute_$(HIGHEST_SM)
-# endif
-$(foreach sm,$(SMS),$(eval GENCODE_FLAGS += -gencode arch=compute_$(sm),code=compute_$(sm)))
+#HIGHEST_SM := $(lastword $(sort $(SMS)))
+#ifneq ($(HIGHEST_SM),)
+#GENCODE_FLAGS += -gencode arch=compute_$(HIGHEST_SM),code=compute_$(HIGHEST_SM)
+#endif
+$(foreach sm,$(SMS),$(eval GENCODE_FLAGS += -gencode arch=compute_$(sm),code=compute_$(sm))) 
 endif
 
 ALL_CCFLAGS += --threads 0
@@ -308,7 +308,7 @@ endif
 # Target rules
 all: build
 
-build: matrixMul
+build: quasirandomGenerator
 
 check.deps:
 ifeq ($(SAMPLE_ENABLED),0)
@@ -317,19 +317,25 @@ else
 	@echo "Sample is ready - all dependencies have been met"
 endif
 
-matrixMul.o:matrixMul.cu
+quasirandomGenerator_kernel.o:quasirandomGenerator_kernel.cu
 	$(EXEC) $(NVCC) $(INCLUDES) $(ALL_CCFLAGS) $(GENCODE_FLAGS) -o $@ -c $<
 
-matrixMul: matrixMul.o
+quasirandomGenerator_gold.o:quasirandomGenerator_gold.cpp
+	$(EXEC) $(NVCC) $(INCLUDES) $(ALL_CCFLAGS) $(GENCODE_FLAGS) -o $@ -c $<
+
+quasirandomGenerator.o:quasirandomGenerator.cpp
+	$(EXEC) $(NVCC) $(INCLUDES) $(ALL_CCFLAGS) $(GENCODE_FLAGS) -o $@ -c $<
+
+quasirandomGenerator:quasirandomGenerator_kernel.o quasirandomGenerator_gold.o quasirandomGenerator.o
 	$(EXEC) $(NVCC) $(ALL_LDFLAGS) $(GENCODE_FLAGS) -o $@ $+ $(LIBRARIES)
 	$(EXEC) mkdir -p ../bin/
 	$(EXEC) mv $@ ../bin/
 
 run: build
-	$(EXEC) ./matrixMul
+	$(EXEC) ./quasirandomGenerator
 
 clean:
 	rm -f *.o
-	rm -rf ../bin/matrixMul
+	rm -rf ../bin/quasirandomGenerator
 
 clobber: clean
