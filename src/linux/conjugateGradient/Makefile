@@ -278,7 +278,7 @@ LIBRARIES :=
 ################################################################################
 
 # Gencode arguments
-SMS ?= 50 52 60 61 70 75 80 86
+SMS ?= 60 61 70 75 80 86
 
 ifeq ($(SMS),)
 $(info >>> WARNING - no SM architectures have been specified - waiving sample <<<)
@@ -297,7 +297,7 @@ $(foreach sm,$(SMS),$(eval GENCODE_FLAGS += -gencode arch=compute_$(sm),code=sm_
 $(foreach sm,$(SMS),$(eval GENCODE_FLAGS += -gencode arch=compute_$(sm),code=compute_$(sm))) 
 endif
 
-ALL_CCFLAGS += --threads 0
+ALL_CCFLAGS += --std=c++11 --threads 0
 
 ifeq ($(SAMPLE_ENABLED),0)
 EXEC ?= @echo "[@]"
@@ -320,7 +320,10 @@ endif
 main.o:main.cpp
 	$(EXEC) $(NVCC) $(INCLUDES) $(ALL_CCFLAGS) $(GENCODE_FLAGS) -o $@ -c $<
 
-conjugateGradient:main.o
+conjugateGradientMultiBlockCG.o:conjugateGradientMultiBlockCG.cu
+	$(EXEC) $(NVCC) $(INCLUDES) $(ALL_CCFLAGS) $(GENCODE_FLAGS) -o $@ -c $<
+
+conjugateGradient:conjugateGradientMultiBlockCG.o
 	$(EXEC) $(NVCC) $(ALL_LDFLAGS) $(GENCODE_FLAGS) -o $@ $+ $(LIBRARIES)
 	$(EXEC) mkdir -p ../bin/
 	$(EXEC) mv $@ ../bin/
