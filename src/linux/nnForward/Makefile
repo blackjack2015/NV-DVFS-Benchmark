@@ -278,7 +278,7 @@ LIBRARIES :=
 ################################################################################
 
 # Gencode arguments
-SMS ?= 50 52 60 61 70 75 80 86
+SMS ?= 50 52 60 61 70 75 # 80 86
 
 ifeq ($(SMS),)
 $(info >>> WARNING - no SM architectures have been specified - waiving sample <<<)
@@ -296,7 +296,9 @@ GENCODE_FLAGS += -gencode arch=compute_$(HIGHEST_SM),code=compute_$(HIGHEST_SM)
 endif
 endif
 
-ALL_CCFLAGS += --threads 0
+ifndef CUDA_LOW
+    ALL_CCFLAGS += --threads 0
+endif
 
 ifeq ($(SAMPLE_ENABLED),0)
 EXEC ?= @echo "[@]"
