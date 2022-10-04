@@ -34,7 +34,7 @@
 ###############################################################################
 
 
-CASES=matrixMul nnForward
+CASES=matrixMul nnForward nvml_tools
 
 TARGET_ARCH ?= $(shell uname -m)
 

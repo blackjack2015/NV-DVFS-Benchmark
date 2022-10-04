@@ -11,8 +11,7 @@
 #include <cuda.h>
 #include <cuda_runtime.h>
 #include <cuda_runtime_api.h>
-#include <helper_functions.h>   // helper functions for string parsing
-#include <helper_cuda.h>        // helper functions CUDA error checking and initialization
+#include <helper_cuda.h>
 
 #define CUDA_SAFE_CALL( call) {                                    \
     cudaError err = call;                                                    \
@@ -32,15 +31,23 @@
 // 			default: return 32;
 // 		}
 // 		case 3:  return 192;
-// 		case 6:  switch(minor){
+// 		case 6: switch(minor){
 // 			case 0:  return 64;
 // 			default: return 128;
 // 		}
+// 		case 7:  return 64;
 // 		default: return 128;
 // 	}
 // }
 
-// Return theoretical peak limits in compute and memory bandwidth from cuda property information
+static inline bool IsFP16Supported(void){
+	cudaDeviceProp deviceProp;
+	int current_device;
+	CUDA_SAFE_CALL( cudaGetDevice(&current_device) );
+	CUDA_SAFE_CALL( cudaGetDeviceProperties(&deviceProp, current_device) );
+	return deviceProp.major>5 || (deviceProp.major == 5 && deviceProp.minor == 3);
+}
+
 static inline void GetDevicePeakInfo(double *aGIPS, double *aGBPS, cudaDeviceProp *aDeviceProp = NULL){
 	cudaDeviceProp deviceProp;
 	int current_device;
@@ -55,7 +62,6 @@ static inline void GetDevicePeakInfo(double *aGIPS, double *aGBPS, cudaDevicePro
 	*aGBPS = 2.0 * (double)deviceProp.memoryClockRate * 1000.0 * (double)deviceProp.memoryBusWidth / 8.0;
 }
 
-// Get CUDA device properties
 static inline cudaDeviceProp GetDeviceProperties(void){
 	cudaDeviceProp deviceProp;
 	int current_device;
@@ -64,7 +70,7 @@ static inline cudaDeviceProp GetDeviceProperties(void){
 	return deviceProp;
 }
 
-// Produce basic device information output to a file stream
+// Print basic device information
 static void StoreDeviceInfo(FILE *fout){
 	cudaDeviceProp deviceProp;
 	int current_device, driver_version;

@@ -278,7 +278,7 @@ LIBRARIES :=
 ################################################################################
 
 # Gencode arguments
-SMS ?= 50 52 60 61 70 75 #80 86
+SMS ?= 60 61 70 75 80 86
 
 ifeq ($(SMS),)
 $(info >>> WARNING - no SM architectures have been specified - waiving sample <<<)
@@ -290,15 +290,14 @@ ifeq ($(GENCODE_FLAGS),)
 $(foreach sm,$(SMS),$(eval GENCODE_FLAGS += -gencode arch=compute_$(sm),code=sm_$(sm)))
 
 # Generate PTX code from the highest SM architecture in $(SMS) to guarantee forward-compatibility
-HIGHEST_SM := $(lastword $(sort $(SMS)))
-ifneq ($(HIGHEST_SM),)
-GENCODE_FLAGS += -gencode arch=compute_$(HIGHEST_SM),code=compute_$(HIGHEST_SM)
-endif
+#HIGHEST_SM := $(lastword $(sort $(SMS)))
+#ifneq ($(HIGHEST_SM),)
+#GENCODE_FLAGS += -gencode arch=compute_$(HIGHEST_SM),code=compute_$(HIGHEST_SM)
+#endif
+$(foreach sm,$(SMS),$(eval GENCODE_FLAGS += -gencode arch=compute_$(sm),code=compute_$(sm))) 
 endif
 
-ifndef CUDA_LOW
-    ALL_CCFLAGS += --threads 0
-endif
+ALL_CCFLAGS += --std=c++11 --threads 0
 
 ifeq ($(SAMPLE_ENABLED),0)
 EXEC ?= @echo "[@]"
@@ -321,7 +320,10 @@ endif
 main.o:main.cpp
 	$(EXEC) $(NVCC) $(INCLUDES) $(ALL_CCFLAGS) $(GENCODE_FLAGS) -o $@ -c $<
 
-conjugateGradient:main.o
+conjugateGradientMultiBlockCG.o:conjugateGradientMultiBlockCG.cu
+	$(EXEC) $(NVCC) $(INCLUDES) $(ALL_CCFLAGS) $(GENCODE_FLAGS) -o $@ -c $<
+
+conjugateGradient:conjugateGradientMultiBlockCG.o
 	$(EXEC) $(NVCC) $(ALL_LDFLAGS) $(GENCODE_FLAGS) -o $@ $+ $(LIBRARIES)
 	$(EXEC) mkdir -p ../bin/
 	$(EXEC) mv $@ ../bin/

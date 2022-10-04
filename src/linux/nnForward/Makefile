@@ -290,10 +290,11 @@ ifeq ($(GENCODE_FLAGS),)
 $(foreach sm,$(SMS),$(eval GENCODE_FLAGS += -gencode arch=compute_$(sm),code=sm_$(sm)))
 
 # Generate PTX code from the highest SM architecture in $(SMS) to guarantee forward-compatibility
-HIGHEST_SM := $(lastword $(sort $(SMS)))
-ifneq ($(HIGHEST_SM),)
-GENCODE_FLAGS += -gencode arch=compute_$(HIGHEST_SM),code=compute_$(HIGHEST_SM)
-endif
+#HIGHEST_SM := $(lastword $(sort $(SMS)))
+#ifneq ($(HIGHEST_SM),)
+#GENCODE_FLAGS += -gencode arch=compute_$(HIGHEST_SM),code=compute_$(HIGHEST_SM)
+#endif
+$(foreach sm,$(SMS),$(eval GENCODE_FLAGS += -gencode arch=compute_$(sm),code=compute_$(sm))) 
 endif
 
 ifndef CUDA_LOW

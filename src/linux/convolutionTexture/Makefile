@@ -278,7 +278,7 @@ LIBRARIES :=
 ################################################################################
 
 # Gencode arguments
-SMS ?= 50 52 60 61 70 75 # 80 86
+SMS ?= 50 52 60 61 70 75 80 86
 
 ifeq ($(SMS),)
 $(info >>> WARNING - no SM architectures have been specified - waiving sample <<<)
@@ -290,15 +290,14 @@ ifeq ($(GENCODE_FLAGS),)
 $(foreach sm,$(SMS),$(eval GENCODE_FLAGS += -gencode arch=compute_$(sm),code=sm_$(sm)))
 
 # Generate PTX code from the highest SM architecture in $(SMS) to guarantee forward-compatibility
-HIGHEST_SM := $(lastword $(sort $(SMS)))
-ifneq ($(HIGHEST_SM),)
-GENCODE_FLAGS += -gencode arch=compute_$(HIGHEST_SM),code=compute_$(HIGHEST_SM)
-endif
+#HIGHEST_SM := $(lastword $(sort $(SMS)))
+#ifneq ($(HIGHEST_SM),)
+#GENCODE_FLAGS += -gencode arch=compute_$(HIGHEST_SM),code=compute_$(HIGHEST_SM)
+#endif
+$(foreach sm,$(SMS),$(eval GENCODE_FLAGS += -gencode arch=compute_$(sm),code=compute_$(sm))) 
 endif
 
-ifndef CUDA_LOW
-    ALL_CCFLAGS += --threads 0
-endif
+ALL_CCFLAGS += --threads 0
 
 ifeq ($(SAMPLE_ENABLED),0)
 EXEC ?= @echo "[@]"
@@ -318,22 +317,22 @@ else
 	@echo "Sample is ready - all dependencies have been met"
 endif
 
+convolutionTexture.o:convolutionTexture.cu
+	$(EXEC) $(NVCC) $(INCLUDES) $(ALL_CCFLAGS) $(GENCODE_FLAGS) -o $@ -c $<
+
 convolutionTexture_gold.o:convolutionTexture_gold.cpp
 	$(EXEC) $(NVCC) $(INCLUDES) $(ALL_CCFLAGS) $(GENCODE_FLAGS) -o $@ -c $<
 
 main.o:main.cpp
 	$(EXEC) $(NVCC) $(INCLUDES) $(ALL_CCFLAGS) $(GENCODE_FLAGS) -o $@ -c $<
 
-convolutionTexture.o:convolutionTexture.cu
-	$(EXEC) $(NVCC) $(INCLUDES) $(ALL_CCFLAGS) $(GENCODE_FLAGS) -o $@ -c $<
-
-convolutionTexture: convolutionTexture.o main.o convolutionTexture_gold.o
+convolutionTexture: convolutionTexture.o convolutionTexture_gold.o main.o
 	$(EXEC) $(NVCC) $(ALL_LDFLAGS) $(GENCODE_FLAGS) -o $@ $+ $(LIBRARIES)
 	$(EXEC) mkdir -p ../bin/
 	$(EXEC) mv $@ ../bin/
 
 run: build
-	$(EXEC) ./backconvolutionTextureprop
+	$(EXEC) ./convolutionTexture
 
 clean:
 	rm -f *.o
