@@ -34,7 +34,7 @@
 ###############################################################################
 
 
-CASES=matrixMul nnForward nvml_tools
+CASES=binomialOptions BlackScholes conjugateGradient convolutionFFT2D convolutionSeparable convolutionTexture eigenvalues fastWalshTransform gaussian histogram hotspot kmeans matrixMul mergeSort nnForward nvml_tools pathfinder quasirandomGenerator reduction scalarProd SobolQRNG sortingNetworks transpose vectorAdd
 
 TARGET_ARCH ?= $(shell uname -m)
 

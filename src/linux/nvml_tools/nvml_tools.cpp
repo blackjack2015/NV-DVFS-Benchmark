@@ -109,19 +109,18 @@ int main(int argc, char **argv)
 	printf("Device %i: is %s\n", devID, name);
 	ofile << "Device " << devID << ": is " << name << '\n';
 
-	clock_t start = 0;
-	clock_t now;
-	double msec = 0.0;
+	timeval start, now;
+	double usec = 0.0;
+	gettimeofday(&start, 0);
 
 	printf("Time-Stamp\tP-state\tCore-F(MHz)\tMem-F(MHz)\tPower(mW)\t\n");
 	ofile << "Time-Stamp\tP-state\tCore-F(MHz)\tMem-F(MHz)\tPower(mW)\t\n";
 	while (1)
 	{
-		now = clock();
-		printf("%u-%u-%u\n", start, now, CLOCKS_PER_SEC);
-		msec = double(now - start);
-		printf("%.1f ms\t", msec);
-		ofile << msec << " ms\t";
+		gettimeofday(&now, 0);
+		usec = 1000000*(now.tv_sec - start.tv_sec) + now.tv_usec - start.tv_usec;
+		printf("%.1f ms\t", usec/1000.0);
+		ofile << usec/1000.0 << " ms\t";
 		start = now;
 
 		//get pState of GPU
