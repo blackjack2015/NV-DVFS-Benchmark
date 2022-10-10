@@ -43,10 +43,6 @@ int main(int argc, char **argv)
 	// By default, we use device 0, otherwise we override the device ID based on what is provided at the command line
 	int devID = 0;
 	int sampleInterval = 200;
-	char* outputF = new char[150];
-
-	for (int i = 0; i < 150; i++)
-		outputF[i] = '\0';
 
 	if (checkCmdLineFlag(argc, (const char **)argv, "device"))
 	{
@@ -54,19 +50,11 @@ int main(int argc, char **argv)
 		cudaSetDevice(devID);
 	}
 
-	if (checkCmdLineFlag(argc, (const char **)argv, "output"))
-	{
-		getCmdLineArgumentString(argc, (const char **)argv, "output", &outputF);
-	}
 
 	if (checkCmdLineFlag(argc, (const char **)argv, "si"))
 	{
 		sampleInterval = getCmdLineArgumentInt(argc, (const char **)argv, "si");
 	}
-
-	printf(outputF);
-	ofstream ofile;
-	ofile.open(outputF);
 
 	nvmlReturn_t result;
 	//unsigned int device_count, i;
@@ -107,20 +95,17 @@ int main(int argc, char **argv)
 		printf("Failed to get name of device %i: %s\n", devID, nvmlErrorString(result));
 	}
 	printf("Device %i: is %s\n", devID, name);
-	ofile << "Device " << devID << ": is " << name << '\n';
 
 	timeval start, now;
 	double usec = 0.0;
 	gettimeofday(&start, 0);
 
 	printf("Time-Stamp\tP-state\tCore-F(MHz)\tMem-F(MHz)\tPower(mW)\t\n");
-	ofile << "Time-Stamp\tP-state\tCore-F(MHz)\tMem-F(MHz)\tPower(mW)\t\n";
 	while (1)
 	{
 		gettimeofday(&now, 0);
 		usec = 1000000*(now.tv_sec - start.tv_sec) + now.tv_usec - start.tv_usec;
-		printf("%.1f ms\t", usec/1000.0);
-		ofile << usec/1000.0 << " ms\t";
+		printf("%.2f ms\t", usec/1000.0);
 		start = now;
 
 		//get pState of GPU
@@ -133,7 +118,6 @@ int main(int argc, char **argv)
 			printf("Failed to get PState Information for device %i: %s\n", devID, nvmlErrorString(result));
 		}
 		printf("%d\t", pState);
-		ofile << pState << "\t";
 
 		//get SM clock and Memory clock of GPU
 		unsigned int sm_clock, memory_clock;
@@ -147,7 +131,6 @@ int main(int argc, char **argv)
 			printf("Failed to get clock Information for device %i: %s\n", devID, nvmlErrorString(result));
 		}
 		printf("%u\t%u\t", sm_clock, memory_clock);
-		ofile << sm_clock << "\t" << memory_clock << "\t";
 
 		result = nvmlDeviceGetPowerUsage(device, &power);
 		if (NVML_ERROR_NOT_SUPPORTED == result)
@@ -157,7 +140,7 @@ int main(int argc, char **argv)
 			printf("Failed to get power Information for device %i: %s\n", devID, nvmlErrorString(result));
 		}
 		printf("%u\t\n", power);
-		ofile << power << "\t" << endl;
+		fflush(stdout);
 
 		// Sleep(sampleInterval);
 		usleep(sampleInterval*1000.0);
