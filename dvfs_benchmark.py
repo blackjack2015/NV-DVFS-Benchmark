@@ -143,8 +143,12 @@ if __name__ == '__main__':
 
     if bench_args['nvprof'] is not None:
         nvprofiler = NvProfiler(device_id=bench_args['cuda_dev_id'], metrics=bench_args['nvprof']['metrics_list'])
+
     if bench_args['dcgm'] is not None:
-        dcgm_profiler = DCGMProfiler(device_id=bench_args['nvsmi_dev_id'])
+        dcgm_profiler = DCGMProfiler(
+            device_id = bench_args['nvsmi_dev_id'],
+            sample_interval = bench_args['pw_sample_int']
+        )
 
     print(bench_args['freqs'])
     for core_freq, mem_freq in bench_args['freqs']:
@@ -172,12 +176,19 @@ if __name__ == '__main__':
                 power_profiler.start(bench.get_power_file())
                 time.sleep(bench_args['rest_time'])
     
-                # execute program to collect power data
+                # start dcgm
+                if bench_args['dcgm'] is not None:
+                    dcgm_profiler.start(bench.get_dcgm_file())
+                    time.sleep(bench_args['rest_time'])
+    
+                # execute program to collect power (and dcgm optionally) data
                 bench.run(secs=bench_args['running_time'])
                 time.sleep(bench_args['rest_time'])
     
-                # stop record power data
+                # stop record power (and dcgm optionally) data
                 power_profiler.end()
+                if bench_args['dcgm'] is not None:
+                    dcgm_profiler.end()
 
                 if bench_args['nvprof'] is not None:
                     # use nvprof to collect the execution time

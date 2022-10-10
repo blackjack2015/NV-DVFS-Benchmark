@@ -9,7 +9,7 @@ def run_command(command):
 
 class PowerProfiler:
 
-    def __init__(self, device_id, sample_interval):
+    def __init__(self, device_id, sample_interval=200):
 
         self.device_id = device_id
         self.sample_interval = sample_interval
@@ -80,6 +80,31 @@ class NvProfiler:
 
 class DCGMProfiler:
 
-    def __init__(self, device_id=0):
+    def __init__(self, device_id=0, sample_interval=200):
 
-        pass
+        self.device_id = device_id
+        self.sample_interval = sample_interval
+        self.start_cmd = 'dcgmi dmon -i %d -d %d' % (
+            self.device_id,
+            self.sample_interval,
+        )
+        self.stop_cmd = 'killall dcgmi'
+        # SMACT - 1002
+        # SMOCC - 1003
+        # TENSO - 1004
+        # DRAMA - 1005
+        # FP64A - 1006
+        # FP32A - 1007
+        # FP16A - 1008
+        self.metrics = [1002, 1003, 1004, 1005, 1006, 1007, 1008]
+
+    def start(self, output):
+
+        metrics_str = '-e ' + ','.join([str(item) for item in self.metrics])
+        daemon_cmd = 'nohup %s %s 1>%s 2>&1 &' % (self.start_cmd, metrics_str, output)
+        run_command(daemon_cmd)
+
+    def end(self):
+
+        run_command(self.stop_cmd)
+
