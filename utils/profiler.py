@@ -96,7 +96,8 @@ class DCGMProfiler:
         # FP64A - 1006
         # FP32A - 1007
         # FP16A - 1008
-        self.metrics = [1002, 1003, 1004, 1005, 1006, 1007, 1008]
+        # INTAC - 1016
+        self.metrics = [1002, 1003, 1004, 1005, 1006, 1007, 1008, 1016]
 
     def start(self, output):
 
