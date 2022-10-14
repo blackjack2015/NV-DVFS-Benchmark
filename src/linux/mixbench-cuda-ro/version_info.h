@@ -1,0 +1,1 @@
+#define VERSION_INFO "v0.02-35-g1852d76"
