@@ -80,7 +80,7 @@ class NvProfiler:
 
 class DCGMProfiler:
 
-    def __init__(self, device_id=0, sample_interval=200):
+    def __init__(self, device_id=0, sample_interval=200, metrics=None):
 
         self.device_id = device_id
         self.sample_interval = sample_interval
@@ -97,7 +97,11 @@ class DCGMProfiler:
         # FP32A - 1007
         # FP16A - 1008
         # INTAC - 1016
-        self.metrics = [1002, 1003, 1004, 1005, 1006, 1007, 1008, 1016]
+        if metrics is None:
+            self.metrics = [1002, 1003, 1004, 1005, 1006, 1007, 1008, 1016]
+        else:
+            print(metrics)
+            self.metrics = metrics
 
     def start(self, output):
 

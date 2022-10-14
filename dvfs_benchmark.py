@@ -101,6 +101,7 @@ def get_config(bench_file, nvprof_enabled=True, dcgm_enabled=True):
         bench_args['dcgm'] = None
     else:
         bench_args['dcgm'] = {}
+        bench_args['dcgm']['metrics_list'] = json.loads(cf_bs.get("dcgm", "metrics"))
 
     return bench_args
 
@@ -142,12 +143,15 @@ if __name__ == '__main__':
     dvfs_controller.activate()
 
     if bench_args['nvprof'] is not None:
-        nvprofiler = NvProfiler(device_id=bench_args['cuda_dev_id'], metrics=bench_args['nvprof']['metrics_list'])
-
+        nvprofiler = NvProfiler(
+            device_id=bench_args['cuda_dev_id'],
+            metrics=bench_args['nvprof']['metrics_list']
+        )
     if bench_args['dcgm'] is not None:
         dcgm_profiler = DCGMProfiler(
             device_id = bench_args['nvsmi_dev_id'],
-            sample_interval = bench_args['pw_sample_int']
+            sample_interval = bench_args['pw_sample_int'],
+            metrics=bench_args['dcgm']['metrics_list']
         )
 
     print(bench_args['freqs'])
