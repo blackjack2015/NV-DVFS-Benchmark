@@ -186,7 +186,7 @@ if __name__ == '__main__':
                     time.sleep(bench_args['rest_time'])
     
                 # execute program to collect power (and dcgm optionally) data
-                bench.run(secs=bench_args['running_time'])
+                bench.run(device_id=bench_args['cuda_dev_id'], secs=bench_args['running_time'])
                 time.sleep(bench_args['rest_time'])
     
                 # stop record power (and dcgm optionally) data

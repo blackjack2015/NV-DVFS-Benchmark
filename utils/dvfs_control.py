@@ -10,7 +10,7 @@ class DVFSController:
     def activate(self):
         # for linux
         # unlock the dvfs function
-        os.system('sudo nvidia-smi -i %d -pl 250' % self.device_id)
+        os.system('sudo nvidia-smi -i %d -pl 260' % self.device_id)
         os.system('sudo nvidia-smi -i %d -pm ENABLED' % self.device_id)
         os.system('sudo nvidia-smi -i %d -acp 0' % self.device_id)
 
@@ -21,6 +21,7 @@ class DVFSController:
 
         os.system('sudo nvidia-smi -i %d -lgc %d' % (self.device_id, core_freq))
         os.system('sudo nvidia-smi -i %d -lmc %d' % (self.device_id, mem_freq))
+        os.system('sudo nvidia-smi -i %d -ac %d,%d' % (self.device_id, mem_freq, core_freq))
 
     def reset(self):
 
