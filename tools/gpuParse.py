@@ -32,11 +32,14 @@ for perf_file in perf_filelist:
     power_file = perf_file.replace('perf', 'power')
     dcgm_file = perf_file.replace('perf', 'dcgm')
 
-    appName, coreF, memF, time = parse_perf_log(perf_file)
-    avg_power = parse_power_log(power_file)
-    metrics, means = parse_dcgm_log(dcgm_file)
+    perf_dict = parse_perf_log(perf_file)
+    pow_dict = parse_power_log(power_file)
+    dcgm_dict = parse_dcgm_log(dcgm_file)
 
-    print(appName, coreF, memF, time, avg_power, means)
+    one_data = {}
+    one_data.update(perf_dict)
+    one_data.update(pow_dict)
+    one_data.update(dcgm_dict)
 
-
+    print(one_data)
 
