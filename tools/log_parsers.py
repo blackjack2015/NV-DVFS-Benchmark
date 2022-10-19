@@ -46,7 +46,14 @@ def parse_perf_log(perf_file):
         else:
             time = float(time[:-1]) * 1000
 
-    return appName, coreF, memF, time
+    dict_info = {
+        'benchmark': appName,
+        'core_frequency': coreF,
+        'memory_frequency': memF,
+        'time': time
+    }
+
+    return dict_info
 
 
 def parse_metrics_log(metrics_file):
@@ -136,7 +143,11 @@ def parse_power_log(power_file):
     powerList = powerList[-10:]   # filter out those power data of cooling down GPU
     avg_power = np.mean(powerList)
 
-    return avg_power
+    dict_info = {
+        'average_power': avg_power
+    }
+
+    return dict_info
 
 
 def parse_dcgm_log(dcgm_file):
@@ -157,7 +168,12 @@ def parse_dcgm_log(dcgm_file):
     lines = [line for line in lines if 'N/A' not in line]
     data = [re.split(r"[ ]+", line.strip())[2:] for line in lines]
     data = np.array(data, dtype=np.float)
-    means = np.mean(data, axis=0)
+    data = data[data[:, 0] > 0]   # filter data of which SMACT > 0
+    means = np.mean(data, axis=0).tolist()
 
-    return metrics, means
+    dict_info = {}
+    for i in range(len(metrics)):
+        dict_info[metrics[i]] = means[i]
+
+    return dict_info
 
