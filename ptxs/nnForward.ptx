@@ -1,0 +1,292 @@
+
+Fatbin elf code:
+================
+arch = sm_80
+code version = [1,7]
+producer = <unknown>
+host = linux
+compile_size = 64bit
+
+Fatbin ptx code:
+================
+arch = sm_80
+code version = [7,5]
+producer = <unknown>
+host = linux
+compile_size = 64bit
+compressed
+
+
+
+
+
+
+
+
+.version 7.5
+.target sm_80
+.address_size 64
+
+
+
+
+
+.visible .entry _Z22bpnn_layerforward_CUDAPfS_S_S_ii(
+.param .u64 _Z22bpnn_layerforward_CUDAPfS_S_S_ii_param_0,
+.param .u64 _Z22bpnn_layerforward_CUDAPfS_S_S_ii_param_1,
+.param .u64 _Z22bpnn_layerforward_CUDAPfS_S_S_ii_param_2,
+.param .u64 _Z22bpnn_layerforward_CUDAPfS_S_S_ii_param_3,
+.param .u32 _Z22bpnn_layerforward_CUDAPfS_S_S_ii_param_4,
+.param .u32 _Z22bpnn_layerforward_CUDAPfS_S_S_ii_param_5
+)
+{
+.reg .pred %p<7>;
+.reg .f32 %f<24>;
+.reg .b32 %r<49>;
+.reg .b64 %rd<13>;
+
+	.shared .align 4 .b8 _ZZ22bpnn_layerforward_CUDAPfS_S_S_iiE10input_node[64];
+
+	.shared .align 4 .b8 _ZZ22bpnn_layerforward_CUDAPfS_S_S_iiE13weight_matrix[1024];
+
+ld.param.u64 %rd2, [_Z22bpnn_layerforward_CUDAPfS_S_S_ii_param_0];
+ld.param.u64 %rd3, [_Z22bpnn_layerforward_CUDAPfS_S_S_ii_param_2];
+ld.param.u64 %rd4, [_Z22bpnn_layerforward_CUDAPfS_S_S_ii_param_3];
+ld.param.u32 %r10, [_Z22bpnn_layerforward_CUDAPfS_S_S_ii_param_5];
+mov.u32 %r1, %ctaid.y;
+mov.u32 %r2, %tid.y;
+mov.u32 %r3, %tid.x;
+setp.ne.s32 %p1, %r3, 0;
+shl.b32 %r11, %r2, 2;
+mov.u32 %r12, _ZZ22bpnn_layerforward_CUDAPfS_S_S_iiE10input_node;
+add.s32 %r4, %r12, %r11;
+@%p1 bra $L__BB0_2;
+
+shl.b32 %r13, %r1, 4;
+add.s32 %r14, %r2, %r13;
+cvta.to.global.u64 %rd5, %rd2;
+mul.wide.s32 %rd6, %r14, 4;
+add.s64 %rd7, %rd5, %rd6;
+ld.global.f32 %f1, [%rd7+4];
+st.shared.f32 [%r4], %f1;
+
+$L__BB0_2:
+cvta.to.global.u64 %rd8, %rd3;
+add.s32 %r15, %r3, %r10;
+add.s32 %r16, %r10, 1;
+mad.lo.s32 %r17, %r16, %r2, %r15;
+shl.b32 %r18, %r10, 4;
+add.s32 %r19, %r18, 16;
+mad.lo.s32 %r20, %r19, %r1, %r17;
+bar.sync 0;
+mul.wide.s32 %rd9, %r20, 4;
+add.s64 %rd1, %rd8, %rd9;
+ld.global.f32 %f2, [%rd1+8];
+shl.b32 %r21, %r2, 6;
+mov.u32 %r22, _ZZ22bpnn_layerforward_CUDAPfS_S_S_iiE13weight_matrix;
+add.s32 %r23, %r22, %r21;
+shl.b32 %r24, %r3, 2;
+add.s32 %r5, %r23, %r24;
+st.shared.f32 [%r5], %f2;
+bar.sync 0;
+ld.shared.f32 %f3, [%r4];
+ld.shared.f32 %f4, [%r5];
+mul.f32 %f5, %f4, %f3;
+st.shared.f32 [%r5], %f5;
+bar.sync 0;
+mov.f32 %f6, 0f40000000;
+cvt.rzi.s32.f32 %r6, %f6;
+rem.s32 %r25, %r2, %r6;
+setp.ne.s32 %p2, %r25, 0;
+@%p2 bra $L__BB0_4;
+
+ld.shared.f32 %f7, [%r5];
+shr.u32 %r26, %r6, 31;
+add.s32 %r27, %r6, %r26;
+shr.s32 %r28, %r27, 1;
+mad.lo.s32 %r29, %r28, 64, %r5;
+ld.shared.f32 %f8, [%r29];
+add.f32 %f9, %f7, %f8;
+st.shared.f32 [%r5], %f9;
+
+$L__BB0_4:
+bar.sync 0;
+mov.f32 %f10, 0f40800000;
+cvt.rzi.s32.f32 %r7, %f10;
+rem.s32 %r30, %r2, %r7;
+setp.ne.s32 %p3, %r30, 0;
+@%p3 bra $L__BB0_6;
+
+ld.shared.f32 %f11, [%r5];
+shr.u32 %r31, %r7, 31;
+add.s32 %r32, %r7, %r31;
+shr.s32 %r33, %r32, 1;
+mad.lo.s32 %r34, %r33, 64, %r5;
+ld.shared.f32 %f12, [%r34];
+add.f32 %f13, %f11, %f12;
+st.shared.f32 [%r5], %f13;
+
+$L__BB0_6:
+bar.sync 0;
+mov.f32 %f14, 0f41000000;
+cvt.rzi.s32.f32 %r8, %f14;
+rem.s32 %r35, %r2, %r8;
+setp.ne.s32 %p4, %r35, 0;
+@%p4 bra $L__BB0_8;
+
+ld.shared.f32 %f15, [%r5];
+shr.u32 %r36, %r8, 31;
+add.s32 %r37, %r8, %r36;
+shr.s32 %r38, %r37, 1;
+mad.lo.s32 %r39, %r38, 64, %r5;
+ld.shared.f32 %f16, [%r39];
+add.f32 %f17, %f15, %f16;
+st.shared.f32 [%r5], %f17;
+
+$L__BB0_8:
+bar.sync 0;
+mov.f32 %f18, 0f41800000;
+cvt.rzi.s32.f32 %r9, %f18;
+rem.s32 %r40, %r2, %r9;
+setp.ne.s32 %p5, %r40, 0;
+@%p5 bra $L__BB0_10;
+
+ld.shared.f32 %f19, [%r5];
+shr.u32 %r41, %r9, 31;
+add.s32 %r42, %r9, %r41;
+shr.s32 %r43, %r42, 1;
+mad.lo.s32 %r44, %r43, 64, %r5;
+ld.shared.f32 %f20, [%r44];
+add.f32 %f21, %f19, %f20;
+st.shared.f32 [%r5], %f21;
+
+$L__BB0_10:
+bar.sync 0;
+ld.shared.f32 %f22, [%r5];
+st.global.f32 [%rd1+8], %f22;
+bar.sync 0;
+@%p1 bra $L__BB0_12;
+
+cvta.to.global.u64 %rd10, %rd4;
+add.s32 %r47, %r22, %r11;
+ld.shared.f32 %f23, [%r47];
+mad.lo.s32 %r48, %r1, %r10, %r2;
+mul.wide.s32 %rd11, %r48, 4;
+add.s64 %rd12, %rd10, %rd11;
+st.global.f32 [%rd12], %f23;
+
+$L__BB0_12:
+ret;
+
+}
+
+.visible .entry _Z24bpnn_adjust_weights_cudaPfiS_iS_S_(
+.param .u64 _Z24bpnn_adjust_weights_cudaPfiS_iS_S__param_0,
+.param .u32 _Z24bpnn_adjust_weights_cudaPfiS_iS_S__param_1,
+.param .u64 _Z24bpnn_adjust_weights_cudaPfiS_iS_S__param_2,
+.param .u32 _Z24bpnn_adjust_weights_cudaPfiS_iS_S__param_3,
+.param .u64 _Z24bpnn_adjust_weights_cudaPfiS_iS_S__param_4,
+.param .u64 _Z24bpnn_adjust_weights_cudaPfiS_iS_S__param_5
+)
+{
+.reg .pred %p<2>;
+.reg .f32 %f<17>;
+.reg .b32 %r<15>;
+.reg .f64 %fd<25>;
+.reg .b64 %rd<19>;
+
+
+ld.param.u64 %rd4, [_Z24bpnn_adjust_weights_cudaPfiS_iS_S__param_0];
+ld.param.u32 %r2, [_Z24bpnn_adjust_weights_cudaPfiS_iS_S__param_1];
+ld.param.u64 %rd5, [_Z24bpnn_adjust_weights_cudaPfiS_iS_S__param_2];
+ld.param.u64 %rd6, [_Z24bpnn_adjust_weights_cudaPfiS_iS_S__param_4];
+ld.param.u64 %rd7, [_Z24bpnn_adjust_weights_cudaPfiS_iS_S__param_5];
+cvta.to.global.u64 %rd1, %rd6;
+shl.b32 %r3, %r2, 4;
+add.s32 %r4, %r3, 16;
+mov.u32 %r5, %ctaid.y;
+add.s32 %r6, %r2, 1;
+mov.u32 %r7, %tid.y;
+mov.u32 %r1, %tid.x;
+add.s32 %r8, %r1, %r2;
+mad.lo.s32 %r9, %r6, %r7, %r8;
+mad.lo.s32 %r10, %r4, %r5, %r9;
+shl.b32 %r11, %r5, 4;
+add.s32 %r12, %r7, %r11;
+cvta.to.global.u64 %rd8, %rd4;
+mul.wide.s32 %rd9, %r1, 4;
+add.s64 %rd2, %rd8, %rd9;
+ld.global.f32 %f1, [%rd2+4];
+cvt.f64.f32 %fd1, %f1;
+mul.f64 %fd2, %fd1, 0d3FD3333333333333;
+cvta.to.global.u64 %rd10, %rd5;
+mul.wide.s32 %rd11, %r12, 4;
+add.s64 %rd12, %rd10, %rd11;
+ld.global.f32 %f2, [%rd12+4];
+cvt.f64.f32 %fd3, %f2;
+cvta.to.global.u64 %rd3, %rd7;
+mul.wide.s32 %rd13, %r10, 4;
+add.s64 %rd14, %rd3, %rd13;
+ld.global.f32 %f3, [%rd14+8];
+cvt.f64.f32 %fd4, %f3;
+mul.f64 %fd5, %fd4, 0d3FD3333333333333;
+fma.rn.f64 %fd6, %fd2, %fd3, %fd5;
+add.s64 %rd15, %rd1, %rd13;
+ld.global.f32 %f4, [%rd15+8];
+cvt.f64.f32 %fd7, %f4;
+add.f64 %fd8, %fd6, %fd7;
+cvt.rn.f32.f64 %f5, %fd8;
+st.global.f32 [%rd15+8], %f5;
+ld.global.f32 %f6, [%rd2+4];
+cvt.f64.f32 %fd9, %f6;
+mul.f64 %fd10, %fd9, 0d3FD3333333333333;
+ld.global.f32 %f7, [%rd12+4];
+cvt.f64.f32 %fd11, %f7;
+ld.global.f32 %f8, [%rd14+8];
+cvt.f64.f32 %fd12, %f8;
+mul.f64 %fd13, %fd12, 0d3FD3333333333333;
+fma.rn.f64 %fd14, %fd10, %fd11, %fd13;
+cvt.rn.f32.f64 %f9, %fd14;
+st.global.f32 [%rd14+8], %f9;
+bar.sync 0;
+or.b32 %r13, %r7, %r5;
+setp.ne.s32 %p1, %r13, 0;
+@%p1 bra $L__BB1_2;
+
+add.s32 %r14, %r1, 1;
+ld.global.f32 %f10, [%rd2+4];
+cvt.f64.f32 %fd15, %f10;
+mul.wide.s32 %rd16, %r14, 4;
+add.s64 %rd17, %rd3, %rd16;
+ld.global.f32 %f11, [%rd17];
+cvt.f64.f32 %fd16, %f11;
+mul.f64 %fd17, %fd16, 0d3FD3333333333333;
+fma.rn.f64 %fd18, %fd15, 0d3FD3333333333333, %fd17;
+add.s64 %rd18, %rd1, %rd16;
+ld.global.f32 %f12, [%rd18];
+cvt.f64.f32 %fd19, %f12;
+add.f64 %fd20, %fd18, %fd19;
+cvt.rn.f32.f64 %f13, %fd20;
+st.global.f32 [%rd18], %f13;
+ld.global.f32 %f14, [%rd2+4];
+cvt.f64.f32 %fd21, %f14;
+ld.global.f32 %f15, [%rd17];
+cvt.f64.f32 %fd22, %f15;
+mul.f64 %fd23, %fd22, 0d3FD3333333333333;
+fma.rn.f64 %fd24, %fd21, 0d3FD3333333333333, %fd23;
+cvt.rn.f32.f64 %f16, %fd24;
+st.global.f32 [%rd17], %f16;
+
+$L__BB1_2:
+ret;
+
+}
+
+
+Fatbin elf code:
+================
+arch = sm_80
+code version = [1,7]
+producer = <unknown>
+host = linux
+compile_size = 64bit

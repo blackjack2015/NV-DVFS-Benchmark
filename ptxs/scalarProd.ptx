@@ -1,0 +1,371 @@
+
+Fatbin elf code:
+================
+arch = sm_80
+code version = [1,7]
+producer = <unknown>
+host = linux
+compile_size = 64bit
+
+Fatbin ptx code:
+================
+arch = sm_80
+code version = [7,5]
+producer = <unknown>
+host = linux
+compile_size = 64bit
+compressed
+
+
+
+
+
+
+
+
+.version 7.5
+.target sm_80
+.address_size 64
+
+
+
+
+.visible .entry _Z13scalarProdGPUPfS_S_ii(
+.param .u64 _Z13scalarProdGPUPfS_S_ii_param_0,
+.param .u64 _Z13scalarProdGPUPfS_S_ii_param_1,
+.param .u64 _Z13scalarProdGPUPfS_S_ii_param_2,
+.param .u32 _Z13scalarProdGPUPfS_S_ii_param_3,
+.param .u32 _Z13scalarProdGPUPfS_S_ii_param_4
+)
+{
+.reg .pred %p<32>;
+.reg .f32 %f<64>;
+.reg .b32 %r<100>;
+.reg .b64 %rd<25>;
+
+	.shared .align 4 .b8 _ZZ13scalarProdGPUPfS_S_iiE11accumResult[4096];
+
+ld.param.u64 %rd16, [_Z13scalarProdGPUPfS_S_ii_param_0];
+ld.param.u64 %rd17, [_Z13scalarProdGPUPfS_S_ii_param_1];
+ld.param.u64 %rd18, [_Z13scalarProdGPUPfS_S_ii_param_2];
+ld.param.u32 %r45, [_Z13scalarProdGPUPfS_S_ii_param_3];
+ld.param.u32 %r46, [_Z13scalarProdGPUPfS_S_ii_param_4];
+cvta.to.global.u64 %rd1, %rd18;
+cvta.to.global.u64 %rd2, %rd17;
+mov.u32 %r85, %ctaid.x;
+setp.ge.s32 %p1, %r85, %r45;
+@%p1 bra $L__BB0_46;
+
+cvta.to.global.u64 %rd3, %rd16;
+bfe.s32 %r2, %r46, 0, 24;
+mov.u32 %r3, %nctaid.x;
+mov.u32 %r4, %tid.x;
+not.b32 %r47, %r4;
+add.s32 %r5, %r47, %r46;
+mov.u32 %r6, %ntid.x;
+neg.s32 %r7, %r6;
+add.s64 %rd4, %rd2, 8192;
+add.s64 %rd5, %rd1, 8192;
+setp.gt.s32 %p2, %r4, 1023;
+mov.f32 %f9, 0f00000000;
+setp.gt.s32 %p10, %r4, 511;
+setp.gt.s32 %p12, %r4, 255;
+setp.gt.s32 %p14, %r4, 127;
+
+$L__BB0_2:
+bfe.s32 %r48, %r85, 0, 24;
+mul.lo.s32 %r9, %r48, %r2;
+add.s32 %r10, %r9, %r46;
+@%p2 bra $L__BB0_13;
+
+mov.u32 %r86, 0;
+mov.u32 %r87, %r4;
+
+$L__BB0_4:
+mad.lo.s32 %r13, %r86, %r7, %r5;
+add.s32 %r14, %r87, %r9;
+setp.ge.s32 %p3, %r14, %r10;
+mov.f32 %f63, %f9;
+@%p3 bra $L__BB0_12;
+
+shr.u32 %r50, %r13, 10;
+add.s32 %r51, %r50, 1;
+and.b32 %r15, %r51, 3;
+setp.eq.s32 %p4, %r15, 0;
+mov.u32 %r88, %r14;
+mov.f32 %f63, %f9;
+@%p4 bra $L__BB0_9;
+
+mul.wide.s32 %rd19, %r14, 4;
+add.s64 %rd6, %rd2, %rd19;
+add.s64 %rd7, %rd1, %rd19;
+ld.global.f32 %f12, [%rd7];
+ld.global.f32 %f13, [%rd6];
+fma.rn.f32 %f63, %f13, %f12, 0f00000000;
+add.s32 %r88, %r14, 1024;
+setp.eq.s32 %p5, %r15, 1;
+@%p5 bra $L__BB0_9;
+
+ld.global.f32 %f14, [%rd7+4096];
+ld.global.f32 %f15, [%rd6+4096];
+fma.rn.f32 %f63, %f15, %f14, %f63;
+add.s32 %r88, %r14, 2048;
+setp.eq.s32 %p6, %r15, 2;
+@%p6 bra $L__BB0_9;
+
+ld.global.f32 %f16, [%rd7+8192];
+ld.global.f32 %f17, [%rd6+8192];
+fma.rn.f32 %f63, %f17, %f16, %f63;
+add.s32 %r88, %r14, 3072;
+
+$L__BB0_9:
+setp.lt.u32 %p7, %r13, 3072;
+@%p7 bra $L__BB0_12;
+
+mul.wide.s32 %rd20, %r88, 4;
+add.s64 %rd24, %rd4, %rd20;
+add.s64 %rd23, %rd5, %rd20;
+
+$L__BB0_11:
+ld.global.f32 %f18, [%rd23+-8192];
+ld.global.f32 %f19, [%rd24+-8192];
+fma.rn.f32 %f20, %f19, %f18, %f63;
+ld.global.f32 %f21, [%rd23+-4096];
+ld.global.f32 %f22, [%rd24+-4096];
+fma.rn.f32 %f23, %f22, %f21, %f20;
+ld.global.f32 %f24, [%rd23];
+ld.global.f32 %f25, [%rd24];
+fma.rn.f32 %f26, %f25, %f24, %f23;
+ld.global.f32 %f27, [%rd23+4096];
+ld.global.f32 %f28, [%rd24+4096];
+fma.rn.f32 %f63, %f28, %f27, %f26;
+add.s64 %rd24, %rd24, 16384;
+add.s64 %rd23, %rd23, 16384;
+add.s32 %r88, %r88, 4096;
+setp.lt.s32 %p8, %r88, %r10;
+@%p8 bra $L__BB0_11;
+
+$L__BB0_12:
+shl.b32 %r52, %r87, 2;
+mov.u32 %r53, _ZZ13scalarProdGPUPfS_S_iiE11accumResult;
+add.s32 %r54, %r53, %r52;
+st.shared.f32 [%r54], %f63;
+add.s32 %r87, %r87, %r6;
+setp.lt.s32 %p9, %r87, 1024;
+add.s32 %r86, %r86, 1;
+@%p9 bra $L__BB0_4;
+
+$L__BB0_13:
+bar.sync 0;
+@%p10 bra $L__BB0_16;
+
+mov.u32 %r90, %r4;
+
+$L__BB0_15:
+shl.b32 %r55, %r90, 2;
+mov.u32 %r56, _ZZ13scalarProdGPUPfS_S_iiE11accumResult;
+add.s32 %r57, %r56, %r55;
+ld.shared.f32 %f29, [%r57];
+ld.shared.f32 %f30, [%r57+2048];
+add.f32 %f31, %f30, %f29;
+st.shared.f32 [%r57], %f31;
+add.s32 %r90, %r90, %r6;
+setp.lt.s32 %p11, %r90, 512;
+@%p11 bra $L__BB0_15;
+
+$L__BB0_16:
+bar.sync 0;
+@%p12 bra $L__BB0_19;
+
+mov.u32 %r91, %r4;
+
+$L__BB0_18:
+shl.b32 %r58, %r91, 2;
+mov.u32 %r59, _ZZ13scalarProdGPUPfS_S_iiE11accumResult;
+add.s32 %r60, %r59, %r58;
+ld.shared.f32 %f32, [%r60];
+ld.shared.f32 %f33, [%r60+1024];
+add.f32 %f34, %f33, %f32;
+st.shared.f32 [%r60], %f34;
+add.s32 %r91, %r91, %r6;
+setp.lt.s32 %p13, %r91, 256;
+@%p13 bra $L__BB0_18;
+
+$L__BB0_19:
+bar.sync 0;
+@%p14 bra $L__BB0_22;
+
+mov.u32 %r92, %r4;
+
+$L__BB0_21:
+shl.b32 %r61, %r92, 2;
+mov.u32 %r62, _ZZ13scalarProdGPUPfS_S_iiE11accumResult;
+add.s32 %r63, %r62, %r61;
+ld.shared.f32 %f35, [%r63];
+ld.shared.f32 %f36, [%r63+512];
+add.f32 %f37, %f36, %f35;
+st.shared.f32 [%r63], %f37;
+add.s32 %r92, %r92, %r6;
+setp.lt.s32 %p15, %r92, 128;
+@%p15 bra $L__BB0_21;
+
+$L__BB0_22:
+setp.gt.s32 %p16, %r4, 63;
+bar.sync 0;
+@%p16 bra $L__BB0_25;
+
+mov.u32 %r93, %r4;
+
+$L__BB0_24:
+shl.b32 %r64, %r93, 2;
+mov.u32 %r65, _ZZ13scalarProdGPUPfS_S_iiE11accumResult;
+add.s32 %r66, %r65, %r64;
+ld.shared.f32 %f38, [%r66];
+ld.shared.f32 %f39, [%r66+256];
+add.f32 %f40, %f39, %f38;
+st.shared.f32 [%r66], %f40;
+add.s32 %r93, %r93, %r6;
+setp.lt.s32 %p17, %r93, 64;
+@%p17 bra $L__BB0_24;
+
+$L__BB0_25:
+setp.gt.s32 %p18, %r4, 31;
+bar.sync 0;
+@%p18 bra $L__BB0_28;
+
+mov.u32 %r94, %r4;
+
+$L__BB0_27:
+shl.b32 %r67, %r94, 2;
+mov.u32 %r68, _ZZ13scalarProdGPUPfS_S_iiE11accumResult;
+add.s32 %r69, %r68, %r67;
+ld.shared.f32 %f41, [%r69];
+ld.shared.f32 %f42, [%r69+128];
+add.f32 %f43, %f42, %f41;
+st.shared.f32 [%r69], %f43;
+add.s32 %r94, %r94, %r6;
+setp.lt.s32 %p19, %r94, 32;
+@%p19 bra $L__BB0_27;
+
+$L__BB0_28:
+setp.gt.s32 %p20, %r4, 15;
+bar.sync 0;
+@%p20 bra $L__BB0_31;
+
+mov.u32 %r95, %r4;
+
+$L__BB0_30:
+shl.b32 %r70, %r95, 2;
+mov.u32 %r71, _ZZ13scalarProdGPUPfS_S_iiE11accumResult;
+add.s32 %r72, %r71, %r70;
+ld.shared.f32 %f44, [%r72];
+ld.shared.f32 %f45, [%r72+64];
+add.f32 %f46, %f45, %f44;
+st.shared.f32 [%r72], %f46;
+add.s32 %r95, %r95, %r6;
+setp.lt.s32 %p21, %r95, 16;
+@%p21 bra $L__BB0_30;
+
+$L__BB0_31:
+setp.gt.s32 %p22, %r4, 7;
+bar.sync 0;
+@%p22 bra $L__BB0_34;
+
+mov.u32 %r96, %r4;
+
+$L__BB0_33:
+shl.b32 %r73, %r96, 2;
+mov.u32 %r74, _ZZ13scalarProdGPUPfS_S_iiE11accumResult;
+add.s32 %r75, %r74, %r73;
+ld.shared.f32 %f47, [%r75];
+ld.shared.f32 %f48, [%r75+32];
+add.f32 %f49, %f48, %f47;
+st.shared.f32 [%r75], %f49;
+add.s32 %r96, %r96, %r6;
+setp.lt.s32 %p23, %r96, 8;
+@%p23 bra $L__BB0_33;
+
+$L__BB0_34:
+setp.gt.s32 %p24, %r4, 3;
+bar.sync 0;
+@%p24 bra $L__BB0_37;
+
+mov.u32 %r97, %r4;
+
+$L__BB0_36:
+shl.b32 %r76, %r97, 2;
+mov.u32 %r77, _ZZ13scalarProdGPUPfS_S_iiE11accumResult;
+add.s32 %r78, %r77, %r76;
+ld.shared.f32 %f50, [%r78];
+ld.shared.f32 %f51, [%r78+16];
+add.f32 %f52, %f51, %f50;
+st.shared.f32 [%r78], %f52;
+add.s32 %r97, %r97, %r6;
+setp.lt.s32 %p25, %r97, 4;
+@%p25 bra $L__BB0_36;
+
+$L__BB0_37:
+setp.gt.s32 %p26, %r4, 1;
+bar.sync 0;
+@%p26 bra $L__BB0_40;
+
+mov.u32 %r98, %r4;
+
+$L__BB0_39:
+shl.b32 %r79, %r98, 2;
+mov.u32 %r80, _ZZ13scalarProdGPUPfS_S_iiE11accumResult;
+add.s32 %r81, %r80, %r79;
+ld.shared.f32 %f53, [%r81];
+ld.shared.f32 %f54, [%r81+8];
+add.f32 %f55, %f54, %f53;
+st.shared.f32 [%r81], %f55;
+add.s32 %r98, %r98, %r6;
+setp.lt.s32 %p27, %r98, 2;
+@%p27 bra $L__BB0_39;
+
+$L__BB0_40:
+setp.gt.s32 %p28, %r4, 0;
+bar.sync 0;
+@%p28 bra $L__BB0_43;
+
+mov.u32 %r99, %r4;
+
+$L__BB0_42:
+shl.b32 %r82, %r99, 2;
+mov.u32 %r83, _ZZ13scalarProdGPUPfS_S_iiE11accumResult;
+add.s32 %r84, %r83, %r82;
+ld.shared.f32 %f56, [%r84];
+ld.shared.f32 %f57, [%r84+4];
+add.f32 %f58, %f57, %f56;
+st.shared.f32 [%r84], %f58;
+add.s32 %r99, %r99, %r6;
+setp.lt.s32 %p29, %r99, 1;
+@%p29 bra $L__BB0_42;
+
+$L__BB0_43:
+setp.ne.s32 %p30, %r4, 0;
+@%p30 bra $L__BB0_45;
+
+ld.shared.f32 %f59, [_ZZ13scalarProdGPUPfS_S_iiE11accumResult];
+mul.wide.s32 %rd21, %r85, 4;
+add.s64 %rd22, %rd3, %rd21;
+st.global.f32 [%rd22], %f59;
+
+$L__BB0_45:
+add.s32 %r85, %r85, %r3;
+setp.lt.s32 %p31, %r85, %r45;
+@%p31 bra $L__BB0_2;
+
+$L__BB0_46:
+ret;
+
+}
+
+
+Fatbin elf code:
+================
+arch = sm_80
+code version = [1,7]
+producer = <unknown>
+host = linux
+compile_size = 64bit

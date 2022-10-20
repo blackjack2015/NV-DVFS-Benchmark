@@ -1,0 +1,275 @@
+
+Fatbin elf code:
+================
+arch = sm_80
+code version = [1,7]
+producer = <unknown>
+host = linux
+compile_size = 64bit
+
+Fatbin ptx code:
+================
+arch = sm_80
+code version = [7,5]
+producer = <unknown>
+host = linux
+compile_size = 64bit
+compressed
+
+
+
+
+
+
+
+
+.version 7.5
+.target sm_80
+.address_size 64
+
+
+.const .align 4 .b8 c_Kernel[68];
+.global .texref texSrc;
+
+.visible .entry _Z21convolutionRowsKernelPfii(
+.param .u64 _Z21convolutionRowsKernelPfii_param_0,
+.param .u32 _Z21convolutionRowsKernelPfii_param_1,
+.param .u32 _Z21convolutionRowsKernelPfii_param_2
+)
+{
+.reg .pred %p<4>;
+.reg .f32 %f<124>;
+.reg .b32 %r<18>;
+.reg .b64 %rd<6>;
+
+
+ld.param.u64 %rd1, [_Z21convolutionRowsKernelPfii_param_0];
+ld.param.u32 %r3, [_Z21convolutionRowsKernelPfii_param_1];
+ld.param.u32 %r4, [_Z21convolutionRowsKernelPfii_param_2];
+mov.u32 %r5, %ntid.x;
+bfe.s32 %r6, %r5, 0, 24;
+mov.u32 %r7, %ctaid.x;
+bfe.s32 %r8, %r7, 0, 24;
+mov.u32 %r9, %tid.x;
+mad.lo.s32 %r1, %r8, %r6, %r9;
+mov.u32 %r10, %ntid.y;
+bfe.s32 %r11, %r10, 0, 24;
+mov.u32 %r12, %ctaid.y;
+bfe.s32 %r13, %r12, 0, 24;
+mov.u32 %r14, %tid.y;
+mad.lo.s32 %r2, %r13, %r11, %r14;
+setp.ge.s32 %p1, %r1, %r3;
+setp.ge.s32 %p2, %r2, %r4;
+or.pred %p3, %p2, %p1;
+@%p3 bra $L__BB0_2;
+
+cvt.rn.f32.s32 %f1, %r2;
+add.f32 %f2, %f1, 0f3F000000;
+cvt.rn.f32.s32 %f3, %r1;
+add.f32 %f4, %f3, 0f3F000000;
+add.f32 %f5, %f4, 0fC1000000;
+tex.2d.v4.f32.f32 {%f6, %f7, %f8, %f9}, [texSrc, {%f5, %f2}];
+ld.const.f32 %f10, [c_Kernel+64];
+add.f32 %f11, %f4, 0fC0E00000;
+tex.2d.v4.f32.f32 {%f12, %f13, %f14, %f15}, [texSrc, {%f11, %f2}];
+ld.const.f32 %f16, [c_Kernel+60];
+add.f32 %f17, %f4, 0fC0C00000;
+tex.2d.v4.f32.f32 {%f18, %f19, %f20, %f21}, [texSrc, {%f17, %f2}];
+ld.const.f32 %f22, [c_Kernel+56];
+add.f32 %f23, %f4, 0fC0A00000;
+tex.2d.v4.f32.f32 {%f24, %f25, %f26, %f27}, [texSrc, {%f23, %f2}];
+ld.const.f32 %f28, [c_Kernel+52];
+add.f32 %f29, %f4, 0fC0800000;
+tex.2d.v4.f32.f32 {%f30, %f31, %f32, %f33}, [texSrc, {%f29, %f2}];
+ld.const.f32 %f34, [c_Kernel+48];
+add.f32 %f35, %f4, 0fC0400000;
+tex.2d.v4.f32.f32 {%f36, %f37, %f38, %f39}, [texSrc, {%f35, %f2}];
+ld.const.f32 %f40, [c_Kernel+44];
+add.f32 %f41, %f4, 0fC0000000;
+tex.2d.v4.f32.f32 {%f42, %f43, %f44, %f45}, [texSrc, {%f41, %f2}];
+ld.const.f32 %f46, [c_Kernel+40];
+add.f32 %f47, %f4, 0fBF800000;
+tex.2d.v4.f32.f32 {%f48, %f49, %f50, %f51}, [texSrc, {%f47, %f2}];
+ld.const.f32 %f52, [c_Kernel+36];
+add.f32 %f53, %f4, 0f00000000;
+tex.2d.v4.f32.f32 {%f54, %f55, %f56, %f57}, [texSrc, {%f53, %f2}];
+ld.const.f32 %f58, [c_Kernel+32];
+add.f32 %f59, %f4, 0f3F800000;
+tex.2d.v4.f32.f32 {%f60, %f61, %f62, %f63}, [texSrc, {%f59, %f2}];
+ld.const.f32 %f64, [c_Kernel+28];
+add.f32 %f65, %f4, 0f40000000;
+tex.2d.v4.f32.f32 {%f66, %f67, %f68, %f69}, [texSrc, {%f65, %f2}];
+ld.const.f32 %f70, [c_Kernel+24];
+add.f32 %f71, %f4, 0f40400000;
+tex.2d.v4.f32.f32 {%f72, %f73, %f74, %f75}, [texSrc, {%f71, %f2}];
+ld.const.f32 %f76, [c_Kernel+20];
+add.f32 %f77, %f4, 0f40800000;
+tex.2d.v4.f32.f32 {%f78, %f79, %f80, %f81}, [texSrc, {%f77, %f2}];
+ld.const.f32 %f82, [c_Kernel+16];
+add.f32 %f83, %f4, 0f40A00000;
+tex.2d.v4.f32.f32 {%f84, %f85, %f86, %f87}, [texSrc, {%f83, %f2}];
+ld.const.f32 %f88, [c_Kernel+12];
+add.f32 %f89, %f4, 0f40C00000;
+tex.2d.v4.f32.f32 {%f90, %f91, %f92, %f93}, [texSrc, {%f89, %f2}];
+ld.const.f32 %f94, [c_Kernel+8];
+add.f32 %f95, %f4, 0f40E00000;
+tex.2d.v4.f32.f32 {%f96, %f97, %f98, %f99}, [texSrc, {%f95, %f2}];
+ld.const.f32 %f100, [c_Kernel+4];
+add.f32 %f101, %f4, 0f41000000;
+tex.2d.v4.f32.f32 {%f102, %f103, %f104, %f105}, [texSrc, {%f101, %f2}];
+ld.const.f32 %f106, [c_Kernel];
+fma.rn.f32 %f107, %f102, %f106, 0f00000000;
+fma.rn.f32 %f108, %f96, %f100, %f107;
+fma.rn.f32 %f109, %f90, %f94, %f108;
+fma.rn.f32 %f110, %f84, %f88, %f109;
+fma.rn.f32 %f111, %f78, %f82, %f110;
+fma.rn.f32 %f112, %f72, %f76, %f111;
+fma.rn.f32 %f113, %f66, %f70, %f112;
+fma.rn.f32 %f114, %f60, %f64, %f113;
+fma.rn.f32 %f115, %f54, %f58, %f114;
+fma.rn.f32 %f116, %f48, %f52, %f115;
+fma.rn.f32 %f117, %f42, %f46, %f116;
+fma.rn.f32 %f118, %f36, %f40, %f117;
+fma.rn.f32 %f119, %f30, %f34, %f118;
+fma.rn.f32 %f120, %f24, %f28, %f119;
+fma.rn.f32 %f121, %f18, %f22, %f120;
+fma.rn.f32 %f122, %f12, %f16, %f121;
+fma.rn.f32 %f123, %f6, %f10, %f122;
+bfe.s32 %r15, %r2, 0, 24;
+bfe.s32 %r16, %r3, 0, 24;
+mad.lo.s32 %r17, %r15, %r16, %r1;
+cvta.to.global.u64 %rd3, %rd1;
+mul.wide.s32 %rd4, %r17, 4;
+add.s64 %rd5, %rd3, %rd4;
+st.global.f32 [%rd5], %f123;
+
+$L__BB0_2:
+ret;
+
+}
+
+.visible .entry _Z24convolutionColumnsKernelPfii(
+.param .u64 _Z24convolutionColumnsKernelPfii_param_0,
+.param .u32 _Z24convolutionColumnsKernelPfii_param_1,
+.param .u32 _Z24convolutionColumnsKernelPfii_param_2
+)
+{
+.reg .pred %p<4>;
+.reg .f32 %f<124>;
+.reg .b32 %r<18>;
+.reg .b64 %rd<6>;
+
+
+ld.param.u64 %rd1, [_Z24convolutionColumnsKernelPfii_param_0];
+ld.param.u32 %r3, [_Z24convolutionColumnsKernelPfii_param_1];
+ld.param.u32 %r4, [_Z24convolutionColumnsKernelPfii_param_2];
+mov.u32 %r5, %ntid.x;
+bfe.s32 %r6, %r5, 0, 24;
+mov.u32 %r7, %ctaid.x;
+bfe.s32 %r8, %r7, 0, 24;
+mov.u32 %r9, %tid.x;
+mad.lo.s32 %r1, %r8, %r6, %r9;
+mov.u32 %r10, %ntid.y;
+bfe.s32 %r11, %r10, 0, 24;
+mov.u32 %r12, %ctaid.y;
+bfe.s32 %r13, %r12, 0, 24;
+mov.u32 %r14, %tid.y;
+mad.lo.s32 %r2, %r13, %r11, %r14;
+setp.ge.s32 %p1, %r1, %r3;
+setp.ge.s32 %p2, %r2, %r4;
+or.pred %p3, %p2, %p1;
+@%p3 bra $L__BB1_2;
+
+cvt.rn.f32.s32 %f1, %r1;
+add.f32 %f2, %f1, 0f3F000000;
+cvt.rn.f32.s32 %f3, %r2;
+add.f32 %f4, %f3, 0f3F000000;
+add.f32 %f5, %f4, 0fC1000000;
+tex.2d.v4.f32.f32 {%f6, %f7, %f8, %f9}, [texSrc, {%f2, %f5}];
+ld.const.f32 %f10, [c_Kernel+64];
+add.f32 %f11, %f4, 0fC0E00000;
+tex.2d.v4.f32.f32 {%f12, %f13, %f14, %f15}, [texSrc, {%f2, %f11}];
+ld.const.f32 %f16, [c_Kernel+60];
+add.f32 %f17, %f4, 0fC0C00000;
+tex.2d.v4.f32.f32 {%f18, %f19, %f20, %f21}, [texSrc, {%f2, %f17}];
+ld.const.f32 %f22, [c_Kernel+56];
+add.f32 %f23, %f4, 0fC0A00000;
+tex.2d.v4.f32.f32 {%f24, %f25, %f26, %f27}, [texSrc, {%f2, %f23}];
+ld.const.f32 %f28, [c_Kernel+52];
+add.f32 %f29, %f4, 0fC0800000;
+tex.2d.v4.f32.f32 {%f30, %f31, %f32, %f33}, [texSrc, {%f2, %f29}];
+ld.const.f32 %f34, [c_Kernel+48];
+add.f32 %f35, %f4, 0fC0400000;
+tex.2d.v4.f32.f32 {%f36, %f37, %f38, %f39}, [texSrc, {%f2, %f35}];
+ld.const.f32 %f40, [c_Kernel+44];
+add.f32 %f41, %f4, 0fC0000000;
+tex.2d.v4.f32.f32 {%f42, %f43, %f44, %f45}, [texSrc, {%f2, %f41}];
+ld.const.f32 %f46, [c_Kernel+40];
+add.f32 %f47, %f4, 0fBF800000;
+tex.2d.v4.f32.f32 {%f48, %f49, %f50, %f51}, [texSrc, {%f2, %f47}];
+ld.const.f32 %f52, [c_Kernel+36];
+add.f32 %f53, %f4, 0f00000000;
+tex.2d.v4.f32.f32 {%f54, %f55, %f56, %f57}, [texSrc, {%f2, %f53}];
+ld.const.f32 %f58, [c_Kernel+32];
+add.f32 %f59, %f4, 0f3F800000;
+tex.2d.v4.f32.f32 {%f60, %f61, %f62, %f63}, [texSrc, {%f2, %f59}];
+ld.const.f32 %f64, [c_Kernel+28];
+add.f32 %f65, %f4, 0f40000000;
+tex.2d.v4.f32.f32 {%f66, %f67, %f68, %f69}, [texSrc, {%f2, %f65}];
+ld.const.f32 %f70, [c_Kernel+24];
+add.f32 %f71, %f4, 0f40400000;
+tex.2d.v4.f32.f32 {%f72, %f73, %f74, %f75}, [texSrc, {%f2, %f71}];
+ld.const.f32 %f76, [c_Kernel+20];
+add.f32 %f77, %f4, 0f40800000;
+tex.2d.v4.f32.f32 {%f78, %f79, %f80, %f81}, [texSrc, {%f2, %f77}];
+ld.const.f32 %f82, [c_Kernel+16];
+add.f32 %f83, %f4, 0f40A00000;
+tex.2d.v4.f32.f32 {%f84, %f85, %f86, %f87}, [texSrc, {%f2, %f83}];
+ld.const.f32 %f88, [c_Kernel+12];
+add.f32 %f89, %f4, 0f40C00000;
+tex.2d.v4.f32.f32 {%f90, %f91, %f92, %f93}, [texSrc, {%f2, %f89}];
+ld.const.f32 %f94, [c_Kernel+8];
+add.f32 %f95, %f4, 0f40E00000;
+tex.2d.v4.f32.f32 {%f96, %f97, %f98, %f99}, [texSrc, {%f2, %f95}];
+ld.const.f32 %f100, [c_Kernel+4];
+add.f32 %f101, %f4, 0f41000000;
+tex.2d.v4.f32.f32 {%f102, %f103, %f104, %f105}, [texSrc, {%f2, %f101}];
+ld.const.f32 %f106, [c_Kernel];
+fma.rn.f32 %f107, %f102, %f106, 0f00000000;
+fma.rn.f32 %f108, %f96, %f100, %f107;
+fma.rn.f32 %f109, %f90, %f94, %f108;
+fma.rn.f32 %f110, %f84, %f88, %f109;
+fma.rn.f32 %f111, %f78, %f82, %f110;
+fma.rn.f32 %f112, %f72, %f76, %f111;
+fma.rn.f32 %f113, %f66, %f70, %f112;
+fma.rn.f32 %f114, %f60, %f64, %f113;
+fma.rn.f32 %f115, %f54, %f58, %f114;
+fma.rn.f32 %f116, %f48, %f52, %f115;
+fma.rn.f32 %f117, %f42, %f46, %f116;
+fma.rn.f32 %f118, %f36, %f40, %f117;
+fma.rn.f32 %f119, %f30, %f34, %f118;
+fma.rn.f32 %f120, %f24, %f28, %f119;
+fma.rn.f32 %f121, %f18, %f22, %f120;
+fma.rn.f32 %f122, %f12, %f16, %f121;
+fma.rn.f32 %f123, %f6, %f10, %f122;
+bfe.s32 %r15, %r2, 0, 24;
+bfe.s32 %r16, %r3, 0, 24;
+mad.lo.s32 %r17, %r15, %r16, %r1;
+cvta.to.global.u64 %rd3, %rd1;
+mul.wide.s32 %rd4, %r17, 4;
+add.s64 %rd5, %rd3, %rd4;
+st.global.f32 [%rd5], %f123;
+
+$L__BB1_2:
+ret;
+
+}
+
+
+Fatbin elf code:
+================
+arch = sm_80
+code version = [1,7]
+producer = <unknown>
+host = linux
+compile_size = 64bit

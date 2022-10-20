@@ -1,0 +1,681 @@
+
+Fatbin elf code:
+================
+arch = sm_80
+code version = [1,7]
+producer = <unknown>
+host = linux
+compile_size = 64bit
+
+Fatbin ptx code:
+================
+arch = sm_80
+code version = [7,5]
+producer = <unknown>
+host = linux
+compile_size = 64bit
+compressed
+
+
+
+
+
+
+
+
+.version 7.5
+.target sm_80
+.address_size 64
+
+
+.global .texref texFloat;
+.global .texref texComplexA;
+.global .texref texComplexB;
+
+.visible .entry _Z16padKernel_kernelPfS_iiiiii(
+.param .u64 _Z16padKernel_kernelPfS_iiiiii_param_0,
+.param .u64 _Z16padKernel_kernelPfS_iiiiii_param_1,
+.param .u32 _Z16padKernel_kernelPfS_iiiiii_param_2,
+.param .u32 _Z16padKernel_kernelPfS_iiiiii_param_3,
+.param .u32 _Z16padKernel_kernelPfS_iiiiii_param_4,
+.param .u32 _Z16padKernel_kernelPfS_iiiiii_param_5,
+.param .u32 _Z16padKernel_kernelPfS_iiiiii_param_6,
+.param .u32 _Z16padKernel_kernelPfS_iiiiii_param_7
+)
+{
+.reg .pred %p<4>;
+.reg .f32 %f<5>;
+.reg .b32 %r<25>;
+.reg .b64 %rd<6>;
+
+
+ld.param.u64 %rd1, [_Z16padKernel_kernelPfS_iiiiii_param_0];
+ld.param.u32 %r3, [_Z16padKernel_kernelPfS_iiiiii_param_2];
+ld.param.u32 %r4, [_Z16padKernel_kernelPfS_iiiiii_param_3];
+ld.param.u32 %r8, [_Z16padKernel_kernelPfS_iiiiii_param_4];
+ld.param.u32 %r5, [_Z16padKernel_kernelPfS_iiiiii_param_5];
+ld.param.u32 %r6, [_Z16padKernel_kernelPfS_iiiiii_param_6];
+ld.param.u32 %r7, [_Z16padKernel_kernelPfS_iiiiii_param_7];
+mov.u32 %r9, %ntid.y;
+mov.u32 %r10, %ctaid.y;
+mov.u32 %r11, %tid.y;
+mad.lo.s32 %r1, %r9, %r10, %r11;
+mov.u32 %r12, %ctaid.x;
+mov.u32 %r13, %ntid.x;
+mov.u32 %r14, %tid.x;
+mad.lo.s32 %r2, %r13, %r12, %r14;
+setp.ge.s32 %p1, %r1, %r8;
+setp.ge.s32 %p2, %r2, %r5;
+or.pred %p3, %p1, %p2;
+@%p3 bra $L__BB0_2;
+
+mad.lo.s32 %r15, %r1, %r5, %r2;
+tex.1d.v4.f32.s32 {%f1, %f2, %f3, %f4}, [texFloat, {%r15}];
+sub.s32 %r16, %r1, %r6;
+sub.s32 %r17, %r2, %r7;
+shr.s32 %r18, %r16, 31;
+and.b32 %r19, %r18, %r3;
+shr.s32 %r20, %r17, 31;
+and.b32 %r21, %r20, %r4;
+add.s32 %r22, %r19, %r16;
+add.s32 %r23, %r21, %r17;
+mad.lo.s32 %r24, %r22, %r4, %r23;
+cvta.to.global.u64 %rd3, %rd1;
+mul.wide.s32 %rd4, %r24, 4;
+add.s64 %rd5, %rd3, %rd4;
+st.global.f32 [%rd5], %f1;
+
+$L__BB0_2:
+ret;
+
+}
+
+.visible .entry _Z27padDataClampToBorder_kernelPfS_iiiiiiii(
+.param .u64 _Z27padDataClampToBorder_kernelPfS_iiiiiiii_param_0,
+.param .u64 _Z27padDataClampToBorder_kernelPfS_iiiiiiii_param_1,
+.param .u32 _Z27padDataClampToBorder_kernelPfS_iiiiiiii_param_2,
+.param .u32 _Z27padDataClampToBorder_kernelPfS_iiiiiiii_param_3,
+.param .u32 _Z27padDataClampToBorder_kernelPfS_iiiiiiii_param_4,
+.param .u32 _Z27padDataClampToBorder_kernelPfS_iiiiiiii_param_5,
+.param .u32 _Z27padDataClampToBorder_kernelPfS_iiiiiiii_param_6,
+.param .u32 _Z27padDataClampToBorder_kernelPfS_iiiiiiii_param_7,
+.param .u32 _Z27padDataClampToBorder_kernelPfS_iiiiiiii_param_8,
+.param .u32 _Z27padDataClampToBorder_kernelPfS_iiiiiiii_param_9
+)
+{
+.reg .pred %p<10>;
+.reg .f32 %f<5>;
+.reg .b32 %r<25>;
+.reg .b64 %rd<6>;
+
+
+ld.param.u64 %rd1, [_Z27padDataClampToBorder_kernelPfS_iiiiiiii_param_0];
+ld.param.u32 %r8, [_Z27padDataClampToBorder_kernelPfS_iiiiiiii_param_2];
+ld.param.u32 %r3, [_Z27padDataClampToBorder_kernelPfS_iiiiiiii_param_3];
+ld.param.u32 %r4, [_Z27padDataClampToBorder_kernelPfS_iiiiiiii_param_4];
+ld.param.u32 %r5, [_Z27padDataClampToBorder_kernelPfS_iiiiiiii_param_5];
+ld.param.u32 %r6, [_Z27padDataClampToBorder_kernelPfS_iiiiiiii_param_8];
+ld.param.u32 %r7, [_Z27padDataClampToBorder_kernelPfS_iiiiiiii_param_9];
+mov.u32 %r9, %ntid.y;
+mov.u32 %r10, %ctaid.y;
+mov.u32 %r11, %tid.y;
+mad.lo.s32 %r1, %r9, %r10, %r11;
+mov.u32 %r12, %ctaid.x;
+mov.u32 %r13, %ntid.x;
+mov.u32 %r14, %tid.x;
+mad.lo.s32 %r2, %r13, %r12, %r14;
+setp.ge.s32 %p1, %r1, %r8;
+setp.ge.s32 %p2, %r2, %r3;
+or.pred %p3, %p1, %p2;
+@%p3 bra $L__BB1_2;
+
+setp.ge.s32 %p4, %r1, %r4;
+add.s32 %r15, %r6, %r4;
+setp.lt.s32 %p5, %r1, %r15;
+and.pred %p6, %p4, %p5;
+setp.ge.s32 %p7, %r2, %r5;
+add.s32 %r16, %r7, %r5;
+setp.lt.s32 %p8, %r2, %r16;
+and.pred %p9, %p7, %p8;
+add.s32 %r17, %r4, -1;
+selp.b32 %r18, %r17, %r1, %p6;
+add.s32 %r19, %r5, -1;
+selp.b32 %r20, %r19, %r2, %p9;
+selp.b32 %r21, %r18, 0, %p5;
+selp.b32 %r22, %r20, 0, %p8;
+mad.lo.s32 %r23, %r21, %r5, %r22;
+tex.1d.v4.f32.s32 {%f1, %f2, %f3, %f4}, [texFloat, {%r23}];
+mad.lo.s32 %r24, %r1, %r3, %r2;
+cvta.to.global.u64 %rd3, %rd1;
+mul.wide.s32 %rd4, %r24, 4;
+add.s64 %rd5, %rd3, %rd4;
+st.global.f32 [%rd5], %f1;
+
+$L__BB1_2:
+ret;
+
+}
+
+.visible .entry _Z27modulateAndNormalize_kernelP6float2S0_if(
+.param .u64 _Z27modulateAndNormalize_kernelP6float2S0_if_param_0,
+.param .u64 _Z27modulateAndNormalize_kernelP6float2S0_if_param_1,
+.param .u32 _Z27modulateAndNormalize_kernelP6float2S0_if_param_2,
+.param .f32 _Z27modulateAndNormalize_kernelP6float2S0_if_param_3
+)
+{
+.reg .pred %p<2>;
+.reg .f32 %f<17>;
+.reg .b32 %r<6>;
+.reg .b64 %rd<8>;
+
+
+ld.param.u64 %rd1, [_Z27modulateAndNormalize_kernelP6float2S0_if_param_0];
+ld.param.u64 %rd2, [_Z27modulateAndNormalize_kernelP6float2S0_if_param_1];
+ld.param.u32 %r2, [_Z27modulateAndNormalize_kernelP6float2S0_if_param_2];
+ld.param.f32 %f1, [_Z27modulateAndNormalize_kernelP6float2S0_if_param_3];
+mov.u32 %r3, %ntid.x;
+mov.u32 %r4, %ctaid.x;
+mov.u32 %r5, %tid.x;
+mad.lo.s32 %r1, %r3, %r4, %r5;
+setp.ge.s32 %p1, %r1, %r2;
+@%p1 bra $L__BB2_2;
+
+cvta.to.global.u64 %rd3, %rd1;
+cvta.to.global.u64 %rd4, %rd2;
+mul.wide.s32 %rd5, %r1, 8;
+add.s64 %rd6, %rd4, %rd5;
+ld.global.v2.f32 {%f2, %f3}, [%rd6];
+add.s64 %rd7, %rd3, %rd5;
+ld.global.v2.f32 {%f6, %f7}, [%rd7];
+mul.f32 %f10, %f2, %f6;
+mul.f32 %f11, %f3, %f7;
+sub.f32 %f12, %f10, %f11;
+mul.f32 %f13, %f2, %f7;
+fma.rn.f32 %f14, %f3, %f6, %f13;
+mul.f32 %f15, %f12, %f1;
+mul.f32 %f16, %f14, %f1;
+st.global.v2.f32 [%rd7], {%f15, %f16};
+
+$L__BB2_2:
+ret;
+
+}
+
+.visible .entry _Z22spPostprocess2D_kernelP6float2S0_jjjjf(
+.param .u64 _Z22spPostprocess2D_kernelP6float2S0_jjjjf_param_0,
+.param .u64 _Z22spPostprocess2D_kernelP6float2S0_jjjjf_param_1,
+.param .u32 _Z22spPostprocess2D_kernelP6float2S0_jjjjf_param_2,
+.param .u32 _Z22spPostprocess2D_kernelP6float2S0_jjjjf_param_3,
+.param .u32 _Z22spPostprocess2D_kernelP6float2S0_jjjjf_param_4,
+.param .u32 _Z22spPostprocess2D_kernelP6float2S0_jjjjf_param_5,
+.param .f32 _Z22spPostprocess2D_kernelP6float2S0_jjjjf_param_6
+)
+{
+.reg .pred %p<6>;
+.reg .f32 %f<57>;
+.reg .b32 %r<40>;
+.reg .b64 %rd<12>;
+
+
+ld.param.u64 %rd3, [_Z22spPostprocess2D_kernelP6float2S0_jjjjf_param_0];
+ld.param.u32 %r7, [_Z22spPostprocess2D_kernelP6float2S0_jjjjf_param_2];
+ld.param.u32 %r8, [_Z22spPostprocess2D_kernelP6float2S0_jjjjf_param_3];
+ld.param.u32 %r10, [_Z22spPostprocess2D_kernelP6float2S0_jjjjf_param_4];
+ld.param.u32 %r9, [_Z22spPostprocess2D_kernelP6float2S0_jjjjf_param_5];
+ld.param.f32 %f1, [_Z22spPostprocess2D_kernelP6float2S0_jjjjf_param_6];
+cvta.to.global.u64 %rd1, %rd3;
+mov.u32 %r11, %ntid.x;
+mov.u32 %r12, %ctaid.x;
+mov.u32 %r13, %tid.x;
+mad.lo.s32 %r1, %r12, %r11, %r13;
+setp.ge.u32 %p1, %r1, %r10;
+@%p1 bra $L__BB3_3;
+
+shr.u32 %r2, %r8, 1;
+add.s32 %r14, %r2, -1;
+and.b32 %r15, %r14, %r1;
+brev.b32 %r16, %r2;
+bfind.shiftamt.u32 %r17, %r16;
+shr.u32 %r18, %r1, %r17;
+add.s32 %r19, %r7, -1;
+and.b32 %r20, %r18, %r19;
+brev.b32 %r21, %r7;
+bfind.shiftamt.u32 %r22, %r21;
+shr.u32 %r23, %r18, %r22;
+mul.lo.s32 %r24, %r23, %r7;
+mul.lo.s32 %r25, %r24, %r8;
+mad.lo.s32 %r3, %r20, %r8, %r25;
+add.s32 %r26, %r3, %r15;
+setp.eq.s32 %p2, %r20, 0;
+sub.s32 %r27, %r7, %r20;
+selp.b32 %r28, 0, %r27, %p2;
+mad.lo.s32 %r4, %r28, %r8, %r25;
+setp.ne.s32 %p3, %r15, 0;
+setp.eq.s32 %p4, %r15, 0;
+sub.s32 %r29, %r8, %r15;
+selp.b32 %r30, 0, %r29, %p4;
+add.s32 %r31, %r4, %r30;
+tex.1d.v4.f32.s32 {%f2, %f3, %f4, %f5}, [texComplexA, {%r26}];
+tex.1d.v4.f32.s32 {%f6, %f7, %f8, %f9}, [texComplexA, {%r31}];
+add.s32 %r32, %r9, %r8;
+mul.lo.s32 %r33, %r24, %r32;
+mad.lo.s32 %r5, %r20, %r32, %r33;
+mad.lo.s32 %r6, %r28, %r32, %r33;
+add.s32 %r34, %r5, %r15;
+add.s32 %r35, %r29, %r6;
+cvt.rn.f32.u32 %f10, %r15;
+mul.f32 %f11, %f10, %f1;
+sin.approx.f32 %f12, %f11;
+cos.approx.f32 %f13, %f11;
+add.f32 %f14, %f2, %f6;
+mul.f32 %f15, %f14, 0f3F000000;
+sub.f32 %f16, %f3, %f7;
+mul.f32 %f17, %f16, 0f3F000000;
+add.f32 %f18, %f3, %f7;
+mul.f32 %f19, %f18, 0f3F000000;
+sub.f32 %f20, %f2, %f6;
+mul.f32 %f21, %f20, 0f3F000000;
+mul.f32 %f22, %f12, %f21;
+fma.rn.f32 %f23, %f13, %f19, %f22;
+mul.f32 %f24, %f12, %f19;
+mul.f32 %f25, %f13, %f21;
+sub.f32 %f26, %f24, %f25;
+mul.wide.u32 %rd4, %r34, 8;
+add.s64 %rd5, %rd1, %rd4;
+add.f32 %f27, %f17, %f26;
+add.f32 %f28, %f15, %f23;
+st.global.v2.f32 [%rd5], {%f28, %f27};
+mul.wide.u32 %rd6, %r35, 8;
+add.s64 %rd7, %rd1, %rd6;
+sub.f32 %f29, %f26, %f17;
+sub.f32 %f30, %f15, %f23;
+st.global.v2.f32 [%rd7], {%f30, %f29};
+@%p3 bra $L__BB3_3;
+
+add.s32 %r36, %r3, %r2;
+tex.1d.v4.f32.s32 {%f31, %f32, %f33, %f34}, [texComplexA, {%r36}];
+add.s32 %r37, %r4, %r2;
+tex.1d.v4.f32.s32 {%f35, %f36, %f37, %f38}, [texComplexA, {%r37}];
+setp.gt.f32 %p5, %f1, 0f00000000;
+selp.f32 %f39, 0f3F800000, 0fBF800000, %p5;
+add.f32 %f40, %f31, %f35;
+mul.f32 %f41, %f40, 0f3F000000;
+sub.f32 %f42, %f32, %f36;
+mul.f32 %f43, %f42, 0f3F000000;
+add.f32 %f44, %f32, %f36;
+mul.f32 %f45, %f44, 0f3F000000;
+sub.f32 %f46, %f31, %f35;
+mul.f32 %f47, %f46, 0f3F000000;
+mul.f32 %f48, %f39, %f47;
+fma.rn.f32 %f49, %f45, 0f00000000, %f48;
+mul.f32 %f50, %f39, %f45;
+mul.f32 %f51, %f47, 0f00000000;
+sub.f32 %f52, %f50, %f51;
+add.s32 %r38, %r5, %r2;
+mul.wide.u32 %rd8, %r38, 8;
+add.s64 %rd9, %rd1, %rd8;
+add.f32 %f53, %f43, %f52;
+add.f32 %f54, %f41, %f49;
+st.global.v2.f32 [%rd9], {%f54, %f53};
+add.s32 %r39, %r6, %r2;
+mul.wide.u32 %rd10, %r39, 8;
+add.s64 %rd11, %rd1, %rd10;
+sub.f32 %f55, %f52, %f43;
+sub.f32 %f56, %f41, %f49;
+st.global.v2.f32 [%rd11], {%f56, %f55};
+
+$L__BB3_3:
+ret;
+
+}
+
+.visible .entry _Z21spPreprocess2D_kernelP6float2S0_jjjjf(
+.param .u64 _Z21spPreprocess2D_kernelP6float2S0_jjjjf_param_0,
+.param .u64 _Z21spPreprocess2D_kernelP6float2S0_jjjjf_param_1,
+.param .u32 _Z21spPreprocess2D_kernelP6float2S0_jjjjf_param_2,
+.param .u32 _Z21spPreprocess2D_kernelP6float2S0_jjjjf_param_3,
+.param .u32 _Z21spPreprocess2D_kernelP6float2S0_jjjjf_param_4,
+.param .u32 _Z21spPreprocess2D_kernelP6float2S0_jjjjf_param_5,
+.param .f32 _Z21spPreprocess2D_kernelP6float2S0_jjjjf_param_6
+)
+{
+.reg .pred %p<9>;
+.reg .f32 %f<49>;
+.reg .b32 %r<41>;
+.reg .b64 %rd<12>;
+
+
+ld.param.u64 %rd3, [_Z21spPreprocess2D_kernelP6float2S0_jjjjf_param_0];
+ld.param.u32 %r10, [_Z21spPreprocess2D_kernelP6float2S0_jjjjf_param_2];
+ld.param.u32 %r11, [_Z21spPreprocess2D_kernelP6float2S0_jjjjf_param_3];
+ld.param.u32 %r13, [_Z21spPreprocess2D_kernelP6float2S0_jjjjf_param_4];
+ld.param.u32 %r12, [_Z21spPreprocess2D_kernelP6float2S0_jjjjf_param_5];
+ld.param.f32 %f1, [_Z21spPreprocess2D_kernelP6float2S0_jjjjf_param_6];
+cvta.to.global.u64 %rd1, %rd3;
+mov.u32 %r14, %ntid.x;
+mov.u32 %r15, %ctaid.x;
+mov.u32 %r16, %tid.x;
+mad.lo.s32 %r1, %r15, %r14, %r16;
+setp.ge.u32 %p1, %r1, %r13;
+@%p1 bra $L__BB4_4;
+
+shr.u32 %r2, %r11, 1;
+add.s32 %r17, %r2, -1;
+and.b32 %r3, %r17, %r1;
+brev.b32 %r18, %r2;
+bfind.shiftamt.u32 %r19, %r18;
+shr.u32 %r4, %r1, %r19;
+add.s32 %r20, %r10, -1;
+and.b32 %r5, %r4, %r20;
+setp.eq.s32 %p2, %r3, 0;
+shr.u32 %r21, %r10, 1;
+setp.gt.u32 %p3, %r5, %r21;
+and.pred %p4, %p2, %p3;
+@%p4 bra $L__BB4_4;
+
+setp.ne.s32 %p5, %r3, 0;
+add.s32 %r22, %r12, %r11;
+brev.b32 %r23, %r10;
+bfind.shiftamt.u32 %r24, %r23;
+shr.u32 %r25, %r4, %r24;
+mul.lo.s32 %r26, %r25, %r10;
+mul.lo.s32 %r27, %r26, %r22;
+mad.lo.s32 %r6, %r5, %r22, %r27;
+add.s32 %r28, %r6, %r3;
+sub.s32 %r29, %r10, %r5;
+setp.eq.s32 %p7, %r5, 0;
+selp.b32 %r30, 0, %r29, %p7;
+mad.lo.s32 %r7, %r30, %r22, %r27;
+sub.s32 %r31, %r11, %r3;
+add.s32 %r32, %r31, %r7;
+tex.1d.v4.f32.s32 {%f2, %f3, %f4, %f5}, [texComplexA, {%r28}];
+tex.1d.v4.f32.s32 {%f6, %f7, %f8, %f9}, [texComplexA, {%r32}];
+mul.lo.s32 %r33, %r26, %r11;
+mad.lo.s32 %r8, %r5, %r11, %r33;
+selp.b32 %r34, 0, %r31, %p2;
+mad.lo.s32 %r9, %r30, %r11, %r33;
+add.s32 %r35, %r8, %r3;
+add.s32 %r36, %r9, %r34;
+cvt.rn.f32.u32 %f10, %r3;
+mul.f32 %f11, %f10, %f1;
+sin.approx.f32 %f12, %f11;
+cos.approx.f32 %f13, %f11;
+add.f32 %f14, %f2, %f6;
+sub.f32 %f15, %f3, %f7;
+add.f32 %f16, %f3, %f7;
+sub.f32 %f17, %f2, %f6;
+mul.f32 %f18, %f16, %f13;
+mul.f32 %f19, %f12, %f17;
+sub.f32 %f20, %f18, %f19;
+mul.f32 %f21, %f12, %f16;
+fma.rn.f32 %f22, %f17, %f13, %f21;
+mul.wide.u32 %rd4, %r35, 8;
+add.s64 %rd5, %rd1, %rd4;
+add.f32 %f23, %f15, %f22;
+sub.f32 %f24, %f14, %f20;
+st.global.v2.f32 [%rd5], {%f24, %f23};
+mul.wide.u32 %rd6, %r36, 8;
+add.s64 %rd7, %rd1, %rd6;
+sub.f32 %f25, %f22, %f15;
+add.f32 %f26, %f14, %f20;
+st.global.v2.f32 [%rd7], {%f26, %f25};
+@%p5 bra $L__BB4_4;
+
+add.s32 %r37, %r6, %r2;
+tex.1d.v4.f32.s32 {%f27, %f28, %f29, %f30}, [texComplexA, {%r37}];
+add.s32 %r38, %r7, %r2;
+tex.1d.v4.f32.s32 {%f31, %f32, %f33, %f34}, [texComplexA, {%r38}];
+setp.gt.f32 %p8, %f1, 0f00000000;
+selp.f32 %f35, 0f3F800000, 0fBF800000, %p8;
+add.f32 %f36, %f27, %f31;
+sub.f32 %f37, %f28, %f32;
+add.f32 %f38, %f28, %f32;
+sub.f32 %f39, %f27, %f31;
+mul.f32 %f40, %f38, 0f00000000;
+mul.f32 %f41, %f35, %f39;
+sub.f32 %f42, %f40, %f41;
+mul.f32 %f43, %f35, %f38;
+fma.rn.f32 %f44, %f39, 0f00000000, %f43;
+add.s32 %r39, %r8, %r2;
+mul.wide.u32 %rd8, %r39, 8;
+add.s64 %rd9, %rd1, %rd8;
+add.f32 %f45, %f37, %f44;
+sub.f32 %f46, %f36, %f42;
+st.global.v2.f32 [%rd9], {%f46, %f45};
+add.s32 %r40, %r9, %r2;
+mul.wide.u32 %rd10, %r40, 8;
+add.s64 %rd11, %rd1, %rd10;
+sub.f32 %f47, %f44, %f37;
+add.f32 %f48, %f36, %f42;
+st.global.v2.f32 [%rd11], {%f48, %f47};
+
+$L__BB4_4:
+ret;
+
+}
+
+.visible .entry _Z18spProcess2D_kernelP6float2S0_S0_jjjff(
+.param .u64 _Z18spProcess2D_kernelP6float2S0_S0_jjjff_param_0,
+.param .u64 _Z18spProcess2D_kernelP6float2S0_S0_jjjff_param_1,
+.param .u64 _Z18spProcess2D_kernelP6float2S0_S0_jjjff_param_2,
+.param .u32 _Z18spProcess2D_kernelP6float2S0_S0_jjjff_param_3,
+.param .u32 _Z18spProcess2D_kernelP6float2S0_S0_jjjff_param_4,
+.param .u32 _Z18spProcess2D_kernelP6float2S0_S0_jjjff_param_5,
+.param .f32 _Z18spProcess2D_kernelP6float2S0_S0_jjjff_param_6,
+.param .f32 _Z18spProcess2D_kernelP6float2S0_S0_jjjff_param_7
+)
+{
+.reg .pred %p<8>;
+.reg .f32 %f<161>;
+.reg .b32 %r<33>;
+.reg .b64 %rd<13>;
+
+
+ld.param.u64 %rd4, [_Z18spProcess2D_kernelP6float2S0_S0_jjjff_param_0];
+ld.param.u32 %r7, [_Z18spProcess2D_kernelP6float2S0_S0_jjjff_param_3];
+ld.param.u32 %r8, [_Z18spProcess2D_kernelP6float2S0_S0_jjjff_param_4];
+ld.param.u32 %r9, [_Z18spProcess2D_kernelP6float2S0_S0_jjjff_param_5];
+ld.param.f32 %f3, [_Z18spProcess2D_kernelP6float2S0_S0_jjjff_param_6];
+ld.param.f32 %f4, [_Z18spProcess2D_kernelP6float2S0_S0_jjjff_param_7];
+cvta.to.global.u64 %rd1, %rd4;
+mov.u32 %r10, %ntid.x;
+mov.u32 %r11, %ctaid.x;
+mov.u32 %r12, %tid.x;
+mad.lo.s32 %r1, %r11, %r10, %r12;
+setp.ge.u32 %p1, %r1, %r9;
+@%p1 bra $L__BB5_4;
+
+add.s32 %r13, %r8, -1;
+and.b32 %r2, %r13, %r1;
+brev.b32 %r14, %r8;
+bfind.shiftamt.u32 %r15, %r14;
+shr.u32 %r16, %r1, %r15;
+shr.u32 %r3, %r7, 1;
+add.s32 %r17, %r3, -1;
+and.b32 %r4, %r16, %r17;
+brev.b32 %r18, %r3;
+bfind.shiftamt.u32 %r19, %r18;
+shr.u32 %r20, %r16, %r19;
+mul.lo.s32 %r21, %r8, %r7;
+mul.lo.s32 %r5, %r21, %r20;
+setp.eq.s32 %p2, %r4, 0;
+shr.u32 %r22, %r8, 1;
+setp.gt.u32 %p3, %r2, %r22;
+and.pred %p4, %p3, %p2;
+@%p4 bra $L__BB5_4;
+
+setp.ne.s32 %p5, %r4, 0;
+mad.lo.s32 %r23, %r4, %r8, %r2;
+add.s32 %r24, %r23, %r5;
+sub.s32 %r25, %r7, %r4;
+selp.b32 %r26, 0, %r25, %p2;
+sub.s32 %r27, %r8, %r2;
+setp.eq.s32 %p7, %r2, 0;
+selp.b32 %r6, 0, %r27, %p7;
+add.s32 %r28, %r5, %r6;
+mad.lo.s32 %r29, %r26, %r8, %r28;
+tex.1d.v4.f32.s32 {%f5, %f6, %f7, %f8}, [texComplexA, {%r24}];
+tex.1d.v4.f32.s32 {%f9, %f10, %f11, %f12}, [texComplexA, {%r29}];
+tex.1d.v4.f32.s32 {%f13, %f14, %f15, %f16}, [texComplexB, {%r24}];
+tex.1d.v4.f32.s32 {%f17, %f18, %f19, %f20}, [texComplexB, {%r29}];
+cvt.rn.f32.u32 %f21, %r2;
+mul.f32 %f22, %f21, %f3;
+sin.approx.f32 %f1, %f22;
+cos.approx.f32 %f2, %f22;
+add.f32 %f23, %f5, %f9;
+mul.f32 %f24, %f23, 0f3F000000;
+sub.f32 %f25, %f6, %f10;
+mul.f32 %f26, %f25, 0f3F000000;
+add.f32 %f27, %f6, %f10;
+mul.f32 %f28, %f27, 0f3F000000;
+sub.f32 %f29, %f5, %f9;
+mul.f32 %f30, %f29, 0f3F000000;
+mul.f32 %f31, %f28, %f2;
+fma.rn.f32 %f32, %f30, %f1, %f31;
+add.f32 %f33, %f24, %f32;
+mul.f32 %f34, %f28, %f1;
+mul.f32 %f35, %f30, %f2;
+sub.f32 %f36, %f34, %f35;
+add.f32 %f37, %f26, %f36;
+sub.f32 %f38, %f24, %f32;
+sub.f32 %f39, %f36, %f26;
+add.f32 %f40, %f13, %f17;
+mul.f32 %f41, %f40, 0f3F000000;
+sub.f32 %f42, %f14, %f18;
+mul.f32 %f43, %f42, 0f3F000000;
+add.f32 %f44, %f14, %f18;
+mul.f32 %f45, %f44, 0f3F000000;
+sub.f32 %f46, %f13, %f17;
+mul.f32 %f47, %f46, 0f3F000000;
+mul.f32 %f48, %f1, %f47;
+fma.rn.f32 %f49, %f2, %f45, %f48;
+add.f32 %f50, %f41, %f49;
+mul.f32 %f51, %f1, %f45;
+mul.f32 %f52, %f2, %f47;
+sub.f32 %f53, %f51, %f52;
+add.f32 %f54, %f43, %f53;
+sub.f32 %f55, %f41, %f49;
+sub.f32 %f56, %f53, %f43;
+mul.f32 %f57, %f33, %f50;
+mul.f32 %f58, %f37, %f54;
+sub.f32 %f59, %f57, %f58;
+mul.f32 %f60, %f59, %f4;
+mul.f32 %f61, %f33, %f54;
+fma.rn.f32 %f62, %f37, %f50, %f61;
+mul.f32 %f63, %f62, %f4;
+mul.f32 %f64, %f38, %f55;
+mul.f32 %f65, %f39, %f56;
+sub.f32 %f66, %f64, %f65;
+mul.f32 %f67, %f66, %f4;
+mul.f32 %f68, %f38, %f56;
+fma.rn.f32 %f69, %f39, %f55, %f68;
+mul.f32 %f70, %f69, %f4;
+add.f32 %f71, %f60, %f67;
+sub.f32 %f72, %f63, %f70;
+add.f32 %f73, %f63, %f70;
+sub.f32 %f74, %f60, %f67;
+mul.f32 %f75, %f2, %f73;
+mul.f32 %f76, %f1, %f74;
+sub.f32 %f77, %f75, %f76;
+mul.f32 %f78, %f1, %f73;
+fma.rn.f32 %f79, %f2, %f74, %f78;
+mul.wide.u32 %rd5, %r24, 8;
+add.s64 %rd6, %rd1, %rd5;
+sub.f32 %f80, %f71, %f77;
+add.f32 %f81, %f72, %f79;
+st.global.v2.f32 [%rd6], {%f80, %f81};
+mul.wide.u32 %rd7, %r29, 8;
+add.s64 %rd8, %rd1, %rd7;
+add.f32 %f82, %f71, %f77;
+sub.f32 %f83, %f79, %f72;
+st.global.v2.f32 [%rd8], {%f82, %f83};
+@%p5 bra $L__BB5_4;
+
+mad.lo.s32 %r30, %r3, %r8, %r5;
+add.s32 %r31, %r30, %r2;
+add.s32 %r32, %r30, %r6;
+tex.1d.v4.f32.s32 {%f84, %f85, %f86, %f87}, [texComplexA, {%r31}];
+tex.1d.v4.f32.s32 {%f88, %f89, %f90, %f91}, [texComplexA, {%r32}];
+tex.1d.v4.f32.s32 {%f92, %f93, %f94, %f95}, [texComplexB, {%r31}];
+tex.1d.v4.f32.s32 {%f96, %f97, %f98, %f99}, [texComplexB, {%r32}];
+add.f32 %f100, %f84, %f88;
+mul.f32 %f101, %f100, 0f3F000000;
+sub.f32 %f102, %f85, %f89;
+mul.f32 %f103, %f102, 0f3F000000;
+add.f32 %f104, %f85, %f89;
+mul.f32 %f105, %f104, 0f3F000000;
+sub.f32 %f106, %f84, %f88;
+mul.f32 %f107, %f106, 0f3F000000;
+mul.f32 %f108, %f1, %f107;
+fma.rn.f32 %f109, %f2, %f105, %f108;
+add.f32 %f110, %f101, %f109;
+mul.f32 %f111, %f1, %f105;
+mul.f32 %f112, %f2, %f107;
+sub.f32 %f113, %f111, %f112;
+add.f32 %f114, %f103, %f113;
+sub.f32 %f115, %f101, %f109;
+sub.f32 %f116, %f113, %f103;
+add.f32 %f117, %f92, %f96;
+mul.f32 %f118, %f117, 0f3F000000;
+sub.f32 %f119, %f93, %f97;
+mul.f32 %f120, %f119, 0f3F000000;
+add.f32 %f121, %f93, %f97;
+mul.f32 %f122, %f121, 0f3F000000;
+sub.f32 %f123, %f92, %f96;
+mul.f32 %f124, %f123, 0f3F000000;
+mul.f32 %f125, %f1, %f124;
+fma.rn.f32 %f126, %f2, %f122, %f125;
+add.f32 %f127, %f118, %f126;
+mul.f32 %f128, %f1, %f122;
+mul.f32 %f129, %f2, %f124;
+sub.f32 %f130, %f128, %f129;
+add.f32 %f131, %f120, %f130;
+sub.f32 %f132, %f118, %f126;
+sub.f32 %f133, %f130, %f120;
+mul.f32 %f134, %f110, %f127;
+mul.f32 %f135, %f114, %f131;
+sub.f32 %f136, %f134, %f135;
+mul.f32 %f137, %f136, %f4;
+mul.f32 %f138, %f110, %f131;
+fma.rn.f32 %f139, %f114, %f127, %f138;
+mul.f32 %f140, %f139, %f4;
+mul.f32 %f141, %f115, %f132;
+mul.f32 %f142, %f116, %f133;
+sub.f32 %f143, %f141, %f142;
+mul.f32 %f144, %f143, %f4;
+mul.f32 %f145, %f115, %f133;
+fma.rn.f32 %f146, %f116, %f132, %f145;
+mul.f32 %f147, %f146, %f4;
+add.f32 %f148, %f137, %f144;
+sub.f32 %f149, %f140, %f147;
+add.f32 %f150, %f140, %f147;
+sub.f32 %f151, %f137, %f144;
+mul.f32 %f152, %f2, %f150;
+mul.f32 %f153, %f1, %f151;
+sub.f32 %f154, %f152, %f153;
+mul.f32 %f155, %f1, %f150;
+fma.rn.f32 %f156, %f2, %f151, %f155;
+mul.wide.u32 %rd9, %r31, 8;
+add.s64 %rd10, %rd1, %rd9;
+sub.f32 %f157, %f148, %f154;
+add.f32 %f158, %f149, %f156;
+st.global.v2.f32 [%rd10], {%f157, %f158};
+mul.wide.u32 %rd11, %r32, 8;
+add.s64 %rd12, %rd1, %rd11;
+add.f32 %f159, %f148, %f154;
+sub.f32 %f160, %f156, %f149;
+st.global.v2.f32 [%rd12], {%f159, %f160};
+
+$L__BB5_4:
+ret;
+
+}
+
+
+Fatbin elf code:
+================
+arch = sm_80
+code version = [1,7]
+producer = <unknown>
+host = linux
+compile_size = 64bit

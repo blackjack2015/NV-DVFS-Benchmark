@@ -1,0 +1,203 @@
+
+Fatbin elf code:
+================
+arch = sm_80
+code version = [1,7]
+producer = <unknown>
+host = linux
+compile_size = 64bit
+
+Fatbin ptx code:
+================
+arch = sm_80
+code version = [7,5]
+producer = <unknown>
+host = linux
+compile_size = 64bit
+compressed
+
+
+
+
+
+
+
+
+.version 7.5
+.target sm_80
+.address_size 64
+
+
+
+
+.visible .entry _Z15sobolGPU_kerneljjPjPf(
+.param .u32 _Z15sobolGPU_kerneljjPjPf_param_0,
+.param .u32 _Z15sobolGPU_kerneljjPjPf_param_1,
+.param .u64 _Z15sobolGPU_kerneljjPjPf_param_2,
+.param .u64 _Z15sobolGPU_kerneljjPjPf_param_3
+)
+{
+.reg .pred %p<10>;
+.reg .f32 %f<5>;
+.reg .b32 %r<115>;
+.reg .b64 %rd<19>;
+
+	.shared .align 4 .b8 _ZZ15sobolGPU_kerneljjPjPfE1v[128];
+
+ld.param.u32 %r41, [_Z15sobolGPU_kerneljjPjPf_param_0];
+ld.param.u64 %rd3, [_Z15sobolGPU_kerneljjPjPf_param_2];
+ld.param.u64 %rd4, [_Z15sobolGPU_kerneljjPjPf_param_3];
+cvta.to.global.u64 %rd1, %rd4;
+mov.u32 %r1, %ctaid.y;
+mul.lo.s32 %r42, %r1, %r41;
+cvt.u64.u32 %rd2, %r42;
+mov.u32 %r2, %tid.x;
+setp.gt.u32 %p1, %r2, 31;
+@%p1 bra $L__BB0_2;
+
+cvta.to.global.u64 %rd5, %rd3;
+shl.b32 %r43, %r1, 5;
+cvt.u64.u32 %rd6, %r43;
+cvt.u64.u32 %rd7, %r2;
+add.s64 %rd8, %rd6, %rd7;
+shl.b64 %rd9, %rd8, 2;
+add.s64 %rd10, %rd5, %rd9;
+ld.global.u32 %r44, [%rd10];
+shl.b32 %r45, %r2, 2;
+mov.u32 %r46, _ZZ15sobolGPU_kerneljjPjPfE1v;
+add.s32 %r47, %r46, %r45;
+st.shared.u32 [%r47], %r44;
+
+$L__BB0_2:
+bar.sync 0;
+mov.u32 %r49, %ntid.x;
+mov.u32 %r50, %ctaid.x;
+mad.lo.s32 %r113, %r50, %r49, %r2;
+mov.u32 %r51, %nctaid.x;
+mul.lo.s32 %r4, %r51, %r49;
+shr.s32 %r52, %r113, 1;
+xor.b32 %r106, %r52, %r113;
+brev.b32 %r53, %r4;
+bfind.shiftamt.u32 %r6, %r53;
+setp.eq.s32 %p2, %r6, 0;
+mov.u32 %r111, 0;
+@%p2 bra $L__BB0_9;
+
+add.s32 %r57, %r6, -1;
+and.b32 %r110, %r6, 3;
+setp.lt.u32 %p3, %r57, 3;
+mov.u32 %r104, 0;
+mov.u32 %r111, %r104;
+@%p3 bra $L__BB0_6;
+
+sub.s32 %r102, %r6, %r110;
+mov.u32 %r98, _ZZ15sobolGPU_kerneljjPjPfE1v;
+
+$L__BB0_5:
+and.b32 %r61, %r106, 1;
+neg.s32 %r62, %r61;
+ld.shared.u32 %r63, [%r98];
+and.b32 %r64, %r63, %r62;
+xor.b32 %r65, %r64, %r111;
+bfe.u32 %r66, %r106, 1, 1;
+neg.s32 %r67, %r66;
+ld.shared.u32 %r68, [%r98+4];
+and.b32 %r69, %r68, %r67;
+xor.b32 %r70, %r69, %r65;
+bfe.u32 %r71, %r106, 2, 1;
+neg.s32 %r72, %r71;
+ld.shared.u32 %r73, [%r98+8];
+and.b32 %r74, %r73, %r72;
+xor.b32 %r75, %r74, %r70;
+bfe.u32 %r76, %r106, 3, 1;
+neg.s32 %r77, %r76;
+ld.shared.u32 %r78, [%r98+12];
+and.b32 %r79, %r78, %r77;
+xor.b32 %r111, %r79, %r75;
+shr.u32 %r106, %r106, 4;
+add.s32 %r104, %r104, 4;
+add.s32 %r98, %r98, 16;
+add.s32 %r102, %r102, -4;
+setp.ne.s32 %p4, %r102, 0;
+@%p4 bra $L__BB0_5;
+
+$L__BB0_6:
+setp.eq.s32 %p5, %r110, 0;
+@%p5 bra $L__BB0_9;
+
+shl.b32 %r80, %r104, 2;
+mov.u32 %r81, _ZZ15sobolGPU_kerneljjPjPfE1v;
+add.s32 %r107, %r81, %r80;
+
+$L__BB0_8:
+.pragma "nounroll";
+and.b32 %r82, %r106, 1;
+neg.s32 %r83, %r82;
+ld.shared.u32 %r84, [%r107];
+and.b32 %r85, %r84, %r83;
+xor.b32 %r111, %r85, %r111;
+shr.u32 %r106, %r106, 1;
+add.s32 %r107, %r107, 4;
+add.s32 %r110, %r110, -1;
+setp.ne.s32 %p6, %r110, 0;
+@%p6 bra $L__BB0_8;
+
+$L__BB0_9:
+setp.ge.u32 %p7, %r113, %r41;
+@%p7 bra $L__BB0_11;
+
+cvt.rn.f32.u32 %f1, %r111;
+mul.f32 %f2, %f1, 0f2F800000;
+cvt.s64.s32 %rd11, %r113;
+add.s64 %rd12, %rd2, %rd11;
+shl.b64 %rd13, %rd12, 2;
+add.s64 %rd14, %rd1, %rd13;
+st.global.f32 [%rd14], %f2;
+
+$L__BB0_11:
+add.s32 %r112, %r113, %r4;
+setp.ge.u32 %p8, %r112, %r41;
+@%p8 bra $L__BB0_14;
+
+shl.b32 %r86, %r6, 2;
+mov.u32 %r87, _ZZ15sobolGPU_kerneljjPjPfE1v;
+add.s32 %r88, %r87, %r86;
+ld.shared.u32 %r34, [%r88+-4];
+add.s32 %r35, %r4, -1;
+
+$L__BB0_13:
+mov.u32 %r36, %r112;
+or.b32 %r89, %r113, %r35;
+not.b32 %r90, %r89;
+brev.b32 %r91, %r90;
+bfind.shiftamt.u32 %r92, %r91;
+shl.b32 %r93, %r92, 2;
+add.s32 %r95, %r87, %r93;
+xor.b32 %r96, %r111, %r34;
+ld.shared.u32 %r97, [%r95];
+xor.b32 %r111, %r96, %r97;
+cvt.rn.f32.u32 %f3, %r111;
+mul.f32 %f4, %f3, 0f2F800000;
+cvt.u64.u32 %rd15, %r36;
+add.s64 %rd16, %rd15, %rd2;
+shl.b64 %rd17, %rd16, 2;
+add.s64 %rd18, %rd1, %rd17;
+st.global.f32 [%rd18], %f4;
+add.s32 %r112, %r36, %r4;
+setp.lt.u32 %p9, %r112, %r41;
+mov.u32 %r113, %r36;
+@%p9 bra $L__BB0_13;
+
+$L__BB0_14:
+ret;
+
+}
+
+
+Fatbin elf code:
+================
+arch = sm_80
+code version = [1,7]
+producer = <unknown>
+host = linux
+compile_size = 64bit

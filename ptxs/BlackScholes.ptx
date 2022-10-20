@@ -1,0 +1,150 @@
+
+Fatbin elf code:
+================
+arch = sm_80
+code version = [1,7]
+producer = <unknown>
+host = linux
+compile_size = 64bit
+
+Fatbin ptx code:
+================
+arch = sm_80
+code version = [7,5]
+producer = <unknown>
+host = linux
+compile_size = 64bit
+compressed
+
+
+
+
+
+
+
+
+.version 7.5
+.target sm_80
+.address_size 64
+
+
+
+.visible .entry _Z15BlackScholesGPUPfS_S_S_S_ffi(
+.param .u64 _Z15BlackScholesGPUPfS_S_S_S_ffi_param_0,
+.param .u64 _Z15BlackScholesGPUPfS_S_S_S_ffi_param_1,
+.param .u64 _Z15BlackScholesGPUPfS_S_S_S_ffi_param_2,
+.param .u64 _Z15BlackScholesGPUPfS_S_S_S_ffi_param_3,
+.param .u64 _Z15BlackScholesGPUPfS_S_S_S_ffi_param_4,
+.param .f32 _Z15BlackScholesGPUPfS_S_S_S_ffi_param_5,
+.param .f32 _Z15BlackScholesGPUPfS_S_S_S_ffi_param_6,
+.param .u32 _Z15BlackScholesGPUPfS_S_S_S_ffi_param_7
+)
+{
+.reg .pred %p<4>;
+.reg .f32 %f<61>;
+.reg .b32 %r<6>;
+.reg .b64 %rd<17>;
+
+
+ld.param.u64 %rd1, [_Z15BlackScholesGPUPfS_S_S_S_ffi_param_0];
+ld.param.u64 %rd2, [_Z15BlackScholesGPUPfS_S_S_S_ffi_param_1];
+ld.param.u64 %rd3, [_Z15BlackScholesGPUPfS_S_S_S_ffi_param_2];
+ld.param.u64 %rd4, [_Z15BlackScholesGPUPfS_S_S_S_ffi_param_3];
+ld.param.u64 %rd5, [_Z15BlackScholesGPUPfS_S_S_S_ffi_param_4];
+ld.param.f32 %f1, [_Z15BlackScholesGPUPfS_S_S_S_ffi_param_5];
+ld.param.f32 %f2, [_Z15BlackScholesGPUPfS_S_S_S_ffi_param_6];
+ld.param.u32 %r2, [_Z15BlackScholesGPUPfS_S_S_S_ffi_param_7];
+mov.u32 %r3, %ntid.x;
+mov.u32 %r4, %ctaid.x;
+mov.u32 %r5, %tid.x;
+mad.lo.s32 %r1, %r3, %r4, %r5;
+setp.ge.s32 %p1, %r1, %r2;
+@%p1 bra $L__BB0_2;
+
+cvta.to.global.u64 %rd6, %rd3;
+cvta.to.global.u64 %rd7, %rd1;
+mul.wide.s32 %rd8, %r1, 4;
+add.s64 %rd9, %rd7, %rd8;
+cvta.to.global.u64 %rd10, %rd2;
+add.s64 %rd11, %rd10, %rd8;
+add.s64 %rd12, %rd6, %rd8;
+cvta.to.global.u64 %rd13, %rd4;
+add.s64 %rd14, %rd13, %rd8;
+cvta.to.global.u64 %rd15, %rd5;
+add.s64 %rd16, %rd15, %rd8;
+ld.global.f32 %f3, [%rd16];
+sqrt.rn.f32 %f4, %f3;
+ld.global.f32 %f5, [%rd14];
+ld.global.f32 %f6, [%rd12];
+div.rn.f32 %f7, %f6, %f5;
+lg2.approx.f32 %f8, %f7;
+mul.f32 %f9, %f8, 0f3F317218;
+mul.f32 %f10, %f2, 0f3F000000;
+fma.rn.f32 %f11, %f10, %f2, %f1;
+fma.rn.f32 %f12, %f11, %f3, %f9;
+mul.f32 %f13, %f4, %f2;
+div.rn.f32 %f14, %f12, %f13;
+sub.f32 %f15, %f14, %f13;
+abs.f32 %f16, %f14;
+fma.rn.f32 %f17, %f16, 0f3E6D3389, 0f3F800000;
+mov.f32 %f18, 0f3F800000;
+rcp.rn.f32 %f19, %f17;
+mul.f32 %f20, %f14, 0fBF000000;
+mul.f32 %f21, %f14, %f20;
+mul.f32 %f22, %f21, 0f3FB8AA3B;
+ex2.approx.f32 %f23, %f22;
+mul.f32 %f24, %f23, 0f3ECC422A;
+fma.rn.f32 %f25, %f19, 0f3FAA466F, 0fBFE91EEA;
+fma.rn.f32 %f26, %f19, %f25, 0f3FE40778;
+fma.rn.f32 %f27, %f19, %f26, 0fBEB68F87;
+fma.rn.f32 %f28, %f19, %f27, 0f3EA385FA;
+mul.f32 %f29, %f19, %f28;
+mul.f32 %f30, %f24, %f29;
+setp.gt.f32 %p2, %f14, 0f00000000;
+sub.f32 %f31, %f18, %f30;
+selp.f32 %f32, %f31, %f30, %p2;
+abs.f32 %f33, %f15;
+fma.rn.f32 %f34, %f33, 0f3E6D3389, 0f3F800000;
+rcp.rn.f32 %f35, %f34;
+mul.f32 %f36, %f15, 0fBF000000;
+mul.f32 %f37, %f15, %f36;
+mul.f32 %f38, %f37, 0f3FB8AA3B;
+ex2.approx.f32 %f39, %f38;
+mul.f32 %f40, %f39, 0f3ECC422A;
+fma.rn.f32 %f41, %f35, 0f3FAA466F, 0fBFE91EEA;
+fma.rn.f32 %f42, %f35, %f41, 0f3FE40778;
+fma.rn.f32 %f43, %f35, %f42, 0fBEB68F87;
+fma.rn.f32 %f44, %f35, %f43, 0f3EA385FA;
+mul.f32 %f45, %f35, %f44;
+mul.f32 %f46, %f40, %f45;
+setp.gt.f32 %p3, %f15, 0f00000000;
+sub.f32 %f47, %f18, %f46;
+selp.f32 %f48, %f47, %f46, %p3;
+mul.f32 %f49, %f3, %f1;
+mul.f32 %f50, %f49, 0fBFB8AA3B;
+ex2.approx.f32 %f51, %f50;
+mul.f32 %f52, %f6, %f32;
+mul.f32 %f53, %f5, %f51;
+mul.f32 %f54, %f53, %f48;
+sub.f32 %f55, %f52, %f54;
+st.global.f32 [%rd9], %f55;
+sub.f32 %f56, %f18, %f48;
+mul.f32 %f57, %f53, %f56;
+sub.f32 %f58, %f18, %f32;
+mul.f32 %f59, %f6, %f58;
+sub.f32 %f60, %f57, %f59;
+st.global.f32 [%rd11], %f60;
+
+$L__BB0_2:
+ret;
+
+}
+
+
+Fatbin elf code:
+================
+arch = sm_80
+code version = [1,7]
+producer = <unknown>
+host = linux
+compile_size = 64bit
