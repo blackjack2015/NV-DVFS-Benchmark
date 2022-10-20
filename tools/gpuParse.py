@@ -23,10 +23,13 @@ coreBase = opt.core_base
 memBase = opt.mem_base
 
 logRoot = 'logs/%s-%s' % (gpucard, version)
+output_name = 'data/%s-%s.csv' % (gpucard, version)
 
 perf_filelist = glob.glob(r'%s/*perf.log' % logRoot)
 perf_filelist.sort()
 
+
+rows = pd.DataFrame()
 for perf_file in perf_filelist:
     
     power_file = perf_file.replace('perf', 'power')
@@ -42,4 +45,9 @@ for perf_file in perf_filelist:
     one_data.update(dcgm_dict)
 
     print(one_data)
+
+    rows = rows.append(one_data, ignore_index=True)
+
+print(rows.head())
+rows.to_csv(output_name)
 
