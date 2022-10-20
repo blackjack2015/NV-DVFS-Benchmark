@@ -347,7 +347,8 @@ double runbench(int total_blocks, datatype *cd, long size, bool spreadsheet, boo
     for (int i = 0 ; i < iters; i++)
 	    benchmark_func<datatype><<< dimGrid, dimBlock >>>(cd, readonly, BLOCK_SIZE, stepwidth, index_clamping);
 	
-    finalizeEvents(start, stop);
+    float avg_msec = finalizeEvents(start, stop) / iters;
+    printf("benchmark_func() iterated %d, average time is %f msec\n", iters, avg_msec);
 
 	return bandwidth;
 }

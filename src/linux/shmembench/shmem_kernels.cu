@@ -267,7 +267,8 @@ extern "C" void shmembenchGPU(double *c, long size, int ratio, int benchtype, in
                     break;
                 }
         }
-	finalizeEvents(start, stop);
+    float avg_msec = finalizeEvents(start, stop) / iters;
+    printf("benchmark_func() iterated %d, average time is %f msec\n", iters, avg_msec);
 
 	CUDA_SAFE_CALL( cudaFree(cd) );
 	CUDA_SAFE_CALL( cudaDeviceReset() );

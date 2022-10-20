@@ -185,6 +185,7 @@ void runbench(double *cd, long size, int memory_ratio){
     int iters = int((double)secs * 1000 / kernel_time_mad);
     printf("Adjust %d iterations to achieve time duration %d.\n", iters, secs);
 
+	initializeEvents(&start, &stop);
     for (int i = 0 ; i < iters; i++)
         switch (datatype)
         {
@@ -205,6 +206,8 @@ void runbench(double *cd, long size, int memory_ratio){
             }
         }
 
+    float avg_msec = finalizeEvents(start, stop) / iters;
+    printf("benchmark_func() iterated %d, average time is %f msec\n", iters, avg_msec);
 }
 
 extern "C" void mixbenchGPU(double *c, long size, int memory_ratio, BenchType bt, int s){
