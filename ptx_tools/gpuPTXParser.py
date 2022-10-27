@@ -3,7 +3,6 @@ import sys
 import glob
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 import re #regular expressions library
 from readFiles import readISA
 from globalStuff import buffer_max_size
@@ -382,7 +381,7 @@ def main():
     headers = ['benchmark', 'kernel']
     headers.extend(ISA)
     headers.extend(state_spaces)
-    headers.extend(inst_types)
+    # headers.extend(inst_types)
 
     data = pd.DataFrame()
     for ptx_file in ptx_list:
@@ -400,19 +399,20 @@ def main():
 
         mem_stats_per_kernel = count_memory_space(sequence_per_kernel, state_spaces)
         dtype_stats_per_kernel = count_dtype(sequence_per_kernel, inst_types)
-        print(kernel_names, occurrences_per_kernel, mem_stats_per_kernel, dtype_stats_per_kernel)
+        # print(kernel_names, occurrences_per_kernel, mem_stats_per_kernel, dtype_stats_per_kernel)
 
         for i in range(len(kernel_names)):
+            one_row = {}
             one_row['benchmark'] = app_name
             one_row['kernel'] = kernel_names[i]
             for name, count in zip(ISA, occurrences_per_kernel[i]):
                 one_row[name] = count
             for name, count in zip(state_spaces, mem_stats_per_kernel[i]):
                 one_row[name] = count
-            for name, count in zip(inst_types, dtype_stats_per_kernel[i]):
-                one_row[name] = count
+            # for name, count in zip(inst_types, dtype_stats_per_kernel[i]):
+            #     one_row[name] = count
 
-            data.append(one_row)
+            data = data.append(one_row, ignore_index=True)
         # writeOutputFiles(ISA, occurrences_per_kernel, sequence_per_kernel, sequence_per_kernel_coded, kernel_names, output_folder)
     data.to_csv("test.csv")
 
