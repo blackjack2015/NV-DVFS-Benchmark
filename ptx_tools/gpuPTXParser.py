@@ -1,6 +1,8 @@
 import os
 import sys
+import glob
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 import re #regular expressions library
 from readFiles import readISA
@@ -56,7 +58,8 @@ def readInstructionCounterFile(filepath, ISA, state_spaces, inst_types, isa_type
             if isa_type == 'cubin':
                 kernel_name = aux[1]
             else:
-                kernel_name = aux[2]
+                # kernel_name = aux[2]
+                kernel_name = aux[-1]   # the last one?
 
             if (kernel_count>0):
                 occurrences_per_kernel.append(occurrences)
@@ -183,7 +186,8 @@ def readInstructionCounterFile(filepath, ISA, state_spaces, inst_types, isa_type
                         # value from memory is written into 4 destinations
                         elif 'v4' in full_inst:
                             #operands
-                            address = line.split()[5].split(';')[0]
+                            # address = line.split()[5].split(';')[0]
+                            address = line.split()[-1].split(';')[0]  # take the last item, which is generally the operand
                             operand = address.split('[')[1].split(']')[0]
                             dependency_inst, dependency_inst_type = checkDependencyOperand(buffer_past_insts, buffer_past_producers, operand, dependency_inst, dependency_inst_type)
 
@@ -204,7 +208,11 @@ def readInstructionCounterFile(filepath, ISA, state_spaces, inst_types, isa_type
                         # value from memory is written into a single destination
                         else:
                             #operands
-                            address = line.split()[2].split(',')[0].split(';')[0]
+                            # TODO: check the functionality
+                            if len(line.split()) > 2:
+                                address = line.split()[2].split(',')[0].split(';')[0]
+                            else:
+                                address = line.split()[1].split(',')[1].split(',')[0].split(';')[0]
                             operand = address.split('[')[1].split(']')[0]
                             dependency_inst, dependency_inst_type = checkDependencyOperand(buffer_past_insts, buffer_past_producers, operand, dependency_inst, dependency_inst_type)
 
@@ -230,7 +238,10 @@ def readInstructionCounterFile(filepath, ISA, state_spaces, inst_types, isa_type
                                     dependency_inst, dependency_inst_type = checkDependencyOperand(buffer_past_insts, buffer_past_producers, operand, dependency_inst, dependency_inst_type)
 
                         #destination
-                        dest_reg = line.split()[1].split(',')[0].split(';')[0]
+                        if len(line.split()) > 1:
+                            dest_reg = line.split()[1].split(',')[0].split(';')[0]
+                        else:
+                            dest_reg = 'no_reg'   # an instruction that has no operand
                         addToBuffer(buffer_past_insts, buffer_past_producers, dest_reg, 0)
 
                     if verbose == True:
@@ -303,6 +314,33 @@ def showHistogramInstructions(ISA, occurrences_per_kernel, kernel_names):
     plt.savefig('instructions_count_histogram.pdf')
     plt.close()
 
+
+def count_memory_space(sequence_per_kernel, state_spaces):
+
+    mem_per_kernel = []
+    for sequence in sequence_per_kernel:
+        mem_stats = []
+        for mem_type in state_spaces:
+            stat_mem = [inst for inst in sequence if mem_type in inst]
+            mem_stats.append(len(stat_mem))
+        mem_per_kernel.append(mem_stats)
+
+    return mem_per_kernel
+
+
+def count_dtype(sequence_per_kernel, inst_types):
+
+    dtype_per_kernel = []
+    for sequence in sequence_per_kernel:
+        dtype_stats = []
+        for inst_type in inst_types:
+            stat_inst = [inst for inst in sequence if inst_type in inst]
+            dtype_stats.append(len(stat_inst))
+        dtype_per_kernel.append(dtype_stats)
+
+    return dtype_per_kernel
+
+
 def main():
     """Main function."""
     import argparse
@@ -313,30 +351,25 @@ def main():
     isa_type = 'PTX'
 
     # parser.add_argument('isa_type', type=str)
-    parser.add_argument('isa_files_path', type=str)
-    parser.add_argument('benchmark_source_file', type=str)
-    parser.add_argument('--output-root', type=str, default='./')
+    parser.add_argument('--isa-files-path', type=str, default='ptx_tools/assembly_info')
+    parser.add_argument('--source-root', type=str)
+    parser.add_argument('--output', type=str, default='ptx.csv')
     parser.add_argument('--v', action='store_const', const=True, default=False)
-    parser.add_argument('--histogram', action='store_const', const=True, default=False)
 
-    args = vars(parser.parse_args())
+    args = parser.parse_args()
     print(args)
 
     # isa_type = args['isa_type']
-    isa_files_path =  args['isa_files_path']
-    sass_file_path = args['benchmark_source_file']
+    isa_files_path = args.isa_files_path
+    source_root = args.source_root
     global verbose
-    verbose = args['v']
-    histogram = args['histogram']
+    verbose = args.v
 
     isa_file_path = '%s/ptx_isa.txt' %isa_files_path
     state_spacesfile_path = '%s/ptx_state_spaces.txt' %isa_files_path
     instruction_types_file_path = '%s/ptx_instruction_types.txt' %isa_files_path
 
-    app_name = sass_file_path.split('/')[-1][:-4]
-    output_folder = os.path.join(args['output_root'], app_name)
-
-    os.makedirs(output_folder)
+    ptx_list = glob.glob(r'%s/*.ptx' % source_root)
 
     ISA = readISA(isa_file_path)
     print('\n\n======================= ARCHITECTURE =======================\n')
@@ -346,22 +379,42 @@ def main():
     inst_types = readISA(instruction_types_file_path)
     print("inst_types has %d types" %(len(inst_types)))
 
-    if verbose == True:
-        print('\n\n================== BEGINNING PTX PARSING ==================\n')
-    occurrences, occurrences_per_kernel, sequence_per_kernel, sequence_per_kernel_coded, kernel_names = readInstructionCounterFile(sass_file_path, ISA, state_spaces, inst_types, isa_type)
+    headers = ['benchmark', 'kernel']
+    headers.extend(ISA)
+    headers.extend(state_spaces)
+    headers.extend(inst_types)
 
-    print('\n===================== KERNEL(S) SUMMARY ====================\n')
+    data = pd.DataFrame()
+    for ptx_file in ptx_list:
+        app_name = ptx_file.split('/')[-1][:-4]
+        print(app_name)
 
-    print('Source file has %d kernels, with a total of %d instructions\n' %(len(occurrences_per_kernel), np.sum(occurrences)))
-    printOccurrencesPerKernel(ISA, occurrences_per_kernel, kernel_names)
+        if verbose == True:
+            print('\n\n================== BEGINNING PTX PARSING ==================\n')
+        occurrences, occurrences_per_kernel, sequence_per_kernel, sequence_per_kernel_coded, kernel_names = readInstructionCounterFile(ptx_file, ISA, state_spaces, inst_types, isa_type)
 
-    print(output_folder)
-    writeOutputFiles(ISA, occurrences_per_kernel, sequence_per_kernel, sequence_per_kernel_coded, kernel_names, output_folder)
+        print('\n===================== KERNEL(S) SUMMARY ====================\n')
 
-    if histogram == True:
-        showHistogramInstructions(ISA, occurrences_per_kernel, kernel_names)
+        print('Source file has %d kernels, with a total of %d instructions\n' %(len(occurrences_per_kernel), np.sum(occurrences)))
+        printOccurrencesPerKernel(ISA, occurrences_per_kernel, kernel_names)
 
-    print('\n========================== THE END ==========================\n')
+        mem_stats_per_kernel = count_memory_space(sequence_per_kernel, state_spaces)
+        dtype_stats_per_kernel = count_dtype(sequence_per_kernel, inst_types)
+        print(kernel_names, occurrences_per_kernel, mem_stats_per_kernel, dtype_stats_per_kernel)
+
+        for i in range(len(kernel_names)):
+            one_row['benchmark'] = app_name
+            one_row['kernel'] = kernel_names[i]
+            for name, count in zip(ISA, occurrences_per_kernel[i]):
+                one_row[name] = count
+            for name, count in zip(state_spaces, mem_stats_per_kernel[i]):
+                one_row[name] = count
+            for name, count in zip(inst_types, dtype_stats_per_kernel[i]):
+                one_row[name] = count
+
+            data.append(one_row)
+        # writeOutputFiles(ISA, occurrences_per_kernel, sequence_per_kernel, sequence_per_kernel_coded, kernel_names, output_folder)
+    data.to_csv("test.csv")
 
 
 if __name__ == "__main__":

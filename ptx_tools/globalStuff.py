@@ -1,6 +1,5 @@
 import os
 import sys
-import torch
 import time
 import math
 
@@ -139,13 +138,3 @@ def arrangeDataset(dataset, indexes, pc):
 
     return new_dataset
 
-def initPytorch(device_arg, device_id):
-    if (device_arg == 'gpu'):
-        if torch.cuda.is_available():
-            device = torch.device("cuda:%d" %(device_id))
-            printing(torch.cuda.get_device_name(device_id))
-        else:
-            device = torch.device("cpu")
-    else:
-        device = torch.device("cpu")
-    return device
