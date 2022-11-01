@@ -48,6 +48,7 @@ def parse_perf_log(perf_file):
 
     dict_info = {
         'benchmark': appName,
+        'argNo': argNo,
         'core_frequency': coreF,
         'memory_frequency': memF,
         'time': time
