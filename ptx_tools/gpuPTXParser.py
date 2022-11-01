@@ -414,7 +414,7 @@ def main():
 
             data = data.append(one_row, ignore_index=True)
         # writeOutputFiles(ISA, occurrences_per_kernel, sequence_per_kernel, sequence_per_kernel_coded, kernel_names, output_folder)
-    data.to_csv("test.csv")
+    data.to_csv(args.output)
 
 
 if __name__ == "__main__":
