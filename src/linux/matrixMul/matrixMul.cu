@@ -44,9 +44,10 @@ bool timeRestrict = false;
  * Matrix multiplication (CUDA Kernel) on the device: C = A * B
  * wA is A's width and wB is B's width
  */
-template <int BLOCK_SIZE> __global__ void
+__global__ void
 matrixMulCUDA(float *C, float *A, float *B, int wA, int wB)
 {
+    const size_t BLOCK_SIZE=32;
     // Block index
     int bx = blockIdx.x;
     int by = blockIdx.y;
@@ -211,14 +212,7 @@ int matrixMultiply(int argc, char **argv, int block_size, dim3 &dimsA, dim3 &dim
     printf("Computing result using CUDA Kernel...\n");
 
     // Performs warmup operation using matrixMul CUDA kernel
-    if (block_size == 16)
-    {
-        matrixMulCUDA<16><<< grid, threads >>>(d_C, d_A, d_B, dimsA.x, dimsB.x);
-    }
-    else
-    {
-        matrixMulCUDA<32><<< grid, threads >>>(d_C, d_A, d_B, dimsA.x, dimsB.x);
-    }
+    matrixMulCUDA<<< grid, threads >>>(d_C, d_A, d_B, dimsA.x, dimsB.x);
 
     printf("done\n");
 
@@ -237,14 +231,7 @@ int matrixMultiply(int argc, char **argv, int block_size, dim3 &dimsA, dim3 &dim
 		// Run kernel and record the time
 		checkCudaErrors(cudaEventRecord(start, NULL));
 
-        if (block_size == 16)
-        {
-            matrixMulCUDA<16><<< grid, threads >>>(d_C, d_A, d_B, dimsA.x, dimsB.x);
-        }
-        else
-        {
-            matrixMulCUDA<32><<< grid, threads >>>(d_C, d_A, d_B, dimsA.x, dimsB.x);
-        }
+        matrixMulCUDA<<< grid, threads >>>(d_C, d_A, d_B, dimsA.x, dimsB.x);
 
 		cudaThreadSynchronize();
 
@@ -404,7 +391,7 @@ int main(int argc, char **argv)
     }
 
     // Use a larger block size for Fermi and above
-    int block_size = (deviceProp.major < 2) ? 16 : 32;
+    int block_size = 32;
 
     dim3 dimsA(5*2*block_size, 5*2*block_size, 1);
     dim3 dimsB(5*4*block_size, 5*2*block_size, 1);

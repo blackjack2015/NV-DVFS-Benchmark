@@ -31,7 +31,7 @@
 #include "gerschgorin.h"
 
 #include "bisect_small.cuh"
-#include "bisect_large.cuh"
+// #include "bisect_large.cuh"
 
 
 int nIter = 100;
@@ -319,7 +319,7 @@ runTest(int argc, char **argv)
     printf("Gerschgorin interval: %f / %f\n", lg, ug);
 
     // two kernels, for small matrices a lot of overhead can be avoided
-    if (mat_size <= MAX_SMALL_MATRIX)
+    // if (mat_size <= MAX_SMALL_MATRIX)
     {
 
         // initialize memory for result
@@ -340,26 +340,26 @@ runTest(int argc, char **argv)
         printf("User requests non-default argument(s), skipping self-check!\n");
         bCompareResult = true;
     }
-    else
-    {
+    // else
+    // {
 
-        // initialize memory for result
-        ResultDataLarge  result;
-        initResultDataLargeMatrix(result, mat_size);
+    //     // initialize memory for result
+    //     ResultDataLarge  result;
+    //     initResultDataLargeMatrix(result, mat_size);
 
-        // run the kernel
-        computeEigenvaluesLargeMatrix(input, result, mat_size,
-                                      precision, lg, ug,
-                                      nIter, secs, timeRestrict);
+    //     // run the kernel
+    //     computeEigenvaluesLargeMatrix(input, result, mat_size,
+    //                                   precision, lg, ug,
+    //                                   nIter, secs, timeRestrict);
 
-        // get the result from the device and do some sanity checks
-        // save the result if user specified matrix size
-        bCompareResult = processResultDataLargeMatrix(input, result, mat_size, result_file,
-                                                      user_defined, argv[0]);
+    //     // get the result from the device and do some sanity checks
+    //     // save the result if user specified matrix size
+    //     bCompareResult = processResultDataLargeMatrix(input, result, mat_size, result_file,
+    //                                                   user_defined, argv[0]);
 
-        // cleanup
-        cleanupResultDataLargeMatrix(result);
-    }
+    //     // cleanup
+    //     cleanupResultDataLargeMatrix(result);
+    // }
 
     cleanupInputData(input);
 

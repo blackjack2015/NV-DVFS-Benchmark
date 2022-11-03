@@ -49,5 +49,5 @@ for perf_file in perf_filelist:
     rows = rows.append(one_data, ignore_index=True)
 
 print(rows.head())
-rows.to_csv(output_name)
+rows.to_csv(output_name, index=False)
 

@@ -105,7 +105,7 @@ template<uint sortDir> static inline __device__ uint binarySearchExclusive(uint 
 ////////////////////////////////////////////////////////////////////////////////
 // Bottom-level merge sort (binary search-based)
 ////////////////////////////////////////////////////////////////////////////////
-template<uint sortDir> __global__ void mergeSortSharedKernel(
+__global__ void mergeSortSharedKernel(
     uint *d_DstKey,
     uint *d_DstVal,
     uint *d_SrcKey,
@@ -136,8 +136,8 @@ template<uint sortDir> __global__ void mergeSortSharedKernel(
         uint valA = baseVal[lPos +      0];
         uint keyB = baseKey[lPos + stride];
         uint valB = baseVal[lPos + stride];
-        uint posA = binarySearchExclusive<sortDir>(keyA, baseKey + stride, stride, stride) + lPos;
-        uint posB = binarySearchInclusive<sortDir>(keyB, baseKey +      0, stride, stride) + lPos;
+        uint posA = binarySearchExclusive<1U>(keyA, baseKey + stride, stride, stride) + lPos;
+        uint posB = binarySearchInclusive<1U>(keyB, baseKey +      0, stride, stride) + lPos;
 
         __syncthreads();
         baseKey[posA] = keyA;
@@ -173,16 +173,16 @@ static void mergeSortShared(
     uint  blockCount = batchSize * arrayLength / SHARED_SIZE_LIMIT;
     uint threadCount = SHARED_SIZE_LIMIT / 2;
 
-    if (sortDir)
+    // if (sortDir)
     {
-        mergeSortSharedKernel<1U><<<blockCount, threadCount>>>(d_DstKey, d_DstVal, d_SrcKey, d_SrcVal, arrayLength);
+        mergeSortSharedKernel<<<blockCount, threadCount>>>(d_DstKey, d_DstVal, d_SrcKey, d_SrcVal, arrayLength);
         getLastCudaError("mergeSortShared<1><<<>>> failed\n");
     }
-    else
-    {
-        mergeSortSharedKernel<0U><<<blockCount, threadCount>>>(d_DstKey, d_DstVal, d_SrcKey, d_SrcVal, arrayLength);
-        getLastCudaError("mergeSortShared<0><<<>>> failed\n");
-    }
+    // else
+    // {
+    //     mergeSortSharedKernel<0U><<<blockCount, threadCount>>>(d_DstKey, d_DstVal, d_SrcKey, d_SrcVal, arrayLength);
+    //     getLastCudaError("mergeSortShared<0><<<>>> failed\n");
+    // }
 }
 
 

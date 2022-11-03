@@ -297,7 +297,7 @@ $(foreach sm,$(SMS),$(eval GENCODE_FLAGS += -gencode arch=compute_$(sm),code=sm_
 $(foreach sm,$(SMS),$(eval GENCODE_FLAGS += -gencode arch=compute_$(sm),code=compute_$(sm)))
 endif
 
-ALL_CCFLAGS += --threads 0
+ALL_CCFLAGS += --threads 0 -std=c++17
 
 ifeq ($(SAMPLE_ENABLED),0)
 EXEC ?= @echo "[@]"
@@ -320,10 +320,10 @@ endif
 reduction.o:reduction.cu
 	$(EXEC) $(NVCC) $(INCLUDES) $(ALL_CCFLAGS) $(GENCODE_FLAGS) -o $@ -c $<
 
-reduction_kernel.o:reduction_kernel.cu
-	$(EXEC) $(NVCC) $(INCLUDES) $(ALL_CCFLAGS) $(GENCODE_FLAGS) -o $@ -c $<
+# reduction_kernel.o:reduction_kernel.cu
+# 	$(EXEC) $(NVCC) $(INCLUDES) $(ALL_CCFLAGS) $(GENCODE_FLAGS) -o $@ -c $<
 
-reduction:reduction.o reduction_kernel.o
+reduction:reduction.o # reduction_kernel.o
 	$(EXEC) $(NVCC) $(ALL_LDFLAGS) $(GENCODE_FLAGS) -o $@ $+ $(LIBRARIES)
 	$(EXEC) mkdir -p ../bin/
 	$(EXEC) mv $@ ../bin/

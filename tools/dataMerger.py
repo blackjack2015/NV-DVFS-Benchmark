@@ -9,10 +9,10 @@ def main():
     """Main function."""
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('--ptx-csv', type=str, default='ptx.csv')
+    parser.add_argument('--ptx-csv', type=str, default='data/ptx.csv')
     parser.add_argument('--kernel-setting', type=str)
     parser.add_argument('--profile-csv', type=str)
-    parser.add_argument('--output', type=str, default='test.csv')
+    parser.add_argument('--output', type=str, default='data/data.csv')
 
     args = parser.parse_args()
     print(args)
@@ -28,9 +28,22 @@ def main():
         app_kernel[app] = json.loads(cf_ks.get(app, 'kernels'))[0]
 
     ptx_stats = pd.read_csv(args.ptx_csv, header=0)
+    profile_stats = pd.read_csv(args.profile_csv, header=0)
+
+    target_ptx_stats = pd.DataFrame()
     for (app, kernel) in app_kernel.items():
-        recs = ptx_stats[(ptx_stats.benchmark == app) & (kernel in ptx_stats.kernel)]
-        print(len(recs))
+        recs = ptx_stats[(ptx_stats.benchmark == app) & (ptx_stats['kernel'].str.contains(kernel))]
+        print(app, kernel, len(recs))
+        target_ptx_stats = target_ptx_stats.append(recs.iloc[0])
+
+    target_ptx_stats = target_ptx_stats.reset_index()
+    print(len(target_ptx_stats), len(profile_stats))
+
+    join_stats = pd.merge(profile_stats, target_ptx_stats, how='left', on='benchmark')
+    print(len(join_stats))
+    print(join_stats.head())
+    join_stats.to_csv(args.output, index=False)
+
 
 if __name__ == '__main__':
     main()

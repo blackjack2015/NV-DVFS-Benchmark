@@ -352,7 +352,7 @@ def main():
     # parser.add_argument('isa_type', type=str)
     parser.add_argument('--isa-files-path', type=str, default='ptx_tools/assembly_info')
     parser.add_argument('--source-root', type=str)
-    parser.add_argument('--output', type=str, default='ptx.csv')
+    parser.add_argument('--output', type=str, default='data/ptx.csv')
     parser.add_argument('--v', action='store_const', const=True, default=False)
 
     args = parser.parse_args()
@@ -414,7 +414,7 @@ def main():
 
             data = data.append(one_row, ignore_index=True)
         # writeOutputFiles(ISA, occurrences_per_kernel, sequence_per_kernel, sequence_per_kernel_coded, kernel_names, output_folder)
-    data.to_csv(args.output)
+    data.to_csv(args.output, index=False)
 
 
 if __name__ == "__main__":

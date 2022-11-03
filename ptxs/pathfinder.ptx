@@ -10,7 +10,7 @@ compile_size = 64bit
 Fatbin ptx code:
 ================
 arch = sm_80
-code version = [7,5]
+code version = [7,2]
 producer = <unknown>
 host = linux
 compile_size = 64bit
@@ -23,7 +23,7 @@ compressed
 
 
 
-.version 7.5
+.version 7.2
 .target sm_80
 .address_size 64
 
@@ -72,7 +72,7 @@ shl.b32 %r25, %r3, 2;
 mov.u32 %r26, _ZZ14dynproc_kerneliPiS_S_iiiiE4prev;
 add.s32 %r5, %r26, %r25;
 or.pred %p4, %p2, %p3;
-@%p4 bra $L__BB0_2;
+@%p4 bra LBB0_2;
 
 cvta.to.global.u64 %rd5, %rd3;
 mul.wide.s32 %rd6, %r4, 4;
@@ -80,12 +80,12 @@ add.s64 %rd7, %rd5, %rd6;
 ld.global.u32 %r27, [%rd7];
 st.shared.u32 [%r5], %r27;
 
-$L__BB0_2:
+LBB0_2:
 bar.sync 0;
 mov.u32 %r29, _ZZ14dynproc_kerneliPiS_S_iiiiE6result;
 add.s32 %r6, %r29, %r25;
 setp.lt.s32 %p5, %r17, 1;
-@%p5 bra $L__BB0_10;
+@%p5 bra LBB0_10;
 
 cvta.to.global.u64 %rd1, %rd2;
 mov.u32 %r62, 0;
@@ -117,7 +117,7 @@ and.pred %p1, %p7, %p8;
 mov.u16 %rs4, 0;
 mov.u16 %rs5, 1;
 
-$L__BB0_4:
+LBB0_4:
 mov.u32 %r49, 254;
 sub.s32 %r50, %r49, %r62;
 setp.le.s32 %p9, %r3, %r50;
@@ -126,7 +126,7 @@ and.pred %p11, %p10, %p9;
 and.pred %p12, %p1, %p11;
 not.pred %p13, %p12;
 mov.u16 %rs8, %rs4;
-@%p13 bra $L__BB0_6;
+@%p13 bra LBB0_6;
 
 ld.shared.u32 %r51, [%r7];
 ld.shared.u32 %r52, [%r5];
@@ -140,29 +140,29 @@ add.s32 %r57, %r55, %r56;
 st.shared.u32 [%r6], %r57;
 mov.u16 %rs8, %rs5;
 
-$L__BB0_6:
+LBB0_6:
 bar.sync 0;
 setp.eq.s32 %p14, %r61, -1;
-@%p14 bra $L__BB0_10;
+@%p14 bra LBB0_10;
 
 setp.eq.s16 %p15, %rs8, 0;
-@%p15 bra $L__BB0_9;
+@%p15 bra LBB0_9;
 
 ld.shared.u32 %r58, [%r6];
 st.shared.u32 [%r5], %r58;
 
-$L__BB0_9:
+LBB0_9:
 bar.sync 0;
 add.s32 %r61, %r61, 1;
 add.s32 %r60, %r60, %r18;
 add.s32 %r62, %r62, 1;
 setp.lt.s32 %p16, %r62, %r17;
-@%p16 bra $L__BB0_4;
+@%p16 bra LBB0_4;
 
-$L__BB0_10:
+LBB0_10:
 and.b16 %rs6, %rs8, 255;
 setp.eq.s16 %p17, %rs6, 0;
-@%p17 bra $L__BB0_12;
+@%p17 bra LBB0_12;
 
 cvta.to.global.u64 %rd10, %rd4;
 ld.shared.u32 %r59, [%r6];
@@ -170,7 +170,7 @@ mul.wide.s32 %rd11, %r4, 4;
 add.s64 %rd12, %rd10, %rd11;
 st.global.u32 [%rd12], %r59;
 
-$L__BB0_12:
+LBB0_12:
 ret;
 
 }

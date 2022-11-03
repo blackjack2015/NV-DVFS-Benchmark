@@ -300,7 +300,7 @@ endif
 # ifndef CUDA_LOW
 #     ALL_CCFLAGS += --threads 0
 # endif
-ALL_CCFLAGS += --std=c++11 --threads 0
+ALL_CCFLAGS += --std=c++17 --threads 0
 
 ifeq ($(SAMPLE_ENABLED),0)
 EXEC ?= @echo "[@]"
