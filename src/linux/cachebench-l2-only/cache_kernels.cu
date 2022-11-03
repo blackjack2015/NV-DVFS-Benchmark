@@ -207,9 +207,8 @@ __device__ int dev_fun<int4>::reduce(const int4 &v){
 	return v.x ^ v.y ^ v.z ^ v.w;
 }
 
-template<class T>
-__global__ void benchmark_func(T * const g_data, bool readonly, int blockdim, int stepwidth, int index_clamping){
-	dev_fun<T> func;
+__global__ void benchmark_int(int * const g_data, bool readonly, int blockdim, int stepwidth, int index_clamping){
+	dev_fun<int> func;
 	const int grid_data_width = stepwidth*gridDim.x*blockdim;
 
 	// Thread block-wise striding
@@ -218,25 +217,25 @@ __global__ void benchmark_func(T * const g_data, bool readonly, int blockdim, in
 	const int stride = blockdim;
 
 	unsigned int offset = index;
-	T temp = func.init(0);
+	int temp = func.init(0);
 	for(int j=0; j<TOTAL_ITERATIONS; j+=UNROLL_ITERATIONS){
 		// Pretend updating of offset in order to force repetitive loads
 		offset = func(temp, offset);
 #ifndef TEX_LOADS
 		union {
-			const T *ptr;
+			const int *ptr;
 			int2 i;
 		} g_data_load_ptr = { g_data+offset };
 #endif
-		/*volatile*/ T * const g_data_store_ptr = g_data+offset+grid_data_width;
+		/*volatile*/ int * const g_data_store_ptr = g_data+offset+grid_data_width;
 #pragma unroll
 		for(int i=0; i<UNROLL_ITERATIONS; i++){
 			const unsigned int iteration_offset = (readonly ? i : i >> 1) % stepwidth;//readonly ? i % stepwidth : (i >> 1) % stepwidth;
 			if( readonly || (i % 2 == 0) ){
 #ifdef TEX_LOADS
-				const T v = func.load(g_data, offset+iteration_offset*stride);
+				const int v = func.load(g_data, offset+iteration_offset*stride);
 #else
-				const T v = func.load(g_data_load_ptr.ptr, iteration_offset*stride);
+				const int v = func.load(g_data_load_ptr.ptr, iteration_offset*stride);
 #endif
 				if( readonly ){
 #ifdef TEX_LOADS
@@ -255,6 +254,114 @@ __global__ void benchmark_func(T * const g_data, bool readonly, int blockdim, in
 	offset = func(temp, offset);
 	if( offset != index ) // Does not occur
 		*g_data = func.init(offset);
+}
+
+__global__ void benchmark_two_int(int2 * const g_data, bool readonly, int blockdim, int stepwidth, int index_clamping){
+	dev_fun<int2> func;
+	const int grid_data_width = stepwidth*gridDim.x*blockdim;
+
+	// Thread block-wise striding
+	int index = stepwidth*blockIdx.x*blockdim + threadIdx.x;
+	index = index_clamping==0 ? index : index % index_clamping;
+	const int stride = blockdim;
+
+	unsigned int offset = index;
+	int2 temp = func.init(0);
+	for(int j=0; j<TOTAL_ITERATIONS; j+=UNROLL_ITERATIONS){
+		// Pretend updating of offset in order to force repetitive loads
+		offset = func(temp, offset);
+#ifndef TEX_LOADS
+		union {
+			const int2 *ptr;
+			int2 i;
+		} g_data_load_ptr = { g_data+offset };
+#endif
+		/*volatile*/ int2 * const g_data_store_ptr = g_data+offset+grid_data_width;
+#pragma unroll
+		for(int i=0; i<UNROLL_ITERATIONS; i++){
+			const unsigned int iteration_offset = (readonly ? i : i >> 1) % stepwidth;//readonly ? i % stepwidth : (i >> 1) % stepwidth;
+			if( readonly || (i % 2 == 0) ){
+#ifdef TEX_LOADS
+				const int2 v = func.load(g_data, offset+iteration_offset*stride);
+#else
+				const int2 v = func.load(g_data_load_ptr.ptr, iteration_offset*stride);
+#endif
+				if( readonly ){
+#ifdef TEX_LOADS
+					// Pretend update of offset in order to force reloads
+					offset ^= func.reduce(v);
+#else
+					// Pretend update of data pointer in order to force reloads
+					g_data_load_ptr.i.x ^= func.reduce(v);
+#endif
+				}
+				temp = v;
+			} else
+				func.store( g_data_store_ptr, iteration_offset*stride, temp );
+		}
+	}
+	offset = func(temp, offset);
+	if( offset != index ) // Does not occur
+		*g_data = func.init(offset);
+}
+
+__global__ void benchmark_four_int(int4 * const g_data, bool readonly, int blockdim, int stepwidth, int index_clamping){
+	dev_fun<int4> func;
+	const int grid_data_width = stepwidth*gridDim.x*blockdim;
+
+	// Thread block-wise striding
+	int index = stepwidth*blockIdx.x*blockdim + threadIdx.x;
+	index = index_clamping==0 ? index : index % index_clamping;
+	const int stride = blockdim;
+
+	unsigned int offset = index;
+	int4 temp = func.init(0);
+	for(int j=0; j<TOTAL_ITERATIONS; j+=UNROLL_ITERATIONS){
+		// Pretend updating of offset in order to force repetitive loads
+		offset = func(temp, offset);
+#ifndef TEX_LOADS
+		union {
+			const int4 *ptr;
+			int2 i;
+		} g_data_load_ptr = { g_data+offset };
+#endif
+		/*volatile*/ int4 * const g_data_store_ptr = g_data+offset+grid_data_width;
+#pragma unroll
+		for(int i=0; i<UNROLL_ITERATIONS; i++){
+			const unsigned int iteration_offset = (readonly ? i : i >> 1) % stepwidth;//readonly ? i % stepwidth : (i >> 1) % stepwidth;
+			if( readonly || (i % 2 == 0) ){
+#ifdef TEX_LOADS
+				const int4 v = func.load(g_data, offset+iteration_offset*stride);
+#else
+				const int4 v = func.load(g_data_load_ptr.ptr, iteration_offset*stride);
+#endif
+				if( readonly ){
+#ifdef TEX_LOADS
+					// Pretend update of offset in order to force reloads
+					offset ^= func.reduce(v);
+#else
+					// Pretend update of data pointer in order to force reloads
+					g_data_load_ptr.i.x ^= func.reduce(v);
+#endif
+				}
+				temp = v;
+			} else
+				func.store( g_data_store_ptr, iteration_offset*stride, temp );
+		}
+	}
+	offset = func(temp, offset);
+	if( offset != index ) // Does not occur
+		*g_data = func.init(offset);
+}
+
+template<class T>
+void benchmark_func(dim3 dimGrid, dim3 dimBlock, T * const g_data, bool readonly, int blockdim, int stepwidth, int index_clamping){
+    if constexpr(std::is_integral_v<T>)
+	benchmark_int<<<dimGrid, dimBlock>>>(g_data, readonly, blockdim, stepwidth, index_clamping);
+    else if constexpr (sizeof(T) == 8)
+	benchmark_two_int<<<dimGrid, dimBlock>>>(g_data, readonly, blockdim, stepwidth, index_clamping);
+    else
+	benchmark_four_int<<<dimGrid, dimBlock>>>(g_data, readonly, blockdim, stepwidth, index_clamping);
 }
 
 double max3(double v1, double v2, double v3){
@@ -287,7 +394,7 @@ void runbench_warmup(datatype *cd, long size){
 	dim3 dimBlock(BLOCK_SIZE, 1, 1);
 	dim3 dimReducedGrid(TOTAL_REDUCED_BLOCKS, 1, 1);
 
-	benchmark_func<datatype><<< dimReducedGrid, dimBlock >>>(cd, false, BLOCK_SIZE, 1, 256 );
+	benchmark_func<datatype>(dimReducedGrid, dimBlock, cd, false, BLOCK_SIZE, 1, 256 );
 	CUDA_SAFE_CALL( cudaGetLastError() );
 	CUDA_SAFE_CALL( cudaDeviceSynchronize() );
 }
@@ -314,7 +421,7 @@ double runbench(int total_blocks, datatype *cd, long size, bool spreadsheet, boo
 	}
 
 	initializeEvents(&start, &stop);
-	benchmark_func<datatype><<< dimGrid, dimBlock >>>(cd, readonly, BLOCK_SIZE, stepwidth, index_clamping);
+	benchmark_func<datatype>(dimGrid, dimBlock, cd, readonly, BLOCK_SIZE, stepwidth, index_clamping);
 	float kernel_time = finalizeEvents(start, stop);
 	double bandwidth = ((double)memoryoperations*sizeof(datatype))/kernel_time*1000./(1000.*1000.*1000.);
 
@@ -345,7 +452,7 @@ double runbench(int total_blocks, datatype *cd, long size, bool spreadsheet, boo
 
 	initializeEvents(&start, &stop);
     for (int i = 0 ; i < iters; i++)
-	    benchmark_func<datatype><<< dimGrid, dimBlock >>>(cd, readonly, BLOCK_SIZE, stepwidth, index_clamping);
+	    benchmark_func<datatype>(dimGrid, dimBlock, cd, readonly, BLOCK_SIZE, stepwidth, index_clamping);
 	
     float avg_msec = finalizeEvents(start, stop) / iters;
     printf("benchmark_func() iterated %d, average time is %f msec\n", iters, avg_msec);
