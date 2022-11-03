@@ -10,7 +10,7 @@ compile_size = 64bit
 Fatbin ptx code:
 ================
 arch = sm_80
-code version = [7,5]
+code version = [7,2]
 producer = <unknown>
 host = linux
 compile_size = 64bit
@@ -23,7 +23,7 @@ compressed
 
 
 
-.version 7.5
+.version 7.2
 .target sm_80
 .address_size 64
 
@@ -104,7 +104,7 @@ mov.u32 %r37, _ZZ14calculate_tempiPfS_S_iiiifffffE13power_on_cuda;
 add.s32 %r38, %r37, %r33;
 add.s32 %r7, %r38, %r36;
 not.pred %p10, %p9;
-@%p10 bra $L__BB0_2;
+@%p10 bra LBB0_2;
 
 cvta.to.global.u64 %rd4, %rd2;
 mul.wide.s32 %rd5, %r5, 4;
@@ -116,13 +116,13 @@ add.s64 %rd8, %rd7, %rd5;
 ld.global.f32 %f8, [%rd8];
 st.shared.f32 [%r7], %f8;
 
-$L__BB0_2:
+LBB0_2:
 bar.sync 0;
 mov.u32 %r40, _ZZ14calculate_tempiPfS_S_iiiifffffE6temp_t;
 add.s32 %r41, %r40, %r33;
 add.s32 %r8, %r41, %r36;
 setp.lt.s32 %p11, %r19, 1;
-@%p11 bra $L__BB0_11;
+@%p11 bra LBB0_11;
 
 mov.u32 %r81, 0;
 neg.s32 %r44, %r1;
@@ -180,14 +180,14 @@ mov.u16 %rs4, 0;
 mov.f32 %f20, 0f42A00000;
 mov.u16 %rs6, 1;
 
-$L__BB0_4:
+LBB0_4:
 mov.u32 %r79, 14;
 sub.s32 %r16, %r79, %r81;
 setp.gt.s32 %p18, %r4, %r16;
 setp.le.s32 %p19, %r4, %r81;
 or.pred %p20, %p19, %p18;
 mov.u16 %rs9, %rs4;
-@%p20 bra $L__BB0_7;
+@%p20 bra LBB0_7;
 
 setp.le.s32 %p21, %r3, %r81;
 setp.gt.s32 %p22, %r3, %r16;
@@ -195,7 +195,7 @@ or.pred %p23, %p22, %p21;
 or.pred %p24, %p23, %p1;
 or.pred %p25, %p24, %p2;
 mov.u16 %rs9, %rs4;
-@%p25 bra $L__BB0_7;
+@%p25 bra LBB0_7;
 
 ld.shared.f32 %f12, [%r6];
 cvt.f64.f32 %fd4, %f12;
@@ -223,28 +223,28 @@ cvt.rn.f32.f64 %f23, %fd15;
 st.shared.f32 [%r8], %f23;
 mov.u16 %rs9, %rs6;
 
-$L__BB0_7:
+LBB0_7:
 bar.sync 0;
 setp.eq.s32 %p26, %r80, -1;
-@%p26 bra $L__BB0_11;
+@%p26 bra LBB0_11;
 
 setp.eq.s16 %p27, %rs9, 0;
-@%p27 bra $L__BB0_10;
+@%p27 bra LBB0_10;
 
 ld.shared.f32 %f24, [%r8];
 st.shared.f32 [%r6], %f24;
 
-$L__BB0_10:
+LBB0_10:
 bar.sync 0;
 add.s32 %r80, %r80, 1;
 add.s32 %r81, %r81, 1;
 setp.lt.s32 %p28, %r81, %r19;
-@%p28 bra $L__BB0_4;
+@%p28 bra LBB0_4;
 
-$L__BB0_11:
+LBB0_11:
 and.b16 %rs7, %rs9, 255;
 setp.eq.s16 %p29, %rs7, 0;
-@%p29 bra $L__BB0_13;
+@%p29 bra LBB0_13;
 
 cvta.to.global.u64 %rd9, %rd3;
 ld.shared.f32 %f25, [%r8];
@@ -252,7 +252,7 @@ mul.wide.s32 %rd10, %r5, 4;
 add.s64 %rd11, %rd9, %rd10;
 st.global.f32 [%rd11], %f25;
 
-$L__BB0_13:
+LBB0_13:
 ret;
 
 }

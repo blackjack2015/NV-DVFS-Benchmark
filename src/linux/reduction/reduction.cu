@@ -64,6 +64,7 @@ enum ReduceType
 template <class T>
 bool runTest(int argc, char **argv, ReduceType datatype);
 
+
 #define MAX_BLOCK_DIM_SIZE 65535
 
 #ifdef WIN32
@@ -575,7 +576,7 @@ runTest(int argc, char **argv, ReduceType datatype)
 		int smemSize = (numThreads <= 32) ? 2 * numThreads * sizeof(T) : numThreads * sizeof(T);
 
 		// warming up
-		reduce2<T> << < dimGrid, dimBlock, smemSize >> >(d_idata, d_odata, size);
+		reduce2(dimGrid, dimBlock, smemSize, d_idata, d_odata, size);
 		checkCudaErrors(cudaDeviceSynchronize());
 
 		cudaEvent_t start, stop;
@@ -590,7 +591,7 @@ runTest(int argc, char **argv, ReduceType datatype)
 			// Run kernel and record the time
 			checkCudaErrors(cudaEventRecord(start, NULL));
 
-			reduce2<T> << < dimGrid, dimBlock, smemSize >> >(d_idata, d_odata, size);
+			reduce2<T>(dimGrid, dimBlock, smemSize, d_idata, d_odata, size);
 
 			cudaThreadSynchronize();
 
@@ -678,3 +679,4 @@ runTest(int argc, char **argv, ReduceType datatype)
 
     return true;
 }
+

@@ -14,8 +14,8 @@ else
 	@echo "Sample is ready - all dependencies have been met"
 endif
 
-bisect_large.o:bisect_large.cu
-	$(EXEC) $(NVCC) $(INCLUDES) $(ALL_CCFLAGS) $(GENCODE_FLAGS) -o $@ -c $<
+# bisect_large.o:bisect_large.cu
+#	$(EXEC) $(NVCC) $(INCLUDES) $(ALL_CCFLAGS) $(GENCODE_FLAGS) -o $@ -c $<
 
 bisect_small.o:bisect_small.cu
 	$(EXEC) $(NVCC) $(INCLUDES) $(ALL_CCFLAGS) $(GENCODE_FLAGS) -o $@ -c $<
@@ -32,7 +32,7 @@ matlab.o:matlab.cpp
 main.o:main.cu
 	$(EXEC) $(NVCC) $(INCLUDES) $(ALL_CCFLAGS) $(GENCODE_FLAGS) -o $@ -c $<
 
-eigenvalues:bisect_large.o bisect_small.o bisect_util.o gerschgorin.o matlab.o main.o
+eigenvalues:bisect_small.o bisect_util.o gerschgorin.o matlab.o main.o
 	$(EXEC) $(NVCC) $(ALL_LDFLAGS) $(GENCODE_FLAGS) -o $@ $+ $(LIBRARIES)
 	$(EXEC) mkdir -p ../bin/
 	$(EXEC) mv $@ ../bin/

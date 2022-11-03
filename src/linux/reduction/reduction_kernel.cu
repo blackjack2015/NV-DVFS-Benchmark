@@ -146,11 +146,10 @@ __global__ void reduce1(T *g_idata, T *g_odata, unsigned int n) {
 /*
     This version uses sequential addressing -- no divergence or bank conflicts.
 */
-template <class T>
-__global__ void reduce2(T *g_idata, T *g_odata, unsigned int n) {
+__global__ void reduce2_float(float *g_idata, float *g_odata, unsigned int n) {
   // Handle to thread block group
   cg::thread_block cta = cg::this_thread_block();
-  T *sdata = SharedMemory<T>();
+  float *sdata = SharedMemory<float>();
 
   // load shared mem
   unsigned int tid = threadIdx.x;
@@ -171,6 +170,69 @@ __global__ void reduce2(T *g_idata, T *g_odata, unsigned int n) {
 
   // write result for this block to global mem
   if (tid == 0) g_odata[blockIdx.x] = sdata[0];
+}
+
+__global__ void reduce2_int(int *g_idata, int *g_odata, unsigned int n) {
+  // Handle to thread block group
+  cg::thread_block cta = cg::this_thread_block();
+  int *sdata = SharedMemory<int>();
+
+  // load shared mem
+  unsigned int tid = threadIdx.x;
+  unsigned int i = blockIdx.x * blockDim.x + threadIdx.x;
+
+  sdata[tid] = (i < n) ? g_idata[i] : 0;
+
+  cg::sync(cta);
+
+  // do reduction in shared mem
+  for (unsigned int s = blockDim.x / 2; s > 0; s >>= 1) {
+    if (tid < s) {
+      sdata[tid] += sdata[tid + s];
+    }
+
+    cg::sync(cta);
+  }
+
+  // write result for this block to global mem
+  if (tid == 0) g_odata[blockIdx.x] = sdata[0];
+}
+
+__global__ void reduce2_double(double *g_idata, double *g_odata, unsigned int n) {
+  // Handle to thread block group
+  cg::thread_block cta = cg::this_thread_block();
+  double *sdata = SharedMemory<double>();
+
+  // load shared mem
+  unsigned int tid = threadIdx.x;
+  unsigned int i = blockIdx.x * blockDim.x + threadIdx.x;
+
+  sdata[tid] = (i < n) ? g_idata[i] : 0;
+
+  cg::sync(cta);
+
+  // do reduction in shared mem
+  for (unsigned int s = blockDim.x / 2; s > 0; s >>= 1) {
+    if (tid < s) {
+      sdata[tid] += sdata[tid + s];
+    }
+
+    cg::sync(cta);
+  }
+
+  // write result for this block to global mem
+  if (tid == 0) g_odata[blockIdx.x] = sdata[0];
+}
+
+template <class T>
+void reduce2(dim3 dimGrid, dim3 dimBlock, int smemSize, T* d_idata, T* d_odata, int size){
+    if constexpr(std::is_integral_v<T>)
+        reduce2_int<< < dimGrid, dimBlock, smemSize >> >(d_idata, d_odata, size);
+    // else if constexpr (std::is_floating_point_v<T>) 
+    else if constexpr (sizeof(T) == 4) 
+        reduce2_float<< < dimGrid, dimBlock, smemSize >> >(d_idata, d_odata, size);
+    else
+        reduce2_double<< < dimGrid, dimBlock, smemSize >> >(d_idata, d_odata, size);
 }
 
 /*
@@ -624,7 +686,7 @@ void reduce(int size, int threads, int blocks, int whichKernel, T *d_idata,
       break;
 
     case 2:
-      reduce2<T><<<dimGrid, dimBlock, smemSize>>>(d_idata, d_odata, size);
+      reduce2<T>(dimGrid, dimBlock, smemSize, d_idata, d_odata, size);
       break;
 
     case 3:

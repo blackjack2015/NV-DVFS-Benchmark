@@ -10,7 +10,7 @@ compile_size = 64bit
 Fatbin ptx code:
 ================
 arch = sm_80
-code version = [7,5]
+code version = [7,2]
 producer = <unknown>
 host = linux
 compile_size = 64bit
@@ -23,7 +23,7 @@ compressed
 
 
 
-.version 7.5
+.version 7.2
 .target sm_80
 .address_size 64
 
@@ -43,7 +43,7 @@ compressed
 .reg .pred %p<3>;
 .reg .f32 %f<299>;
 .reg .b32 %r<18>;
-.reg .b64 %rd<12>;
+.reg .b64 %rd<9>;
 
 	.shared .align 4 .b8 _ZZ21convolutionRowsKernelPfS_iiiE6s_Data[2560];
 
@@ -62,47 +62,47 @@ shl.b32 %r10, %r9, 2;
 mov.u32 %r11, %tid.y;
 add.s32 %r12, %r10, %r11;
 mad.lo.s32 %r13, %r12, %r4, %r1;
-cvt.s64.s32 %rd6, %r13;
-add.s64 %rd1, %rd6, 16;
-mul.wide.s32 %rd7, %r13, 4;
-add.s64 %rd8, %rd5, %rd7;
-add.s64 %rd2, %rd8, 64;
-ld.global.f32 %f6, [%rd8+64];
+mul.wide.s32 %rd6, %r13, 4;
+add.s64 %rd7, %rd5, %rd6;
+add.s64 %rd1, %rd7, 64;
+ld.global.f32 %f6, [%rd7+64];
 mov.u32 %r14, _ZZ21convolutionRowsKernelPfS_iiiE6s_Data;
 mad.lo.s32 %r15, %r11, 640, %r14;
 shl.b32 %r16, %r7, 2;
 add.s32 %r2, %r15, %r16;
 st.shared.f32 [%r2+64], %f6;
-ld.global.f32 %f7, [%rd8+128];
+ld.global.f32 %f7, [%rd7+128];
 st.shared.f32 [%r2+128], %f7;
-ld.global.f32 %f8, [%rd8+192];
+ld.global.f32 %f8, [%rd7+192];
 st.shared.f32 [%r2+192], %f8;
-ld.global.f32 %f9, [%rd8+256];
+ld.global.f32 %f9, [%rd7+256];
 st.shared.f32 [%r2+256], %f9;
-ld.global.f32 %f10, [%rd8+320];
+ld.global.f32 %f10, [%rd7+320];
 st.shared.f32 [%r2+320], %f10;
-ld.global.f32 %f11, [%rd8+384];
+ld.global.f32 %f11, [%rd7+384];
 st.shared.f32 [%r2+384], %f11;
-ld.global.f32 %f12, [%rd8+448];
+ld.global.f32 %f12, [%rd7+448];
 st.shared.f32 [%r2+448], %f12;
-ld.global.f32 %f13, [%rd8+512];
+ld.global.f32 %f13, [%rd7+512];
 st.shared.f32 [%r2+512], %f13;
+cvta.to.global.u64 %rd8, %rd3;
+add.s64 %rd2, %rd8, %rd6;
 setp.lt.s32 %p1, %r1, 0;
 mov.f32 %f298, 0f00000000;
 mov.f32 %f297, %f298;
-@%p1 bra $L__BB0_2;
+@%p1 bra LBB0_2;
 
-ld.global.f32 %f297, [%rd2+-64];
+ld.global.f32 %f297, [%rd1+-64];
 
-$L__BB0_2:
+LBB0_2:
 st.shared.f32 [%r2], %f297;
 sub.s32 %r17, %r3, %r1;
 setp.lt.s32 %p2, %r17, 145;
-@%p2 bra $L__BB0_4;
+@%p2 bra LBB0_4;
 
-ld.global.f32 %f298, [%rd2+512];
+ld.global.f32 %f298, [%rd1+512];
 
-$L__BB0_4:
+LBB0_4:
 st.shared.f32 [%r2+576], %f298;
 bar.sync 0;
 ld.shared.f32 %f15, [%r2+32];
@@ -156,10 +156,7 @@ fma.rn.f32 %f62, %f61, %f60, %f59;
 ld.shared.f32 %f63, [%r2+96];
 ld.const.f32 %f64, [c_Kernel];
 fma.rn.f32 %f65, %f64, %f63, %f62;
-cvta.to.global.u64 %rd9, %rd3;
-shl.b64 %rd10, %rd1, 2;
-add.s64 %rd11, %rd9, %rd10;
-st.global.f32 [%rd11], %f65;
+st.global.f32 [%rd2+64], %f65;
 fma.rn.f32 %f66, %f16, %f63, 0f00000000;
 ld.shared.f32 %f67, [%r2+100];
 fma.rn.f32 %f68, %f19, %f67, %f66;
@@ -193,7 +190,7 @@ ld.shared.f32 %f95, [%r2+156];
 fma.rn.f32 %f96, %f61, %f95, %f94;
 ld.shared.f32 %f97, [%r2+160];
 fma.rn.f32 %f98, %f64, %f97, %f96;
-st.global.f32 [%rd11+64], %f98;
+st.global.f32 [%rd2+128], %f98;
 fma.rn.f32 %f99, %f16, %f97, 0f00000000;
 ld.shared.f32 %f100, [%r2+164];
 fma.rn.f32 %f101, %f19, %f100, %f99;
@@ -227,7 +224,7 @@ ld.shared.f32 %f128, [%r2+220];
 fma.rn.f32 %f129, %f61, %f128, %f127;
 ld.shared.f32 %f130, [%r2+224];
 fma.rn.f32 %f131, %f64, %f130, %f129;
-st.global.f32 [%rd11+128], %f131;
+st.global.f32 [%rd2+192], %f131;
 fma.rn.f32 %f132, %f16, %f130, 0f00000000;
 ld.shared.f32 %f133, [%r2+228];
 fma.rn.f32 %f134, %f19, %f133, %f132;
@@ -261,7 +258,7 @@ ld.shared.f32 %f161, [%r2+284];
 fma.rn.f32 %f162, %f61, %f161, %f160;
 ld.shared.f32 %f163, [%r2+288];
 fma.rn.f32 %f164, %f64, %f163, %f162;
-st.global.f32 [%rd11+192], %f164;
+st.global.f32 [%rd2+256], %f164;
 fma.rn.f32 %f165, %f16, %f163, 0f00000000;
 ld.shared.f32 %f166, [%r2+292];
 fma.rn.f32 %f167, %f19, %f166, %f165;
@@ -295,7 +292,7 @@ ld.shared.f32 %f194, [%r2+348];
 fma.rn.f32 %f195, %f61, %f194, %f193;
 ld.shared.f32 %f196, [%r2+352];
 fma.rn.f32 %f197, %f64, %f196, %f195;
-st.global.f32 [%rd11+256], %f197;
+st.global.f32 [%rd2+320], %f197;
 fma.rn.f32 %f198, %f16, %f196, 0f00000000;
 ld.shared.f32 %f199, [%r2+356];
 fma.rn.f32 %f200, %f19, %f199, %f198;
@@ -329,7 +326,7 @@ ld.shared.f32 %f227, [%r2+412];
 fma.rn.f32 %f228, %f61, %f227, %f226;
 ld.shared.f32 %f229, [%r2+416];
 fma.rn.f32 %f230, %f64, %f229, %f228;
-st.global.f32 [%rd11+320], %f230;
+st.global.f32 [%rd2+384], %f230;
 fma.rn.f32 %f231, %f16, %f229, 0f00000000;
 ld.shared.f32 %f232, [%r2+420];
 fma.rn.f32 %f233, %f19, %f232, %f231;
@@ -363,7 +360,7 @@ ld.shared.f32 %f260, [%r2+476];
 fma.rn.f32 %f261, %f61, %f260, %f259;
 ld.shared.f32 %f262, [%r2+480];
 fma.rn.f32 %f263, %f64, %f262, %f261;
-st.global.f32 [%rd11+384], %f263;
+st.global.f32 [%rd2+448], %f263;
 fma.rn.f32 %f264, %f16, %f262, 0f00000000;
 ld.shared.f32 %f265, [%r2+484];
 fma.rn.f32 %f266, %f19, %f265, %f264;
@@ -397,7 +394,7 @@ ld.shared.f32 %f293, [%r2+540];
 fma.rn.f32 %f294, %f61, %f293, %f292;
 ld.shared.f32 %f295, [%r2+544];
 fma.rn.f32 %f296, %f64, %f295, %f294;
-st.global.f32 [%rd11+448], %f296;
+st.global.f32 [%rd2+512], %f296;
 ret;
 
 }
@@ -412,16 +409,16 @@ ret;
 {
 .reg .pred %p<3>;
 .reg .f32 %f<243>;
-.reg .b32 %r<20>;
-.reg .b64 %rd<34>;
+.reg .b32 %r<19>;
+.reg .b64 %rd<40>;
 
 	.shared .align 4 .b8 _ZZ24convolutionColumnsKernelPfS_iiiE6s_Data[5184];
 
-ld.param.u64 %rd5, [_Z24convolutionColumnsKernelPfS_iii_param_0];
-ld.param.u64 %rd6, [_Z24convolutionColumnsKernelPfS_iii_param_1];
+ld.param.u64 %rd6, [_Z24convolutionColumnsKernelPfS_iii_param_0];
+ld.param.u64 %rd7, [_Z24convolutionColumnsKernelPfS_iii_param_1];
 ld.param.u32 %r4, [_Z24convolutionColumnsKernelPfS_iii_param_3];
 ld.param.u32 %r5, [_Z24convolutionColumnsKernelPfS_iii_param_4];
-cvta.to.global.u64 %rd1, %rd6;
+cvta.to.global.u64 %rd8, %rd7;
 mov.u32 %r6, %ctaid.x;
 shl.b32 %r7, %r6, 4;
 mov.u32 %r8, %tid.x;
@@ -431,64 +428,69 @@ shl.b32 %r11, %r10, 6;
 mov.u32 %r12, %tid.y;
 add.s32 %r13, %r12, %r11;
 add.s32 %r1, %r13, -8;
-mad.lo.s32 %r2, %r1, %r5, %r9;
-cvt.s64.s32 %rd2, %r2;
-shl.b32 %r14, %r5, 3;
-cvt.s64.s32 %rd3, %r14;
-add.s64 %rd4, %rd3, %rd2;
-shl.b64 %rd7, %rd4, 2;
-add.s64 %rd8, %rd1, %rd7;
-ld.global.f32 %f6, [%rd8];
+mad.lo.s32 %r14, %r1, %r5, %r9;
+mul.wide.s32 %rd9, %r14, 4;
+add.s64 %rd1, %rd8, %rd9;
+shl.b32 %r2, %r5, 3;
+mul.wide.s32 %rd10, %r2, 4;
+add.s64 %rd11, %rd1, %rd10;
+ld.global.f32 %f6, [%rd11];
 mov.u32 %r15, _ZZ24convolutionColumnsKernelPfS_iiiE6s_Data;
 mad.lo.s32 %r16, %r8, 324, %r15;
 shl.b32 %r17, %r12, 2;
 add.s32 %r3, %r16, %r17;
 st.shared.f32 [%r3+32], %f6;
-mul.wide.s32 %rd9, %r14, 4;
-add.s64 %rd10, %rd8, %rd9;
-ld.global.f32 %f7, [%rd10];
+cvt.s64.s32 %rd2, %r5;
+mul.wide.s32 %rd3, %r5, 8;
+shl.b64 %rd12, %rd3, 2;
+add.s64 %rd13, %rd11, %rd12;
+mul.wide.s32 %rd14, %r5, 32;
+add.s64 %rd15, %rd11, %rd14;
+ld.global.f32 %f7, [%rd15];
 st.shared.f32 [%r3+64], %f7;
-add.s64 %rd11, %rd10, %rd9;
-ld.global.f32 %f8, [%rd11];
+add.s64 %rd16, %rd13, %rd12;
+add.s64 %rd17, %rd15, %rd14;
+ld.global.f32 %f8, [%rd17];
 st.shared.f32 [%r3+96], %f8;
-add.s64 %rd12, %rd11, %rd9;
-ld.global.f32 %f9, [%rd12];
+add.s64 %rd18, %rd16, %rd12;
+add.s64 %rd19, %rd17, %rd14;
+ld.global.f32 %f9, [%rd19];
 st.shared.f32 [%r3+128], %f9;
-add.s64 %rd13, %rd12, %rd9;
-ld.global.f32 %f10, [%rd13];
+add.s64 %rd20, %rd18, %rd12;
+add.s64 %rd21, %rd19, %rd14;
+ld.global.f32 %f10, [%rd21];
 st.shared.f32 [%r3+160], %f10;
-add.s64 %rd14, %rd13, %rd9;
-ld.global.f32 %f11, [%rd14];
+add.s64 %rd22, %rd20, %rd12;
+add.s64 %rd23, %rd21, %rd14;
+ld.global.f32 %f11, [%rd23];
 st.shared.f32 [%r3+192], %f11;
-add.s64 %rd15, %rd14, %rd9;
-ld.global.f32 %f12, [%rd15];
+add.s64 %rd24, %rd22, %rd12;
+add.s64 %rd25, %rd23, %rd14;
+ld.global.f32 %f12, [%rd25];
 st.shared.f32 [%r3+224], %f12;
-add.s64 %rd16, %rd15, %rd9;
-ld.global.f32 %f13, [%rd16];
+add.s64 %rd4, %rd24, %rd12;
+add.s64 %rd26, %rd25, %rd14;
+ld.global.f32 %f13, [%rd26];
 st.shared.f32 [%r3+256], %f13;
+cvta.to.global.u64 %rd27, %rd6;
+add.s64 %rd5, %rd27, %rd9;
 setp.lt.s32 %p1, %r1, 0;
 mov.f32 %f242, 0f00000000;
 mov.f32 %f241, %f242;
-@%p1 bra $L__BB1_2;
+@%p1 bra LBB1_2;
 
-mul.wide.s32 %rd17, %r2, 4;
-add.s64 %rd18, %rd1, %rd17;
-ld.global.f32 %f241, [%rd18];
+ld.global.f32 %f241, [%rd1];
 
-$L__BB1_2:
+LBB1_2:
 st.shared.f32 [%r3], %f241;
 sub.s32 %r18, %r4, %r1;
 setp.lt.s32 %p2, %r18, 73;
-@%p2 bra $L__BB1_4;
+@%p2 bra LBB1_4;
 
-mul.lo.s32 %r19, %r5, 72;
-cvt.s64.s32 %rd19, %r19;
-add.s64 %rd20, %rd19, %rd2;
-shl.b64 %rd21, %rd20, 2;
-add.s64 %rd22, %rd1, %rd21;
-ld.global.f32 %f242, [%rd22];
+add.s64 %rd29, %rd4, %rd12;
+ld.global.f32 %f242, [%rd29];
 
-$L__BB1_4:
+LBB1_4:
 st.shared.f32 [%r3+288], %f242;
 bar.sync 0;
 ld.shared.f32 %f15, [%r3];
@@ -542,9 +544,8 @@ fma.rn.f32 %f62, %f61, %f60, %f59;
 ld.shared.f32 %f63, [%r3+64];
 ld.const.f32 %f64, [c_Kernel];
 fma.rn.f32 %f65, %f64, %f63, %f62;
-cvta.to.global.u64 %rd23, %rd5;
-add.s64 %rd25, %rd23, %rd7;
-st.global.f32 [%rd25], %f65;
+add.s64 %rd31, %rd5, %rd10;
+st.global.f32 [%rd31], %f65;
 fma.rn.f32 %f66, %f16, %f39, 0f00000000;
 fma.rn.f32 %f67, %f19, %f42, %f66;
 fma.rn.f32 %f68, %f22, %f45, %f67;
@@ -570,9 +571,9 @@ ld.shared.f32 %f87, [%r3+92];
 fma.rn.f32 %f88, %f61, %f87, %f86;
 ld.shared.f32 %f89, [%r3+96];
 fma.rn.f32 %f90, %f64, %f89, %f88;
-shl.b64 %rd26, %rd3, 2;
-add.s64 %rd27, %rd25, %rd26;
-st.global.f32 [%rd27], %f90;
+shl.b64 %rd32, %rd2, 5;
+add.s64 %rd33, %rd31, %rd32;
+st.global.f32 [%rd33], %f90;
 fma.rn.f32 %f91, %f16, %f63, 0f00000000;
 fma.rn.f32 %f92, %f19, %f75, %f91;
 fma.rn.f32 %f93, %f22, %f77, %f92;
@@ -598,8 +599,8 @@ ld.shared.f32 %f112, [%r3+124];
 fma.rn.f32 %f113, %f61, %f112, %f111;
 ld.shared.f32 %f114, [%r3+128];
 fma.rn.f32 %f115, %f64, %f114, %f113;
-add.s64 %rd28, %rd27, %rd26;
-st.global.f32 [%rd28], %f115;
+add.s64 %rd34, %rd33, %rd32;
+st.global.f32 [%rd34], %f115;
 fma.rn.f32 %f116, %f16, %f89, 0f00000000;
 fma.rn.f32 %f117, %f19, %f100, %f116;
 fma.rn.f32 %f118, %f22, %f102, %f117;
@@ -625,8 +626,8 @@ ld.shared.f32 %f137, [%r3+156];
 fma.rn.f32 %f138, %f61, %f137, %f136;
 ld.shared.f32 %f139, [%r3+160];
 fma.rn.f32 %f140, %f64, %f139, %f138;
-add.s64 %rd29, %rd28, %rd26;
-st.global.f32 [%rd29], %f140;
+add.s64 %rd35, %rd34, %rd32;
+st.global.f32 [%rd35], %f140;
 fma.rn.f32 %f141, %f16, %f114, 0f00000000;
 fma.rn.f32 %f142, %f19, %f125, %f141;
 fma.rn.f32 %f143, %f22, %f127, %f142;
@@ -652,8 +653,8 @@ ld.shared.f32 %f162, [%r3+188];
 fma.rn.f32 %f163, %f61, %f162, %f161;
 ld.shared.f32 %f164, [%r3+192];
 fma.rn.f32 %f165, %f64, %f164, %f163;
-add.s64 %rd30, %rd29, %rd26;
-st.global.f32 [%rd30], %f165;
+add.s64 %rd36, %rd35, %rd32;
+st.global.f32 [%rd36], %f165;
 fma.rn.f32 %f166, %f16, %f139, 0f00000000;
 fma.rn.f32 %f167, %f19, %f150, %f166;
 fma.rn.f32 %f168, %f22, %f152, %f167;
@@ -679,8 +680,8 @@ ld.shared.f32 %f187, [%r3+220];
 fma.rn.f32 %f188, %f61, %f187, %f186;
 ld.shared.f32 %f189, [%r3+224];
 fma.rn.f32 %f190, %f64, %f189, %f188;
-add.s64 %rd31, %rd30, %rd26;
-st.global.f32 [%rd31], %f190;
+add.s64 %rd37, %rd36, %rd32;
+st.global.f32 [%rd37], %f190;
 fma.rn.f32 %f191, %f16, %f164, 0f00000000;
 fma.rn.f32 %f192, %f19, %f175, %f191;
 fma.rn.f32 %f193, %f22, %f177, %f192;
@@ -706,8 +707,8 @@ ld.shared.f32 %f212, [%r3+252];
 fma.rn.f32 %f213, %f61, %f212, %f211;
 ld.shared.f32 %f214, [%r3+256];
 fma.rn.f32 %f215, %f64, %f214, %f213;
-add.s64 %rd32, %rd31, %rd26;
-st.global.f32 [%rd32], %f215;
+add.s64 %rd38, %rd37, %rd32;
+st.global.f32 [%rd38], %f215;
 fma.rn.f32 %f216, %f16, %f189, 0f00000000;
 fma.rn.f32 %f217, %f19, %f200, %f216;
 fma.rn.f32 %f218, %f22, %f202, %f217;
@@ -733,8 +734,8 @@ ld.shared.f32 %f237, [%r3+284];
 fma.rn.f32 %f238, %f61, %f237, %f236;
 ld.shared.f32 %f239, [%r3+288];
 fma.rn.f32 %f240, %f64, %f239, %f238;
-add.s64 %rd33, %rd32, %rd26;
-st.global.f32 [%rd33], %f240;
+add.s64 %rd39, %rd38, %rd32;
+st.global.f32 [%rd39], %f240;
 ret;
 
 }

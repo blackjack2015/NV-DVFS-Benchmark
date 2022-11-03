@@ -10,7 +10,7 @@ compile_size = 64bit
 Fatbin ptx code:
 ================
 arch = sm_80
-code version = [7,5]
+code version = [7,2]
 producer = <unknown>
 host = linux
 compile_size = 64bit
@@ -23,7 +23,7 @@ compressed
 
 
 
-.version 7.5
+.version 7.2
 .target sm_80
 .address_size 64
 
@@ -59,23 +59,19 @@ mov.u32 %r4, %ctaid.x;
 mov.u32 %r5, %tid.x;
 mad.lo.s32 %r1, %r3, %r4, %r5;
 setp.ge.s32 %p1, %r1, %r2;
-@%p1 bra $L__BB0_2;
+@%p1 bra LBB0_2;
 
 cvta.to.global.u64 %rd6, %rd3;
-cvta.to.global.u64 %rd7, %rd1;
-mul.wide.s32 %rd8, %r1, 4;
-add.s64 %rd9, %rd7, %rd8;
-cvta.to.global.u64 %rd10, %rd2;
-add.s64 %rd11, %rd10, %rd8;
-add.s64 %rd12, %rd6, %rd8;
-cvta.to.global.u64 %rd13, %rd4;
-add.s64 %rd14, %rd13, %rd8;
-cvta.to.global.u64 %rd15, %rd5;
-add.s64 %rd16, %rd15, %rd8;
-ld.global.f32 %f3, [%rd16];
+mul.wide.s32 %rd7, %r1, 4;
+add.s64 %rd8, %rd6, %rd7;
+cvta.to.global.u64 %rd9, %rd4;
+add.s64 %rd10, %rd9, %rd7;
+cvta.to.global.u64 %rd11, %rd5;
+add.s64 %rd12, %rd11, %rd7;
+ld.global.f32 %f3, [%rd12];
 sqrt.rn.f32 %f4, %f3;
-ld.global.f32 %f5, [%rd14];
-ld.global.f32 %f6, [%rd12];
+ld.global.f32 %f5, [%rd10];
+ld.global.f32 %f6, [%rd8];
 div.rn.f32 %f7, %f6, %f5;
 lg2.approx.f32 %f8, %f7;
 mul.f32 %f9, %f8, 0f3F317218;
@@ -127,15 +123,19 @@ mul.f32 %f52, %f6, %f32;
 mul.f32 %f53, %f5, %f51;
 mul.f32 %f54, %f53, %f48;
 sub.f32 %f55, %f52, %f54;
-st.global.f32 [%rd9], %f55;
+cvta.to.global.u64 %rd13, %rd1;
+add.s64 %rd14, %rd13, %rd7;
+st.global.f32 [%rd14], %f55;
 sub.f32 %f56, %f18, %f48;
 mul.f32 %f57, %f53, %f56;
 sub.f32 %f58, %f18, %f32;
 mul.f32 %f59, %f6, %f58;
 sub.f32 %f60, %f57, %f59;
-st.global.f32 [%rd11], %f60;
+cvta.to.global.u64 %rd15, %rd2;
+add.s64 %rd16, %rd15, %rd7;
+st.global.f32 [%rd16], %f60;
 
-$L__BB0_2:
+LBB0_2:
 ret;
 
 }

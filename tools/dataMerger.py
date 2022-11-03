@@ -28,9 +28,10 @@ def main():
         app_kernel[app] = json.loads(cf_ks.get(app, 'kernels'))[0]
 
     ptx_stats = pd.read_csv(args.ptx_csv, header=0)
+    print(ptx_stats.kernel)
     for (app, kernel) in app_kernel.items():
-        recs = ptx_stats[(ptx_stats.benchmark == app) & (kernel in ptx_stats.kernel)]
-        print(len(recs))
+        recs = ptx_stats[(ptx_stats.benchmark == app) & (ptx_stats['kernel'].str.contains(kernel))]
+        print(app, kernel, len(recs))
 
 if __name__ == '__main__':
     main()
