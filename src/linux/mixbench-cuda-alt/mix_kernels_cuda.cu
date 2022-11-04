@@ -18,8 +18,8 @@
 BenchType datatype = BENCH_FLOAT;
 int secs = 5;
 
-template <class T, int blockdim>
-__global__ void benchmark_func(T seed, volatile T *g_data, int memory_ratio){
+__global__ void benchmark_int(int seed, volatile int *g_data, int memory_ratio){
+	const int blockdim = blockDim.x;
 	const int index_stride = blockdim;
 	const int index_base = blockIdx.x*blockdim*UNROLLED_MEMORY_ACCESSES + threadIdx.x;
 
@@ -28,17 +28,17 @@ __global__ void benchmark_func(T seed, volatile T *g_data, int memory_ratio){
 	const int array_index_bound = index_base+offset_slips*index_stride;
 	const int initial_index_range = memory_ratio>0 ? UNROLLED_MEMORY_ACCESSES % ((memory_ratio+1)/2) : 1;
 	int initial_index_factor = 0;
-	volatile T *data = g_data;
+	volatile int *data = g_data;
 
 	int array_index = index_base;
-	T r0 = seed + blockIdx.x * blockdim + threadIdx.x,
-	  r1 = r0+(T)(2),
-	  r2 = r0+(T)(3),
-	  r3 = r0+(T)(5),
-	  r4 = r0+(T)(7),
-	  r5 = r0+(T)(11),
-	  r6 = r0+(T)(13),
-	  r7 = r0+(T)(17);
+	int r0 = seed + blockIdx.x * blockdim + threadIdx.x,
+	    r1 = r0+(int)(2),
+	    r2 = r0+(int)(3),
+	    r3 = r0+(int)(5),
+	    r4 = r0+(int)(7),
+	    r5 = r0+(int)(11),
+	    r6 = r0+(int)(13),
+	    r7 = r0+(int)(17);
 
 	for(int j=0; j<COMP_ITERATIONS; j+=UNROLL_ITERATIONS){
 		#pragma unroll
@@ -57,7 +57,7 @@ __global__ void benchmark_func(T seed, volatile T *g_data, int memory_ratio){
 		#pragma unroll
 		for(int i=UNROLL_ITERATIONS-memory_ratio; i<UNROLL_ITERATIONS; i++){
 			// Each iteration maps to one memory operation
-			T& r = reg_idx==0 ? r0 : (reg_idx==1 ? r1 : (reg_idx==2 ? r2 : (reg_idx==3 ? r3 : (reg_idx==4 ? r4 : (reg_idx==5 ? r5 : (reg_idx==6 ? r6 : r7))))));
+			int& r = reg_idx==0 ? r0 : (reg_idx==1 ? r1 : (reg_idx==2 ? r2 : (reg_idx==3 ? r3 : (reg_idx==4 ? r4 : (reg_idx==5 ? r5 : (reg_idx==6 ? r6 : r7))))));
 			if( do_write )
 				data[ array_index+halfarraysize ] = r;
 			else {
@@ -74,10 +74,147 @@ __global__ void benchmark_func(T seed, volatile T *g_data, int memory_ratio){
 			array_index = index_base + initial_index_factor*index_stride;
 		}
 	}
-	if( (r0==(T)CUDART_INF) && (r1==(T)CUDART_INF) && (r2==(T)CUDART_INF) && (r3==(T)CUDART_INF) &&
-	    (r4==(T)CUDART_INF) && (r5==(T)CUDART_INF) && (r6==(T)CUDART_INF) && (r7==(T)CUDART_INF) ){ // extremely unlikely to happen
+	if( (r0==(int)CUDART_INF) && (r1==(int)CUDART_INF) && (r2==(int)CUDART_INF) && (r3==(int)CUDART_INF) &&
+	    (r4==(int)CUDART_INF) && (r5==(int)CUDART_INF) && (r6==(int)CUDART_INF) && (r7==(int)CUDART_INF) ){ // extremely unlikely to happen
 		g_data[0] = r0+r1+r2+r3+r4+r5+r6+r7;
 	}
+
+}
+
+__global__ void benchmark_float(float seed, volatile float *g_data, int memory_ratio){
+	const int blockdim = blockDim.x;
+	const int index_stride = blockdim;
+	const int index_base = blockIdx.x*blockdim*UNROLLED_MEMORY_ACCESSES + threadIdx.x;
+
+	const int halfarraysize = gridDim.x*blockdim*UNROLLED_MEMORY_ACCESSES;
+	const int offset_slips = 1+UNROLLED_MEMORY_ACCESSES-((memory_ratio+1)/2);
+	const int array_index_bound = index_base+offset_slips*index_stride;
+	const int initial_index_range = memory_ratio>0 ? UNROLLED_MEMORY_ACCESSES % ((memory_ratio+1)/2) : 1;
+	int initial_index_factor = 0;
+	volatile float *data = g_data;
+
+	int array_index = index_base;
+	float r0 = seed + blockIdx.x * blockdim + threadIdx.x,
+	      r1 = r0+(float)(2),
+	      r2 = r0+(float)(3),
+	      r3 = r0+(float)(5),
+	      r4 = r0+(float)(7),
+	      r5 = r0+(float)(11),
+	      r6 = r0+(float)(13),
+	      r7 = r0+(float)(17);
+
+	for(int j=0; j<COMP_ITERATIONS; j+=UNROLL_ITERATIONS){
+		#pragma unroll
+		for(int i=0; i<UNROLL_ITERATIONS-memory_ratio; i++){
+			r0 = r0 * r0 + r4;
+			r1 = r1 * r1 + r5;
+			r2 = r2 * r2 + r6;
+			r3 = r3 * r3 + r7;
+			r4 = r4 * r4 + r0;
+			r5 = r5 * r5 + r1;
+			r6 = r6 * r6 + r2;
+			r7 = r7 * r7 + r3;
+		}
+		bool do_write = true;
+		int reg_idx = 0;
+		#pragma unroll
+		for(int i=UNROLL_ITERATIONS-memory_ratio; i<UNROLL_ITERATIONS; i++){
+			// Each iteration maps to one memory operation
+			float& r = reg_idx==0 ? r0 : (reg_idx==1 ? r1 : (reg_idx==2 ? r2 : (reg_idx==3 ? r3 : (reg_idx==4 ? r4 : (reg_idx==5 ? r5 : (reg_idx==6 ? r6 : r7))))));
+			if( do_write )
+				data[ array_index+halfarraysize ] = r;
+			else {
+				r = data[ array_index ];
+				if( ++reg_idx>=REGBLOCK_SIZE )
+					reg_idx = 0;
+				array_index += index_stride;
+			}
+			do_write = !do_write;
+		}
+		if( array_index >= array_index_bound ){
+			if( ++initial_index_factor > initial_index_range)
+				initial_index_factor = 0;
+			array_index = index_base + initial_index_factor*index_stride;
+		}
+	}
+	if( (r0==(float)CUDART_INF) && (r1==(float)CUDART_INF) && (r2==(float)CUDART_INF) && (r3==(float)CUDART_INF) &&
+	    (r4==(float)CUDART_INF) && (r5==(float)CUDART_INF) && (r6==(float)CUDART_INF) && (r7==(float)CUDART_INF) ){ // extremely unlikely to happen
+		g_data[0] = r0+r1+r2+r3+r4+r5+r6+r7;
+	}
+
+}
+
+__global__ void benchmark_double(double seed, volatile double *g_data, int memory_ratio){
+	const int blockdim = blockDim.x;
+	const int index_stride = blockdim;
+	const int index_base = blockIdx.x*blockdim*UNROLLED_MEMORY_ACCESSES + threadIdx.x;
+
+	const int halfarraysize = gridDim.x*blockdim*UNROLLED_MEMORY_ACCESSES;
+	const int offset_slips = 1+UNROLLED_MEMORY_ACCESSES-((memory_ratio+1)/2);
+	const int array_index_bound = index_base+offset_slips*index_stride;
+	const int initial_index_range = memory_ratio>0 ? UNROLLED_MEMORY_ACCESSES % ((memory_ratio+1)/2) : 1;
+	int initial_index_factor = 0;
+	volatile double *data = g_data;
+
+	int array_index = index_base;
+	double r0 = seed + blockIdx.x * blockdim + threadIdx.x,
+	       r1 = r0+(double)(2),
+	       r2 = r0+(double)(3),
+	       r3 = r0+(double)(5),
+	       r4 = r0+(double)(7),
+	       r5 = r0+(double)(11),
+	       r6 = r0+(double)(13),
+	       r7 = r0+(double)(17);
+
+	for(int j=0; j<COMP_ITERATIONS; j+=UNROLL_ITERATIONS){
+		#pragma unroll
+		for(int i=0; i<UNROLL_ITERATIONS-memory_ratio; i++){
+			r0 = r0 * r0 + r4;
+			r1 = r1 * r1 + r5;
+			r2 = r2 * r2 + r6;
+			r3 = r3 * r3 + r7;
+			r4 = r4 * r4 + r0;
+			r5 = r5 * r5 + r1;
+			r6 = r6 * r6 + r2;
+			r7 = r7 * r7 + r3;
+		}
+		bool do_write = true;
+		int reg_idx = 0;
+		#pragma unroll
+		for(int i=UNROLL_ITERATIONS-memory_ratio; i<UNROLL_ITERATIONS; i++){
+			// Each iteration maps to one memory operation
+			double& r = reg_idx==0 ? r0 : (reg_idx==1 ? r1 : (reg_idx==2 ? r2 : (reg_idx==3 ? r3 : (reg_idx==4 ? r4 : (reg_idx==5 ? r5 : (reg_idx==6 ? r6 : r7))))));
+			if( do_write )
+				data[ array_index+halfarraysize ] = r;
+			else {
+				r = data[ array_index ];
+				if( ++reg_idx>=REGBLOCK_SIZE )
+					reg_idx = 0;
+				array_index += index_stride;
+			}
+			do_write = !do_write;
+		}
+		if( array_index >= array_index_bound ){
+			if( ++initial_index_factor > initial_index_range)
+				initial_index_factor = 0;
+			array_index = index_base + initial_index_factor*index_stride;
+		}
+	}
+	if( (r0==(double)CUDART_INF) && (r1==(double)CUDART_INF) && (r2==(double)CUDART_INF) && (r3==(double)CUDART_INF) &&
+	    (r4==(double)CUDART_INF) && (r5==(double)CUDART_INF) && (r6==(double)CUDART_INF) && (r7==(double)CUDART_INF) ){ // extremely unlikely to happen
+		g_data[0] = r0+r1+r2+r3+r4+r5+r6+r7;
+	}
+
+}
+
+template <class T>
+void benchmark_func(dim3 dimGrid, dim3 dimBlock, T seed, volatile T *g_data, int memory_ratio){
+    if constexpr(std::is_integral_v<T>)
+	benchmark_int<<<dimGrid, dimBlock>>>(seed, g_data, memory_ratio);
+    else if constexpr (sizeof(T) == 4)
+	benchmark_float<<<dimGrid, dimBlock>>>(seed, g_data, memory_ratio);
+    else
+	benchmark_double<<<dimGrid, dimBlock>>>(seed, g_data, memory_ratio);
 
 }
 
@@ -106,7 +243,7 @@ void runbench_warmup(double *cd, long size){
 	dim3 dimBlock(BLOCK_SIZE, 1, 1);
 	dim3 dimReducedGrid(TOTAL_REDUCED_BLOCKS, 1, 1);
 
-	benchmark_func< short, BLOCK_SIZE><<< dimReducedGrid, dimBlock >>>((short)1, (short*)cd, 0);
+	benchmark_func< double>(dimReducedGrid, dimBlock, (double)1, (double*)cd, 0);
 	CUDA_SAFE_CALL( cudaGetLastError() );
 	CUDA_SAFE_CALL( cudaThreadSynchronize() );
 }
@@ -134,7 +271,7 @@ void runbench(double *cd, long size, int memory_ratio){
         default:
         case BENCH_FLOAT:{
 	        initializeEvents(&start, &stop);
-	        benchmark_func< float, BLOCK_SIZE><<< dimGrid, dimBlock >>>(1.0f, (float*)cd, memory_ratio);
+	        benchmark_func< float>(dimGrid, dimBlock, 1.0f, (float*)cd, memory_ratio);
 	        kernel_time_mad = finalizeEvents(start, stop);
             size_of_data = sizeof(float);
             break;
@@ -142,7 +279,7 @@ void runbench(double *cd, long size, int memory_ratio){
 
         case BENCH_DOUBLE:{
 	        initializeEvents(&start, &stop);
-	        benchmark_func< double, BLOCK_SIZE><<< dimGrid, dimBlock >>>(1.0, cd, memory_ratio);
+	        benchmark_func< double>(dimGrid, dimBlock, 1.0, cd, memory_ratio);
 	        kernel_time_mad = finalizeEvents(start, stop);
             size_of_data = sizeof(double);
             break;
@@ -150,7 +287,7 @@ void runbench(double *cd, long size, int memory_ratio){
 
         case BENCH_INT:{
 	        initializeEvents(&start, &stop);
-	        benchmark_func< int, BLOCK_SIZE><<< dimGrid, dimBlock >>>(1, (int*)cd, memory_ratio);
+	        benchmark_func< int>(dimGrid, dimBlock, 1, (int*)cd, memory_ratio);
 	        kernel_time_mad = finalizeEvents(start, stop);
             size_of_data = sizeof(int);
             break;
@@ -191,17 +328,17 @@ void runbench(double *cd, long size, int memory_ratio){
         {
             default:
             case BENCH_FLOAT:{
-	            benchmark_func< float, BLOCK_SIZE><<< dimGrid, dimBlock >>>(1.0f, (float*)cd, memory_ratio);
+	            benchmark_func< float>(dimGrid, dimBlock, 1.0f, (float*)cd, memory_ratio);
                 break;
             }
 
             case BENCH_DOUBLE:{
-	            benchmark_func< double, BLOCK_SIZE><<< dimGrid, dimBlock >>>(1.0, cd, memory_ratio);
+	            benchmark_func< double>(dimGrid, dimBlock, 1.0, cd, memory_ratio);
                 break;
             }
 
             case BENCH_INT:{
-	            benchmark_func< int, BLOCK_SIZE><<< dimGrid, dimBlock >>>(1, (int*)cd, memory_ratio);
+	            benchmark_func< int>(dimGrid, dimBlock, 1, (int*)cd, memory_ratio);
                 break;
             }
         }

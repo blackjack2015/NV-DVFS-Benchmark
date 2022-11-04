@@ -14,6 +14,7 @@ from utils.dvfs_control import DVFSController
 
 class Benchmark:
 
+    # TODO: write the benchmark arguments into the log.
     def __init__(self, app_dir, log_dir, application, arg_no, arg, core_freq, mem_freq, device_id=0):
 
         # app_exec_cmd = './%s/%s %s -device=%d -secs=%d >> %s/%s' % (

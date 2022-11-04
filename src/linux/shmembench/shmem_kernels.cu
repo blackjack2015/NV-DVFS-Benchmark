@@ -91,9 +91,8 @@ __device__ void set_vector(float4 *target, int offset, float4 v){
 
 extern __shared__ float shm_buffer_ptr[];
 
-template <class T>
-__global__ void benchmark_shmem(T *g_data, int ratio){
-	T *shm_buffer = (T*)shm_buffer_ptr;
+__global__ void benchmark_float(float *g_data, int ratio){
+	float *shm_buffer = (float*)shm_buffer_ptr;
 	int tid = threadIdx.x; 
 	int globaltid = blockIdx.x*blockDim.x + tid;
     int globalsize = blockDim.x * gridDim.x;
@@ -114,7 +113,67 @@ __global__ void benchmark_shmem(T *g_data, int ratio){
 		shmem_swap(shm_buffer+tid+3*blockDim.x, shm_buffer+tid+4*blockDim.x);
 		__threadfence_block();
 	}
-	g_data[globaltid] = reduce_vector<T>(shm_buffer[tid+0*blockDim.x], shm_buffer[tid+1*blockDim.x], shm_buffer[tid+2*blockDim.x], shm_buffer[tid+3*blockDim.x], shm_buffer[tid+4*blockDim.x], shm_buffer[tid+5*blockDim.x]);
+	g_data[globaltid] = reduce_vector<float>(shm_buffer[tid+0*blockDim.x], shm_buffer[tid+1*blockDim.x], shm_buffer[tid+2*blockDim.x], shm_buffer[tid+3*blockDim.x], shm_buffer[tid+4*blockDim.x], shm_buffer[tid+5*blockDim.x]);
+}
+
+__global__ void benchmark_two_float(float2 *g_data, int ratio){
+	float2 *shm_buffer = (float2*)shm_buffer_ptr;
+	int tid = threadIdx.x; 
+	int globaltid = blockIdx.x*blockDim.x + tid;
+    int globalsize = blockDim.x * gridDim.x;
+	set_vector(shm_buffer, tid+0*blockDim.x, init_val(g_data[globalsize * 0 + globaltid]));
+	set_vector(shm_buffer, tid+1*blockDim.x, init_val(g_data[globalsize * 1 + globaltid]));
+	set_vector(shm_buffer, tid+2*blockDim.x, init_val(g_data[globalsize * 2 + globaltid]));
+	set_vector(shm_buffer, tid+3*blockDim.x, init_val(g_data[globalsize * 3 + globaltid]));
+	set_vector(shm_buffer, tid+4*blockDim.x, init_val(g_data[globalsize * 4 + globaltid]));
+	set_vector(shm_buffer, tid+5*blockDim.x, init_val(g_data[globalsize * 5 + globaltid]));
+	__threadfence_block();
+#pragma unroll 32
+	for(int j=0; j<ratio; j++){
+		shmem_swap(shm_buffer+tid+0*blockDim.x, shm_buffer+tid+1*blockDim.x);
+        shmem_swap(shm_buffer+tid+2*blockDim.x, shm_buffer+tid+3*blockDim.x);
+		shmem_swap(shm_buffer+tid+4*blockDim.x, shm_buffer+tid+5*blockDim.x);
+		__threadfence_block();
+		shmem_swap(shm_buffer+tid+1*blockDim.x, shm_buffer+tid+2*blockDim.x);
+		shmem_swap(shm_buffer+tid+3*blockDim.x, shm_buffer+tid+4*blockDim.x);
+		__threadfence_block();
+	}
+	g_data[globaltid] = reduce_vector<float2>(shm_buffer[tid+0*blockDim.x], shm_buffer[tid+1*blockDim.x], shm_buffer[tid+2*blockDim.x], shm_buffer[tid+3*blockDim.x], shm_buffer[tid+4*blockDim.x], shm_buffer[tid+5*blockDim.x]);
+}
+
+__global__ void benchmark_four_float(float4 *g_data, int ratio){
+	float4 *shm_buffer = (float4*)shm_buffer_ptr;
+	int tid = threadIdx.x; 
+	int globaltid = blockIdx.x*blockDim.x + tid;
+    int globalsize = blockDim.x * gridDim.x;
+	set_vector(shm_buffer, tid+0*blockDim.x, init_val(g_data[globalsize * 0 + globaltid]));
+	set_vector(shm_buffer, tid+1*blockDim.x, init_val(g_data[globalsize * 1 + globaltid]));
+	set_vector(shm_buffer, tid+2*blockDim.x, init_val(g_data[globalsize * 2 + globaltid]));
+	set_vector(shm_buffer, tid+3*blockDim.x, init_val(g_data[globalsize * 3 + globaltid]));
+	set_vector(shm_buffer, tid+4*blockDim.x, init_val(g_data[globalsize * 4 + globaltid]));
+	set_vector(shm_buffer, tid+5*blockDim.x, init_val(g_data[globalsize * 5 + globaltid]));
+	__threadfence_block();
+#pragma unroll 32
+	for(int j=0; j<ratio; j++){
+		shmem_swap(shm_buffer+tid+0*blockDim.x, shm_buffer+tid+1*blockDim.x);
+        shmem_swap(shm_buffer+tid+2*blockDim.x, shm_buffer+tid+3*blockDim.x);
+		shmem_swap(shm_buffer+tid+4*blockDim.x, shm_buffer+tid+5*blockDim.x);
+		__threadfence_block();
+		shmem_swap(shm_buffer+tid+1*blockDim.x, shm_buffer+tid+2*blockDim.x);
+		shmem_swap(shm_buffer+tid+3*blockDim.x, shm_buffer+tid+4*blockDim.x);
+		__threadfence_block();
+	}
+	g_data[globaltid] = reduce_vector<float4>(shm_buffer[tid+0*blockDim.x], shm_buffer[tid+1*blockDim.x], shm_buffer[tid+2*blockDim.x], shm_buffer[tid+3*blockDim.x], shm_buffer[tid+4*blockDim.x], shm_buffer[tid+5*blockDim.x]);
+}
+
+template <class T>
+void benchmark_shmem(dim3 dimGrid, dim3 dimBlock, int shared_mem_per_block, T *g_data, int ratio){
+	if constexpr(sizeof(T) == 4)
+	    benchmark_float<<<dimGrid, dimBlock, shared_mem_per_block>>>(g_data, ratio);
+	else if constexpr(sizeof(T) == 8)
+	    benchmark_two_float<<<dimGrid, dimBlock, shared_mem_per_block>>>(g_data, ratio);
+        else
+	    benchmark_four_float<<<dimGrid, dimBlock, shared_mem_per_block>>>(g_data, ratio);
 }
 
 double max3(double v1, double v2, double v3){
@@ -172,19 +231,19 @@ extern "C" void shmembenchGPU(double *c, long size, int ratio, int benchtype, in
         case 0:
             {
 	            initializeEvents(&start, &stop);
-	            benchmark_shmem<float><<< dimGrid_f1, dimBlock, shared_mem_per_block >>>((float*)cd, ratio);
+	            benchmark_shmem<float>(dimGrid_f1, dimBlock, shared_mem_per_block, (float*)cd, ratio);
                 break;
             }
         case 1:
             {
 	            initializeEvents(&start, &stop);
-	            benchmark_shmem<float2><<< dimGrid_f2, dimBlock, shared_mem_per_block*2 >>>((float2*)cd, ratio);
+	            benchmark_shmem<float2>(dimGrid_f2, dimBlock, shared_mem_per_block*2, (float2*)cd, ratio);
                 break;
             }
         case 2:
             {
 	            initializeEvents(&start, &stop);
-	            benchmark_shmem<float4><<< dimGrid_f4, dimBlock, shared_mem_per_block*4 >>>((float4*)cd, ratio);
+	            benchmark_shmem<float4>(dimGrid_f4, dimBlock, shared_mem_per_block*4, (float4*)cd, ratio);
                 break;
             }
     }
@@ -253,17 +312,17 @@ extern "C" void shmembenchGPU(double *c, long size, int ratio, int benchtype, in
             default:
             case 0:
                 {
-	                benchmark_shmem<float><<< dimGrid_f1, dimBlock, shared_mem_per_block >>>((float*)cd, ratio);
+	                benchmark_shmem<float>(dimGrid_f1, dimBlock, shared_mem_per_block, (float*)cd, ratio);
                     break;
                 }
             case 1:
                 {
-	                benchmark_shmem<float2><<< dimGrid_f2, dimBlock, shared_mem_per_block*2 >>>((float2*)cd, ratio);
+	                benchmark_shmem<float2>(dimGrid_f2, dimBlock, shared_mem_per_block*2, (float2*)cd, ratio);
                     break;
                 }
             case 2:
                 {
-	                benchmark_shmem<float4><<< dimGrid_f4, dimBlock, shared_mem_per_block*4 >>>((float4*)cd, ratio);
+	                benchmark_shmem<float4>(dimGrid_f4, dimBlock, shared_mem_per_block*4, (float4*)cd, ratio);
                     break;
                 }
         }
