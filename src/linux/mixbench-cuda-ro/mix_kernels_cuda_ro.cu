@@ -15,14 +15,14 @@
 BenchType datatype = BENCH_FLOAT;
 int secs = 5;
 
-template <class T, int blockdim, unsigned int granularity, unsigned int fusion_degree>
-__global__ void benchmark_func(T seed, T *g_data, int compute_iterations){
-	const unsigned int blockSize = blockdim;
+template <unsigned int granularity, unsigned int fusion_degree>
+__global__ void benchmark_int(int seed, int *g_data, int compute_iterations){
+	const unsigned int blockSize = blockDim.x;
 	const int stride = blockSize;
 	int idx = blockIdx.x*blockSize*granularity + threadIdx.x;
 	const int big_stride = gridDim.x*blockSize*granularity;
 
-	T tmps[granularity];
+	int tmps[granularity];
 	for(int k=0; k<fusion_degree; k++){
 		#pragma unroll
 		for(int j=0; j<granularity; j++){
@@ -34,15 +34,85 @@ __global__ void benchmark_func(T seed, T *g_data, int compute_iterations){
 			}
 		}
 		// Multiply add reduction
-		T sum = (T)0;
+		int sum = (int)0;
 		#pragma unroll
 		for(int j=0; j<granularity; j+=2)
 			sum += tmps[j]*tmps[j+1];
 		// Dummy code
-		if( sum==(T)-1 ) // Designed so it never executes
+		if( sum==(int)-1 ) // Designed so it never executes
 			g_data[idx+k*big_stride] = sum;
 	}
 }
+
+template <unsigned int granularity, unsigned int fusion_degree>
+__global__ void benchmark_float(float seed, float *g_data, int compute_iterations){
+	const unsigned int blockSize = blockDim.x;
+	const int stride = blockSize;
+	int idx = blockIdx.x*blockSize*granularity + threadIdx.x;
+	const int big_stride = gridDim.x*blockSize*granularity;
+
+	float tmps[granularity];
+	for(int k=0; k<fusion_degree; k++){
+		#pragma unroll
+		for(int j=0; j<granularity; j++){
+			// Load elements (memory intensive part)
+			tmps[j] = g_data[idx+j*stride+k*big_stride];
+			// Perform computations (compute intensive part)
+			for(int i=0; i<compute_iterations; i++){
+				tmps[j] = tmps[j]*tmps[j]+seed;//tmps[(j+granularity/2)%granularity];
+			}
+		}
+		// Multiply add reduction
+		float sum = (float)0;
+		#pragma unroll
+		for(int j=0; j<granularity; j+=2)
+			sum += tmps[j]*tmps[j+1];
+		// Dummy code
+		if( sum==(float)-1 ) // Designed so it never executes
+			g_data[idx+k*big_stride] = sum;
+	}
+}
+
+template <unsigned int granularity, unsigned int fusion_degree>
+__global__ void benchmark_double(double seed, double *g_data, int compute_iterations){
+	const unsigned int blockSize = blockDim.x;
+	const int stride = blockSize;
+	int idx = blockIdx.x*blockSize*granularity + threadIdx.x;
+	const int big_stride = gridDim.x*blockSize*granularity;
+
+	double tmps[granularity];
+	for(int k=0; k<fusion_degree; k++){
+		#pragma unroll
+		for(int j=0; j<granularity; j++){
+			// Load elements (memory intensive part)
+			tmps[j] = g_data[idx+j*stride+k*big_stride];
+			// Perform computations (compute intensive part)
+			for(int i=0; i<compute_iterations; i++){
+				tmps[j] = tmps[j]*tmps[j]+seed;//tmps[(j+granularity/2)%granularity];
+			}
+		}
+		// Multiply add reduction
+		double sum = (double)0;
+		#pragma unroll
+		for(int j=0; j<granularity; j+=2)
+			sum += tmps[j]*tmps[j+1];
+		// Dummy code
+		if( sum==(double)-1 ) // Designed so it never executes
+			g_data[idx+k*big_stride] = sum;
+	}
+}
+
+template <class T, unsigned int granularity, unsigned int fusion_degree>
+void benchmark_func(dim3 dimGrid, dim3 dimBlock, T seed, T *g_data, int compute_iterations){
+    if constexpr(std::is_integral_v<T>)
+	benchmark_int<granularity, fusion_degree><<<dimGrid, dimBlock>>>(seed, g_data, compute_iterations);
+    else if constexpr (sizeof(T) == 4)
+	benchmark_float<granularity, fusion_degree><<<dimGrid, dimBlock>>>(seed, g_data, compute_iterations);
+    else
+	benchmark_double<granularity, fusion_degree><<<dimGrid, dimBlock>>>(seed, g_data, compute_iterations);
+
+}
+
 
 void initializeEvents(cudaEvent_t *start, cudaEvent_t *stop){
 	CUDA_SAFE_CALL( cudaEventCreate(start) );
@@ -69,7 +139,7 @@ void runbench_warmup(double *cd, long size){
 	dim3 dimBlock(BLOCK_SIZE, 1, 1);
 	dim3 dimReducedGrid(TOTAL_REDUCED_BLOCKS, 1, 1);
 
-	benchmark_func< short, BLOCK_SIZE, ELEMENTS_PER_THREAD, FUSION_DEGREE ><<< dimReducedGrid, dimBlock >>>((short)1, (short*)cd, 0);
+	benchmark_func<double, ELEMENTS_PER_THREAD, FUSION_DEGREE >(dimReducedGrid, dimBlock, (double)1, (double*)cd, 0);
 	CUDA_SAFE_CALL( cudaGetLastError() );
 	CUDA_SAFE_CALL( cudaThreadSynchronize() );
 }
@@ -94,7 +164,7 @@ void runbench(double *cd, long size, int compute_iterations){
         default:
         case BENCH_FLOAT:{
 	        initializeEvents(&start, &stop);
-	        benchmark_func< float, BLOCK_SIZE, ELEMENTS_PER_THREAD, FUSION_DEGREE><<< dimGrid, dimBlock >>>(1.0f, (float*)cd, compute_iterations);
+	        benchmark_func< float, ELEMENTS_PER_THREAD, FUSION_DEGREE>(dimGrid, dimBlock, 1.0f, (float*)cd, compute_iterations);
 	        kernel_time_mad = finalizeEvents(start, stop);
             size_of_data = sizeof(float);
             break;
@@ -102,7 +172,7 @@ void runbench(double *cd, long size, int compute_iterations){
 
         case BENCH_DOUBLE:{
 	        initializeEvents(&start, &stop);
-	        benchmark_func< double, BLOCK_SIZE, ELEMENTS_PER_THREAD, FUSION_DEGREE><<< dimGrid, dimBlock >>>(1.0, cd, compute_iterations);
+	        benchmark_func< double, ELEMENTS_PER_THREAD, FUSION_DEGREE>(dimGrid, dimBlock, 1.0, cd, compute_iterations);
 	        kernel_time_mad = finalizeEvents(start, stop);
             size_of_data = sizeof(double);
             break;
@@ -110,7 +180,7 @@ void runbench(double *cd, long size, int compute_iterations){
 
         case BENCH_INT:{
 	        initializeEvents(&start, &stop);
-	        benchmark_func< int, BLOCK_SIZE, ELEMENTS_PER_THREAD, FUSION_DEGREE><<< dimGrid, dimBlock >>>(1, (int*)cd, compute_iterations);
+	        benchmark_func< int, ELEMENTS_PER_THREAD, FUSION_DEGREE>(dimGrid, dimBlock, 1, (int*)cd, compute_iterations);
 	        kernel_time_mad = finalizeEvents(start, stop);
             size_of_data = sizeof(int);
             break;
@@ -149,17 +219,17 @@ void runbench(double *cd, long size, int compute_iterations){
         {
             default:
             case BENCH_FLOAT:{
-	            benchmark_func< float, BLOCK_SIZE, ELEMENTS_PER_THREAD, FUSION_DEGREE><<< dimGrid, dimBlock >>>(1.0f, (float*)cd, compute_iterations);
+	            benchmark_func< float, ELEMENTS_PER_THREAD, FUSION_DEGREE>(dimGrid, dimBlock, 1.0f, (float*)cd, compute_iterations);
                 break;
             }
 
             case BENCH_DOUBLE:{
-	            benchmark_func< double, BLOCK_SIZE, ELEMENTS_PER_THREAD, FUSION_DEGREE><<< dimGrid, dimBlock >>>(1.0, cd, compute_iterations);
+	            benchmark_func< double, ELEMENTS_PER_THREAD, FUSION_DEGREE>(dimGrid, dimBlock, 1.0, cd, compute_iterations);
                 break;
             }
 
             case BENCH_INT:{
-	            benchmark_func< int, BLOCK_SIZE, ELEMENTS_PER_THREAD, FUSION_DEGREE><<< dimGrid, dimBlock >>>(1, (int*)cd, compute_iterations);
+	            benchmark_func< int, ELEMENTS_PER_THREAD, FUSION_DEGREE>(dimGrid, dimBlock, 1, (int*)cd, compute_iterations);
                 break;
             }
         }
