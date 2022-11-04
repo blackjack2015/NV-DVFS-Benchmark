@@ -14,8 +14,8 @@ from utils.dvfs_control import DVFSController
 
 class Benchmark:
 
-    # TODO: write the benchmark arguments into the log.
-    def __init__(self, app_dir, log_dir, application, arg_no, arg, core_freq, mem_freq, device_id=0):
+    # TODO: write the benchmark arguments as one line into the log.
+    def __init__(self, app_dir, log_dir, application, arg_no, arg, kernel, core_freq, mem_freq, device_id=0):
 
         # app_exec_cmd = './%s/%s %s -device=%d -secs=%d >> %s/%s' % (
         self.base_cmd = './%s/%s %s' % (
@@ -29,6 +29,10 @@ class Benchmark:
         self.perflog = './%s/benchmark_%s_core%d_mem%d_input%03d_perf.log' % (log_dir, application, core_freq, mem_freq, arg_no)
         self.metricslog = './%s/benchmark_%s_core%d_mem%d_input%03d_metrics.log' % (log_dir, application, core_freq, mem_freq, arg_no)
         self.dcgmlog = './%s/benchmark_%s_core%d_mem%d_input%03d_dcgm.log' % (log_dir, application, core_freq, mem_freq, arg_no)
+
+        # write the argument info into the log.
+        os.system('echo "kernel name:\n" >> %s' % self.perflog)
+        os.system('echo "%s" >> %s' % (kernel, self.perflog))
 
     def get_power_file(self):
 
@@ -164,15 +168,18 @@ if __name__ == '__main__':
         for i, app in enumerate(benchmark_programs):
     
             args = json.loads(cf_ks.get(app, 'args'))
+            kernels = json.loads(cf_ks.get(app, 'kernels'))
     
             for argNo, arg in enumerate(args):
-    
+                
+                kernel = kernels[argNo]
                 bench = Benchmark(
                     app_dir = application_dir,
                     log_dir = logging_dir,
                     application = app,
                     arg_no = argNo,
                     arg = arg,
+                    kernel = kernel,
                     core_freq = core_freq,
                     mem_freq = mem_freq
                 )
