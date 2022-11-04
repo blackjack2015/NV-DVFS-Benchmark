@@ -3,13 +3,11 @@ import configparser
 import json
 
 
-logRoot = 'logs/v100-dvfs-microbenchmark'
+logRoot = 'logs/v100-dvfs-real'
 perf_filelist = glob.glob(r'%s/*perf.log' % logRoot)
 
 cf_ks = configparser.ConfigParser()
-cf_ks.read('configs/kernels/microbenchmark.cfg')
-benchmark_programs = cf_ks.sections()
-print(benchmark_programs)
+cf_ks.read('configs/kernels/real.cfg')
 
 for perf_file in perf_filelist:
 
@@ -17,6 +15,10 @@ for perf_file in perf_filelist:
     appName = appInfo[1]
     argNo = int(appInfo[4][5:])
 
-    print(appName, argNo)
     kernel = json.loads(cf_ks.get(appName, 'kernels'))[argNo]
     print(appName, kernel)
+
+    with open(perf_file, 'r+') as f:
+        content = f.read()
+        f.seek(0, 0)
+        f.write("kernel_name:%s\n" % kernel + content)

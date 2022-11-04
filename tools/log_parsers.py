@@ -27,6 +27,9 @@ def parse_perf_log(perf_file):
     content = f.readlines()
     f.close()
 
+    # extract the kernel name
+    kernel = content[0].split(':')[1].strip()
+
     isLog = True
     if isLog:
         regex = re.compile(r'(iterated \d+, average time is)|(Average Kernel Time)|(Average Time)')
@@ -49,6 +52,7 @@ def parse_perf_log(perf_file):
     dict_info = {
         'benchmark': appName,
         'argNo': argNo,
+        'kernel': kernel,
         'core_frequency': coreF,
         'memory_frequency': memF,
         'time': time
