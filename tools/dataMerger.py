@@ -2,7 +2,6 @@ import json
 import pandas as pd
 import argparse
 import sys
-import configparser
 
 
 def main():
@@ -10,39 +9,37 @@ def main():
     parser = argparse.ArgumentParser()
 
     parser.add_argument('--ptx-csv', type=str, default='data/ptx.csv')
-    parser.add_argument('--kernel-setting', type=str)
     parser.add_argument('--profile-csv', type=str)
     parser.add_argument('--output', type=str, default='data/data.csv')
 
     args = parser.parse_args()
     print(args)
 
-    # Read GPU application settings
-    cfg_name = 'configs/kernels/%s.cfg' % args.kernel_setting
-    cf_ks = configparser.ConfigParser()
-    cf_ks.read(cfg_name)
-    benchmark_programs = cf_ks.sections()
-
-    app_kernel = {}
-    for app in benchmark_programs:
-        app_kernel[app] = json.loads(cf_ks.get(app, 'kernels'))[0]
-
     ptx_stats = pd.read_csv(args.ptx_csv, header=0)
     profile_stats = pd.read_csv(args.profile_csv, header=0)
 
-    target_ptx_stats = pd.DataFrame()
-    for (app, kernel) in app_kernel.items():
-        recs = ptx_stats[(ptx_stats.benchmark == app) & (ptx_stats['kernel'].str.contains(kernel))]
-        print(app, kernel, len(recs))
-        target_ptx_stats = target_ptx_stats.append(recs.iloc[0])
+    # TODO: need to optimize, apply pd.join or pd.merge
+    data = pd.DataFrame()
+    for idx, rec in profile_stats.iterrows():
+        
+        new_rec = {}
 
-    target_ptx_stats = target_ptx_stats.reset_index()
-    print(len(target_ptx_stats), len(profile_stats))
+        benchmark = rec.benchmark
+        kernel = rec.kernel
+        ptx_info = ptx_stats[(ptx_stats.benchmark == benchmark) & (ptx_stats['kernel'].str.contains(kernel))].iloc[0]
 
-    join_stats = pd.merge(profile_stats, target_ptx_stats, how='left', on='benchmark')
-    print(len(join_stats))
-    print(join_stats.head())
-    join_stats.to_csv(args.output, index=False)
+        profile_dict = rec.to_dict()
+        ptx_dict = ptx_info.to_dict()
+        del ptx_dict['benchmark']
+        del ptx_dict['kernel']
+
+        new_rec.update(profile_dict)
+        new_rec.update(ptx_dict)
+
+        data = data.append(new_rec, ignore_index=True)
+
+    print(data.head())
+    data.to_csv(args.output, index=False)
 
 
 if __name__ == '__main__':
