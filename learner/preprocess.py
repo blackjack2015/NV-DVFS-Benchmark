@@ -58,10 +58,12 @@ def get_mem_types():
     return mem_types
 
 
+def piecewise_linear(x, x0, y0, k1):
+    return np.piecewise(x, [x < x0], [lambda x: y0, lambda x: y0+(x-x0)*k1])
+
+
 def fit_piecewise_dvfs_perf_model(data):
 
-    def piecewise_linear(x, x0, y0, k1):
-        return np.piecewise(x, [x < x0], [lambda x: y0, lambda x: y0+(x-x0)*k1])
         # return np.piecewise(x, [x < x0], [lambda x: y0, lambda x: x0+k1*x])
 
     CORE_BASE = 1380.0
