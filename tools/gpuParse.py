@@ -23,7 +23,7 @@ coreBase = opt.core_base
 memBase = opt.mem_base
 
 logRoot = 'logs/%s-%s' % (gpucard, version)
-output_name = 'data/%s-%s.csv' % (gpucard, version)
+output_name = 'data/%s-%s-profile.csv' % (gpucard, version)
 
 perf_filelist = glob.glob(r'%s/*perf.log' % logRoot)
 perf_filelist.sort()

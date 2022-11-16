@@ -409,8 +409,8 @@ def main():
                 one_row[name] = count
             for name, count in zip(state_spaces, mem_stats_per_kernel[i]):
                 one_row[name] = count
-            # for name, count in zip(inst_types, dtype_stats_per_kernel[i]):
-            #     one_row[name] = count
+            for name, count in zip(inst_types, dtype_stats_per_kernel[i]):
+                one_row[name] = count
 
             data = data.append(one_row, ignore_index=True)
         # writeOutputFiles(ISA, occurrences_per_kernel, sequence_per_kernel, sequence_per_kernel_coded, kernel_names, output_folder)

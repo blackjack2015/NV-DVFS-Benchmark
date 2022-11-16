@@ -174,7 +174,8 @@ def parse_dcgm_log(dcgm_file):
     data = [re.split(r"[ ]+", line.strip())[2:] for line in lines]
     data = np.array(data, dtype=np.float)
     data = data[data[:, 0] > 0]   # filter data of which SMACT > 0
-    means = np.mean(data, axis=0).tolist()
+    rowcount = len(data)
+    means = np.mean(data[rowcount//3:rowcount//3*2, :], axis=0).tolist()
 
     dict_info = {}
     for i in range(len(metrics)):
