@@ -31,7 +31,7 @@ class Benchmark:
         self.dcgmlog = './%s/benchmark_%s_core%d_mem%d_input%03d_dcgm.log' % (log_dir, application, core_freq, mem_freq, arg_no)
 
         # write the argument info into the log.
-        os.system('echo "kernel name:\n" >> %s' % self.perflog)
+        os.system('echo "kernel name:" >> %s' % self.perflog)
         os.system('echo "%s" >> %s' % (kernel, self.perflog))
 
     def get_power_file(self):

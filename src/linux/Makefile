@@ -34,7 +34,7 @@
 ###############################################################################
 
 
-CASES=binomialOptions BlackScholes conjugateGradient convolutionFFT2D convolutionSeparable convolutionTexture eigenvalues fastWalshTransform gaussian histogram hotspot kmeans matrixMul mergeSort nnForward nvml_tools pathfinder quasirandomGenerator reduction scalarProd SobolQRNG sortingNetworks transpose vectorAdd shmembench cachebench cachebench-l2-only cachebench-tex-loads mixbench mixbench-cuda-ro mixbench-cuda-alt
+CASES=binomialOptions BlackScholes conjugateGradient convolutionFFT2D convolutionSeparable convolutionTexture cfd eigenvalues fastWalshTransform gaussian histogram hotspot kmeans matrixMul mergeSort nnForward nvml_tools pathfinder quasirandomGenerator reduction scalarProd SobolQRNG sortingNetworks transpose vectorAdd shmembench cachebench cachebench-l2-only cachebench-tex-loads mixbench mixbench-cuda-ro mixbench-cuda-alt
 
 TARGET_ARCH ?= $(shell uname -m)
 

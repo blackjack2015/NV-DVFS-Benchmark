@@ -28,7 +28,10 @@ def parse_perf_log(perf_file):
     f.close()
 
     # extract the kernel name
-    kernel = content[0].split(':')[1].strip()
+    # kernel = content[0].split(':')[1].strip()
+    kernel = content[1].strip()
+    if kernel == '':
+        kernel = content[2].strip()
 
     isLog = True
     if isLog:
