@@ -21,9 +21,10 @@ def calc_dvfs_power(p0, cg, coreFs):
 
 if __name__ == '__main__':
 
-    data = pd.read_csv('data/v100-dvfs-real.csv', header=0)
-    # params = pd.read_csv('data/v100-dvfs-real-params-static.csv', header=0)
-    # params = pd.read_csv('data/v100-dvfs-real-params-dynamic.csv', header=0)
+    # data = pd.read_csv('data/v100-dvfs-real.csv', header=0)
+    data = pd.read_csv('data/rtx8000-dvfs-real.csv', header=0)
+    # params = pd.read_csv('data/rtx8000-dvfs-real-params-static.csv', header=0)
+    # params = pd.read_csv('data/rtx8000-dvfs-real-params-dynamic.csv', header=0)
     params = pd.read_csv('results.csv', header=0)
 
     keys = ['Fc', 'delta', 't0', 'p0', 'cg']
@@ -41,7 +42,8 @@ if __name__ == '__main__':
         power = kdata["average_power"].values / kdata["average_power"].max()
         Fc, delta, t0, p0, cg, _ = params[params.benchmark_argNo == kernel].iloc[0].tolist()
 
-        coreFs = kdata["core_frequency"].values * 1.0 / 1380
+        # coreFs = kdata["core_frequency"].values * 1.0 / 1380 # v100
+        coreFs = kdata["core_frequency"].values * 1.0 / 1710 # rtx8000
 
         perf_pred = calc_dvfs_perf(Fc, delta, t0, coreFs)
         mape = mean_absolute_percentage_error(perf, perf_pred)

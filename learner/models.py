@@ -39,12 +39,12 @@ def nn_fitting(X, y):
         decay_steps=3000
     )
     # opt = keras.optimizers.Adam(learning_rate=1e-3)
-    opt = keras.optimizers.Adam(learning_rate=lr_schedule)
+    opt = tf.keras.optimizers.Adam(learning_rate=lr_schedule)
     model.compile(optimizer=opt, loss=tf.keras.losses.MeanAbsoluteError())
 
     model.summary()
 
-    model.fit(X, y, batch_size=16, epochs=100)   #, steps_per_epoch=3)
+    model.fit(X, y, batch_size=16, epochs=150)   #, steps_per_epoch=3)
 
     return model
 

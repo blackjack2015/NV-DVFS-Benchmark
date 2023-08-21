@@ -7,8 +7,8 @@ from learner.models import nn_fitting, mean_absolute_percentage_error
 
 if __name__ == '__main__':
 
-    train_data = pd.read_csv('data/v100-dvfs-microbenchmark.csv', header=0)
-    test_data = pd.read_csv('data/v100-dvfs-real.csv', header=0)
+    train_data = pd.read_csv('data/rtx8000-dvfs-microbenchmark.csv', header=0)
+    test_data = pd.read_csv('data/rtx8000-dvfs-real.csv', header=0)
 
     train_data = normalize(train_data)
     test_data = normalize(test_data)

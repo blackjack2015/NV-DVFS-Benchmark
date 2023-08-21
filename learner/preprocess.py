@@ -8,6 +8,9 @@ import pwlf
 
 ASSEMBLY_INFO_ROOT = 'ptx_tools/assembly_info/'
 
+CORE_BASE = 1710.0
+MEM_BASE = 6500.0
+
 
 def LR(X, y, alpha = 5e-4): 
     
@@ -66,9 +69,6 @@ def fit_piecewise_dvfs_perf_model(data):
 
         # return np.piecewise(x, [x < x0], [lambda x: y0, lambda x: x0+k1*x])
 
-    CORE_BASE = 1380.0
-    MEM_BASE = 877.0
-
     coreFs = data["core_frequency"].values * 1.0 / CORE_BASE
     
     # fitting performance
@@ -84,8 +84,6 @@ def fit_piecewise_dvfs_perf_model(data):
 
 def fit_dvfs_power_model(data):
 
-    CORE_BASE = 1380.0
-    MEM_BASE = 877.0
     VP = 0.5
 
     coreFs = data["core_frequency"].values * 1.0 / CORE_BASE
@@ -95,7 +93,8 @@ def fit_dvfs_power_model(data):
     VFs = coreVs ** 2 * coreFs
     # X = np.stack((np.ones(memFs.shape[0]), memFs, VFs)).T
     X = np.stack((np.ones(VFs.shape[0]), VFs)).T
-    y = data["average_power"].values / data[data.core_frequency == 1380].average_power.item()
+    # y = data["average_power"].values / data[data.core_frequency == 1380].average_power.item() # v100
+    y = data["average_power"].values / data[data.core_frequency == 1710].average_power.item() # rtx8000
     pw = LR(X, y)
     p0 = pw[0]
     # gamma = pw[1]
@@ -170,7 +169,8 @@ def normalize(data):
 
     print(kernel_params)
 
-    data = data[data.core_frequency == 1380]
+    # data = data[data.core_frequency == 1380] # v100
+    data = data[data.core_frequency == 1710] # rtx8000
 
     data = data.merge(kernel_params, on='benchmark_argNo')
     return data
